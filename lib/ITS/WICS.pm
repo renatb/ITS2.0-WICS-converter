@@ -1,12 +1,13 @@
-#modified from "Effective Perl Programming" by Joseph N. Hall, et al.
 package ITS::WICS;
 use strict;
 use warnings;
 use autodie;
+use Carp;
+use ITS::WICS::XML2HTML;
 # VERSION
 
 
-# ABSTRACT: Default Module Template
+# ABSTRACT: Convert ITS-decorated XML into HTML
 =head1 SYNOPSIS
 
 	my $obj = ITS::WICS->new();
@@ -14,92 +15,31 @@ use autodie;
 
 =head1 DESCRIPTION
 
-Description here
+This module allows one to convert various forms of ITS-decorated XML into HTML with equivalent ITS markup.
 
 =cut
 
-__PACKAGE__->new->_run unless caller;
+# __PACKAGE__->new->_run unless caller;
 
-sub _run {
-	my ($application) = @_;
-	print { $application->{output_fh} }
-		$application->message;
-}
+# sub _run {
+# 	my ($application) = @_;
+# 	print { $application->{output_fh} }
+# 		$application->message;
+# }
 
 =head1 METHODS
 
-=head2 C<new>
+=head2 C<xml2html>
 
-Creates a new instance of ITS::WICS
+Takes a named argument; if C<file>, the value should be the name of an XML file with ITS markup.
+If C<string>), the value should be a pointer to a string containing XML with ITS markup.
 
-=cut
-
-sub new {
-	my ($class) = @_;
-	my $application = bless {}, $class;
-	$application->_init;
-	return $application;
-}
-
-sub _init {
-	my ($application) = @_;
-	$application->{output_fh} = \*STDOUT;
-	$application->{input_fh} = \*STDIN;
-	return;
-}
-
-=head2 C<output_fh>
-
-Input: filehandle or filename
-
-Sets the filehandle for this object to print to.
+Returns an XML::Twig::Elt object containing the root of the converted HTML.
 
 =cut
 
-sub output_fh {
-	my ( $application, $fh ) = @_;
-	if ($fh) {
-		if(ref($fh) eq 'GLOB'){
-			$application->{output_fh} = $fh;
-		}
-		else{
-			open my $fh2, '>', $fh;
-			$application->{output_fh} = $fh2;
-		}
-	}
-	return $application->{output_fh};
-}
-
-=head2 C<input_fh>
-
-Input: filehandle or filename
-
-Sets the filehandle for this object to read from.
-
-=cut
-
-sub input_fh {
-	my ( $application, $fh ) = @_;
-	if ($fh) {
-		if(ref($fh) eq 'GLOB'){
-			$application->{input_fh} = $fh;
-		}
-		else{
-			open my $fh2, '<', $fh;
-			$application->{input_fh} = $fh2;
-		}
-	}
-	return $application->{input_fh};
-}
-
-=head2 C<other_subroutines>
-
-PUT MORE SUBROUTINES HERE
-
-=cut
-
-sub other_subroutines {
-	"YOUR WORK STARTS HERE\n";
+sub xml2html {
+	return ITS::WICS::XML2HTML::convert(@_);
 }
 
 1;
