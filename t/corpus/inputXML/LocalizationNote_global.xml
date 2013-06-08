@@ -1,0 +1,22 @@
+﻿<?xml version="1.0"?>
+  <body>
+  <head>
+  <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+
+  <its:locNoteRule locNoteType="alert" selector="//msg[@id='InvalidParameter']">
+  <its:locNote>
+[XML note]: Date and time should be in YYYY-DD-MM HH:MM format.
+  </its:locNote>
+  </its:locNoteRule>
+  <its:locNoteRule locNoteType="alert" selector="//msg[@id='webNote']">
+  <its:locNote>
+[XML note]: The note added by Alex S
+  </its:locNote>
+  </its:locNoteRule>
+
+  </its:rules>
+  </head>
+  <para>
+The following message appears: <msg id="InvalidParameter">Invalid parameter</msg>. And here is some text added for the <msg id="webNote">purposes of testing</msg>.
+  </para>
+  </body>

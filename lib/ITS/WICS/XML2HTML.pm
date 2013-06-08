@@ -3,10 +3,14 @@ use strict;
 use warnings;
 use Carp;
 use XML::Twig;
+use Try::Tiny;
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
 # VERSION
 # use feature "state";
 # use Carp qw(cluck);
+
+#text for html <title> element
+our $title = 'WICS';
 
 =head1 METHODS
 
@@ -29,7 +33,12 @@ sub convert{
 			croak "file does not exist: $args{file}";
 		}
 		$twig = _create_twig();
-		$twig->parsefile( $args{file} );
+		try{
+			$twig->parsefile( $args{file} );
+		} catch {
+			warn "error parsing file '$args{file}': $_";
+			return undef;
+		};
 
 	}elsif(exists $args{string}){
 		$twig = _create_twig();

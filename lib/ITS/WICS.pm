@@ -4,6 +4,9 @@ use warnings;
 use autodie;
 use Carp;
 use ITS::WICS::XML2HTML;
+use Exporter::Easy (
+	OK => ['xml2html']
+);
 # VERSION
 
 
