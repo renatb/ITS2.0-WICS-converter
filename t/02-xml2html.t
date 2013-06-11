@@ -19,6 +19,7 @@ my $html_dir = path($Bin, 'corpus', 'outputHTML');
 my @xml_docs = $xml_dir->children;
 for my $file(@xml_docs){
     next if $file =~ /_rules_XML/;
+    next if $file !~ /\.xml$/;
     my $html = xml2html(file => $file);
     # print $html;
     #get expected output HTML

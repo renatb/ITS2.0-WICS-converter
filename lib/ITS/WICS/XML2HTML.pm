@@ -113,6 +113,7 @@ sub _make_html {
 
 	my $head = XML::Twig::Elt->new('head');
 	XML::Twig::Elt->new( meta => { charset => 'utf-8' } )->paste('first_child' => $head);
+	XML::Twig::Elt->new('title', $title)->paste('first_child' => $head);
 	$head->paste(first_child => $html);
 }
 
@@ -143,7 +144,7 @@ sub _process_rules {
 	my @rules = $twig->find_nodes('//its:rules');
 	@rules or die 'couldnt get rules!';
 	for my $rules(@rules){
-		my $script = XML::Twig::Elt->new('script', type=> 'application/its+xml');
+		my $script = XML::Twig::Elt->new('script', {type=> 'application/its+xml'});
 		$rules->cut;
 		$rules->paste($script);
 		$script->paste(last_child => $head);
