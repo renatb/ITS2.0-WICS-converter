@@ -42,7 +42,10 @@ Returns an XML::Twig::Elt object containing the root of the converted HTML.
 =cut
 
 sub xml2html {
-	return ITS::WICS::XML2HTML::convert(@_);
+	my $twig = ITS::WICS::XML2HTML::convert(@_);
+	my $html = "<!DOCTYPE html>\n";
+	$html .= $twig->sprint;
+	return $html;
 }
 
 1;

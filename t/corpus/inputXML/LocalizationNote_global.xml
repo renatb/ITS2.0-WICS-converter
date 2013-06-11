@@ -5,12 +5,12 @@
 
   <its:locNoteRule locNoteType="alert" selector="//msg[@id='InvalidParameter']">
   <its:locNote>
-[XML note]: Date and time should be in YYYY-DD-MM HH:MM format.
+Date and time should be in YYYY-DD-MM HH:MM format.
   </its:locNote>
   </its:locNoteRule>
   <its:locNoteRule locNoteType="alert" selector="//msg[@id='webNote']">
   <its:locNote>
-[XML note]: The note added by Alex S
+The note added by Alex S
   </its:locNote>
   </its:locNoteRule>
 

@@ -46,18 +46,21 @@ sub convert{
 	}else{
 		croak 'Need to specify either a file or a string pointer with XML contents';
 	}
-	$twig->set_doctype('html');
 
 	_make_html($twig);
 	# move its:rules to head/script here
 
-	return $twig->root;
+	return $twig;
 }
 
+#add doctype
 #put contents into body, and add html, head, and meta elements
 #TODO: add title
 sub _make_html {
 	my ($twig) = @_;
+
+	$twig->set_doctype('html');
+
 	my $root = $twig->root;
 	my $html = $root->wrap_in('body', 'html');
 	# https://github.com/mirod/xmltwig/issues/5
@@ -93,9 +96,27 @@ sub _create_twig {
 }
 
 #convert into a span or a div
+#decided by whether first encounter has a sibling with something besides whitespace in it.
+#store old tag name in title attribute
 sub htmlize {
 	my ($twig, $el) = @_;
-
+	$el->set_att('title', $el->tag);
+	my $new_name = $twig->{span_div_table}->{$el->tag};
+	if(!$new_name){
+		#decide span or div...
+		my $prev = $el->prev_sibling;
+		my $next = $el->next_sibling;
+		if( ($prev && $prev->tag() eq '#PCDATA') ||
+			($next && $next->tag() eq '#PCDATA') ){
+			$twig->{span_div_table}->{$el->tag} = 'span';
+			$new_name = 'span';
+		}else{
+			$twig->{span_div_table}->{$el->tag} = 'div';
+			$new_name = 'div';
+		}
+		$el->set_tag($new_name);
+		1;
+	}
 }
 
 # slurp external rules;
