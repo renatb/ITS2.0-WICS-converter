@@ -47,10 +47,26 @@ sub convert{
 		croak 'Need to specify either a file or a string pointer with XML contents';
 	}
 
+	_rename_els($twig);
 	_make_html($twig);
 	# move its:rules to head/script here
 
 	return $twig;
+}
+
+#rename elements to either span or div, depending on info stored by _choose_name
+#save old name in title attribute
+sub _rename_els {
+	my ($twig) = @_;
+	for my $el(@{ $twig->{els_to_rename} }){
+		my $tag = $el->tag;
+		$el->set_att('title', $tag);
+		if($twig->{span_list}->{$tag}){
+			$el->set_tag('span');
+		}else{
+			$el->set_tag('div');
+		}
+	}
 }
 
 #add doctype
@@ -86,36 +102,31 @@ sub _create_twig {
 		TwigHandlers			=> {
 			'its:rules'		=> \&rules,
 			'its:rule'		=> \&rule,
-			_default_		=> \&htmlize,
+			_default_		=> \&_choose_name,
 			#TODO: fix XPaths
 		},
 		no_prolog				=> 1,
 	);
-
 	return $twig;
 }
 
-#convert into a span or a div
-#decided by whether first encounter has a sibling with something besides whitespace in it.
-#store old tag name in title attribute
-sub htmlize {
+#add title attribute containing tag name
+#save list of tags needing to be 'span' in $twig->{span_list}
+sub _choose_name {
 	my ($twig, $el) = @_;
-	$el->set_att('title', $el->tag);
-	my $new_name = $twig->{span_div_table}->{$el->tag};
-	if(!$new_name){
-		#decide span or div...
-		my $prev = $el->prev_sibling;
-		my $next = $el->next_sibling;
-		if( ($prev && $prev->tag() eq '#PCDATA') ||
-			($next && $next->tag() eq '#PCDATA') ){
-			$twig->{span_div_table}->{$el->tag} = 'span';
-			$new_name = 'span';
-		}else{
-			$twig->{span_div_table}->{$el->tag} = 'div';
-			$new_name = 'div';
-		}
-		$el->set_tag($new_name);
-		1;
+	# $el->set_att('title', $el->tag);
+	#save a list to rename later
+	push @{$twig->{els_to_rename}}, $el;
+	#we already know that this will be a span
+	return if $twig->{span_list}->{$el->tag};
+
+	#find out if this should be a span or is a viable div
+	#only elements with no #PCDATA before/after can be divs
+	my $prev = $el->prev_sibling;
+	my $next = $el->next_sibling;
+	if( ($prev && $prev->tag() eq '#PCDATA') ||
+		($next && $next->tag() eq '#PCDATA') ){
+		$twig->{span_list}->{$el->tag}++;
 	}
 }
 
