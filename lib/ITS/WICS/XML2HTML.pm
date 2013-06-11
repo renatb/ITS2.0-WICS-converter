@@ -49,8 +49,37 @@ sub convert{
 
 	_rename_els($twig);
 	_make_html($twig);
+
+	_process_rules($twig);
+
 	# move its:rules to head/script here
 
+	return $twig;
+}
+
+#Returns an XML::Twig object with proper settings and handlers for converting ITS-decorated XML
+#into HTML with equivalent ITS markup.
+
+sub _create_twig {
+	my $twig = new XML::Twig(
+		empty_tags				=> 'html',
+		pretty_print			=> 'indented',
+		# keep_original_prefix	=> 1, #maybe; this may be bad because the JS code doesn't process namespaces yet
+		output_encoding			=> 'UTF-8',
+		do_not_chain_handlers	=> 1, #can be important when things get complicated
+		keep_spaces				=> 0,
+		map_xmlns				=> {'http://www.w3.org/2005/11/its' => "its"},
+		TwigHandlers			=> {
+			#leave ITS elements for later
+			# 'its:rules'		=> sub {},
+			# 'its:rule'		=> sub {},
+			qr/its:/		=> sub {},
+
+			_default_		=> \&_choose_name,
+			#TODO: fix XPaths
+		},
+		no_prolog				=> 1,
+	);
 	return $twig;
 }
 
@@ -87,29 +116,6 @@ sub _make_html {
 	$head->paste(first_child => $html);
 }
 
-#Returns an XML::Twig object with proper settings and handlers for converting ITS-decorated XML
-#into HTML with equivalent ITS markup.
-
-sub _create_twig {
-	my $twig = new XML::Twig(
-		empty_tags				=> 'html',
-		pretty_print			=> 'indented',
-		# keep_original_prefix	=> 1, #maybe; this may be bad because the JS code doesn't process namespaces yet
-		output_encoding			=> 'UTF-8',
-		do_not_chain_handlers	=> 1, #can be important when things get complicated
-		keep_spaces				=> 0,
-		map_xmlns				=> {'http://www.w3.org/2005/11/its' => "its"},
-		TwigHandlers			=> {
-			'its:rules'		=> \&rules,
-			'its:rule'		=> \&rule,
-			_default_		=> \&_choose_name,
-			#TODO: fix XPaths
-		},
-		no_prolog				=> 1,
-	);
-	return $twig;
-}
-
 #add title attribute containing tag name
 #save list of tags needing to be 'span' in $twig->{span_list}
 sub _choose_name {
@@ -130,14 +136,29 @@ sub _choose_name {
 	}
 }
 
-# slurp external rules;
-sub rules {
-	my ($twig, $el) = @_;
+sub _process_rules {
+	my ($twig) = @_;
+	my $head = $twig->root->first_child('head');
+	$head or die 'couldnt get head!';
+	my @rules = $twig->find_nodes('//its:rules');
+	@rules or die 'couldnt get rules!';
+	for my $rules(@rules){
+		my $script = XML::Twig::Elt->new('script', type=> 'application/its+xml');
+		$rules->cut;
+		$rules->paste($script);
+		$script->paste(last_child => $head);
+	}
+
 }
 
-sub rule {
-	my ($twig, $el) = @_;
+# # slurp external rules;
+# sub rules {
+# 	my ($twig, $el) = @_;
+# }
 
-}
+# sub rule {
+# 	my ($twig, $el) = @_;
+
+# }
 
 1;
