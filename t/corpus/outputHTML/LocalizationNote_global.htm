@@ -1,10 +1,10 @@
 <!DOCTYPE html>
- <html>
+ <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
 
    <script type="application/its+xml">
    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
-   <its:locNoteRule locNoteType="alert" selector="//h:span[@id='InvalidParameter']">
+   <its:locNoteRule locNoteType="alert" selector="//h:span[@id='InvalidParameter', @title='msg']">
    <its:locNote>
 Date and time should be in YYYY-DD-MM HH:MM format.
    </its:locNote>
@@ -22,8 +22,9 @@ The note added by Alex S
   </head>
   <body>
     <div title="body">
-  <div title="p">
-The following message appears: <span title="msg" id="InvalidParameter">Invalid parameter</span>. And here is some text added for the <span id="webNote">purposes of testing</span>.
+    <div title="head"></div>
+  <div title="para">
+The following message appears: <span title="msg" id="InvalidParameter">Invalid parameter</span>. And here is some text added for the <span id="webNote" title="msg">purposes of testing</span>.
   </div>
 </div>
   </body>

@@ -85,6 +85,7 @@ sub _create_twig {
 
 #rename elements to either span or div, depending on info stored by _choose_name
 #save old name in title attribute
+#TODO:delete all attributes except ID, xmlns
 sub _rename_els {
 	my ($twig) = @_;
 	for my $el(@{ $twig->{els_to_rename} }){
@@ -100,7 +101,6 @@ sub _rename_els {
 
 #add doctype
 #put contents into body, and add html, head, and meta elements
-#TODO: add title
 sub _make_html {
 	my ($twig) = @_;
 
@@ -108,6 +108,7 @@ sub _make_html {
 
 	my $root = $twig->root;
 	my $html = $root->wrap_in('body', 'html');
+	$html->set_att('xmlns', 'http://www.w3.org/1999/xhtml');
 	# https://github.com/mirod/xmltwig/issues/5
 	$twig->set_root($html);
 
@@ -137,19 +138,31 @@ sub _choose_name {
 	}
 }
 
+# move the its:rules element(s) to a script in the head;
+# add xmnls:h for XPath matching
+# TODO: slurp external rules
 sub _process_rules {
 	my ($twig) = @_;
 	my $head = $twig->root->first_child('head');
-	$head or die 'couldnt get head!';
 	my @rules = $twig->find_nodes('//its:rules');
-	@rules or die 'couldnt get rules!';
+	@rules = _slurp_external_rules(@rules);
+	@rules or carp q{couldn't find any its:rules element};
 	for my $rules(@rules){
+		$rules->set_att('xmlns:h', 'http://www.w3.org/1999/xhtml');
 		my $script = XML::Twig::Elt->new('script', {type=> 'application/its+xml'});
 		$rules->cut;
 		$rules->paste($script);
 		$script->paste(last_child => $head);
 	}
+}
 
+# find any reference to rules in external files
+# slurp those rules and add them to the list
+# return the full list of its:rules elements
+sub _slurp_external_rules {
+	my @rules = @_;
+
+	return @rules;
 }
 
 # # slurp external rules;
