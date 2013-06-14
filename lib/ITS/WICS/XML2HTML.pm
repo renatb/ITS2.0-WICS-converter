@@ -4,6 +4,7 @@ use warnings;
 use Carp;
 use XML::Twig;
 use Try::Tiny;
+use Cwd;
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
 # VERSION
 # use feature "state";
@@ -50,7 +51,7 @@ sub convert{
 	_rename_els($twig);
 	_make_html($twig);
 
-	_process_rules($twig);
+	_process_rules_elements($twig, $args{file} || getcwd);
 
 	# move its:rules to head/script here
 
@@ -68,7 +69,10 @@ sub _create_twig {
 		output_encoding			=> 'UTF-8',
 		do_not_chain_handlers	=> 1, #can be important when things get complicated
 		keep_spaces				=> 0,
-		map_xmlns				=> {'http://www.w3.org/2005/11/its' => "its"},
+		map_xmlns				=> {
+			'http://www.w3.org/2005/11/its' => 'its',
+			'xlink="http://www.w3.org/1999/xlink' => 'xlink'
+		},
 		TwigHandlers			=> {
 			#leave ITS elements for later
 			# 'its:rules'		=> sub {},
@@ -141,13 +145,18 @@ sub _choose_name {
 # move the its:rules element(s) to a script in the head;
 # add xmnls:h for XPath matching
 # TODO: slurp external rules
-sub _process_rules {
-	my ($twig) = @_;
+sub _process_rules_elements {
+	my ($twig, $relative_to) = @_;
 	my $head = $twig->root->first_child('head');
-	my @rules = $twig->find_nodes('//its:rules');
-	@rules = _slurp_external_rules(@rules);
-	@rules or carp q{couldn't find any its:rules element};
-	for my $rules(@rules){
+	my @rules_els = $twig->find_nodes('//its:rules');
+	# @rules_els = _resolve_external_rules(@rules_els);
+	@rules_els or carp q{couldn't find any its:rules element};
+
+	for my $rules(@rules_els){
+		for my $rule($rules->children){
+			_process_rule_element($twig, $rule);
+		}
+		#paste them in the header in a script element
 		$rules->set_att('xmlns:h', 'http://www.w3.org/1999/xhtml');
 		my $script = XML::Twig::Elt->new('script', {type=> 'application/its+xml'});
 		$rules->cut;
@@ -159,10 +168,39 @@ sub _process_rules {
 # find any reference to rules in external files
 # slurp those rules and add them to the list
 # return the full list of its:rules elements
-sub _slurp_external_rules {
+sub _resolve_external_rules {
 	my @rules = @_;
+	for my $rules(@rules){
+		if($rules->att('xlink:href')){
 
+		}
+	}
 	return @rules;
+}
+
+sub _slurp_external_rules {
+	my ($href) = @_;
+	# TODO: resolve href relative to reference source path;
+	# TODO: parse external doc and grab root;
+	# TODO: check that it is its:rules and return it
+}
+
+# $twig should contain information to aid XPath conversion
+sub _process_rule_element {
+	my ($twig, $rule) = @_;
+	print $rule->tag;
+	if($rule->att('selector')){
+		$rule->set_att('selector', _process_xpath($twig, $rule->att('selector')));
+	}
+}
+
+# $twig should contain information to aid XPath conversion
+# $xpath is the xpath to change to match the document changes
+sub _process_xpath {
+	my ($twig, $xpath) = @_;
+	print $xpath;
+	#note: currently doesn't get string() and
+	print "$1:$2" while ($xpath =~ s/\G(\s*(?:\W+|^))(\w+)(?!\(|['"'])//ge);
 }
 
 # # slurp external rules;
