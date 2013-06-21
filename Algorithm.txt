@@ -16,7 +16,7 @@ do the same for external rules elements
 loop document elements
     save name, and non-id attributes in title
         (don't bother with namespace because 1. this is just for display on mouse-over, and 2. once we delete the atts, the namespace won't be available on the children for similar saving)
-        (need to keep id because its:idValueRule might have created it, and we want to keep ITS data)
+        (need to keep id because its:idValueRule might have created it, and we want to keep ITS data; also, it could be important for matching the HTML output with the original XML input)
     rename element to span or div, depending on inlininess
     Deterministically assign unique ID, if there isn't one
         (want this deterministic so that testing the output is easier)
