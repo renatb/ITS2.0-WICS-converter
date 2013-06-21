@@ -1,0 +1,29 @@
+Algorithm to preserve ITS markup during conversion to HTML:
+
+loop over ITS:xyzRule elements in ITS:rules;
+    for $match (document element matches for selector attribute)
+        if $match doesn't already have rule of same type:
+            localize rule onto $match
+        if has its:*Pointer attribute:
+            if given pointer name for given element is not already registered:
+                save element match for pointer XPath in $pointers structure
+                    $pointers->{$match}->{$pointerAttName} = $pointerMatch
+delete given ITS:rules element
+
+do the same for external rules elements
+    (precedence is preserved by lines 5 and 8)
+
+loop document elements
+    save name, and non-id attributes in title
+        (don't bother with namespace because 1. this is just for display on mouse-over, and 2. once we delete the atts, the namespace won't be available on the children for similar saving)
+        (need to keep id because its:idValueRule might have created it, and we want to keep ITS data)
+    rename element to span or div, depending on inlininess
+    Deterministically assign unique ID, if there isn't one
+        (want this deterministic so that testing the output is easier)
+
+loop $element in $pointers
+    loop $pointerAttName in $pointers->{$element}
+        $element->set_att($pointerAttName, "//*[id()='$pointers->{$element}->{$pointerAttName}']")
+            (note that the spec says that pointers should specify just one element; this assumes that, though it wouldn't be hard to change)
+
+Paste this entire document into the boilerplate for an HTML document (with html, head, title and body).
