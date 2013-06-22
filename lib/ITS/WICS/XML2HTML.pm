@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Carp;
 use XML::Twig;
+use XML::Twig::XPath;
 use Try::Tiny;
 use Cwd;
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
@@ -48,11 +49,14 @@ sub convert{
 		croak 'Need to specify either a file or a string pointer with XML contents';
 	}
 
+
+	my $its_rules = $twig->first_child('//its:rules');
+	my $pointer_index = _apply_rules($twig, $its_rules, {});
+
+	# _apply_rules($twig, $args{file} || getcwd);
+
 	_rename_els($twig);
 	_make_html($twig);
-
-	_process_rules_elements($twig, $args{file} || getcwd);
-
 	# move its:rules to head/script here
 
 	return $twig;
@@ -142,27 +146,27 @@ sub _choose_name {
 	}
 }
 
-# move the its:rules element(s) to a script in the head;
-# add xmnls:h for XPath matching
-# TODO: slurp external rules
-sub _process_rules_elements {
-	my ($twig, $relative_to) = @_;
-	my $head = $twig->root->first_child('head');
-	my @rules_els = $twig->find_nodes('//its:rules');
-	# @rules_els = _resolve_external_rules(@rules_els);
-	@rules_els or carp q{couldn't find any its:rules element};
+# args: document twig, its:rules element, and existing pointer hash
+# convert global rules into local attributes
+sub _apply_rules {
+	my ($twig, $its_rules, $pointer_index) = @_;
 
-	for my $rules(@rules_els){
-		for my $rule($rules->children){
-			_process_rule_element($twig, $rule);
+	for my $rule($rules->children){
+		if(!$rule->att('selector')){
+			carp "skip rule with no selector: $rule->tag";
+			continue;
 		}
-		#paste them in the header in a script element
-		$rules->set_att('xmlns:h', 'http://www.w3.org/1999/xhtml');
-		my $script = XML::Twig::Elt->new('script', {type=> 'application/its+xml'});
-		$rules->cut;
-		$rules->paste($script);
-		$script->paste(last_child => $head);
+		my @matches = $twig->get_xpath($rule->att('selector'));
+		for my $match (@matches){
+			#localize rule onto
+		}
 	}
+	#paste them in the header in a script element
+	$rules->set_att('xmlns:h', 'http://www.w3.org/1999/xhtml');
+	my $script = XML::Twig::Elt->new('script', {type=> 'application/its+xml'});
+	$rules->cut;
+	$rules->paste($script);
+	$script->paste(last_child => $head);
 }
 
 # find any reference to rules in external files
