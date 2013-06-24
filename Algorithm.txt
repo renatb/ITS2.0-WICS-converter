@@ -1,27 +1,22 @@
 Algorithm to preserve ITS markup during conversion to HTML by removing all XPaths and localizing global rules:
 
-Create array containing all its:rules elements (internal or referenced), in order of application
+Create array containing all its:*Rule elements (internal or referenced), in order of application
+    order should be external, internal, external, internal, etc. in order of document appearance
     (later rules will override earlier ones, as per spec)
-    (Question 1)
-
-Loop over each its:rules elements
-    loop all its:idValRule elements
-        apply, setting xml:id values on matches
-    loop all its:langRule elements
-        apply, setting xml:lang values on matches
-    loop all its:preserveSpaceRule elements
-        apply, setting xml:space values on matches
 
 # In this loop, create $matchIndex to remember which rules match which elements
-loop over ITS:xyzRule elements in ITS:rules
+loop over ITS:xyzRule elements
     for $match (document element matches for selector attribute)
-        if $match doesn't already have local rule of same type
+		if the rule is one of idValueRule, langRule, or preserveSpaceRule, apply it
+			(these change actual XML document structure, so they should be applied in case a rule selector requires it)
+			(see Question 2)
+        if $match doesn't already have or inherit a local rule of the same type
             if it has its:*Pointer attribute:
                 $pointerVal = contents of resolved XPath
                     (see note 1.)
             $matchIndex->{$match}->{xyzRule} = [$rule, $pointerVal || undef]
                 (this overwrites previous matches, preserving precedence)
-delete given ITS:rules element
+delete its:rules elements
 
 loop all other document elements
     save name and attributes other than xml:id and xml:lang in title
@@ -41,6 +36,8 @@ loop $element in $match_index
 
 Paste the entire transformed document into the boilerplate for an HTML document (with html, head, title and body elements).
 
+Overall complexity is around 2m + n (m is number of rules, n is elements in document)
+
 ---END---
 
 ############ QUESTIONS #############
@@ -51,6 +48,18 @@ The ITS spec is unclear (to me) on precedence in the following case:
 They are supposed to be applied in document order, later ones overriding earlier ones.
 Should they be applied r1 r2 e1 e2, or r1 e1 r2 e2 (I think it's the latter)?
 
+Answer 1: e1 r1 e2 r2 (later ones overriding earlier ones)
+
+Question 2- say I have an its:rules like this:
+<its:rules>
+<its:locNoteRule selector="id(b)" .../>
+<its:idValueRule selector="//a" idValue="@id_val"/>
+</its:rules>
+
+And then there's a document element <a id_val="b"/>.
+Should the locNoteRule apply first, not matching anything, and then the idValueRule match apply, giving a an id? Or should the rules that change the actual XML instead of adding ITS markup apply first, so that here a would have id="b" and the locNoteRule would apply to it?
+
+Answer 2: I think that in such rule lists the rules apply in the order of their appearance.
 
 ############ NOTES #############
 Note 1- why not preserve pointers as pointers?
