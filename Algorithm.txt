@@ -21,6 +21,7 @@ delete its:rules elements
 loop all other document elements
     save name and attributes other than xml:id and xml:lang in title
         (see note 2.)
+        (see Question 3.)
     save xml:id and xml:lang as id and lang
         (need to keep id and lang because its:[idValue|lang]Rule might have created them, and we want to keep ITS data; also, the ID could be important for matching the HTML output with the original XML input. Language is pretty obviously important information for internationalization)
     delete all of the attributes saved in the title
@@ -60,6 +61,9 @@ And then there's a document element <a id_val="b"/>.
 Should the locNoteRule apply first, not matching anything, and then the idValueRule match apply, giving a an id? Or should the rules that change the actual XML instead of adding ITS markup apply first, so that here a would have id="b" and the locNoteRule would apply to it?
 
 Answer 2: I think that in such rule lists the rules apply in the order of their appearance.
+
+Question 3-
+Is saving all of the attributes of an element in the title overkill? Note that with this algorithm there's no actual need to save the tag name or the attributes. It's only for display purpose (originally I was saving the tag name to match via XPath, but now I don't do that).
 
 ############ NOTES #############
 Note 1- why not preserve pointers as pointers?
