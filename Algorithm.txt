@@ -27,6 +27,7 @@ loop all other document elements
     delete all of the attributes saved in the title
     rename element to span or div, depending on inlininess
 
+(Note: this could be combined with the loop above)
 loop $element in $match_index
     loop [$rule, $pointerVal] in $match_index->{$element}->{(all rule names)}
         localize $rule onto $element
@@ -37,7 +38,7 @@ loop $element in $match_index
 
 Paste the entire transformed document into the boilerplate for an HTML document (with html, head, title and body elements).
 
-Overall complexity is around 2m + n (m is number of rules, n is elements in document)
+Overall complexity is around m + n (m is number of rules, n is elements in document)
 
 ---END---
 

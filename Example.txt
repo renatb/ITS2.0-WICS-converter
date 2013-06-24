@@ -8,19 +8,19 @@ Input XML:
 
   <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
 
-  <its:locNoteRule locNoteType="alert" selector="//msg[@id='InvalidParameter']">
+  <its:locNoteRule xml:id="first" locNoteType="alert" selector="//msg[@id='InvalidParameter']">
   <its:locNote>
 Date and time should be in YYYY-DD-MM HH:MM format.
   </its:locNote>
   </its:locNoteRule>
 
-  <its:locNoteRule locNoteType="alert" selector="//msg[@id='webNote']">
+  <its:locNoteRule xml:id="second" locNoteType="alert" selector="//msg[@id='webNote']">
   <its:locNote>
 The note added by Alex S
   </its:locNote>
   </its:locNoteRule>
 
-  <its:locNoteRule locNoteType="description" selector="id(pointerExample)" locNotePointer="@note"/>
+  <its:locNoteRule xml:id="third" locNoteType="description" selector="id(pointerExample)" locNotePointer="@note"/>
 
   </its:rules>
   </head>
@@ -51,3 +51,39 @@ The following message appears: <span title="msg" id="InvalidParameter" locNoteTy
   <div id="pointerExample" title="msg[@note='This note was found via pointer']" locNote="This note was found via pointer" locNoteType="description">Random note</div>
   </body>
  </html>
+
+_______________
+Example log
+---------------
+Loading ITS rules
+Found rule: locNoteRule
+Found rule: locNoteRule
+Found rule: locNoteRule
+
+Searching for rule matches:
+Searching for matches to locNoteRule (id=first)
+Found match: <msg id="InvalidParameter">
+Searching for matches to locNoteRule (id=second)
+Found match: <msg id="webNote">
+Searching for matches to locNoteRule (id=third)
+Found match: <msg id="pointerExample">
+saving locNotePointer value: "This note was found via pointer"
+
+Transforming document elements into HTML:
+<body> -> <div title="body">
+<head> -> <div title="head">
+<para> -> <div title="para">
+<msg id="InvalidParameter"> -> <span title="msg" id="InvalidParameter">
+<msg id="webNote"> -> <span title="msg" id="webNote">
+<msg id="pointerExample"> -> <div id="pointerExample" title="msg[@note='This note was found via pointer']"
+
+Applying rules:
+localizing locNoteRule (id="first") onto msg (id="InvalidParameter")
+  locNoteType = "alert"
+  locNote = "Date and time should be in YYYY-DD-MM HH:MM format."
+localizing locNoteRule (id="second") onto msg (id="webNote")
+  locNoteType = "alert"
+  locNote = "The note added by Alex S"
+localizing locNoteRule (id="third") onto msg (id="pointerExample")
+  locNoteType = "description"
+  locNote = "This note was found via pointer"
