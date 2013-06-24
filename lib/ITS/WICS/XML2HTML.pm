@@ -2,14 +2,17 @@ package ITS::WICS::XML2HTML;
 use strict;
 use warnings;
 use Carp;
+our @CARP_NOT = qw(ITS::WICS::XML2HTML);
 use XML::Twig;
 use XML::Twig::XPath;
+use Path::Tiny;
 use Try::Tiny;
-use Cwd;
+use feature 'say';
+
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
 # VERSION
-# use feature "state";
-# use Carp qw(cluck);
+
+convert(file => $ARGV[0]) unless caller;
 
 #text for html <title> element
 our $title = 'WICS';
@@ -49,17 +52,22 @@ sub convert{
 		croak 'Need to specify either a file or a string pointer with XML contents';
 	}
 
+	my $rules = _get_rules($twig, path($args{file}) || '.');
+	say scalar @$rules;
+	say $_->att('xml:id') for @$rules;
+	exit;
 
-	my $its_rules = $twig->first_child('//its:rules');
-	my $pointer_index = _apply_rules($twig, $its_rules, {});
+	####HERE
 
-	# _apply_rules($twig, $args{file} || getcwd);
+	# my $pointer_index = _apply_rules($twig, $its_rules, {});
 
-	_rename_els($twig);
-	_make_html($twig);
-	# move its:rules to head/script here
+	# # _apply_rules($twig, $args{file} || getcwd);
 
-	return $twig;
+	# _rename_els($twig);
+	# _make_html($twig);
+	# # move its:rules to head/script here
+
+	# return $twig;
 }
 
 #Returns an XML::Twig object with proper settings and handlers for converting ITS-decorated XML
@@ -69,42 +77,60 @@ sub _create_twig {
 	my $twig = new XML::Twig(
 		empty_tags				=> 'html',
 		pretty_print			=> 'indented',
-		# keep_original_prefix	=> 1, #maybe; this may be bad because the JS code doesn't process namespaces yet
 		output_encoding			=> 'UTF-8',
-		do_not_chain_handlers	=> 1, #can be important when things get complicated
 		keep_spaces				=> 0,
 		map_xmlns				=> {
 			'http://www.w3.org/2005/11/its' => 'its',
-			'xlink="http://www.w3.org/1999/xlink' => 'xlink'
-		},
-		TwigHandlers			=> {
-			#leave ITS elements for later
-			# 'its:rules'		=> sub {},
-			# 'its:rule'		=> sub {},
-			qr/its:/		=> sub {},
-
-			_default_		=> \&_choose_name,
-			#TODO: fix XPaths
+			'http://www.w3.org/1999/xlink' => 'xlink'
 		},
 		no_prolog				=> 1,
+		#can be important when things get complicated
+		do_not_chain_handlers	=> 1,
 	);
 	return $twig;
 }
 
-#rename elements to either span or div, depending on info stored by _choose_name
-#save old name in title attribute
-#TODO:delete all attributes except ID, xmlns
-sub _rename_els {
-	my ($twig) = @_;
-	for my $el(@{ $twig->{els_to_rename} }){
-		my $tag = $el->tag;
-		$el->set_att('title', $tag);
-		if($twig->{span_list}->{$tag}){
-			$el->set_tag('span');
-		}else{
-			$el->set_tag('div');
-		}
+# return all its:*Rule's elements to be applied to the
+# given twig, in order of application
+# $file should be the path of the file that is being read
+# (a Path::Tiny object)
+#
+sub _get_rules {
+	my ($twig, $file) = @_;
+
+	# first, grab internal its:rules elements
+	my @rule_containers;
+	my @internal_rules_containers = $twig->get_xpath('//its:rules');
+	if(@internal_rules_containers == 0){
+		carp "file $file contains no its:rules elements!";
+		return [];
 	}
+
+	# then store their rules, placing external file rules before internal ones
+	my @rules;
+	for my $container(@internal_rules_containers){
+		if($container->att('xlink:href')){
+			#path to file is relative to current file
+			my $path = path($container->att('xlink:href'))->
+				absolute($file->parent);
+			push @rules, @{ _get_external_rules($path) };
+		}
+		push @rules, $container->children;
+	}
+
+	if(@rules == 0){
+		carp "no rules found in $file";
+	}
+	return \@rules;
+}
+
+# return list of its:*Rule's, in application order, given the name of a file
+# containing an its:rules element
+sub _get_external_rules {
+	my ($path) = @_;
+	my $twig = _create_twig();
+	$twig->parsefile($path);
+	return _get_rules($twig, $path);
 }
 
 #add doctype
@@ -145,76 +171,5 @@ sub _choose_name {
 		$twig->{span_list}->{$el->tag}++;
 	}
 }
-
-# args: document twig, its:rules element, and existing pointer hash
-# convert global rules into local attributes
-sub _apply_rules {
-	my ($twig, $its_rules, $pointer_index) = @_;
-
-	for my $rule($rules->children){
-		if(!$rule->att('selector')){
-			carp "skip rule with no selector: $rule->tag";
-			continue;
-		}
-		my @matches = $twig->get_xpath($rule->att('selector'));
-		for my $match (@matches){
-			#localize rule onto
-		}
-	}
-	#paste them in the header in a script element
-	$rules->set_att('xmlns:h', 'http://www.w3.org/1999/xhtml');
-	my $script = XML::Twig::Elt->new('script', {type=> 'application/its+xml'});
-	$rules->cut;
-	$rules->paste($script);
-	$script->paste(last_child => $head);
-}
-
-# find any reference to rules in external files
-# slurp those rules and add them to the list
-# return the full list of its:rules elements
-sub _resolve_external_rules {
-	my @rules = @_;
-	for my $rules(@rules){
-		if($rules->att('xlink:href')){
-
-		}
-	}
-	return @rules;
-}
-
-sub _slurp_external_rules {
-	my ($href) = @_;
-	# TODO: resolve href relative to reference source path;
-	# TODO: parse external doc and grab root;
-	# TODO: check that it is its:rules and return it
-}
-
-# $twig should contain information to aid XPath conversion
-sub _process_rule_element {
-	my ($twig, $rule) = @_;
-	print $rule->tag;
-	if($rule->att('selector')){
-		$rule->set_att('selector', _process_xpath($twig, $rule->att('selector')));
-	}
-}
-
-# $twig should contain information to aid XPath conversion
-# $xpath is the xpath to change to match the document changes
-sub _process_xpath {
-	my ($twig, $xpath) = @_;
-	print $xpath;
-	#note: currently doesn't get string() and
-	print "$1:$2" while ($xpath =~ s/\G(\s*(?:\W+|^))(\w+)(?!\(|['"'])//ge);
-}
-
-# # slurp external rules;
-# sub rules {
-# 	my ($twig, $el) = @_;
-# }
-
-# sub rule {
-# 	my ($twig, $el) = @_;
-
-# }
 
 1;
