@@ -13,6 +13,7 @@ use feature 'say';
 
 if(!caller){
     my $ITS =  ITS->new(file => $ARGV[0]);
+    say 'Extracted rules:';
     say $_->att('xml:id') for @{ $ITS->get_rules() };
 }
 
