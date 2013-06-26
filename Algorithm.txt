@@ -103,6 +103,8 @@ Answer 2: I think that in such rule lists the rules apply in the order of their 
 Question 3-
 Is saving all of the attributes of an element in the title overkill? Note that with this algorithm there's no actual need to save the tag name or the attributes. It's only for display purpose (originally I was saving the tag name to match via XPath, but now I don't do that).
 
+Answer 3: We need some unique identifiers to check that input (XML, XLIFF or HTML) elements have been mapped to certain output HTML elements. Just for debugging purposes. We will also need element mapping log as conversion utility output for the same purposes.
+
 Question 4- non-localizable global rules
 What should I do with domainRule, externalResourceRefRule, and targetPointerRule, which are not localizable?
 
