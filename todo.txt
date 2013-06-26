@@ -1,0 +1,30 @@
+XML to HTML converter
+
+Minimum Marketable Features:
+- Localize rules
+- Respect inheritance
+- HTML-ize ITS markup
+- HTML-ize elements
+
+
+User Stories:
+- Localize a single rule
+- Localize any rule based on domain logic
+- Localize all rules at once
+
+Engineering Tasks:
+- Test::Base class
+    - filters for creating ITS objects with specified rules and applying to given document
+- Rule application method
+- Per-rule domain logic
+    - Create a rule class to store information;
+    - should have global and local att names
+    - html att names, if special
+    - pointer status of each
+    - inheritance logic (later)
+
+To Do on current task:
+- Allow setting rules and document in ITS object separately (for testability)
+- write localize test
+- write the rule application method
+- Create the rule class(es)
