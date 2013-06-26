@@ -22,9 +22,17 @@ Engineering Tasks:
     - html att names, if special
     - pointer status of each
     - inheritance logic (later)
+    - meta-data format?
 
 To Do on current task:
 - Allow setting rules and document in ITS object separately (for testability)
 - write localize test
 - write the rule application method
 - Create the rule class(es)
+
+Testing:
+    Need to test localizing logic separately from HTML logic;
+    need comprehensive end-to-end XML2HTML test suite for Renat and Serge
+
+    Plan: put localizing tests into one giant Test::Base file;
+    create comprehensive
