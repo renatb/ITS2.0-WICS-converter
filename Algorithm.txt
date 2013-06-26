@@ -8,17 +8,18 @@ Create array containing all its:*Rule elements (internal or referenced), in orde
 # In this loop, create $matchIndex to remember which rules match which elements
     (see Note 3.)
 loop over ITS:xyzRule elements
+    if the rule is one of idValueRule, langRule, or preserveSpaceRule:
+        apply it to the elements matched by its selector
+             (Unlike other rules, these are meant to change actual XML document structure. They have to be applied immediately in case a rule selector requires it)
+             (see Question 2)
     for $match (document element matches for selector attribute)
-		if the rule is one of idValueRule, langRule, or preserveSpaceRule, apply it
-			(these change actual XML document structure, so they should be applied in case a rule selector requires it)
-			(see Question 2)
         if $match doesn't already have or inherit a local rule of the same type
             if it has its:*Pointer attribute:
                 $pointerVal = contents of resolved XPath
                     (see note 1.)
             $matchIndex->{$match}->{xyzRule} = [$rule, $pointerVal || undef]
                 (this overwrites previous matches, preserving precedence)
-delete its:rules elements
+delete its:rules elements for localizable(!) material
 
 (Note: the two loops below can be reordered, or combined if the structure of $matchIndex were changed to be $matchIndex->{element}->{rule}. For modularity's sake, they probably won't be combined.)
 loop $element in $match_index
