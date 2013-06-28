@@ -1,0 +1,75 @@
+Algorithm to preserve ITS markup during conversion to HTML by replacing global selectors with new ones.
+
+Outline:
+Grab all rules and store in order of application
+    store parameter values in rules
+Find all document matches, store in an index
+    give unique IDs to matches that don't have IDs
+    store rule-element ID pair for element matches
+    store rule-[element ID, attribute name] pairs for attribute matches
+    store element-[pointer type, target attribute] pairs for matched elements with its:*Pointer atts
+Transform document into HTML
+    keep element IDs
+    change elements to div or span
+    store attributes as child spans (<span title="att_name" class="_ATT" id="parentId-name">value</span>)
+    put inside html structure (html, head, title, body)
+Change rule selectors
+
+__________
+Details:
+----------
+
+Create array containing all its:*Rule elements (internal or referenced), in order of application
+    (order should be external, internal, external, internal, etc. in order of document appearance)
+    initialize $paramIndex
+    [function: GET_RULES(file, $paramIndex)] for each its:rules element in file
+        init @rules
+        store its:param's in $paramIndex
+        if there is an external rules reference,
+            push GET_RULES(referenced file, $paramIndex) onto @rules
+        for each its:*rule in element
+            push rule onto @rules
+            rule should have reference to current $paramIndex entries
+        remove params from $paramIndex
+        return @rules
+
+... (more to come)
+
+______________
+Still Thinking
+--------------
+
+*Pointers can point to any type of node (there are 7). What to do for each of them?
+
+1)Resolving pointer to non-pointer with the referenced value
+2)Leaving as pointer
+----------------------
+element
+    1) value is text content
+    2) point to element (which was transformed)
+
+attribute
+    1) value is set to attribute value
+    2) point to element representing att (need to create)
+
+text
+    1) value is text
+    2) create new xpath to point to same text, after document conversion
+
+comment
+    1) value is text
+    2) point to element representing comment (need to create)
+
+processing instruction
+    1) value is litteral text of PI
+    2) point to element representing comment (need to create)
+
+document (can only match current document)
+    1) value is entire document (ouch!)
+    1) value is some message saying that the value is the entire document
+    2) point to document root element (via ID)
+    2) point to new element representing entire document
+
+namespace
+    1) value is URL
+    2) create element to represent namespace, and point to it
