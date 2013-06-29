@@ -4,14 +4,12 @@ Outline:
 Grab all rules and store in order of application
     store parameter values in rules
 Find all document matches, store in an index
-    give unique IDs to matches that don't have IDs
-    store rule-element ID pair for element matches
-    store rule-[element ID, attribute name] pairs for attribute matches
-    store element-[pointer type, target attribute] pairs for matched elements with its:*Pointer atts
+    for each rule, store matched elements and pointer elements
+        for non-elements, create new ones to represent selected data (but don't insert in document yet), and also save future insertion point (prev/next sibling, parent)
 Transform document into HTML
     keep element IDs
     change elements to div or span
-    store attributes as child spans (<span title="att_name" class="_ATT" id="parentId-name">value</span>)
+    #store attributes as child spans (<span title="att_name" class="_ATT" id="parentId-name">value</span>)
     put inside html structure (html, head, title, body)
 Change rule selectors
 
@@ -33,6 +31,68 @@ Create array containing all its:*Rule elements (internal or referenced), in orde
         remove params from $paramIndex
         return @rules
 
+(Loop through rules and create match index and objects to be pasted to tree later)
+init $matchIndex
+init $placeholders
+for $rule in rules
+    @nodes = matches($rule.selector)
+    if($rule has pointer att)
+        for $node in @nodes
+            push @{$matchIndex->{$rule}}, [getNode($placeholders, $node), getNode($placeholders, $rule.pointer)]
+    else
+        for $node in @nodes
+            push @{$matchIndex->{$rule}}, getNode($placeholders, $node)
+
+    [function: GET_NODE($domNode)]
+    switch(nodetype($domNode))
+        case ELEMENT:
+            return placeholder object
+                (use existing placeholder if found in %placeholders)
+                (placeholder just holds element, and paste does nothing)
+            return $domNode;
+            break;
+        case ATTRIBUTE, COMMENT, PI, DOCUMENT, NAMESPACE:
+            return placeholder object
+                (use existing placeholder if found in %placeholders)
+                (create new element representing $domNode;
+                    also save prev/next sibling/parent)
+        case TEXT:
+            push @{$matchIndex->{$rule}}, placeholder object
+                (use existing placeholder if found in %placeholders)
+                (create new element representing $domNode;
+                    also save prev/next sibling/parent;
+                    should destroy original text when pasted into document)
+
+put document in html/body, add head, title and encoding
+
+for $element in document
+    if $element.namespace is its
+        put in script tag in head
+        next
+    $title = $element.name
+    for $att in $element
+        switch $att.name
+            CASE xml:id
+                becomes id;
+            CASE xml:lang
+                becomes lang
+            CASE: its:translate
+                becomes translate
+            CASE: its:dir
+                becomes dir (may need finagling of values)
+            CASE: its:* (besides above)
+                convert to html version
+            DEFAULT:
+                save in title
+                delete
+    rename element to span or div, depending on inlininess
+
+
+
+    (keep xml:id, but other things that would be a unique id are trash unless mentioned by its:idValueRule)
+    (during html conversion, put standoff markup into script element. Another reason xml:id MUST be preserved is for IRIs linking to in-document content)
+    (Document will need a pre-scan for pointer attributes!)
+
 ... (more to come)
 
 ______________
@@ -42,7 +102,8 @@ Still Thinking
 *Pointers can point to any type of node (there are 7). What to do for each of them?
 
 1)Resolving pointer to non-pointer with the referenced value
-2)Leaving as pointer
+2)Create pointer and element to be pointed to
+3)Change xpath to point to same element
 ----------------------
 element
     1) value is text content
@@ -58,11 +119,12 @@ text
 
 comment
     1) value is text
+    2) create new xpath to point to same comment, after document conversion
     2) point to element representing comment (need to create)
 
 processing instruction
     1) value is litteral text of PI
-    2) point to element representing comment (need to create)
+    2) point to element representing PI (need to create)
 
 document (can only match current document)
     1) value is entire document (ouch!)
