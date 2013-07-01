@@ -8,6 +8,7 @@ our @CARP_NOT = qw(ITS);
 use XML::Twig::XPath;
 use Path::Tiny;
 use Try::Tiny;
+use ITS::Rule;
 use feature 'say';
 
 if(!caller){
@@ -118,105 +119,6 @@ sub get_twig {
     return $self->{twig};
 }
 
-=head2 C<localize_all_rules>
-
-Loops through document rules, in application order, and creates
-corresponding local attributes on their selected elements. See
-C<localize_rule> for how this is done.
-
-This method avoids the selction-breaking corner cases of
-C<localize_rule> by computing all rule matches before making any
-changes to the document.
-
-=cut
-
-sub localize_all_rules {
-    my ($self) = @_;
-
-    #first loop document and create match index
-    my $matchIndex;
-    for my $rule($self->get_rules){
-
-        #TODO: make separate classes for rules. That class
-        #should check that selector is present, and hold
-        #important attributes with HTML equivalents,
-        #inheritance information, and variable references.
-
-        # immediately apply document-changing rules
-        if($rule->tag =~
-            /^(?:idValueRule|langRule|preserveSpaceRule)$/){
-            $self->localize_rule($rule);
-            next;
-        }
-        my @matches = $self->get_twig->findnodes($rule->att('selector'));
-        for my $match(@matches){
-
-        }
-    }
-}
-
-=head2 C<localize_rule>
-
-Localizes the input rule onto its selected elements. This is done
-by creating local attributes which correspond to the rule contents.
-For example, the following global rule:
-
- <its:locNoteRule locNoteType="description" selector="//a">
-     <its:locNote>Note XYZ</its:locNote>
- </its:locNoteRule>
-
-would change an element C<a> with no attributes into the following:
-
- <a its:locNoteType="description" its:locNote="Note XYZ."/>
-
-All pointer-type attributes are resolved into non-pointers. For
-example, the following global rule:
-
- <its:locNoteRule
-     locNoteType="description"
-     selector="//a"
-     locNotePointer="../note"/>
-
-would turn to the following:
-
- <xml>
-  <note>Note ABC</note>
-  <a>Foo bar</a>
- </xml>
-
-into this:
-
- <xml>
-  <note>Note ABC</note>
-  <a its:locNoteType="description" its:locNote="Note ABC">Foo bar</a>
- </xml>
-
-Keep in mind that localizing a rule means changing a document. You may,
-if you are not careful, break some of the ITS rule selectors. For example,
-For example, say someone creates a rule with the selector
-C<//msg[count(@*)=0]>, and that it matches an element C<msg> with no attributes.
-If another rule (say, a C<translateRule>) matches C<msg> and we localize
-the information onto the element so that it becomes C<msg translate="yes">,
-then the above  selector will no longer be able to match the element it
-was intended for. To avoid this kind of corner case, use C<localize_all_rules>,
-which computes all matches before changing the document.
-
-=cut
-
-sub localize_rule {
-    my ($self, $rule) = @_;
-    carp 'localize_rule is not supported';
-    #TODO: probably won't do
-}
-
-# sub apply_rule {
-#     my ($self, $rule, $el) = @_;
-# }
-
-# TODO: not sure if this will be needed/wanted, but
-# sub trickle_atts {
-#
-# }
 
 # find and save all its:*Rule's elements to be applied in
 # $twig, in order of application
@@ -243,7 +145,7 @@ sub _resolve_rules {
                 absolute($base);
             push @rules, @{ _get_external_rules($path) };
         }
-        push @rules, $container->children;
+        push @rules, map {ITS::Rule->new($_)} $container->children;
     }
 
     if(@rules == 0){

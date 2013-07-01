@@ -12,7 +12,7 @@ use Path::Tiny;
 use FindBin qw($Bin);
 use File::Slurp;
 
-my $xml_dir = path($Bin, 'corpus', 'inputXML');
+my $xml_dir = path($Bin, 'corpus');
 
 subtest 'internal rules' => sub {
     plan tests => 4;
