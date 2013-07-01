@@ -32,7 +32,7 @@ Create array containing all its:*Rule elements (internal or referenced), in orde
         return @rules
 
 (Loop through rules and create match index and objects to be pasted to tree later)
-init $matchIndex
+init $matchIndex (tie with Tie::IxHash so that rules will be ordered)
 init $placeholders
 for $rule in rules
     @nodes = matches($rule.selector)
@@ -91,18 +91,75 @@ init @newRules
 for [$rule, $nodeMatch, $nodePointerMatch] in $matchIndex
     ensure $nodeMatch has an id att
     call $nodeMatch->paste (if applicable)
+    create $newRule
+        same atts as $rule, except:
+            selector selects "id('$nodeMatch.id')"
     if $nodePointerMatch is defined
         ensure $nodePointerMatch has an id att
         call $nodePointerMatch->paste (if applicable)
-        create $newRule
-            same atts as $rule, except:
-                selector selects "id('$nodeMatch->id')"
-                pointer selects "id('$nodePointerMatch->id')"
-        push @newRules, $newRule
+        pointer attribute of $newRule selects "id('$nodePointerMatch.id')"
+    push @newRules, $newRule
 
 create new its:rules element containing data of @newRules
 paste in script element in head
 
 done!
 
-(Next: define classes and their interactions/roles)
+Class design
+------------
+XML processor: XML::Twig or XML::LibXML
+Logger: Log::Any, with Dispatch adapter where needed
+ITS:
+    constructor
+        ARG: ITS-decorated XML document, xml/html flag
+        parses the document
+        OR
+        ARGS: its:rules element and xml document separately
+            more testable and flexible
+    get_rules: finds rule elements in source and creates array of Rule objects
+        optionally delete the rule XML elements when done
+    get_matches
+        ARG: Rule object
+        return array pointer:
+            [
+                [$selectorMatch, $pointerMatch || undef],
+                ...
+            ]
+    iterate_matches
+        ARGS: handler, array pointer of Rule objects;
+            uses rules in the document if no rules arg
+        for each rule
+            for each match
+                handler($selectorMatch, $pointerMatch || undef)
+
+Rule:
+    constructor
+        ARGS: rule XML element, hash of current params and values
+        warn if there is no selector
+        copy and store all of the attributes
+        store name of pointer att (undef if there is none)
+        store params and values
+    copy constructor
+        won't need to copy params
+    (string) getter/setter for attributes
+    (string) pointer attribute name (undef if there is none)
+    (string) getter/setter for params
+
+XML2HTML:
+    Creates ITS from document
+    calls ITS.iterate_matches
+        handler fills $matchIndex with rules and element Placeholder objects
+    transforms file into HTML
+    creates new its:rules element and calls ensure_visible on all of the placeholders
+
+Placeholder
+    #this class is a future guarantee of the existence of a visible, selectable element.
+    #if you pass in an attribute node, for example, it will remember it's spot and make sure that there is a visible element representing that element after you call the ensure_visible method.
+    #the document is not changed at all until you call ensure_visible, so that no XPath selectors are broken.
+    constructor
+        ARG: node
+        Save node or create new one depending on type (see GET_NODE in details section)
+        Save node's exact location, if needed
+    ensure_visible
+        if the node is not in the document, this will paste it in the saved spot
+
