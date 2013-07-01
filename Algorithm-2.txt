@@ -112,12 +112,14 @@ Logger: Log::Any, with Dispatch adapter where needed
 ITS:
     constructor
         ARG: ITS-decorated XML document, xml/html flag
-        parses the document
+        parses the document,
+        finds rule elements in source and creates array of Rule objects
         OR
         ARGS: its:rules element and xml document separately
             more testable and flexible
-    get_rules: finds rule elements in source and creates array of Rule objects
-        optionally delete the rule XML elements when done
+    get_rules_from_element:
+        ARG: its:rules XML element
+        return array pointer of Rule objects
     get_matches
         ARG: Rule object
         return array pointer:
@@ -136,6 +138,7 @@ Rule:
     constructor
         ARGS: rule XML element, hash of current params and values
         warn if there is no selector
+        copy and store name
         copy and store all of the attributes
         store name of pointer att (undef if there is none)
         store params and values
