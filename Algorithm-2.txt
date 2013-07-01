@@ -66,10 +66,10 @@ for $rule in rules
 put document in html/body, add head, title and encoding
 
 for $element in document
-    if $element.namespace is its
+    if $element.namespace is its (standoff)
         put in script tag in head
         next
-    $title = $element.name
+    save $element.name in title
     for $att in $element
         switch $att.name
             CASE xml:id
@@ -87,51 +87,22 @@ for $element in document
                 delete
     rename element to span or div, depending on inlininess
 
+init @newRules
+for [$rule, $nodeMatch, $nodePointerMatch] in $matchIndex
+    ensure $nodeMatch has an id att
+    call $nodeMatch->paste (if applicable)
+    if $nodePointerMatch is defined
+        ensure $nodePointerMatch has an id att
+        call $nodePointerMatch->paste (if applicable)
+        create $newRule
+            same atts as $rule, except:
+                selector selects "id('$nodeMatch->id')"
+                pointer selects "id('$nodePointerMatch->id')"
+        push @newRules, $newRule
 
+create new its:rules element containing data of @newRules
+paste in script element in head
 
-    (keep xml:id, but other things that would be a unique id are trash unless mentioned by its:idValueRule)
-    (during html conversion, put standoff markup into script element. Another reason xml:id MUST be preserved is for IRIs linking to in-document content)
-    (Document will need a pre-scan for pointer attributes!)
+done!
 
-... (more to come)
-
-______________
-Still Thinking
---------------
-
-*Pointers can point to any type of node (there are 7). What to do for each of them?
-
-1)Resolving pointer to non-pointer with the referenced value
-2)Create pointer and element to be pointed to
-3)Change xpath to point to same element
-----------------------
-element
-    1) value is text content
-    2) point to element (which was transformed)
-
-attribute
-    1) value is set to attribute value
-    2) point to element representing att (need to create)
-
-text
-    1) value is text
-    2) create new xpath to point to same text, after document conversion
-
-comment
-    1) value is text
-    2) create new xpath to point to same comment, after document conversion
-    2) point to element representing comment (need to create)
-
-processing instruction
-    1) value is litteral text of PI
-    2) point to element representing PI (need to create)
-
-document (can only match current document)
-    1) value is entire document (ouch!)
-    1) value is some message saying that the value is the entire document
-    2) point to document root element (via ID)
-    2) point to new element representing entire document
-
-namespace
-    1) value is URL
-    2) create element to represent namespace, and point to it
+(Next: define classes and their interactions/roles)

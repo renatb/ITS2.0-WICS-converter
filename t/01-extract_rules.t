@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use ITS;
 use Test::More 0.88;
-plan tests => 3;
+plan tests => 4;
 use Test::NoWarnings;
 use Test::XML;
 use Path::Tiny;
@@ -37,4 +37,12 @@ subtest 'external and internal rules' => sub {
     is($rules->[1]->att('xml:id'), 'ext2rule', 'correct second rule');
     is($rules->[2]->att('xml:id'), 'ext1rule', 'correct third rule');
     is($rules->[3]->att('xml:id'), 'baseFileRule', 'correct fourth rule');
+};
+
+TODO: {
+    local $TODO = 'its:param not implemented yet';
+    subtest 'parameters resolved' => sub {
+        plan tests => 1;
+        ok(0);
+    };
 };
