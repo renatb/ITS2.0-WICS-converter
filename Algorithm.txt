@@ -1,118 +1,168 @@
-Algorithm to preserve ITS markup during conversion to HTML by removing all XPaths and localizing global rules:
+Algorithm to preserve ITS markup during conversion to HTML by replacing global selectors with new ones.
+
+Outline:
+Grab all rules and store in order of application
+    store parameter values in rules
+Find all document matches, store in an index
+    for each rule, store matched elements and pointer elements
+        for non-elements, create new ones to represent selected data (but don't insert in document yet), and also save future insertion point (prev/next sibling, parent)
+Transform document into HTML
+    keep element IDs
+    change elements to div or span
+    #store attributes as child spans (<span title="att_name" class="_ATT" id="parentId-name">value</span>)
+    put inside html structure (html, head, title, body)
+Change rule selectors
+
+__________
+Details:
+----------
 
 Create array containing all its:*Rule elements (internal or referenced), in order of application
-    order should be external, internal, external, internal, etc. in order of document appearance
-    (later rules will override earlier ones, as per spec)
-    (TODO: resolve its:param's in here somewhere)
+    (order should be external, internal, external, internal, etc. in order of document appearance)
+    initialize $paramIndex
+    [function: GET_RULES(file, $paramIndex)] for each its:rules element in file
+        init @rules
+        store its:param's in $paramIndex
+        if there is an external rules reference,
+            push GET_RULES(referenced file, $paramIndex) onto @rules
+        for each its:*rule in element
+            push rule onto @rules
+            rule should have reference to current $paramIndex entries
+        remove params from $paramIndex
+        return @rules
 
-(TODO: perhaps localize inherited attributes for easier processing)
-# In this loop, create $matchIndex to remember which rules match which elements
-    (see Note 3.)
+(Loop through rules and create match index and objects to be pasted to tree later)
+init $matchIndex (tie with Tie::IxHash so that rules will be ordered)
+init $placeholders
+for $rule in rules
+    @nodes = matches($rule.selector)
+    if($rule has pointer att)
+        for $node in @nodes
+            push @{$matchIndex->{$rule}}, [getNode($placeholders, $node), getNode($placeholders, $rule.pointer)]
+    else
+        for $node in @nodes
+            push @{$matchIndex->{$rule}}, getNode($placeholders, $node)
 
-loop over ITS:xyzRule elements
-    if the rule is one of idValueRule, langRule, or preserveSpaceRule:
-        apply it to the elements matched by its selector
-             (Unlike other rules, these are meant to change actual XML document structure. They have to be applied immediately in case a rule selector requires it)
-             (see Question 2)
-    for $match (document element matches for selector attribute)
-        if $match doesn't already have or inherit a local rule of the same type
-            if it has its:*Pointer attribute:
-                $pointerVal = contents of resolved XPath
-                    (see note 1.)
-            $matchIndex->{$match}->{xyzRule} = [$rule, $pointerVal || undef]
-                (this overwrites previous matches, preserving precedence)
-delete its:rules elements for localizable(!) material
+    [function: GET_NODE($domNode)]
+    switch(nodetype($domNode))
+        case ELEMENT:
+            return placeholder object
+                (use existing placeholder if found in %placeholders)
+                (placeholder just holds element, and paste does nothing)
+            return $domNode;
+            break;
+        case ATTRIBUTE, COMMENT, PI, DOCUMENT, NAMESPACE:
+            return placeholder object
+                (use existing placeholder if found in %placeholders)
+                (create new element representing $domNode;
+                    also save prev/next sibling/parent)
+        case TEXT:
+            push @{$matchIndex->{$rule}}, placeholder object
+                (use existing placeholder if found in %placeholders)
+                (create new element representing $domNode;
+                    also save prev/next sibling/parent;
+                    should destroy original text when pasted into document)
 
-(Note: the two loops below can be reordered, or combined if the structure of $matchIndex were changed to be $matchIndex->{element}->{rule}. For modularity's sake, they probably won't be combined.)
-loop $element in $match_index
-    loop [$rule, $pointerVal] in $match_index->{$element}->{(all rule names)}
-        localize $rule onto $element
-        if $pointerVal is defined
-            set the corresponding non-pointer attribute on the element to $pointerVal
-                (e.g. locNoteRefPointer value becomes locNoteRef)
-                (Note 1.)
+put document in html/body, add head, title and encoding
 
-loop all other document elements
-    save name and attributes other than xml:id, xml:lang and its:* in title
-        (see note 2.)
-        (see Question 3.)
-    convert the its:* attributes into equivalent HTML attributes:
-        save the following attributes with HTML equivalents:
-            xml:id -> id
-            xml:lang -> lang
-            its:translate -> translate
-            its:dir -> dir
-        turn all other its:* attributes into corresponding HTML attributes
-            prefix with its-
-            uppercase replace with lowercase and -
-    delete all of the attributes saved in the title
+for $element in document
+    if $element.namespace is its (standoff)
+        put in script tag in head
+        next
+    save $element.name in title
+    for $att in $element
+        switch $att.name
+            CASE xml:id
+                becomes id;
+            CASE xml:lang
+                becomes lang
+            CASE: its:translate
+                becomes translate
+            CASE: its:dir
+                becomes dir (may need finagling of values)
+            CASE: its:* (besides above)
+                convert to html version
+            DEFAULT:
+                save in title
+                delete
     rename element to span or div, depending on inlininess
 
+init @newRules
+for [$rule, $nodeMatch, $nodePointerMatch] in $matchIndex
+    ensure $nodeMatch has an id att
+    call $nodeMatch->paste (if applicable)
+    create $newRule
+        same atts as $rule, except:
+            selector selects "id('$nodeMatch.id')"
+    if $nodePointerMatch is defined
+        ensure $nodePointerMatch has an id att
+        call $nodePointerMatch->paste (if applicable)
+        pointer attribute of $newRule selects "id('$nodePointerMatch.id')"
+    push @newRules, $newRule
 
-Paste the entire transformed document into the boilerplate for an HTML document (with html, head, title and body elements).
+create new its:rules element containing data of @newRules
+paste in script element in head
 
-Overall complexity is around m + n (m is number of rules, n is elements in document)
+done!
 
----END---
+Class design
+------------
+XML processor: XML::Twig or XML::LibXML
+Logger: Log::Any, with Dispatch adapter where needed
+ITS:
+    constructor
+        ARG: ITS-decorated XML document, xml/html flag
+        parses the document,
+        finds rule elements in source and creates array of Rule objects
+        OR
+        ARGS: its:rules element and xml document separately
+            more testable and flexible
+    get_rules_from_element:
+        ARG: its:rules XML element
+        return array pointer of Rule objects
+    get_matches
+        ARG: Rule object
+        return array pointer:
+            [
+                [$selectorMatch, $pointerMatch || undef],
+                ...
+            ]
+    iterate_matches
+        ARGS: handler, array pointer of Rule objects;
+            uses rules in the document if no rules arg
+        for each rule
+            for each match
+                handler($selectorMatch, $pointerMatch || undef)
 
-_____________
-Comparison with global rule selector XPath editing strategy
--------------
-Cons:
-------
+Rule:
+    constructor
+        ARGS: rule XML element, hash of current params and values
+        warn if there is no selector
+        copy and store name
+        copy and store all of the attributes
+        store name of pointer att (undef if there is none)
+        store params and values
+    copy constructor
+        won't need to copy params
+    (string) getter/setter for attributes
+    (string) pointer attribute name (undef if there is none)
+    (string) getter/setter for params
 
-Rule localizing (RL) disallows ITS application to anything besides elements.
-XPath finagling (XPF) doesn't.
-HTML conversion destroys all attributes and browsers don't display non-text, so this point is moot.
+XML2HTML:
+    Creates ITS from document
+    calls ITS.iterate_matches
+        handler fills $matchIndex with rules and element Placeholder objects
+    transforms file into HTML
+    creates new its:rules element and calls ensure_visible on all of the placeholders
 
-XPF can't preserve comparison relationships between nodes under HTML conversion.
-    *[@foo=@bar] is impossible without complex functions not available in 1.0.
-XPF requires a full XPath parser, with complex logic to decide what part of the XPath can transformed and how it should be done
+Placeholder
+    #this class is a future guarantee of the existence of a visible, selectable element.
+    #if you pass in an attribute node, for example, it will remember it's spot and make sure that there is a visible element representing that element after you call the ensure_visible method.
+    #the document is not changed at all until you call ensure_visible, so that no XPath selectors are broken.
+    constructor
+        ARG: node
+        Save node or create new one depending on type (see GET_NODE in details section)
+        Save node's exact location, if needed
+    ensure_visible
+        if the node is not in the document, this will paste it in the saved spot
 
-RL disallows rules with no local equivalent.
-    domainRule, externalResourceRefRule, targetPointerRule
-RL requires domain knowledge (how to localize each rule)
-    Though domain knowledge is needed for conversion to HTML anyway
-RL requires resolving of inherited ITS markup, which requires more domain knowledge and processing
-    Though this was recommended in the contract anyway.
-
-Localizing of rules was recommended in the contract.
-
-
-############ QUESTIONS #############
-Question 1-
-The ITS spec is unclear (to me) on precedence in the following case:
-    document contains two its:rules elements (r1 and r2)
-    each contains various its:*rule elements and an external its:rules references (e1 and e2)
-They are supposed to be applied in document order, later ones overriding earlier ones.
-Should they be applied r1 r2 e1 e2, or r1 e1 r2 e2 (I think it's the latter)?
-
-Answer 1: e1 r1 e2 r2 (later ones overriding earlier ones)
-
-Question 2- say I have an its:rules like this:
-<its:rules>
-<its:locNoteRule selector="id(b)" .../>
-<its:idValueRule selector="//a" idValue="@id_val"/>
-</its:rules>
-
-And then there's a document element <a id_val="b"/>.
-Should the locNoteRule apply first, not matching anything, and then the idValueRule match apply, giving a an id? Or should the rules that change the actual XML instead of adding ITS markup apply first, so that here a would have id="b" and the locNoteRule would apply to it?
-
-Answer 2: I think that in such rule lists the rules apply in the order of their appearance.
-
-Question 3-
-Is saving all of the attributes of an element in the title overkill? Note that with this algorithm there's no actual need to save the tag name or the attributes. It's only for display purpose (originally I was saving the tag name to match via XPath, but now I don't do that).
-
-Answer 3: We need some unique identifiers to check that input (XML, XLIFF or HTML) elements have been mapped to certain output HTML elements. Just for debugging purposes. We will also need element mapping log as conversion utility output for the same purposes.
-
-Question 4- non-localizable global rules
-What should I do with domainRule, externalResourceRefRule, and targetPointerRule, which are not localizable?
-
-############ NOTES #############
-Note 1- why not preserve pointers as pointers?
-    Because during HTML conversion we blow away most attributes. Let's say there were an element <a url="http://example.com"/> and a locNoteRefPointer referred to the url att via something like "../a/@url". The element might become <span title="a[@url='http://example.com']/>". So if we wanted to preserve the ITS pointer-ness, then we would have to 1. save the element which is being referred to by this pointer before the document is converted into HTML, 2. also save the attribute being referred to, and 3. after the document is converted, create an XPath expression to extract the value of that attribute out of the referred-to element's title attribute; if we want the old url attribute contained in the title, we would have to create an expression like
-Note 2- why not save the namespace in the title attribute?
-    1. This is just for display on mouse-over, not for matching with XPath
-    2. once we delete the atts from the element in the current loop iteration, the namespace won't even be available on the children for saving, so consistency would not be possible
-Note 3- why do we find rule matches and apply them later?
-    This is to ensure that the selectors are absolutely evaluated correctly. For example, say someone creates a rule with the selector "//msg[count(@*)=0]", and that it matches an element <msg>. If another rule matches <msg> and we localize the information onto the element so that it becomes <msg translate="yes">, then the above selector will no longer be able to match the element it was intended for. By separating the match and apply phases or processing, there won't be any corner cases like this.
