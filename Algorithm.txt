@@ -140,8 +140,9 @@ Rule:
         warn if there is no selector
         copy and store name
         copy and store all of the attributes
-        store name of pointer att (undef if there is none)
+        store names of pointer atts (undef if there is none)
         store params and values
+        sotre element contents
     copy constructor
         won't need to copy params
     (string) getter/setter for attributes
