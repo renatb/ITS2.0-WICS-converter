@@ -5,15 +5,17 @@ TODO:
 - then write TODOs for HTML stuff
 
 Engineering Tasks:
-    - switch to XML::LibXML
     - Test::Base class
         - filters for creating ITS objects with specified rules and applying to given document
+    - switch to XML::LibXML
 
 To Do on current task:
-    - Allow setting rules and document in ITS object separately (for testability)
+    -
 
 Later To Do:
     - make sure that Rule objects don't store the actual attribute hash used by the XML element
+    - Create full storage of Rule XML contents (future proofing and allowing greater extensibility)
+        - right now it just lists children tags and text
 
 Testing:
     Besides testing each piece of functionality, we need a comprehensive end-to-end XML2HTML test suite for Renat and Serge

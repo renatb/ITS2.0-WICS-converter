@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use ITS;
 use Test::More 0.88;
-plan tests => 5;
+plan tests => 6;
 use Test::Warn;
 use Test::NoWarnings;
 use XML::Twig;
@@ -39,8 +39,8 @@ subtest 'parameters' => sub {
             'storageEncoding' => 'UTF-8',
         }
     );
-    my $rule = ITS::Rule->new($el, $params);
-    is($rule->params, $params, 'parameter values')
+    my $rule = ITS::Rule->new($el, %$params);
+    is_deeply($rule->params, $params, 'parameter values')
 };
 
 subtest 'pointer attributes' => sub {
@@ -61,6 +61,22 @@ subtest 'pointer attributes' => sub {
 };
 
 my $el = XML::Twig::Elt->new(
+    'its:locNoteRule' => {
+        'xmlns:its' => 'http://www.w3.org/2005/11/its',
+        'locNoteType' => 'description',
+        'selector' => '//*',
+    }
+);
+XML::Twig::Elt->new(
+    'its:locNote' => 'Localization note goes here!')->
+    paste($el);
+my $rule = ITS::Rule->new($el);
+is_deeply($rule->children,
+    [['its:locNote', 'Localization note goes here!']],
+    'rule text contents'
+);
+
+$el = XML::Twig::Elt->new(
     'its:storageSizeRule' => {
         'xmlns:its' => 'http://www.w3.org/2005/11/its',
         'storageSizePointer' => '@size',

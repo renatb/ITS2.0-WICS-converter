@@ -27,12 +27,19 @@ sub new {
     # the correct pointer which matches the element name?
     my @pointer = sort grep {$_ =~ /.+Pointer$/} keys %$atts;
 
-    #TODO: some rules contain more elements, e.g. locNote
+    # TODO: this is fine for now, but any extions or updates
+    # to ITS could require saving more information than just
+    # the tag and text of the children.
+    my @children;
+    for($el->children){
+        push @children, [$_->tag, $_->text];
+    }
 
     my $self = bless {
         type => $type,
         atts => $atts,
         pointers => \@pointer,
+        children => \@children,
         params => \%params || {},
     }, $class;
     return $self;
@@ -49,7 +56,7 @@ sub type {
     return $self->{type};
 }
 
-=head2 C<att>
+=head2 C<params>
 
 Returns a hash pointer containing all of the paramater names and
 their values.
@@ -72,7 +79,7 @@ sub att {
     return $self->{atts}->{$name};
 }
 
-=head2 C<att>
+=head2 C<atts>
 
 Returns a hash pointer containing all of the attribute names
 and values;
@@ -84,7 +91,7 @@ sub atts {
     return $self->{atts};
 }
 
-=head2 C<att>
+=head2 C<pointers>
 
 Returns an array pointer containing the names of attributes which are pointers
 (or relative selectors).
@@ -94,6 +101,18 @@ Returns an array pointer containing the names of attributes which are pointers
 sub pointers {
     my ($self) = @_;
     return $self->{pointers};
+}
+
+=head2 C<children>
+
+Returns an array ref; each element is an array ref containing [element name, element text]
+for each of the child elements of the original rule XML element.
+
+=cut
+
+sub children {
+    my ($self) = @_;
+    return $self->{children};
 }
 
 =head2 C<as_element>
