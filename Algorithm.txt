@@ -124,8 +124,11 @@ ITS:
         ARG: Rule object
         return array pointer:
             [
-                [$selectorMatch, $pointerMatch || undef],
-                ...
+                {
+                    'selector' => $selectorMatch,
+                    'pointer name' => $pointerMatch,
+                    ...
+                }
             ]
     iterate_matches
         ARGS: handler, array pointer of Rule objects;

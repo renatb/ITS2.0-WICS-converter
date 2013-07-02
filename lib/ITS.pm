@@ -133,6 +133,27 @@ sub get_rules {
     return $self->{rules};
 }
 
+=head2 C<get_match>
+
+Argument: C<ITS::Rule> object.
+
+Returns a list of matches on this ITS document against the input rule.
+Each element of the list is an hash ref containing at least one key,
+C<selector> wich value is the node which it matched. Any other keys
+are names of pointer attributes and their matched nodes.
+
+=cut
+
+sub get_match {
+    my ($self, $rule) = @_;
+    my @matches;
+    my $xpath = $rule->selector;
+    return undef unless defined $xpath;
+
+    my @selector_matches = $self->{twig}->findnodes($xpath);
+    return \@selector_matches;
+}
+
 =head2 C<get_twig>
 
 Returns the XML::Twig::XPath object used internally to represent and process
@@ -157,7 +178,6 @@ sub _resolve_rules {
     my @rule_containers;
     my @internal_rules_containers = $twig->get_xpath('//its:rules');
     if(@internal_rules_containers == 0){
-        carp "$name contains no its:rules elements!";
         return [];
     }
 

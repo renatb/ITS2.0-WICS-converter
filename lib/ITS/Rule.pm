@@ -19,8 +19,12 @@ sub new {
     my $type = $el->local_name;
     $type =~ s/Rule$//;
     my $atts = $el->atts;
+
+    my $selector = undef;
     if(!$atts->{selector}){
         carp "$type rule is missing selector! No nodes will match.";
+    }else{
+        $selector = $atts->{selector};
     }
 
     # TODO: is this too forgiving? Should I be checking for
@@ -38,6 +42,7 @@ sub new {
     my $self = bless {
         type => $type,
         atts => $atts,
+        selector => $selector,
         pointers => \@pointer,
         children => \@children,
         params => \%params || {},
@@ -113,6 +118,18 @@ for each of the child elements of the original rule XML element.
 sub children {
     my ($self) = @_;
     return $self->{children};
+}
+
+=head2 C<selector>
+
+Returns the value of this rule's C<selector> attribute, which is used
+to apply the rule meta-data to document nodes.
+
+=cut
+
+sub selector {
+    my ($self) = @_;
+    return $self->{selector};
 }
 
 =head2 C<as_element>

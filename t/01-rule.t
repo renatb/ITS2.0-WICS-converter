@@ -10,7 +10,7 @@ use Test::NoWarnings;
 use XML::Twig;
 
 subtest 'basic rule' => sub {
-    plan tests => 4;
+    plan tests => 5;
     my $attributes = {
         'xmlns:its' => 'http://www.w3.org/2005/11/its',
         'selector' => 'id("id_1")',
@@ -22,6 +22,7 @@ subtest 'basic rule' => sub {
     is($rule->type, 'storageSize', 'rule name');
     is_deeply($rule->atts, $attributes, 'rule attributes');
     is($rule->att('storageSize'), '8', 'attribute accessor');
+    is($rule->selector, 'id("id_1")', 'selector accessor');
     is_deeply($rule->params, {}, 'no parameters');
 };
 
