@@ -15,7 +15,7 @@ Creates a new C<Rule> instance.
 =cut
 
 sub new {
-    my ($class, $el, $params) = @_;
+    my ($class, $el, %params) = @_;
     my $type = $el->local_name;
     $type =~ s/Rule$//;
     my $atts = $el->atts;
@@ -33,7 +33,7 @@ sub new {
         type => $type,
         atts => $atts,
         pointers => \@pointer,
-        params => $params || {},
+        params => \%params || {},
     }, $class;
     return $self;
 }

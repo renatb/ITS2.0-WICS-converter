@@ -39,10 +39,46 @@ subtest 'external and internal rules' => sub {
     is($rules->[3]->att('xml:id'), 'baseFileRule', 'correct fourth rule');
 };
 
-TODO: {
-    local $TODO = 'its:param not implemented yet';
-    subtest 'parameters resolved' => sub {
-        plan tests => 1;
-        ok(0);
-    };
+subtest 'parameters resolved' => sub {
+    plan tests => 7;
+    my $param_test = path($xml_dir, 'test_param.xml');
+    my $ITS = ITS->new(file => $param_test);
+    my $rules = $ITS->get_rules();
+
+    is($#$rules, 2, 'three rules in file');
+
+    my $ext_rule = $rules->[0];
+    is($ext_rule->att('xml:id'), 'ext_rule', 'external rule first');
+    is_deeply(
+        $ext_rule->params,
+        {
+            title   => 'Text',
+            trmarkId=> 'notran',
+            baz     => 'qux',
+            foo     => 'bar2',
+        },
+        'external rule params');
+
+    my $idValRule = $rules->[1];
+    is($idValRule->att('xml:id'), 'idValRule', 'internal rule next');
+    is_deeply(
+        $idValRule->params,
+        {
+            title   => 'Text',
+            trmarkId=> 'notran',
+            foo     => 'bar1',
+        },
+        'internal rule params');
+
+    my $locNoteRule = $rules->[2];
+    is($locNoteRule->att('xml:id'), 'locNoteRule', 'last internal rule last');
+    is_deeply(
+        $locNoteRule->params,
+        {
+            title   => 'Text',
+            trmarkId=> 'notran',
+            foo     => 'bar1',
+        },
+        'last rule params');
+
 };

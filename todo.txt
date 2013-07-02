@@ -1,18 +1,21 @@
 XML to HTML converter
 
 TODO:
-- Rewrite Rule class
 - create constructor to allow passing in rules and document separately, pre-parsed
 - create interface for extracting rules
 - create interface for iterating over matches
 - then write TODOs for HTML stuff
 
 Engineering Tasks:
-- Test::Base class
-    - filters for creating ITS objects with specified rules and applying to given document
+    - Test::Base class
+        - filters for creating ITS objects with specified rules and applying to given document
 
 To Do on current task:
-- Allow setting rules and document in ITS object separately (for testability)
+    - Allow setting rules and document in ITS object separately (for testability)
+
+
+Later To Do:
+    - make sure that Rule objects don't store the actual attribute hash used by the XML element
 
 Testing:
     Besides testing each piece of functionality, we need comprehensive end-to-end XML2HTML test suite for Renat and Serge

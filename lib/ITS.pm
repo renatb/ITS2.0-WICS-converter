@@ -126,8 +126,7 @@ sub get_twig {
 # $name is a name for the input to use in errors
 # (like filename or 'string')
 sub _resolve_rules {
-    my ($twig, $base, $name) = @_;
-    # TODO: deal with its:param elements
+    my ($twig, $base, $name, %params) = @_;
     # first, grab internal its:rules elements
     my @rule_containers;
     my @internal_rules_containers = $twig->get_xpath('//its:rules');
@@ -139,13 +138,18 @@ sub _resolve_rules {
     # then store their rules, placing external file rules before internal ones
     my @rules;
     for my $container(@internal_rules_containers){
+        my @children = $container->children();
+        while($children[0]->tag eq 'its:param'){
+            my $param = shift @children;
+            $params{$param->att('name')} = $param->text;
+        }
         if($container->att('xlink:href')){
             #path to file is relative to current file
             my $path = path($container->att('xlink:href'))->
                 absolute($base);
-            push @rules, @{ _get_external_rules($path) };
+            push @rules, @{ _get_external_rules($path, \%params) };
         }
-        push @rules, map {ITS::Rule->new($_)} $container->children;
+        push @rules, map {ITS::Rule->new($_, %params)} @children;
     }
 
     if(@rules == 0){
@@ -157,10 +161,10 @@ sub _resolve_rules {
 # return list of its:*Rule's, in application order, given the name of a file
 # containing an its:rules element
 sub _get_external_rules {
-    my ($path) = @_;
+    my ($path, $params) = @_;
     my $twig = _create_twig();
     $twig->parsefile($path);
-    return _resolve_rules($twig, $path->parent, $path);
+    return _resolve_rules($twig, $path->parent, $path, %$params);
 }
 
 1;
