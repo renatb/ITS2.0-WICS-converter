@@ -21,17 +21,38 @@ if(!caller){
 
 =head2 C<new>
 
-Returns an object instance after parsing the given XML.
-Takes a named argument; if C<file>, the value should be the name of an XML file with ITS markup.
-If C<string>), the value should be a pointer to a string containing XML with ITS markup.
+Returns an ITS object instance.
+Takes one or more named parameters:
+
+=over 3
+
+=item C<file>
+
+The name of an XML file with ITS markup. The file is parsed and rules are extracted
+(unless a rules parameter is provided). External rule URIs are resolved relative
+to the file URI.
+
+=item C<string>
+
+A pointer to a string containing XML with ITS markup. The string is parsed and rules
+extracted (unless a rules parameter is provided). External rule URIs are resolved relative
+to the current working directory.
+
+=item C<rules>
+
+A pointer to a string containing  XML from which to extract ITS rules. External
+rule URIs are resolved relative to the current working directory.
+
+=back
 
 =cut
 
 sub new {
     # TODO: also accept its:param values here
+    # (not sure about precedence for them yet)
     my ($class, %args) = @_;
     my $twig;
-    #either parse a file or a string using the XML2HTML twig
+    #either parse a file or a string
     if(exists $args{file}){
         unless(-e $args{file}){
             croak "file does not exist: $args{file}";
@@ -57,17 +78,22 @@ sub new {
         twig => $twig,
     }, $class;
 
+    my $rules_twig = $twig;
+    if($args{rules}){
+        $rules_twig = _create_twig();
+        try{
+            $rules_twig->parse( ${$args{rules}} );
+        } catch {
+            croak "error parsing string: $_";
+        };
+    }
+
     $self->{rules} = _resolve_rules(
-        $twig,
+        $rules_twig,
         ($args{file} ? path($args{file})->parent : path('.') ),
         $args{file} || 'string'
     );
     return $self;
-
-    # my $rules = _get_rules($twig, path($args{file}) || '.');
-    # say scalar @$rules;
-    # say $_->att('xml:id') for @$rules;
-    # exit;
 }
 
 #Returns an XML::Twig object with proper settings for parsing ITS
@@ -163,7 +189,12 @@ sub _resolve_rules {
 sub _get_external_rules {
     my ($path, $params) = @_;
     my $twig = _create_twig();
-    $twig->parsefile($path);
+    try{
+        $twig->parsefile( $path );
+    } catch {
+        carp "Skipping rules in file '$path': $_";
+        return [];
+    };
     return _resolve_rules($twig, $path->parent, $path, %$params);
 }
 

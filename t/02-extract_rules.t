@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use ITS;
 use Test::More 0.88;
-plan tests => 4;
+plan tests => 5;
 use Test::NoWarnings;
 use Test::XML;
 use Path::Tiny;
@@ -59,26 +59,43 @@ subtest 'parameters resolved' => sub {
         },
         'external rule params');
 
+    my $params = {
+        title   => 'Text',
+        trmarkId=> 'notran',
+        foo     => 'bar1',
+    };
     my $idValRule = $rules->[1];
     is($idValRule->att('xml:id'), 'idValRule', 'internal rule next');
     is_deeply(
-        $idValRule->params,
-        {
-            title   => 'Text',
-            trmarkId=> 'notran',
-            foo     => 'bar1',
-        },
-        'internal rule params');
+        $idValRule->params, $params, 'internal rule params');
 
     my $locNoteRule = $rules->[2];
     is($locNoteRule->att('xml:id'), 'locNoteRule', 'last internal rule last');
     is_deeply(
-        $locNoteRule->params,
-        {
-            title   => 'Text',
-            trmarkId=> 'notran',
-            foo     => 'bar1',
-        },
-        'last rule params');
+        $locNoteRule->params, $params, 'last rule params');
+};
 
+subtest 'rules and document from separate strings' => sub {
+    plan tests => 3;
+    my $ITS = ITS->new(string => \<<'XML', rules => \<<'RULES');
+<myDoc>
+ <body>
+  <par id="100" title="Text">The
+    <trmark id="notran">World Wide Web Consortium</trmark>
+     is making the World Wide Web worldwide!
+  </par>
+ </body>
+</myDoc>
+XML
+<its:rules xml:id="baseFileContainer" xmlns:its="http://www.w3.org/2005/11/its" version="2.0"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+    <its:idValueRule xml:id="idValRule" selector="id('Text')" idValue="bodyId"/>
+    <its:locNoteRule xml:id="locNoteRule" selector="id('Text')" locNotePointer="id('notran')"/>
+</its:rules>
+RULES
+
+    my $rules = $ITS->get_rules();
+    is($#$rules, 1, '2 rules in string');
+    is($rules->[0]->att('xml:id'), 'idValRule', 'correct first rule');
+    is($rules->[1]->att('xml:id'), 'locNoteRule', 'correct second rule');;
 };
