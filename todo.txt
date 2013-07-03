@@ -5,9 +5,10 @@ TODO:
 - then write TODOs for HTML stuff
 
 Engineering Tasks:
-    - Test::Base class
-        - filters for creating ITS objects with specified rules and applying to given document
+    - factor out all XML processing code into its own class
+        - trying to zero to manage 3rd party code
     - switch to XML::LibXML
+        - much better designed and maintained than XML::XPath
 
 To Do on current task:
     -
