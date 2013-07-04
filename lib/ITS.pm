@@ -11,11 +11,30 @@ use Try::Tiny;
 use ITS::Rule;
 use feature 'say';
 
+# as script: extract ITS rules from input doc and list IDs
 if(!caller){
     my $ITS =  ITS->new(file => $ARGV[0]);
     say 'Extracted rules:';
     say $_->att('xml:id') for @{ $ITS->get_rules() };
 }
+
+=head1 SYNOPSIS
+
+    use ITS;
+    use feature 'say';
+    my $ITS = ITS->new(file => 'myfile.xml', rules);
+    my $rules = $ITS->get_rules;
+    $ITS->iterate_matches(sub{
+        my ($rule, $selectorMatch, $pointerMatches) = @_;
+        say "$rule matched " . $selectorMatch->id . " and pointers " .
+            join ', ', map {$_->id} @$pointerMatches;
+    });
+
+=head1 DESCRIPTION
+
+This module is for working with ITS decorated XML or HTML documents.
+It allows you to resolve all of the global and find matches for each
+of them.
 
 =head1 METHODS
 

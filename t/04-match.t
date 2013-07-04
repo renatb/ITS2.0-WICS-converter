@@ -32,6 +32,6 @@ __DATA__
     version="2.0">
         <its:translateRule
             xml:id="ext_rule"
-            selector="id('parId')"
+            selector="//*[@baz=$baz]"
             translate="yes"/>
 </its:rules>
