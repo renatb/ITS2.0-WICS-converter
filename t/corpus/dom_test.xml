@@ -1,0 +1,9 @@
+<xml xmlns:foo="www.bar.com">
+    <second foo="bar">
+        some text
+    </second>
+    <third>some <i>italic</i> text</third>
+    <!--A comment...-->
+    <?foo_pi some content?>
+    <fifth baz="qux" boo="far"/>
+</xml>

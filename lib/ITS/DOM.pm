@@ -85,7 +85,7 @@ sub _get_xml_dom {
 
 #Returns an XML::Twig object with proper settings for parsing ITS
 sub _create_twig {
-    my $twig = new XML::Twig::XPath(
+    my $twig = XML::Twig::XPath->new(
         map_xmlns               => {
             'http://www.w3.org/2005/11/its' => 'its',
             'http://www.w3.org/1999/xlink' => 'xlink'
@@ -104,9 +104,11 @@ sub _create_twig {
 1;
 
 package ITS::DOM::Node;
-#thin wrapper around underlying XML engine node objects
+
 use strict;
 use warnings;
+# VERSION
+# ABSTRACT: thin wrapper around underlying XML engine node objects
 use Carp;
 use feature 'switch';
 
@@ -137,26 +139,76 @@ sub new {
     # print $node->tag . "---\n";
     return bless {
         node => $node,
-        type => _get_type($node->get_type)
+        type => _get_type($node),
     }, $class;
 }
 
+sub _get_type {
+    my ($node) = @_;
+    my $type;
+    given($node){
+        when($node->isElementNode){$type = 'ELT'; break;}
+        when($node->isAttributeNode){$type = 'ATT'; break;}
+        when($node->isTextNode){$type = 'TXT'; break;}
+        when($node->isNamespaceNode){$type = 'NS'; break;}
+        when($node->isPINode){$type = 'PI'; break;}
+        when($node->isCommentNode){$type = 'COM'; break;}
+        when(ref $node eq 'XML::Twig::XPath'){$type = 'DOC'; break;}
+        default{croak "unknown node type for $node";}
+    }
+    return $type;
+}
+
+=head2 C<type>
+
+Returns a string representing the type of the node:
+C<ELT>, C<ATT>, C<TXT>, C<NS>, C<PI>, C<COM> or C<DOC>.
+
+=cut
+sub type {
+    my ($self) = @_;
+    return $self->{type};
+}
+
+=head2 C<name>
+
+Returns the name of the node. This is the tag name for elements,
+the name for attributes and PIs, etc.
+
+=cut
+sub name {
+    my ($self) = @_;
+    return $self->{node}->getName;
+}
+
+=head2 C<value>
+
+Returns the value of the node. This is text content of some kind.
+
+=cut
+sub value {
+    my ($self) = @_;
+    return $self->{node}->getValue;
+}
+
+=head2 C<att>
+
+If this node is an element, returns the value of the given attribute.
+
+=cut
 sub att {
     my ($self, $name) = @_;
     return $self->{node}->att($name);
 }
 
+
+=head2 C<atts>
+
+If this node is an element, returns a hash pointer containing all of its
+attributes and their values.
+
+=cut
 sub atts {
     my ($self, $name) = @_;
-
-}
-
-sub _get_type {
-    my ($type_string) = @_;
-    my $type;
-    given($type_string){
-        when('#ELT'){$type = 'ELT'; break;}
-        default{croak "unknown type $type";}
-    }
-    return $type;
+    return \%{$self->{node}->atts};
 }
