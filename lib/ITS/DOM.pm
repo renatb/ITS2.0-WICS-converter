@@ -44,6 +44,22 @@ sub new {
     return bless {dom => $dom}, $class;
 }
 
+=head2 C<get_xpath>
+
+Argument: XPath string to query document with
+
+Returns a list of ITS::DOM::Node objects matching the given XPath.
+
+=cut
+
+sub get_xpath {
+    my ($self, $xpath) = @_;
+    my @nodes =
+        map {ITS::DOM::Node->new($_)}
+        $self->{dom}->findnodes($xpath);
+    return @nodes;
+}
+
 sub _get_xml_dom {
     my ($xml) = @_;
 
@@ -83,4 +99,64 @@ sub _create_twig {
         do_not_chain_handlers   => 1,
     );
     return $twig;
+}
+
+1;
+
+package ITS::DOM::Node;
+#thin wrapper around underlying XML engine node objects
+use strict;
+use warnings;
+use Carp;
+use feature 'switch';
+
+=head1 SYNOPSIS
+
+    use ITS::DOM;
+    use feature 'say';
+    my $dom = ITS::DOM->new(xml => 'path/to/file');
+    my @nodes = $dom->get_nodes('//@foo');
+    for(@nodes){
+        say $node->text;
+    }
+
+=head1 DESCRIPTION
+
+This module is meant for internal use by the ITS::* modules only.
+It is a thin wrapper around an XML::Twig::XPath nodes.
+
+=head1 METHODS
+
+=head2 C<new>
+
+Argument: a single XML/HTML node
+
+=cut
+sub new {
+    my ($class, $node) = @_;
+    # print $node->tag . "---\n";
+    return bless {
+        node => $node,
+        type => _get_type($node->get_type)
+    }, $class;
+}
+
+sub att {
+    my ($self, $name) = @_;
+    return $self->{node}->att($name);
+}
+
+sub atts {
+    my ($self, $name) = @_;
+
+}
+
+sub _get_type {
+    my ($type_string) = @_;
+    my $type;
+    given($type_string){
+        when('#ELT'){$type = 'ELT'; break;}
+        default{croak "unknown type $type";}
+    }
+    return $type;
 }

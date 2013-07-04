@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use ITS::DOM;
 use Test::More 0.88;
-plan tests => 5;
+plan tests => 6;
 use Test::Exception;
 use Test::NoWarnings;
 use Path::Tiny;
@@ -34,3 +34,7 @@ lives_ok{$dom = ITS::DOM->new(
     'xml' => path($corpus_dir, 'dom_test.xml') )}
     'valid XML parses without error';
 
+my @nodes = $dom->get_xpath('//*');
+is(scalar @nodes, 5, '5 nodes in dom_test.xml');
+# use Data::Dumper;
+# print Dumper \@nodes;
