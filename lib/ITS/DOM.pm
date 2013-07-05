@@ -8,7 +8,8 @@ our @CARP_NOT = qw(ITS::DOM ITS);
 use Try::Tiny;
 use Path::Tiny;
 #the XML engine currently used
-use XML::Twig::XPath;
+# use XML::Twig::XPath;
+use XML::LibXML;
 
 =head1 SYNOPSIS
 
@@ -65,10 +66,12 @@ Returns a list of ITS::DOM::Node objects matching the given XPath.
 =cut
 
 sub get_xpath {
-    my ($self, $xpath) = @_;
+    my ($self, $xpath, $parameters) = @_;
+    # my $xpc = XML::LibXML::XPathContext->new();
+    # $xpc->registerVarLookupFunc(\&_var_lookup, $parameters);
     my @nodes =
         map {ITS::DOM::Node->new($_)}
-        $self->{dom}->findnodes($xpath);
+        $self->{dom}->documentElement->findnodes($xpath);
     return @nodes;
 }
 
@@ -87,11 +90,12 @@ sub get_base_uri {
 sub _get_xml_dom {
     my ($xml) = @_;
 
-    my $dom = _create_twig();
+    my $parser = XML::LibXML->new();
+    my $dom;
     if(ref $xml eq 'SCALAR'){
         #string refs are xml content;
         try{
-            $dom->parse( $$xml );
+            $dom = $parser->load_xml( string => $xml );
         } catch {
             croak "error parsing string: $_";
         };
@@ -99,12 +103,17 @@ sub _get_xml_dom {
     else{
         #strings are file names
         try{
-            $dom->parsefile( $xml );
+            $dom = $parser->load_xml( location => $xml );
         } catch {
             croak "error parsing file '$xml': $_";
         };
     }
     return $dom;
+}
+
+sub _var_lookup {
+    my ($varname, $ns, $data) = @_;
+    return $data->{$varname};
 }
 
 #Returns an XML::Twig object with proper settings for parsing ITS
@@ -170,14 +179,14 @@ sub new {
 sub _get_type {
     my ($node) = @_;
     my $type;
-    given($node){
-        when($node->isElementNode){$type = 'ELT'; break;}
-        when($node->isAttributeNode){$type = 'ATT'; break;}
-        when($node->isTextNode){$type = 'TXT'; break;}
-        when($node->isNamespaceNode){$type = 'NS'; break;}
-        when($node->isPINode){$type = 'PI'; break;}
-        when($node->isCommentNode){$type = 'COM'; break;}
-        when(ref $node eq 'XML::Twig::XPath'){$type = 'DOC'; break;}
+    given($node->nodeType){
+        when(1){$type = 'ELT'; break;}
+        when(2){$type = 'ATT'; break;}
+        when(3){$type = 'TXT'; break;}
+        when(18){$type = 'NS'; break;}
+        when(7){$type = 'PI'; break;}
+        when(8){$type = 'COM'; break;}
+        when(9){$type = 'DOC'; break;}
         default{croak "unknown node type for $node";}
     }
     return $type;
@@ -232,7 +241,7 @@ If this node is an element, returns the value of the given attribute.
 =cut
 sub att {
     my ($self, $name) = @_;
-    return $self->{node}->att($name);
+    return $self->{node}->getAttribute($name);
 }
 
 =head2 C<atts>
@@ -243,7 +252,10 @@ attributes and their values.
 =cut
 sub atts {
     my ($self, $name) = @_;
-    return \%{$self->{node}->atts};
+    my %atts =
+        map {($_->name, $_->value)}
+        $self->{node}->attributes;
+    return \%atts;
 }
 
 =head2 C<children>
@@ -254,6 +266,8 @@ child nodes of this element.
 =cut
 sub children {
     my ($self) = @_;
-    my @children = map {ITS::DOM::Node->new($_)} $self->{node}->children;
+    my @children =
+        map {ITS::DOM::Node->new($_)}
+        $self->{node}->getChildrenByTagName('*');
     return \@children;
 }
