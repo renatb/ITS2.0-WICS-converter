@@ -36,7 +36,7 @@ sub new {
     # the tag and text of the children.
     my @children;
     for(@{$el->children}){
-        push @children, [$_->name, $_->value];
+        push @children, [$_->name, $_->text];
     }
 
     my $self = bless {

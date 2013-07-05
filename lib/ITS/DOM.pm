@@ -10,6 +10,9 @@ use Path::Tiny;
 #the XML engine currently used
 # use XML::Twig::XPath;
 use XML::LibXML;
+use Exporter::Easy (
+    OK => [qw(new_element)]
+);
 
 =head1 SYNOPSIS
 
@@ -134,10 +137,12 @@ sub _create_twig {
     return $twig;
 }
 
+#for exporting purposes
+*new_element = *ITS::DOM::Node::new_element;
+
 1;
 
 package ITS::DOM::Node;
-
 use strict;
 use warnings;
 # VERSION
@@ -221,17 +226,27 @@ the namespace prefix.
 =cut
 sub local_name {
     my ($self) = @_;
-    return $self->{node}->local_name;
+    return $self->{node}->localname;
 }
 
 =head2 C<value>
 
-Returns the value of the node. This is text content of some kind.
+Returns a string representing the value of the node.
 
 =cut
 sub value {
     my ($self) = @_;
     return $self->{node}->getValue;
+}
+
+=head2 C<text>
+
+Returns the content of all text nodes in the descendants of this node.
+
+=cut
+sub text {
+    my ($self) = @_;
+    return $self->{node}->textContent;
 }
 
 =head2 C<att>
@@ -271,3 +286,44 @@ sub children {
         $self->{node}->getChildrenByTagName('*');
     return \@children;
 }
+
+=head2 C<paste>
+
+Argument: ITS::Node to be used as new parent node.
+Inserts this node as the last child of the input parent node.
+
+=cut
+sub paste {
+    my ($self, $parent) = @_;
+    $parent->{node}->appendChild($self->{node});
+}
+
+=head1 EXPORTS
+
+The following functions may be exported from ITS::DOM.
+
+=head2 C<new_element>
+
+Arguments: a tag name and optionally a hash of attribute name-value pairs
+and text to store in the element
+
+Creates and returns a new ITS::DOM::Node object representing an element with
+the given name and attributes.
+
+=cut
+sub new_element {
+    my ($name, $atts, $text) = @_;
+    my $el = XML::LibXML::Element->new($name);
+    if(defined $atts){
+        $el->setAttribute($_, $atts->{$_}) for keys %$atts;
+    }
+    if(defined $text){
+        $el->appendText($text);
+    }
+    return bless {
+        node => $el,
+        type => 'ELT',
+    }, __PACKAGE__;
+}
+
+1;

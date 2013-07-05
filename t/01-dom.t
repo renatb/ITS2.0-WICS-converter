@@ -2,9 +2,9 @@
 
 use strict;
 use warnings;
-use ITS::DOM;
+use ITS::DOM qw(new_element);
 use Test::More 0.88;
-plan tests => 32;
+plan tests => 38;
 use Test::Exception;
 use Test::NoWarnings;
 use Path::Tiny;
@@ -18,6 +18,7 @@ lives_ok{$dom = ITS::DOM->new(
     'xml' => path($corpus_dir, 'dom_test.xml') )}
     'valid XML parses without error';
 test_dom_queries($dom);
+test_node_creation();
 
 #make sure that errors are thrown for bad input
 sub test_errors {
@@ -92,4 +93,23 @@ sub test_dom_queries {
     is(scalar @nodes, 1, '1 namespace node in root');
     is($nodes[0]->type, 'NS', 'Namespace type is "NS"');
     is($nodes[0]->value, 'www.bar.com', 'Namespace value is URI');
+
+    #TODO: test XPath parameters
+}
+
+sub test_node_creation {
+    my $atts = {foo => 'bar', baz => 'qux'};
+    my $text = 'some text';
+    my $el = new_element('a', $atts, $text);
+    is($el->type, 'ELT', 'Successfully created new element');
+    is($el->name, 'a', 'Correct element name');
+    is_deeply($el->atts, $atts, 'Correct element attributes');
+    is($el->text, $text, 'Correct element text');
+
+    my $child = new_element('b');
+    $child->paste($el);
+    my @nodes = @{$el->children};
+    is(scalar @nodes, 1, 'Pasted child present in parent');
+    is($nodes[0]->name, 'b', 'Child has correct name');
+
 }
