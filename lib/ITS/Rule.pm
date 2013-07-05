@@ -7,8 +7,8 @@ use Carp;
 
 =head2 C<new>
 
-Arguments: an XML element and a hash representing parameter names
-and values usable by this rule.
+Arguments: an ITS::DOM node of type ELT and a hash representing
+parameter names and values usable by this rule.
 
 Creates a new C<Rule> instance.
 
@@ -35,8 +35,8 @@ sub new {
     # to ITS could require saving more information than just
     # the tag and text of the children.
     my @children;
-    for($el->children){
-        push @children, [$_->tag, $_->text];
+    for(@{$el->children}){
+        push @children, [$_->name, $_->value];
     }
 
     my $self = bless {

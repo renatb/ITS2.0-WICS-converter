@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use ITS::DOM;
 use Test::More 0.88;
-plan tests => 24;
+plan tests => 26;
 use Test::Exception;
 use Test::NoWarnings;
 use Path::Tiny;
@@ -47,6 +47,10 @@ is_deeply(
     $nodes[4]->atts,
     {baz => 'qux', boo => 'far'},
     'attributes of fifth element');
+
+@nodes = @{$nodes[0]->children};
+is(scalar @nodes, 3, '3 children of root');
+is($nodes[0]->name, 'second', 'first child of root is "second"');
 
 @nodes = $dom->get_xpath('//@*');
 is(scalar @nodes, 4, '4 attribute nodes in doc');

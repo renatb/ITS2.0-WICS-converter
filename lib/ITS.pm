@@ -5,7 +5,7 @@ use warnings;
 # VERSION
 use Carp;
 our @CARP_NOT = qw(ITS);
-use XML::Twig::XPath;
+use ITS::DOM;
 use Path::Tiny;
 use Try::Tiny;
 use ITS::Rule;
@@ -41,103 +41,47 @@ of them.
 =head2 C<new>
 
 Returns an ITS object instance.
-Takes one or more named parameters:
-
-=over 3
-
-=item C<file>
-
-The name of an XML file with ITS markup. The file is parsed and rules are extracted
-(unless a rules parameter is provided). External rule URIs are resolved relative
-to the file URI.
-
-=item C<string>
-
-A pointer to a string containing XML with ITS markup. The string is parsed and rules
-extracted (unless a rules parameter is provided). External rule URIs are resolved relative
-to the current working directory.
-
-=item C<rules>
-
-A pointer to a string containing  XML from which to extract ITS rules. External
-rule URIs are resolved relative to the current working directory.
-
-=back
+Arguments: The first is either 'xml' or 'html' to indicate the type of
+document being parsed. After that, you must specify 'doc' and
+may also specify 'rules' parameters. The value of these parameters
+should be either a string containing a file path or a string reference
+containing actual ITS data. The 'document' argument should point to the
+document to which ITS data is being applied, and the 'rules' argument
+should point to the document containing the ITS rules to apply.
 
 =cut
 
 sub new {
     # TODO: also accept its:param values here
     # (not sure about precedence for them yet)
-    my ($class, %args) = @_;
-    my $twig;
-    #either parse a file or a string
-    if(exists $args{file}){
-        unless(-e $args{file}){
-            croak "file does not exist: $args{file}";
-        }
-        $twig = _create_twig();
-        try{
-            $twig->parsefile( $args{file} );
-        } catch {
-            croak "error parsing file '$args{file}': $_";
-        };
-    }elsif(exists $args{string}){
-        $twig = _create_twig();
-        try{
-            $twig->parse( ${$args{string}} );
-        } catch {
-            croak "error parsing string: $_";
-        };
-    }else{
-        croak 'Need to specify either a file or a string pointer with XML contents';
+    my ($class, $file_type, %args) = @_;
+
+    if($file_type !~ /^xml|html$/ or !$args{doc}){
+        croak 'usage: ITS->new("(xml|html)", doc => "file", [rules => "file"]';
     }
+    my $doc = ITS::DOM->new($file_type => $args{doc});
 
     my $self = bless {
-        twig => $twig,
+        doc => $doc,
     }, $class;
 
-    my $rules_twig = $twig;
+    my $rules_doc = $doc;
     if($args{rules}){
-        $rules_twig = _create_twig();
-        try{
-            $rules_twig->parse( ${$args{rules}} );
-        } catch {
-            croak "error parsing string: $_";
-        };
+        $rules_doc = ITS::DOM->new($file_type => $args{rules});
     }
 
     $self->{rules} = _resolve_rules(
-        $rules_twig,
-        ($args{file} ? path($args{file})->parent : path('.') ),
+        $rules_doc,
         $args{file} || 'string'
     );
     return $self;
 }
 
-#Returns an XML::Twig object with proper settings for parsing ITS
-
-sub _create_twig {
-    my $twig = new XML::Twig::XPath(
-        map_xmlns               => {
-            'http://www.w3.org/2005/11/its' => 'its',
-            'http://www.w3.org/1999/xlink' => 'xlink'
-        },
-        # empty_tags              => 'html',
-        pretty_print            => 'indented',
-        output_encoding         => 'UTF-8',
-        keep_spaces             => 0,
-        no_prolog               => 1,
-        #can be important when things get complicated
-        do_not_chain_handlers   => 1,
-    );
-    return $twig;
-}
 
 =head2 C<get_rules>
 
 Returns an arrayref containing the ITS rule elements
-(in the form of XML::Twig::XPath::Elt objects) which are to be
+(in the form of ITS::Rule objects) which are to be
 applied to the document, in the order in which they will
 be applied.
 
@@ -192,10 +136,10 @@ sub get_twig {
 # $name is a name for the input to use in errors
 # (like filename or 'string')
 sub _resolve_rules {
-    my ($twig, $base, $name, %params) = @_;
+    my ($doc, $name, %params) = @_;
     # first, grab internal its:rules elements
     my @rule_containers;
-    my @internal_rules_containers = $twig->get_xpath('//its:rules');
+    my @internal_rules_containers = $doc->get_xpath('//its:rules');
     if(@internal_rules_containers == 0){
         return [];
     }
@@ -203,18 +147,18 @@ sub _resolve_rules {
     # then store their rules, placing external file rules before internal ones
     my @rules;
     for my $container(@internal_rules_containers){
-        my @children = $container->children();
-        while($children[0]->tag eq 'its:param'){
-            my $param = shift @children;
-            $params{$param->att('name')} = $param->text;
+        my $children = $container->children();
+        while($children->[0]->name eq 'its:param'){
+            my $param = shift @$children;
+            $params{$param->att('name')} = $param->value;
         }
         if($container->att('xlink:href')){
             #path to file is relative to current file
             my $path = path($container->att('xlink:href'))->
-                absolute($base);
+                absolute($doc->get_base_uri);
             push @rules, @{ _get_external_rules($path, \%params) };
         }
-        push @rules, map {ITS::Rule->new($_, %params)} @children;
+        push @rules, map {ITS::Rule->new($_, %params)} @$children;
     }
 
     if(@rules == 0){
@@ -227,14 +171,15 @@ sub _resolve_rules {
 # containing an its:rules element
 sub _get_external_rules {
     my ($path, $params) = @_;
-    my $twig = _create_twig();
+    my $doc;
     try{
-        $twig->parsefile( $path );
+        #TODO: will it always be 'xml'?
+        $doc = ITS::DOM->new('xml' => $path );
     } catch {
         carp "Skipping rules in file '$path': $_";
         return [];
     };
-    return _resolve_rules($twig, $path->parent, $path, %$params);
+    return _resolve_rules($doc, $path, %$params);
 }
 
 1;

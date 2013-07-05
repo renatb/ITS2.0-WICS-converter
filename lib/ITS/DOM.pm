@@ -6,6 +6,7 @@ use warnings;
 use Carp;
 our @CARP_NOT = qw(ITS::DOM ITS);
 use Try::Tiny;
+use Path::Tiny;
 #the XML engine currently used
 use XML::Twig::XPath;
 
@@ -36,12 +37,23 @@ Parses the input document, creating a queryable DOM structure.
 sub new {
     my ($class, %args) = @_;
     my $dom;
+    my $source;
     if($args{xml}){
         $dom = _get_xml_dom($args{xml});
+        $source = $args{xml};
     }elsif($args{html}){
         croak 'HTML parsing not supported yet';
+        $source = $args{html};
     }
-    return bless {dom => $dom}, $class;
+
+    my $base;
+    if(ref $source eq 'SCALAR'){
+        $base = path('.');
+    }else{
+        $base = path($source)->parent;
+    }
+
+    return bless {dom => $dom, base => $base}, $class;
 }
 
 =head2 C<get_xpath>
@@ -58,6 +70,18 @@ sub get_xpath {
         map {ITS::DOM::Node->new($_)}
         $self->{dom}->findnodes($xpath);
     return @nodes;
+}
+
+=head2 C<get_base_uri>
+
+Returns the path of the directory containing the DOM content
+(which is '.' for strings). This is useful for resolving relative
+URIs.
+
+=cut
+sub get_base_uri {
+    my ($self) = @_;
+    return $self->{base};
 }
 
 sub _get_xml_dom {
@@ -181,6 +205,16 @@ sub name {
     return $self->{node}->getName;
 }
 
+=head2 C<local_name>
+
+If this node is an element, this method returns its name without
+the namespace prefix.
+=cut
+sub local_name {
+    my ($self) = @_;
+    return $self->{node}->local_name;
+}
+
 =head2 C<value>
 
 Returns the value of the node. This is text content of some kind.
@@ -201,7 +235,6 @@ sub att {
     return $self->{node}->att($name);
 }
 
-
 =head2 C<atts>
 
 If this node is an element, returns a hash pointer containing all of its
@@ -211,4 +244,16 @@ attributes and their values.
 sub atts {
     my ($self, $name) = @_;
     return \%{$self->{node}->atts};
+}
+
+=head2 C<children>
+
+If this node is an element, returns an array pointer containing the
+child nodes of this element.
+
+=cut
+sub children {
+    my ($self) = @_;
+    my @children = map {ITS::DOM::Node->new($_)} $self->{node}->children;
+    return \@children;
 }
