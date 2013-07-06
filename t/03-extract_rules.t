@@ -21,9 +21,9 @@ subtest 'internal rules' => sub {
     my $ITS = ITS->new('xml', doc => $internal_test);
     my $rules = $ITS->get_rules();
     is($#$rules, 2, 'three rules in basic_rules.xml');
-    is($rules->[0]->att('xml:id'), 'first', 'correct first rule');
-    is($rules->[1]->att('xml:id'), 'second', 'correct second rule');
-    is($rules->[2]->att('xml:id'), 'third', 'correct third rule');
+    is($rules->[0]->node->att('xml:id'), 'first', 'correct first rule');
+    is($rules->[1]->node->att('xml:id'), 'second', 'correct second rule');
+    is($rules->[2]->node->att('xml:id'), 'third', 'correct third rule');
 };
 
 subtest 'external and internal rules' => sub {
@@ -33,10 +33,10 @@ subtest 'external and internal rules' => sub {
     my $rules = $ITS->get_rules();
 
     is($#$rules, 3, 'four rules in file');
-    is($rules->[0]->att('xml:id'), 'ext3rule', 'correct first rule');
-    is($rules->[1]->att('xml:id'), 'ext2rule', 'correct second rule');
-    is($rules->[2]->att('xml:id'), 'ext1rule', 'correct third rule');
-    is($rules->[3]->att('xml:id'), 'baseFileRule', 'correct fourth rule');
+    is($rules->[0]->node->att('xml:id'), 'ext3rule', 'correct first rule');
+    is($rules->[1]->node->att('xml:id'), 'ext2rule', 'correct second rule');
+    is($rules->[2]->node->att('xml:id'), 'ext1rule', 'correct third rule');
+    is($rules->[3]->node->att('xml:id'), 'baseFileRule', 'correct fourth rule');
 };
 
 subtest 'parameters resolved' => sub {
@@ -48,7 +48,7 @@ subtest 'parameters resolved' => sub {
     is($#$rules, 2, 'three rules in file');
 
     my $ext_rule = $rules->[0];
-    is($ext_rule->att('xml:id'), 'ext_rule', 'external rule first');
+    is($ext_rule->node->att('xml:id'), 'ext_rule', 'external rule first');
     is_deeply(
         $ext_rule->params,
         {
@@ -65,12 +65,12 @@ subtest 'parameters resolved' => sub {
         foo     => 'bar1',
     };
     my $idValRule = $rules->[1];
-    is($idValRule->att('xml:id'), 'idValRule', 'internal rule next');
+    is($idValRule->node->att('xml:id'), 'idValRule', 'internal rule next');
     is_deeply(
         $idValRule->params, $params, 'internal rule params');
 
     my $locNoteRule = $rules->[2];
-    is($locNoteRule->att('xml:id'), 'locNoteRule', 'last internal rule last');
+    is($locNoteRule->node->att('xml:id'), 'locNoteRule', 'last internal rule last');
     is_deeply(
         $locNoteRule->params, $params, 'last rule params');
 };
@@ -96,6 +96,6 @@ RULES
 
     my $rules = $ITS->get_rules();
     is($#$rules, 1, '2 rules in string');
-    is($rules->[0]->att('xml:id'), 'idValRule', 'correct first rule');
-    is($rules->[1]->att('xml:id'), 'locNoteRule', 'correct second rule');;
+    is($rules->[0]->node->att('xml:id'), 'idValRule', 'correct first rule');
+    is($rules->[1]->node->att('xml:id'), 'locNoteRule', 'correct second rule');;
 };

@@ -70,10 +70,7 @@ sub new {
         $rules_doc = ITS::DOM->new($file_type => $args{rules});
     }
 
-    $self->{rules} = _resolve_rules(
-        $rules_doc,
-        $args{file} || 'string'
-    );
+    $self->{rules} = _resolve_rules($rules_doc);
     return $self;
 }
 
@@ -136,10 +133,10 @@ sub get_twig {
 # $name is a name for the input to use in errors
 # (like filename or 'string')
 sub _resolve_rules {
-    my ($doc, $name, %params) = @_;
+    my ($doc, %params) = @_;
     # first, grab internal its:rules elements
     my @rule_containers;
-    my @internal_rules_containers = $doc->get_xpath('//its:rules');
+    my @internal_rules_containers = _get_its_rules_els($doc);
     if(@internal_rules_containers == 0){
         return [];
     }
@@ -150,8 +147,9 @@ sub _resolve_rules {
         my $children = $container->children();
         while($children->[0]->name eq 'its:param'){
             my $param = shift @$children;
-            $params{$param->att('name')} = $param->value;
+            $params{$param->att('name')} = $param->text;
         }
+        # warn $children->[0]->name;
         if($container->att('xlink:href')){
             #path to file is relative to current file
             my $path = path($container->att('xlink:href'))->
@@ -162,9 +160,20 @@ sub _resolve_rules {
     }
 
     if(@rules == 0){
-        carp "no rules found in $name";
+        carp 'no rules found in ' . $doc->get_source;
     }
     return \@rules;
+}
+
+sub _get_its_rules_els {
+    my ($doc) = @_;
+    return $doc->get_xpath(
+        '//its:rules',
+        {},
+        {
+            its => 'http://www.w3.org/2005/11/its'
+        }
+    );
 }
 
 # return list of its:*Rule's, in application order, given the name of a file
@@ -179,7 +188,7 @@ sub _get_external_rules {
         carp "Skipping rules in file '$path': $_";
         return [];
     };
-    return _resolve_rules($doc, $path, %$params);
+    return _resolve_rules($doc, %$params);
 }
 
 1;

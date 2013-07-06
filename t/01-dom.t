@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use ITS::DOM qw(new_element);
 use Test::More 0.88;
-plan tests => 38;
+plan tests => 42;
 use Test::Exception;
 use Test::NoWarnings;
 use Path::Tiny;
@@ -13,11 +13,14 @@ my $corpus_dir = path($Bin, 'corpus');
 
 test_errors();
 
+my $dom_path = path($corpus_dir, 'dom_test.xml');
 my $dom;
 lives_ok{$dom = ITS::DOM->new(
-    'xml' => path($corpus_dir, 'dom_test.xml') )}
+    'xml' => $dom_path )}
     'valid XML parses without error';
 test_dom_queries($dom);
+is($dom->get_base_uri, '' . $dom_path->parent, 'Base URI');
+is($dom->get_source, '' . $dom_path, 'Source name');
 test_node_creation();
 
 #make sure that errors are thrown for bad input
@@ -45,7 +48,7 @@ ENDXML
 sub test_dom_queries {
     my ($dom) = @_;
     my @nodes = $dom->get_xpath('//*');
-    is(scalar @nodes, 5, '5 nodes in doc');
+    is(scalar @nodes, 6, '6 nodes in doc');
     is($nodes[0]->name, 'xml', 'First element name is "xml"');
     is($nodes[0]->type, 'ELT', 'XML node is an ELT');
 
@@ -59,12 +62,19 @@ sub test_dom_queries {
         'attributes of fifth element')
         or note explain $nodes[4]->atts;
 
+    is($nodes[5]->name, 'foo:sixth', 'Sixth element is "foo:sixth"');
+    is_deeply(
+        $nodes[5]->atts,
+        {'foo:stuff' => 'junk'},
+        'attributes of sixth element')
+        or note explain $nodes[5]->atts;
+
     @nodes = @{$nodes[0]->children};
-    is(scalar @nodes, 3, '3 children of root');
+    is(scalar @nodes, 4, '4 children of root');
     is($nodes[0]->name, 'second', 'first child of root is "second"');
 
     @nodes = $dom->get_xpath('//@*');
-    is(scalar @nodes, 3, '3 (non-namespace) attribute nodes in doc')
+    is(scalar @nodes, 4, '4 (non-namespace) attribute nodes in doc')
         or note explain \@nodes;
     is($nodes[0]->type, 'ATT', 'Attribute type is "ATT"');
     is($nodes[0]->name, 'foo', 'First attribute name is "foo"');

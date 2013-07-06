@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use ITS;
 use Test::More 0.88;
-plan tests => 6;
+plan tests => 5;
 use Test::Warn;
 use Test::NoWarnings;
 use XML::Twig::XPath;
@@ -20,8 +20,8 @@ subtest 'basic rule' => sub {
     };
     my $rule = ITS::Rule->new(new_element('its:storageSizeRule' => $attributes));
     is($rule->type, 'storageSize', 'rule name');
-    is_deeply($rule->atts, $attributes, 'rule attributes');
-    is($rule->att('storageSize'), '8', 'attribute accessor');
+    is_deeply($rule->node->atts, $attributes, 'rule attributes');
+    is($rule->node->att('storageSize'), '8', 'attribute accessor');
     is($rule->selector, 'id("id_1")', 'selector accessor');
     is_deeply($rule->params, {}, 'no parameters');
 };
@@ -69,16 +69,6 @@ my $el = new_element(
     }
 );
 
-my $loc_note = 'Localization note goes here!';
-new_element(
-    'its:locNote', undef, $loc_note)->
-    paste($el);
-my $rule = ITS::Rule->new($el);
-is_deeply($rule->children,
-    [['its:locNote', $loc_note]],
-    'rule text contents'
-);
-
 $el = new_element(
     'its:storageSizeRule' => {
         'xmlns:its' => 'http://www.w3.org/2005/11/its',
@@ -87,5 +77,5 @@ $el = new_element(
     }
 );
 warning_is {my $rule = ITS::Rule->new($el)}
-    'storageSize rule is missing selector! No nodes will match.',
+    'storageSize rule is missing a selector! No nodes will match.',
     'warn on missing selector';

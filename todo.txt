@@ -5,13 +5,13 @@ TODO:
 - then write TODOs for HTML stuff
 
 Engineering Tasks:
-    - factor out all XML processing code into its own class
-        - trying to zero to manage 3rd party code
-    - switch to XML::LibXML
-        - much better designed and maintained than XML::XPath
+    - design XPath querying for rule matches (set contexts correctly)
 
 To Do on current task:
-    -
+    - Figure out how to get all namespaces in scope with XML::LibXML
+        - actually it's fine! Context node gives all scoped namespaces.
+        - only need to worry about its and xlink stuff, queried from document node.
+    - figure out context size and position and other context stuff
 
 Later To Do:
     - make sure that Rule objects don't store the actual attribute hash used by the XML element

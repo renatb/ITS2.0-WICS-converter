@@ -56,25 +56,36 @@ sub new {
     }else{
         $base = path($source)->parent;
     }
+    my $identifier = (ref $source eq 'SCALAR') ? 'STRING' : $source;
 
-    return bless {dom => $dom, base => $base}, $class;
+    return bless {dom => $dom, base => $base, source => $identifier}, $class;
 }
 
 =head2 C<get_xpath>
 
-Argument: XPath string to query document with
+Argument: XPath string to query document with, hash of name-value
+pairs of parameters (strings only!)
 
 Returns a list of ITS::DOM::Node objects matching the given XPath.
 
 =cut
 
 sub get_xpath {
-    my ($self, $xpath, $parameters) = @_;
-    # my $xpc = XML::LibXML::XPathContext->new();
-    # $xpc->registerVarLookupFunc(\&_var_lookup, $parameters);
+    my ($self, $xpath, $parameters, $namespaces) = @_;
+
+    #set up the XPath context with the given information
+    my $xpc = XML::LibXML::XPathContext->new($self->{dom});
+    if($parameters){
+        $xpc->registerVarLookupFunc(\&_var_lookup, $parameters);
+    }
+    if($namespaces){
+        $xpc->registerNs($_, $namespaces->{$_})
+            for keys %$namespaces;
+    }
+
     my @nodes =
         map {ITS::DOM::Node->new($_)}
-        $self->{dom}->documentElement->findnodes($xpath);
+        $xpc->findnodes($xpath);
     return @nodes;
 }
 
@@ -88,6 +99,18 @@ URIs.
 sub get_base_uri {
     my ($self) = @_;
     return $self->{base};
+}
+
+=head2 C<get_source>
+
+Returns the path of the file used to create this document. If the
+data used to create this document was a string, then this returns
+'STRING'.
+
+=cut
+sub get_source {
+    my ($self) = @_;
+    return $self->{source};
 }
 
 sub _get_xml_dom {
@@ -216,7 +239,7 @@ the name for attributes and PIs, etc.
 =cut
 sub name {
     my ($self) = @_;
-    return $self->{node}->getName;
+    return $self->{node}->nodeName;
 }
 
 =head2 C<local_name>
@@ -268,7 +291,7 @@ attributes and their values.
 sub atts {
     my ($self, $name) = @_;
     my %atts =
-        map {($_->name, $_->value)}
+        map {($_->nodeName, $_->value)}
         $self->{node}->attributes;
     return \%atts;
 }
