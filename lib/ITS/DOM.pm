@@ -316,7 +316,7 @@ sub get_namespaces {
     my ($self) = @_;
     my @namespaces = $self->get_xpath('namespace::*');
     my %namespaces;
-    $namespaces{$_->{node}->getPrefix} = $_->{node}->getNamespaceURI
+    $namespaces{$_->{node}->getLocalName} = $_->{node}->getData
         for @namespaces;
     return \%namespaces;
 }

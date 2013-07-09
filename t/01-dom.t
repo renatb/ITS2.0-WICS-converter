@@ -132,9 +132,9 @@ sub test_namespaces {
     is_deeply(
         $nodes[0]->get_namespaces,
         {
-            foo => 'www.bar.com',
-            bar => 'www.foo.com',
+            foo   => 'www.bar.com',
+            bar   => 'www.foo.com',
         },
         'found namespaces in scope'
-    );
+    ) or note explain $nodes[0]->get_namespaces;
 }
