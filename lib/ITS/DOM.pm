@@ -61,32 +61,9 @@ sub new {
     return bless {dom => $dom, base => $base, source => $identifier}, $class;
 }
 
-=head2 C<get_xpath>
-
-Argument: XPath string to query document with, hash of name-value
-pairs of parameters (strings only!)
-
-Returns a list of ITS::DOM::Node objects matching the given XPath.
-
-=cut
-
-sub get_xpath {
-    my ($self, $xpath, $parameters, $namespaces) = @_;
-
-    #set up the XPath context with the given information
-    my $xpc = XML::LibXML::XPathContext->new($self->{dom});
-    if($parameters){
-        $xpc->registerVarLookupFunc(\&_var_lookup, $parameters);
-    }
-    if($namespaces){
-        $xpc->registerNs($_, $namespaces->{$_})
-            for keys %$namespaces;
-    }
-
-    my @nodes =
-        map {ITS::DOM::Node->new($_)}
-        $xpc->findnodes($xpath);
-    return @nodes;
+sub get_root {
+    my ($self) = @_;
+    return ITS::DOM::Node->new($self->{dom}->documentElement);
 }
 
 =head2 C<get_base_uri>
@@ -135,11 +112,6 @@ sub _get_xml_dom {
         };
     }
     return $dom;
-}
-
-sub _var_lookup {
-    my ($varname, $ns, $data) = @_;
-    return $data->{$varname};
 }
 
 #Returns an XML::Twig object with proper settings for parsing ITS
@@ -220,6 +192,44 @@ sub _get_type {
     return $type;
 }
 
+=head2 C<get_xpath>
+
+Parameters: XPath string to query element with, hash of name-value
+pairs of parameters (strings only!)
+
+Returns a list of ITS::DOM::Node objects matching the given XPath.
+
+=cut
+
+sub get_xpath {
+    my ($self, $xpath, $parameters, $namespaces) = @_;
+
+    #set up the XPath context with the given information
+    my $xpc = XML::LibXML::XPathContext->new($self->{node});
+    if($parameters){
+        $xpc->registerVarLookupFunc(\&_var_lookup, $parameters);
+    }
+    if($namespaces){
+        $xpc->registerNs($_, $namespaces->{$_})
+            for keys %$namespaces;
+    }
+
+    my @nodes =
+        map {ITS::DOM::Node->new($_)}
+        $xpc->findnodes($xpath);
+    return @nodes;
+}
+
+#simple dictionary-lookup sub for parameter handling in get_xpath method
+sub _var_lookup {
+    my ($varname, $ns, $data) = @_;
+    my $lookup = $varname;
+    if(defined $ns){
+        $lookup = "$ns:$lookup";
+    }
+    return $data->{$lookup};
+}
+
 =head2 C<type>
 
 Returns a string representing the type of the node:
@@ -294,6 +304,21 @@ sub atts {
         map {($_->nodeName, $_->value)}
         $self->{node}->attributes;
     return \%atts;
+}
+
+=head C<namespaces>
+
+Returns an array ref containing prefix/URI pairs for all of the namespaces
+in scope for this node.
+
+=cut
+sub get_namespaces {
+    my ($self) = @_;
+    my @namespaces = $self->get_xpath('namespace::*');
+    my %namespaces;
+    $namespaces{$_->{node}->getPrefix} = $_->{node}->getNamespaceURI
+        for @namespaces;
+    return \%namespaces;
 }
 
 =head2 C<children>

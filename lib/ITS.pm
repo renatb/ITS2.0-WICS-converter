@@ -93,25 +93,50 @@ sub get_rules {
     return $self->{rules};
 }
 
-=head2 C<get_match>
+=head2 C<get_matches>
 
 Argument: C<ITS::Rule> object.
 
-Returns a list of matches on this ITS document against the input rule.
-Each element of the list is an hash ref containing at least one key,
-C<selector> wich value is the node which it matched. Any other keys
-are names of pointer attributes and their matched nodes.
+Returns an array ref of matches on this ITS document against the input
+rule. Each element of the list is a hash ref containing at least one
+key, C<selector>, whose value is the document node which it matched.
+Any other keys are names of pointer attributes, and their values are
+their matched document nodes.
 
 =cut
 
-sub get_match {
+sub get_matches {
     my ($self, $rule) = @_;
     my @matches;
-    my $xpath = $rule->selector;
-    return undef unless defined $xpath;
+    return [] unless defined $rule->selector;
 
-    my @selector_matches = $self->{twig}->findnodes($xpath);
-    return \@selector_matches;
+    # first, find the matches for the selector attribute
+
+    my $selector_matches = $self->_selector_matches($rule);
+    return $selector_matches;
+}
+
+# return an array ref of ITS::DOM::Nodes matching selector of given rule
+# From the spec, the selector is an "absolute selector":
+# Context for evaluation of the XPath expression is as follows:
+# Context node is set to Root Node.
+# Both context position and context size are 1.
+# All variables defined by param elements are bind.
+# All functions defined in the XPath Core Function Library are available. It is an error for an expression to include a call to any other function.
+# The set of namespace declarations are those in scope on the element which has the attribute in which the expression occurs. This includes the implicit declaration of the prefix xml required by the XML Namespaces Recommendation; the default namespace (as declared by xmlns) is not part of this set.
+
+sub _selector_matches {
+    my ($self, $rule) = @_;
+
+    my $xpath = $rule->selector;
+    return [] unless defined $xpath;
+
+    my $context_node = $self->{doc}->get_root;
+    my $context_pos  = 1;
+    my $context_size = 1;
+    my $params = $rule->params;
+    my $namespaces = $rule->node->get_namespaces;
+
 }
 
 =head2 C<get_twig>
@@ -167,7 +192,7 @@ sub _resolve_rules {
 
 sub _get_its_rules_els {
     my ($doc) = @_;
-    return $doc->get_xpath(
+    return $doc->get_root->get_xpath(
         '//its:rules',
         {},
         {
