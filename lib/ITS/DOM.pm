@@ -243,10 +243,14 @@ sub get_xpath {
         $xpc->setContextPosition($context{position});
     }
 
-    print "now searching for $xpath in " . $self->name . "\n";
-    my @nodes =
-        map {ITS::DOM::Node->new($_)}
-        $xpc->findnodes($xpath);
+    my @nodes;
+    #TODO: catch errors and clean up the stack trace
+    # try{
+        @nodes = map {ITS::DOM::Node->new($_)}
+            $xpc->findnodes($xpath);
+    # }catch{
+    #     croak "Problem evaluating XPath: $_";
+    # };
     return @nodes;
 }
 

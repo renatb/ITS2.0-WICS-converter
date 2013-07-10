@@ -99,21 +99,40 @@ Argument: C<ITS::Rule> object.
 
 Returns an array ref of matches on this ITS document against the input
 rule. Each element of the list is a hash ref containing at least one
-key, C<selector>, whose value is the document node which it matched.
+key, C<selector>, whose value is the document node which the rule
+selector matched.
 Any other keys are names of pointer attributes, and their values are
 their matched document nodes.
 
 =cut
-
 sub get_matches {
     my ($self, $rule) = @_;
     my @matches;
     return [] unless defined $rule->selector;
 
     # first, find the matches for the selector attribute
-
     my $selector_matches = $self->_selector_matches($rule);
-    return $selector_matches;
+
+    # $selector_matches is the "current node list", which is
+    # used to calculate context size and position for pointer XPaths
+    my $context_size = scalar @$selector_matches;
+    my $context_pos = 0;
+
+    for my $selector_match ( @{ $selector_matches } ){
+        $context_pos++;
+        my $match;
+        $match->{selector} = $selector_match;
+        for my $pointer(@{ $rule->pointers }){
+            $match->{$pointer} =
+                _pointer_match(
+                    $selector_match,
+                    $rule->node->att($pointer),
+                    $context_size,
+                    $context_pos);
+        }
+        push @matches, $match;
+    }
+    return \@matches;
 }
 
 # return an array ref of ITS::DOM::Nodes matching selector of given rule
@@ -143,6 +162,30 @@ sub _selector_matches {
         namespaces => $namespaces,
     );
     return \@nodes;
+}
+
+#Context for evaluation of the XPath expression is same as for absolute selector with the following changes:
+# Nodes selected by the expression in the selector attribute form the current node list.
+# Context node comes from the current node list.
+# The context position comes from the position of the current node in the current node list; the first position is 1.
+# The context size comes from the size of the current node list.
+sub _pointer_match {
+    my ($context_node, $xpath, $context_size, $context_pos) = @_;
+
+    # TODO: not sure about parameters
+    # my $params = $rule->params;
+    my $namespaces = $context_node->get_namespaces;
+    my @nodes = $context_node->get_xpath(
+        $xpath,
+        size => $context_size,
+        position => $context_pos,
+        # params => $params,
+        namespaces => $namespaces,
+    );
+    if(scalar @nodes > 1){
+        carp "relative selector $xpath selects more than 1 node. Using just the first.";
+    }
+    return $nodes[0];
 }
 
 =head2 C<get_twig>

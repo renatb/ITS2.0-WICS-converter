@@ -8,12 +8,13 @@ Engineering Tasks:
     - design XPath querying for rule matches (set contexts correctly)
 
 To Do on current task:
-    - Figure out how to get all namespaces in scope with XML::LibXML
-        - actually it's fine! Context node gives all scoped namespaces.
-        - only need to worry about its and xlink stuff, queried from document node.
-    - figure out context size and position and other context stuff
-
+    - test pointer matches with namespaces in scope of selected node
+    - test warning for more than one match for a relative selector
+    - test behavior for no match for a relative selector
+    - find out of parameters are used for relative selectors
 Later To Do:
+    - get ITS rules by namespace URI, not prefix
+    - proper error checking for XPath execution
     - make sure that Rule objects don't store the actual attribute hash used by the XML element
     - Create full storage of Rule XML contents (future proofing and allowing greater extensibility)
         - right now it just lists children tags and text
