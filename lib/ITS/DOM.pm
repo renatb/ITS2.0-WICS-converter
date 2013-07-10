@@ -194,26 +194,56 @@ sub _get_type {
 
 =head2 C<get_xpath>
 
-Parameters: XPath string to query element with, hash of name-value
-pairs of parameters (strings only!)
+Constructs an xpath query from the input arguments, and returns
+a list of nodes matching the query.
 
-Returns a list of ITS::DOM::Node objects matching the given XPath.
+The xpath context node will be the calling node, and the first argument should be
+the XPath string. The rest of the parameters are named and optional:
+
+=over 3
+
+=item position
+
+An integer indicating the context position. Default is -1.
+
+=item size
+
+An integer indicating the context size. Default is -1.
+
+=item params
+
+A hash ref containing variable names and strings values. No other
+types of values are allowed. There are no default parameters.
+
+=item namespaces
+
+A hash ref of namespace prefix keys and namespace URI values. The
+default is whatever namespaces are in the scope of the context node.
+
+=back
 
 =cut
 
 sub get_xpath {
-    my ($self, $xpath, $parameters, $namespaces) = @_;
+    my ($self, $xpath, %context) = @_;
 
     #set up the XPath context with the given information
     my $xpc = XML::LibXML::XPathContext->new($self->{node});
-    if($parameters){
-        $xpc->registerVarLookupFunc(\&_var_lookup, $parameters);
+    if($context{params}){
+        $xpc->registerVarLookupFunc(\&_var_lookup, $context{params});
     }
-    if($namespaces){
-        $xpc->registerNs($_, $namespaces->{$_})
-            for keys %$namespaces;
+    if($context{namespaces}){
+        $xpc->registerNs($_, $context{namespaces}->{$_})
+            for keys %{ $context{namespaces} };
+    }
+    if($context{size}){
+        $xpc->setContextSize($context{size});
+    }
+    if($context{position}){
+        $xpc->setContextPosition($context{position});
     }
 
+    print "now searching for $xpath in " . $self->name . "\n";
     my @nodes =
         map {ITS::DOM::Node->new($_)}
         $xpc->findnodes($xpath);
@@ -222,12 +252,17 @@ sub get_xpath {
 
 #simple dictionary-lookup sub for parameter handling in get_xpath method
 sub _var_lookup {
-    my ($varname, $ns, $data) = @_;
+    my ($data, $varname, $ns) = @_;
     my $lookup = $varname;
     if(defined $ns){
         $lookup = "$ns:$lookup";
     }
-    return $data->{$lookup};
+    my $val = $data->{$lookup};
+    if (!defined($val)) {
+        warn("Unknown variable \"$lookup\"\n");
+        $val = '';
+    }
+    return $val;
 }
 
 =head2 C<type>

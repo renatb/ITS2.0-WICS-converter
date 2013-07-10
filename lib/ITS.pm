@@ -124,7 +124,6 @@ sub get_matches {
 # All variables defined by param elements are bind.
 # All functions defined in the XPath Core Function Library are available. It is an error for an expression to include a call to any other function.
 # The set of namespace declarations are those in scope on the element which has the attribute in which the expression occurs. This includes the implicit declaration of the prefix xml required by the XML Namespaces Recommendation; the default namespace (as declared by xmlns) is not part of this set.
-
 sub _selector_matches {
     my ($self, $rule) = @_;
 
@@ -136,7 +135,14 @@ sub _selector_matches {
     my $context_size = 1;
     my $params = $rule->params;
     my $namespaces = $rule->node->get_namespaces;
-
+    my @nodes = $context_node->get_xpath(
+        $xpath,
+        position => $context_pos,
+        size => $context_size,
+        params => $params,
+        namespaces => $namespaces,
+    );
+    return \@nodes;
 }
 
 =head2 C<get_twig>
@@ -170,6 +176,7 @@ sub _resolve_rules {
     my @rules;
     for my $container(@internal_rules_containers){
         my $children = $container->children();
+        #todo: use URI, not prefix
         while($children->[0]->name eq 'its:param'){
             my $param = shift @$children;
             $params{$param->att('name')} = $param->text;
@@ -194,8 +201,7 @@ sub _get_its_rules_els {
     my ($doc) = @_;
     return $doc->get_root->get_xpath(
         '//its:rules',
-        {},
-        {
+        namespaces => {
             its => 'http://www.w3.org/2005/11/its'
         }
     );
