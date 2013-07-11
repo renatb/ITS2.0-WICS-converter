@@ -5,19 +5,21 @@ TODO:
 - then write TODOs for HTML stuff
 
 Engineering Tasks:
-    - design XPath querying for rule matches (set contexts correctly)
+    - thoroughly test matching
+        - need some answers from ITS group, first!
 
 To Do on current task:
     - test pointer matches with namespaces in scope of selected node
     - test warning for more than one match for a relative selector
     - test behavior for no match for a relative selector
-    - find out of parameters are used for relative selectors
+    - find out if parameters are used for relative selectors
+    - varify that idValue atts are relative selectors (except for return type)
 Later To Do:
     - get ITS rules by namespace URI, not prefix
     - proper error checking for XPath execution
-    - make sure that Rule objects don't store the actual attribute hash used by the XML element
-    - Create full storage of Rule XML contents (future proofing and allowing greater extensibility)
-        - right now it just lists children tags and text
+    - enforce value of idValueRule XPath being a string
+    - enforce pointers being nodes
+    - check test coverage and fill it in!
 
 Testing:
     Besides testing each piece of functionality, we need a comprehensive end-to-end XML2HTML test suite for Renat and Serge

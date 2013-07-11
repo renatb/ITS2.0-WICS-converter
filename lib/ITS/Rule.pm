@@ -87,6 +87,9 @@ sub pointers {
     # the correct pointer which matches the element name?
     my $atts = $self->{node}->atts;
     my @pointers = sort grep {$_ =~ /.+Pointer$/} keys %$atts;
+    if($self->type eq 'idValue' && exists $atts->{idValue}){
+        push @pointers, 'idValue';
+    }
     return \@pointers;
 }
 

@@ -45,7 +45,9 @@ subtest 'parameters' => sub {
 };
 
 subtest 'pointer attributes' => sub {
-    plan tests => 1;
+    plan tests => 2;
+
+    #test that *pointer atts are recognized as pointers
     my $el = new_element(
         'its:storageSizeRule' => {
             'xmlns:its' => 'http://www.w3.org/2005/11/its',
@@ -57,7 +59,21 @@ subtest 'pointer attributes' => sub {
     my $rule = ITS::Rule->new($el);
     is_deeply($rule->pointers,
         [qw(storageEncodingPointer storageSizePointer)],
-        'pointer attributes'
+        '2 pointer attributes found'
+    );
+
+    #test that idValue is recognized as a pointer
+    $el = new_element(
+        'its:idValueRule' => {
+            'xmlns:its' => 'http://www.w3.org/2005/11/its',
+            'selector' => '//foo',
+            'idValue' => '@name',
+        }
+    );
+    $rule = ITS::Rule->new($el);
+    is_deeply($rule->pointers,
+        [qw(idValue)],
+        'idValue is a pointer attribute'
     );
 };
 

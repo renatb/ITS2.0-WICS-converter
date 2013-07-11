@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use ITS::DOM qw(new_element);
 use Test::More 0.88;
-plan tests => 45;
+plan tests => 54;
 use Test::Exception;
 use Test::NoWarnings;
 use Path::Tiny;
@@ -18,11 +18,17 @@ my $dom;
 lives_ok{$dom = ITS::DOM->new(
     'xml' => $dom_path )}
     'valid XML parses without error';
+
 test_dom_queries($dom);
+
 is($dom->get_base_uri, '' . $dom_path->parent, 'Base URI');
+
 is($dom->get_source, '' . $dom_path, 'Source name');
+
 is($dom->get_root->name, 'xml', 'document root element is "xml"');
+
 test_namespaces($dom);
+
 test_node_creation();
 
 #make sure that errors are thrown for bad input
@@ -105,6 +111,21 @@ sub test_dom_queries {
     is(scalar @nodes, 1, '1 namespace node in root');
     is($nodes[0]->type, 'NS', 'Namespace type is "NS"');
     is($nodes[0]->value, 'www.bar.com', 'Namespace value is URI');
+
+    @nodes = $dom->get_root->get_xpath('"foo-bar"');
+    is(scalar @nodes, 1, '1 node returned');
+    is($nodes[0]->type, 'LIT', '...is a text value');
+    is($nodes[0]->value, 'foo-bar', '...with the correct value');
+
+    @nodes = $dom->get_root->get_xpath('not(1)');
+    is(scalar @nodes, 1, '1 node returned');
+    is($nodes[0]->type, 'BOOL', '...is a boolean node');
+    ok(!$nodes[0]->value, '...with the correct value');
+
+    @nodes = $dom->get_root->get_xpath('52');
+    is(scalar @nodes, 1, '1 node returned');
+    is($nodes[0]->type, 'NUM', '...is a text node');
+    is($nodes[0]->value, 52, '...with the correct value');
 
     #TODO: test XPath parameters
 }
