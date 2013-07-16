@@ -268,10 +268,8 @@ sub _resolve_rules {
 sub _get_its_rules_els {
     my ($doc) = @_;
     return $doc->get_root->get_xpath(
-        '//its:rules',
-        namespaces => {
-            its => 'http://www.w3.org/2005/11/its'
-        }
+        '//*[namespace-uri()="http://www.w3.org/2005/11/its"
+            and local-name()="rules"]',
     );
 }
 
