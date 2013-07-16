@@ -229,8 +229,10 @@ types of values are allowed. There are no default parameters.
 
 =item namespaces
 
-A hash ref of namespace prefix keys and namespace URI values. The
-default is whatever namespaces are in the scope of the context node.
+A hash ref of namespace prefix keys and namespace URI values to be
+made available to the XPath expression. Any previously scoped namespaces
+are removed (by default, all namespaces in the scope of the context node
+are available, but providing a namespaces value removes these).
 
 =back
 
@@ -245,9 +247,15 @@ sub get_xpath {
         $xpc->registerVarLookupFunc(\&_var_lookup, $context{params});
     }
     if($context{namespaces}){
+        # my $old_namespaces = $self->get_namespaces;
+        # for(keys %$old_namespaces){
+        #     print "trying to unregister $_\n";
+        #     $xpc->unregisterNs($_);
+        # }
         $xpc->registerNs($_, $context{namespaces}->{$_})
             for keys %{ $context{namespaces} };
     }
+    # print $xpc->lookupNs('bar');
     if($context{size}){
         $xpc->setContextSize($context{size});
     }

@@ -5,15 +5,12 @@ TODO:
 - then write TODOs for HTML stuff
 
 Engineering Tasks:
-    - thoroughly test matching
-        - need some answers from ITS group, first!
 
 To Do on current task:
-    - test pointer matches with namespaces in scope of selected node
+    - Test parameters
     - test warning for more than one match for a relative selector
     - test behavior for no match for a relative selector
-    - find out if parameters are used for relative selectors
-    - varify that idValue atts are relative selectors (except for return type)
+    - parameters for relative selectors
 Later To Do:
     - get ITS rules by namespace URI, not prefix
     - proper error checking for XPath execution

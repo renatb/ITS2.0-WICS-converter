@@ -10,6 +10,7 @@ use Path::Tiny;
 use Try::Tiny;
 use ITS::Rule;
 use feature 'say';
+use Data::Dumper; #debug
 
 # as script: extract ITS rules from input doc and list IDs
 if(!caller){
@@ -122,11 +123,13 @@ sub get_matches {
         $context_pos++;
         my $match;
         $match->{selector} = $selector_match;
+        my $namespaces = $rule->node->get_namespaces;
         for my $pointer(@{ $rule->pointers }){
             $match->{$pointer} =
                 _pointer_match(
                     $selector_match,
                     $rule->node->att($pointer),
+                    $namespaces,
                     $context_size,
                     $context_pos);
         }
@@ -170,11 +173,10 @@ sub _selector_matches {
 # The context position comes from the position of the current node in the current node list; the first position is 1.
 # The context size comes from the size of the current node list.
 sub _pointer_match {
-    my ($context_node, $xpath, $context_size, $context_pos) = @_;
+    my ($context_node, $xpath, $namespaces, $context_size, $context_pos) = @_;
 
     # TODO: not sure about parameters
     # my $params = $rule->params;
-    my $namespaces = $context_node->get_namespaces;
     my @nodes = $context_node->get_xpath(
         $xpath,
         size => $context_size,

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use ITS::DOM qw(new_element);
 use Test::More 0.88;
-plan tests => 54;
+plan tests => 55;
 use Test::Exception;
 use Test::NoWarnings;
 use Path::Tiny;
@@ -111,6 +111,12 @@ sub test_dom_queries {
     is(scalar @nodes, 1, '1 namespace node in root');
     is($nodes[0]->type, 'NS', 'Namespace type is "NS"');
     is($nodes[0]->value, 'www.bar.com', 'Namespace value is URI');
+
+    todo:{
+        local $TODO = 'LibXML cannot remove namespaces in context node scope';
+        @nodes = $dom->get_root->get_xpath('//foo:sixth', namespaces => {});
+        is(scalar @nodes, 0, 'no foo: element found when no namespaces provided');
+    }
 
     @nodes = $dom->get_root->get_xpath('"foo-bar"');
     is(scalar @nodes, 1, '1 node returned');
