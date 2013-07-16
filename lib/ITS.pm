@@ -126,14 +126,19 @@ sub get_matches {
         my $match;
         $match->{selector} = $selector_match;
         for my $pointer(@{ $rule->pointers }){
-            $match->{$pointer} =
+            my $pointer_match =
                 _pointer_match(
                     $selector_match,
                     $rule->node->att($pointer),
                     $namespaces,
                     $params,
                     $context_size,
-                    $context_pos);
+                    $context_pos
+                );
+            #don't save the pointer match if there was none
+            if($pointer_match){
+                $match->{$pointer} = $pointer_match;
+            }
         }
         push @matches, $match;
     }
@@ -193,10 +198,19 @@ sub _pointer_match {
         params => $params,
         namespaces => $namespaces,
     );
-    if(scalar @nodes > 1){
-        carp "relative selector $xpath selects more than 1 node. Using just the first.";
+    if((my $num_nodes = scalar @nodes) != 1){
+        my $warning = "Relative selector $xpath returned $num_nodes nodes";
+        if(my $id = $context_node->att('xml:id')){
+            $warning .= " in element $id";
+        }
+        if($num_nodes > 1){
+            $warning .= "\nUsing first match";
+        }
+        carp $warning;
     }
-    return $nodes[0];
+    return $nodes[0]
+        if $nodes[0];
+    return undef;
 }
 
 =head2 C<get_twig>

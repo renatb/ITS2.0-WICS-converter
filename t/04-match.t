@@ -3,7 +3,8 @@ use strict;
 use warnings;
 use ITS;
 use Test::More 0.88;
-plan tests => 7;
+plan tests => 9;
+use Test::Warn;
 use Data::Section::Simple qw(get_data_section);
 
 my $all_data = get_data_section;
@@ -25,6 +26,9 @@ test_pointer_position_size(
 
 test_namespaces(
     \($all_data->{namespaced_document}), \($all_data->{namespace_rules}));
+
+test_warnings(
+    \($all_data->{document}), \($all_data->{warning_rules}));
 #TODO: test correct namespace scoping
 
 #test out a basic rule match, no pointers or parameters
@@ -120,6 +124,61 @@ sub test_pointer {
         is(scalar keys %$match, 2, 'only one pointer match');
     };
 }
+
+sub test_warnings {
+    my ($doc_text, $rules_text) = @_;
+    my $ITS = ITS->new(
+        'xml',
+        doc => $doc_text,
+        rules => $rules_text,
+    );
+    my $rules = $ITS->get_rules;
+
+    subtest 'rule with pointer to nothing' => sub {
+        plan tests => 4;
+        # match of a locNoteRule with selector id('par2Id')
+        my $matches;
+        warning_like
+            { $matches = $ITS->get_matches($rules->[0]) }
+            {carped => qr/\@foot returned 0 nodes/},
+            'error for no pointer match';
+
+        is(scalar @$matches, 1, 'found one rule match');
+        my $match = $matches->[0];
+        is(
+            $match->{selector}->att('xml:id'),
+            'par2Id',
+            'correct rule selector match'
+        );
+        is(scalar keys %$match, 1, 'no pointer match');
+    };
+
+    subtest 'rule with pointer to nothing' => sub {
+        plan tests => 6;
+        # match of a locNoteRule with selector id('par2Id')
+        my $matches;
+        warning_like
+            { $matches = $ITS->get_matches($rules->[1]) }
+            {carped => qr(//par returned 3 nodes) },
+            'error for multiple pointer matches';
+
+        is(scalar @$matches, 1, 'found one rule match');
+        my $match = $matches->[0];
+        is(
+            $match->{selector}->att('xml:id'),
+            'par2Id',
+            'correct rule selector match'
+        );
+        ok($match->{locNotePointer}, 'there is a locNotePointer value');
+        is(
+            $match->{locNotePointer}->att('xml:id'),
+            'par1Id',
+            '...and its id is "par1Id"'
+        );
+        is(scalar keys %$match, 2, 'only one pointer match used');
+    };
+}
+
 
 #test that pointer XPaths are resolved and returned in matches
 sub test_pointer_params {
@@ -240,7 +299,7 @@ sub test_namespaces {
         # should match one baz:par element
         $matches = $ITS->get_matches($rules->[1]);
         subtest 'namespaces on selected node unavailable to XPath contexts' => sub {
-            plan tests => 2;
+            plan tests => 3;
             is(scalar @$matches, 1, 'found one match');
             my $match = $matches->[0];
             is($match->{selector}->att('xml:id'), 'par2Id', 'correct node selected');
@@ -349,4 +408,18 @@ __DATA__
         xmlns:baz="www.baz.com"
         selector="//baz:par"
         idValue="string(bar:id)"/>
+</its:rules>
+
+@@ warning_rules
+<its:rules
+    xmlns:its="http://www.w3.org/2005/11/its"
+    version="2.0">
+      <its:locNoteRule
+        locNoteType="description"
+        selector="id('par2Id')"
+        locNotePointer="@foot"/>
+      <its:locNoteRule
+        locNoteType="description"
+        selector="id('par2Id')"
+        locNotePointer="//par"/>
 </its:rules>

@@ -7,12 +7,9 @@ TODO:
 Engineering Tasks:
 
 To Do on current task:
-    - Test parameters
-    - test warning for more than one match for a relative selector
-    - test behavior for no match for a relative selector
-    - parameters for relative selectors
-Later To Do:
     - get ITS rules by namespace URI, not prefix
+
+Later To Do:
     - proper error checking for XPath execution
     - enforce value of idValueRule XPath being a string
     - enforce pointers being nodes
