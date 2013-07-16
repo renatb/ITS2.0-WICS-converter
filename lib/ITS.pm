@@ -113,6 +113,8 @@ sub get_matches {
 
     # first, find the matches for the selector attribute
     my $selector_matches = $self->_selector_matches($rule);
+    my $namespaces = $rule->node->get_namespaces;
+    my $params = $rule->params;
 
     # $selector_matches is the "current node list", which is
     # used to calculate context size and position for pointer XPaths
@@ -123,13 +125,13 @@ sub get_matches {
         $context_pos++;
         my $match;
         $match->{selector} = $selector_match;
-        my $namespaces = $rule->node->get_namespaces;
         for my $pointer(@{ $rule->pointers }){
             $match->{$pointer} =
                 _pointer_match(
                     $selector_match,
                     $rule->node->att($pointer),
                     $namespaces,
+                    $params,
                     $context_size,
                     $context_pos);
         }
@@ -173,7 +175,14 @@ sub _selector_matches {
 # The context position comes from the position of the current node in the current node list; the first position is 1.
 # The context size comes from the size of the current node list.
 sub _pointer_match {
-    my ($context_node, $xpath, $namespaces, $context_size, $context_pos) = @_;
+    my (
+        $context_node,
+        $xpath,
+        $namespaces,
+        $params,
+        $context_size,
+        $context_pos
+    ) = @_;
 
     # TODO: not sure about parameters
     # my $params = $rule->params;
@@ -181,7 +190,7 @@ sub _pointer_match {
         $xpath,
         size => $context_size,
         position => $context_pos,
-        # params => $params,
+        params => $params,
         namespaces => $namespaces,
     );
     if(scalar @nodes > 1){

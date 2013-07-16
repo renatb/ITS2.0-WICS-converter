@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use ITS;
 use Test::More 0.88;
-plan tests => 6;
+plan tests => 7;
 use Data::Section::Simple qw(get_data_section);
 
 my $all_data = get_data_section;
@@ -16,6 +16,9 @@ test_param(
 
 test_pointer(
     \($all_data->{document}), \($all_data->{pointer_rule}));
+
+test_pointer_params(
+    \($all_data->{document}), \($all_data->{pointer_param_rule}));
 
 test_pointer_position_size(
     \($all_data->{document}), \($all_data->{pointer_position_size_rule}));
@@ -79,7 +82,49 @@ sub test_param {
 #test that pointer XPaths are resolved and returned in matches
 sub test_pointer {
     my ($doc_text, $rules_text) = @_;
-    subtest 'rule with parameter' => sub {
+    subtest 'rule with pointer' => sub {
+        plan tests => 7;
+        my $ITS = ITS->new(
+            'xml',
+            doc => $doc_text,
+            rules => $rules_text,
+        );
+
+        my $rules = $ITS->get_rules;
+        # match of a locNoteRule with selector id('par2Id')
+        my $matches = $ITS->get_matches($rules->[0]);
+
+        is(scalar @$matches, 1, 'found one rule match');
+        my $match = $matches->[0];
+        is(
+            $match->{selector}->att('xml:id'),
+            'par2Id',
+            'correct rule selector match'
+        );
+        ok($match->{locNotePointer}, 'there is a locNotePointer value');
+        is(
+            $match->{locNotePointer}->type,
+            'ATT',
+            'locNotePointer matched an attribute...'
+        );
+        is(
+            $match->{locNotePointer}->name,
+            'note',
+            '  named "note"...'
+        );
+        is(
+            $match->{locNotePointer}->value,
+            'some loc note',
+            '  with a value of "some loc note"'
+        );
+        is(scalar keys %$match, 2, 'only one pointer match');
+    };
+}
+
+#test that pointer XPaths are resolved and returned in matches
+sub test_pointer_params {
+    my ($doc_text, $rules_text) = @_;
+    subtest 'pointer with parameter' => sub {
         plan tests => 7;
         my $ITS = ITS->new(
             'xml',
@@ -251,6 +296,17 @@ __DATA__
         locNoteType="description"
         selector="id('par2Id')"
         locNotePointer="@note"/>
+</its:rules>
+
+@@ pointer_param_rule
+<its:rules
+    xmlns:its="http://www.w3.org/2005/11/its"
+    version="2.0">
+      <its:param name="noteAtt">note</its:param>
+      <its:locNoteRule
+        locNoteType="description"
+        selector="id('par2Id')"
+        locNotePointer="@*[name()=$noteAtt]"/>
 </its:rules>
 
 @@ pointer_position_size_rule
