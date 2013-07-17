@@ -17,9 +17,9 @@ my $XLINK_NS = 'http://www.w3.org/1999/xlink';
 
 # as script: extract ITS rules from input doc and list IDs
 if(!caller){
-    my $ITS =  ITS->new(file => $ARGV[0]);
+    my $ITS =  XML::ITS->new('xml', doc => $ARGV[0]);
     say 'Extracted rules:';
-    say $_->att('xml:id') for @{ $ITS->get_rules() };
+    say $_->node->att('xml:id') for @{ $ITS->get_rules() };
 }
 
 =head1 SYNOPSIS
