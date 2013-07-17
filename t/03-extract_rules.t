@@ -7,7 +7,6 @@ use ITS;
 use Test::More 0.88;
 plan tests => 6;
 use Test::NoWarnings;
-use Test::XML;
 use Path::Tiny;
 use FindBin qw($Bin);
 use File::Slurp;
