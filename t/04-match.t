@@ -3,8 +3,10 @@ use strict;
 use warnings;
 use ITS;
 use Test::More 0.88;
-plan tests => 9;
+plan tests => 10;
 use Test::Warn;
+use Path::Tiny;
+use FindBin qw($Bin);
 use Data::Section::Simple qw(get_data_section);
 
 my $all_data = get_data_section;
@@ -23,6 +25,9 @@ test_namespaces(
     \($all_data->{namespaced_document}), \($all_data->{namespace_rules}));
 test_warnings(
     \($all_data->{document}), \($all_data->{warning_rules}));
+
+my $doc_path = path($Bin, 'corpus', 'test_external.xml');
+test_iterator($doc_path);
 
 #test out a basic rule match, no pointers or parameters
 sub test_basic {
@@ -305,6 +310,53 @@ sub test_warnings {
             '...and its id is "par1Id"'
         );
         is(scalar keys %$match, 2, 'only one pointer match used');
+    };
+}
+
+# test that match iterator returns matches in application order
+sub test_iterator {
+    my ($doc_path) = @_;
+
+    subtest 'Iterate all rule matches in order' => sub {
+        plan tests => 2;
+        my $ITS = ITS->new(
+            'xml',
+            doc => $doc_path,
+        );
+        my @rule_match_pairs;
+        $ITS->iterate_matches(
+            sub {
+                my ($rule, $match) = @_;
+                push @rule_match_pairs,
+                    [
+                        $rule->node->att('xml:id'),
+                        $match->{selector}->att('xml:id')
+                    ];
+            }
+        );
+        is(scalar @rule_match_pairs, 4, 'Four matches');
+        is_deeply(
+            \@rule_match_pairs,
+            [
+                  [
+                    'ext3rule',
+                    'root'
+                  ],
+                  [
+                    'ext2rule',
+                    'trmark'
+                  ],
+                  [
+                    'ext1rule',
+                    'par'
+                  ],
+                  [
+                    'baseFileRule',
+                    'body'
+                  ]
+            ],
+            'Correct rule-pair matches'
+        ) or note explain \@rule_match_pairs;
     };
 }
 

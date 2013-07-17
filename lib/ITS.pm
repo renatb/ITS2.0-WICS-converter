@@ -95,6 +95,37 @@ sub get_rules {
     return $self->{rules};
 }
 
+=head2 C<iterate_matches>
+
+Iterates over each match of each document rule, in order of
+application.
+
+The first argument is a subroutine reference to be called for each
+match. The arguments to the subroutine are first the matching rule and
+then a hash reference representing the hash object (see C<get_matches>
+below).
+
+The second argument is optionally an array ref of rules to find matches
+for (no argument uses internal rules).
+
+=cut
+
+sub iterate_matches {
+    my ($self, $sub, $rules) = @_;
+    croak 'subroutine required!'
+        unless $sub and ref $sub eq 'CODE';
+    if(!$rules){
+        $rules = $self->get_rules;
+    }
+    for my $rule(@$rules){
+        my $matches = $self->get_matches($rule);
+        for my $match (@$matches){
+            $sub->($rule, $match);
+        }
+    }
+    return;
+}
+
 =head2 C<get_matches>
 
 Argument: C<ITS::Rule> object.

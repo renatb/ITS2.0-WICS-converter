@@ -1,7 +1,6 @@
 XML to HTML converter
 
 TODO:
-- create interface for iterating over matches
 - then write TODOs for HTML stuff
 
 Engineering Tasks:
@@ -13,6 +12,7 @@ Later To Do:
     - enforce value of idValueRule XPath being a string
     - enforce pointers being nodes
     - check test coverage and fill it in!
+    - rename get_matches and iterate_rules to reflect what is being matched (single rule or all rules)
 
 Testing:
     Besides testing each piece of functionality, we need a comprehensive end-to-end XML2HTML test suite for Renat and Serge

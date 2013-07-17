@@ -3,5 +3,5 @@
     xmlns:bar="http://www.w3.org/1999/xlink"
     version="2.0"
     bar:href="external_rules_xml3.xml">
-      <foo:translateRule xml:id="ext2rule" selector="//*" translate="yes"/>
+      <foo:translateRule xml:id="ext2rule" selector="//trmark" translate="yes"/>
 </foo:rules>
