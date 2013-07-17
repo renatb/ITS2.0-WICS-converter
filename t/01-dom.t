@@ -1,62 +1,77 @@
 # Test DOM implementation
-
 use strict;
 use warnings;
 use ITS::DOM qw(new_element);
 use Test::More 0.88;
-plan tests => 57;
+plan tests => 61;
 use Test::Exception;
 use Test::NoWarnings;
 use Path::Tiny;
 use FindBin qw($Bin);
 my $corpus_dir = path($Bin, 'corpus');
 
-test_errors();
-
 my $dom_path = path($corpus_dir, 'dom_test.xml');
-my $dom;
-lives_ok{$dom = ITS::DOM->new(
-    'xml' => $dom_path )}
-    'valid XML parses without error';
+test_errors($dom_path);
 
-test_dom_queries($dom);
+my $dom = ITS::DOM->new( 'xml' => $dom_path );
 
-is($dom->get_base_uri, '' . $dom_path->parent, 'Base URI');
-
-is($dom->get_source, '' . $dom_path, 'Source name');
-
-is($dom->get_root->name, 'xml', 'document root element is "xml"');
-
-test_namespaces($dom);
-
+test_dom_props($dom, $dom_path);
+test_nodes($dom);
+test_xpath($dom);
+test_node_namespaces($dom);
 test_node_creation();
 
-#make sure that errors are thrown for bad input
+# make sure that errors are thrown for bad input
+# and that none are thrown for good input
 sub test_errors {
-    throws_ok
-        {ITS::DOM->new(
-            'xml' => path($corpus_dir, 'nonexistent.xml') ) }
-        qr/error parsing file.*No such file or directory/s,
+    my ($dom_path) = @_;
+
+    note 'testing exceptions';
+    throws_ok {
+        ITS::DOM->new(
+            'xml' => path($corpus_dir, 'nonexistent.xml')
+        )
+    } qr/error parsing file.*No such file or directory/s,
         'dies for nonexistent file';
-    throws_ok
-        {ITS::DOM->new(
-            'xml' => \'<xml>stuff</xlm>')}
-        qr/error parsing string:.*mismatch/s,
+    throws_ok {
+        ITS::DOM->new(
+            'xml' => \'<xml>stuff</xlm>'
+        )
+    } qr/error parsing string:.*mismatch/s,
         'dies for bad XML';
 
-    lives_ok{ITS::DOM->new(
-        'xml' => \<<'ENDXML')} 'valid XML parses without error';
-<xml>
-    <first foo="bar"/>
-</xml>
-ENDXML
+    lives_ok{
+        ITS::DOM->new(
+            'xml' => \'<xml><first foo="bar"/></xml>'
+        )
+    } 'valid XML parses without error';
+
+    lives_ok{
+        $dom = ITS::DOM->new(
+            'xml' => $dom_path,
+            'rules' => $dom_path
+        )
+    } 'valid XML file parses without error' or
+        BAIL_OUT "can't test with basic XML file";
 }
 
-#test xpath querying and names/values/types of nodes
-sub test_dom_queries {
+#test properties of entire document
+sub test_dom_props {
+    my ($dom, $dom_path) = @_;
+
+    note 'testing DOM properties';
+    is($dom->get_base_uri, $dom_path->parent, 'Base URI');
+    is($dom->get_source, $dom_path, 'Source name');
+    is($dom->get_root->name, 'xml', 'root element');
+}
+
+# test methods of all types of nodes (which also requires
+# testing quite a bit of XPath functionality)
+sub test_nodes {
     my ($dom) = @_;
+    note 'testing node methods';
     my @nodes = $dom->get_root->get_xpath('//*');
-    is(scalar @nodes, 7, '7 nodes in doc');
+    is(scalar @nodes, 8, '8 nodes in doc');
     is($nodes[0]->name, 'xml', 'First element name is "xml"');
     is($nodes[0]->type, 'ELT', 'XML node is an ELT');
 
@@ -112,12 +127,6 @@ sub test_dom_queries {
     is($nodes[0]->type, 'NS', 'Namespace type is "NS"');
     is($nodes[0]->value, 'www.bar.com', 'Namespace value is URI');
 
-    todo:{
-        local $TODO = 'LibXML cannot remove namespaces in context node scope';
-        @nodes = $dom->get_root->get_xpath('//foo:sixth', namespaces => {});
-        is(scalar @nodes, 0, 'no foo: element found when no namespaces provided');
-    }
-
     @nodes = $dom->get_root->get_xpath('"foo-bar"');
     is(scalar @nodes, 1, '1 node returned');
     is($nodes[0]->type, 'LIT', '...is a text value');
@@ -132,8 +141,54 @@ sub test_dom_queries {
     is(scalar @nodes, 1, '1 node returned');
     is($nodes[0]->type, 'NUM', '...is a text node');
     is($nodes[0]->value, 52, '...with the correct value');
+}
 
-    #TODO: test XPath parameters
+#test specifics of XPath context setting
+sub test_xpath {
+    my ($dom) = @_;
+    note 'testing XPath context creation';
+    subtest 'string parameters' => sub {
+        plan tests => 3;
+        my @nodes = $dom->get_root->get_xpath(
+            '$foo', params => {foo => 'foo-bar'} );
+        is(scalar @nodes, 1, '1 node returned');
+        is($nodes[0]->type, 'LIT', '...is a text value');
+        is($nodes[0]->value, 'foo-bar', '...with the correct value');
+    };
+
+    subtest 'position' => sub {
+        plan tests => 3;
+        my @nodes = $dom->get_root->get_xpath(
+            'position()', position => 3 , size=> 4 );
+        is(scalar @nodes, 1, '1 node returned');
+        is($nodes[0]->type, 'NUM', '...is a number');
+        is($nodes[0]->value, 3, '...with the correct value');
+    };
+
+    subtest 'size' => sub {
+        plan tests => 3;
+        my @nodes = $dom->get_root->get_xpath(
+            'last()', size=> 4 );
+        is(scalar @nodes, 1, '1 node returned');
+        is($nodes[0]->type, 'NUM', '...is a number');
+        is($nodes[0]->value, 4, '...with the correct value');
+    };
+
+    subtest 'namespace' => sub {
+        plan tests => 2;
+        my @nodes = $dom->get_root->get_xpath(
+            '//xyz:eighth',
+            namespaces => { xyz => 'www.foo.com' }
+        );
+        is(scalar @nodes, 1, '1 node returned');
+        is($nodes[0]->name, 'bar:eighth', '...named "bar:eighth"');
+    };
+
+    todo:{
+        local $TODO = 'LibXML cannot remove namespaces in context node scope';
+        my @nodes = $dom->get_root->get_xpath('//foo:sixth', namespaces => {});
+        is(scalar @nodes, 0, 'no foo: element found when no namespaces provided');
+    }
 }
 
 sub test_node_creation {
@@ -152,8 +207,11 @@ sub test_node_creation {
     is($nodes[0]->name, 'b', 'Child has correct name');
 }
 
-sub test_namespaces {
+#test node methods involving namespaces
+sub test_node_namespaces {
     my ($dom) = @_;
+
+    note 'Testing node namespace methods';
     my @nodes = $dom->get_root->get_xpath('//seventh');
     is($nodes[0]->name, 'seventh', 'got seventh node');
     is_deeply(
