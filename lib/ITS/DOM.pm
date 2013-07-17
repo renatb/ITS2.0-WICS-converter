@@ -318,6 +318,16 @@ sub name {
     return $self->{node}->nodeName;
 }
 
+=head2 C<namespaceURI>
+
+Returns the namespace URI of this node.
+
+=cut
+sub namespaceURI {
+    my ($self) = @_;
+    return $self->{node}->namespaceURI;
+}
+
 =head2 C<local_name>
 
 If this node is an element, this method returns its name without
@@ -351,10 +361,16 @@ sub text {
 =head2 C<att>
 
 If this node is an element, returns the value of the given attribute.
+The first argument is either the  attribute name (with prefix
+if attribute has one), or, if the namespace is provided as a second
+argument, then the attribute's local name.
 
 =cut
 sub att {
-    my ($self, $name) = @_;
+    my ($self, $name, $ns) = @_;
+    if($ns){
+        return $self->{node}->getAttributeNS($ns, $name);
+    }
     return $self->{node}->getAttribute($name);
 }
 

@@ -12,6 +12,9 @@ use ITS::Rule;
 use feature 'say';
 use Data::Dumper; #debug
 
+my $ITS_NS = 'http://www.w3.org/2005/11/its';
+my $XLINK_NS = 'http://www.w3.org/1999/xlink';
+
 # as script: extract ITS rules from input doc and list IDs
 if(!caller){
     my $ITS =  ITS->new(file => $ARGV[0]);
@@ -244,15 +247,15 @@ sub _resolve_rules {
     my @rules;
     for my $container(@internal_rules_containers){
         my $children = $container->children();
-        #todo: use URI, not prefix
-        while($children->[0]->name eq 'its:param'){
+        while($children->[0]->local_name eq 'param' and
+            $children->[0]->namespaceURI eq $ITS_NS){
             my $param = shift @$children;
             $params{$param->att('name')} = $param->text;
         }
         # warn $children->[0]->name;
-        if($container->att('xlink:href')){
+        if($container->att('href', $XLINK_NS)){
             #path to file is relative to current file
-            my $path = path($container->att('xlink:href'))->
+            my $path = path($container->att('href', $XLINK_NS))->
                 absolute($doc->get_base_uri);
             push @rules, @{ _get_external_rules($path, \%params) };
         }
@@ -268,8 +271,8 @@ sub _resolve_rules {
 sub _get_its_rules_els {
     my ($doc) = @_;
     return $doc->get_root->get_xpath(
-        '//*[namespace-uri()="http://www.w3.org/2005/11/its"
-            and local-name()="rules"]',
+        "//*[namespace-uri()='$ITS_NS'
+            and local-name()='rules']",
     );
 }
 

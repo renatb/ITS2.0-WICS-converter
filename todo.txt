@@ -7,7 +7,6 @@ TODO:
 Engineering Tasks:
 
 To Do on current task:
-    - get ITS rules by namespace URI, not prefix
 
 Later To Do:
     - proper error checking for XPath execution

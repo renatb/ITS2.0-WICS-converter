@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use ITS::DOM qw(new_element);
 use Test::More 0.88;
-plan tests => 55;
+plan tests => 57;
 use Test::Exception;
 use Test::NoWarnings;
 use Path::Tiny;
@@ -164,4 +164,12 @@ sub test_namespaces {
         },
         'found namespaces in scope'
     ) or note explain $nodes[0]->get_namespaces;
+
+    @nodes = $dom->get_root->get_xpath('//foo:sixth');
+    is($nodes[0]->namespaceURI, 'www.bar.com', 'Correct namespace');
+    is(
+        $nodes[0]->att('stuff', 'www.bar.com'),
+        'junk',
+        'Correct att retrieved via name and ns'
+    );
 }
