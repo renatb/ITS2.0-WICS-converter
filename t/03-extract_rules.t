@@ -75,30 +75,6 @@ subtest 'parameters resolved' => sub {
         $locNoteRule->params, $params, 'last rule params');
 };
 
-subtest 'rules and document from separate strings' => sub {
-    plan tests => 3;
-    my $ITS = ITS->new('xml', doc => \<<'XML', rules => \<<'RULES');
-<myDoc>
- <body>
-  <par id="100" title="Text">The
-    <trmark id="notran">World Wide Web Consortium</trmark>
-     is making the World Wide Web worldwide!
-  </par>
- </body>
-</myDoc>
-XML
-<its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-    <its:idValueRule xml:id="idValRule" selector="id('Text')" idValue="bodyId"/>
-    <its:locNoteRule xml:id="locNoteRule" selector="id('Text')" locNotePointer="id('notran')"/>
-</its:rules>
-RULES
-
-    my $rules = $ITS->get_rules();
-    is(scalar @$rules, 2, '2 rules in string');
-    is($rules->[0]->node->att('xml:id'), 'idValRule', 'correct first rule');
-    is($rules->[1]->node->att('xml:id'), 'locNoteRule', 'correct second rule');;
-};
-
 subtest 'params contained to one its:rules element' => sub {
     plan tests => 5;
     my $ITS = ITS->new('xml', doc => \<<'XML');
@@ -132,5 +108,28 @@ XML
     $rule = $rules->[1];
     is($rule->node->att('xml:id'), 'rule2', 'correct second rule');
     is_deeply($rule->params, {qux => 'muck'}, '1 param in first rule');
+};
 
+subtest 'rules and document from separate strings' => sub {
+    plan tests => 3;
+    my $ITS = ITS->new('xml', doc => \<<'XML', rules => \<<'RULES');
+<myDoc>
+ <body>
+  <par id="100" title="Text">The
+    <trmark id="notran">World Wide Web Consortium</trmark>
+     is making the World Wide Web worldwide!
+  </par>
+ </body>
+</myDoc>
+XML
+<its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+    <its:idValueRule xml:id="idValRule" selector="id('Text')" idValue="bodyId"/>
+    <its:locNoteRule xml:id="locNoteRule" selector="id('Text')" locNotePointer="id('notran')"/>
+</its:rules>
+RULES
+
+    my $rules = $ITS->get_rules();
+    is(scalar @$rules, 2, '2 rules in string');
+    is($rules->[0]->node->att('xml:id'), 'idValRule', 'correct first rule');
+    is($rules->[1]->node->att('xml:id'), 'locNoteRule', 'correct second rule');;
 };
