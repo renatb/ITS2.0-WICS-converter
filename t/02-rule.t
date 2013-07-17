@@ -7,7 +7,8 @@ use Test::More 0.88;
 plan tests => 5;
 use Test::Warn;
 use Test::NoWarnings;
-use XML::ITS::DOM qw(new_element);
+use XML::ITS::DOM;
+use XML::ITS::DOM::Node qw(new_element);
 
 subtest 'basic rule' => sub {
     plan tests => 5;
@@ -39,7 +40,7 @@ subtest 'parameters' => sub {
             'storageEncoding' => 'UTF-8',
         }
     );
-    my $rule = ITS::Rule->new($el, %$params);
+    my $rule = ITS::Rule->new($el, %{ $params });
     is_deeply($rule->params, $params, 'parameter values')
 };
 

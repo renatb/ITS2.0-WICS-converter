@@ -7,9 +7,10 @@ use Carp;
 
 =head1 SYNOPSIS
 
-    use ITS::Rule;
+    use XML::ITS;
+    use XML::ITS::Rule;
     use feature 'say';
-    my $ITS = ITS->new(file => 'myfile.xml', rules);
+    my $ITS = XML::ITS->new(file => 'myITSfile.xml');
     my $rules = $ITS->get_rules;
     say $_->type for @$rules;
 

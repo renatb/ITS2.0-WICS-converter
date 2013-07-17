@@ -1,7 +1,6 @@
 ITS
 
 TODO:
-    - try dzil test --release and fix all problems
 
 Engineering Tasks:
 

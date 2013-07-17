@@ -53,6 +53,7 @@ sub test_basic {
         );
         is(scalar keys %$match, 1, 'no pointer matches');
     };
+    return;
 }
 
 #test that rules parameters are used in global matching
@@ -79,6 +80,7 @@ sub test_param {
         );
         is(scalar keys %$match, 1, 'no pointer matches');
     };
+    return;
 }
 
 #test that pointer XPaths are resolved and returned in matches
@@ -121,6 +123,7 @@ sub test_pointer {
         );
         is(scalar keys %$match, 2, 'only one pointer match');
     };
+    return;
 }
 
 #test that pointer XPaths are resolved and returned in matches
@@ -163,6 +166,7 @@ sub test_pointer_params {
         );
         is(scalar keys %$match, 2, 'only one pointer match');
     };
+    return;
 }
 
 #test that XPath context size and position are properly set for relative selectors
@@ -203,6 +207,7 @@ sub test_pointer_position_size {
             is(scalar keys %$match, 2, 'no pointers besides idValue');
         }
     };
+    return;
 }
 
 #test that correct namespaces are in scope
@@ -257,6 +262,7 @@ sub test_namespaces {
             );
         };
     }
+    return;
 }
 
 sub test_warnings {
@@ -311,6 +317,7 @@ sub test_warnings {
         );
         is(scalar keys %$match, 2, 'only one pointer match used');
     };
+    return;
 }
 
 # test that match iterator returns matches in application order
@@ -358,6 +365,7 @@ sub test_iterator {
             'Correct rule-pair matches'
         ) or note explain \@rule_match_pairs;
     };
+    return;
 }
 
 __DATA__

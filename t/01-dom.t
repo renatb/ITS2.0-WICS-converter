@@ -1,7 +1,8 @@
 # Test DOM implementation
 use strict;
 use warnings;
-use XML::ITS::DOM qw(new_element);
+use XML::ITS::DOM;
+use XML::ITS::DOM::Node qw(new_element);
 use Test::More 0.88;
 plan tests => 61;
 use Test::Exception;
@@ -53,6 +54,7 @@ sub test_errors {
         )
     } 'valid XML file parses without error' or
         BAIL_OUT "can't test with basic XML file";
+    return;
 }
 
 #test properties of entire document
@@ -63,6 +65,7 @@ sub test_dom_props {
     is($dom->get_base_uri, $dom_path->parent, 'Base URI');
     is($dom->get_source, $dom_path, 'Source name');
     is($dom->get_root->name, 'xml', 'root element');
+    return;
 }
 
 # test methods of all types of nodes (which also requires
@@ -141,6 +144,7 @@ sub test_nodes {
     is(scalar @nodes, 1, '1 node returned');
     is($nodes[0]->type, 'NUM', '...is a text node');
     is($nodes[0]->value, 52, '...with the correct value');
+    return;
 }
 
 #test specifics of XPath context setting
@@ -189,6 +193,7 @@ sub test_xpath {
         my @nodes = $dom->get_root->get_xpath('//foo:sixth', namespaces => {});
         is(scalar @nodes, 0, 'no foo: element found when no namespaces provided');
     }
+    return;
 }
 
 sub test_node_creation {
@@ -205,6 +210,7 @@ sub test_node_creation {
     my @nodes = @{$el->children};
     is(scalar @nodes, 1, 'Pasted child present in parent');
     is($nodes[0]->name, 'b', 'Child has correct name');
+    return;
 }
 
 #test node methods involving namespaces
@@ -230,4 +236,5 @@ sub test_node_namespaces {
         'junk',
         'Correct att retrieved via name and ns'
     );
+    return;
 }

@@ -24,9 +24,9 @@ if(!caller){
 
 =head1 SYNOPSIS
 
-    use ITS;
+    use XML::ITS;
     use feature 'say';
-    my $ITS = ITS->new(file => 'myfile.xml', rules);
+    my $ITS = XML::ITS->new(file => 'myITSfile.xml');
     my $rules = $ITS->get_rules;
     $ITS->iterate_matches(sub{
         my ($rule, $matches) = @_;
@@ -59,7 +59,7 @@ sub new {
     # (not sure about precedence for them yet)
     my ($class, $file_type, %args) = @_;
 
-    if($file_type !~ /^xml|html$/ or !$args{doc}){
+    if($file_type !~ /^xml|html$/ || !$args{doc}){
         croak 'usage: ITS->new("(xml|html)", doc => "file", [rules => "file"]';
     }
     my $doc = XML::ITS::DOM->new($file_type => $args{doc});
@@ -113,7 +113,7 @@ for (no argument uses internal rules).
 sub iterate_matches {
     my ($self, $sub, $rules) = @_;
     croak 'subroutine required!'
-        unless $sub and ref $sub eq 'CODE';
+        unless $sub and (ref $sub eq 'CODE');
     if(!$rules){
         $rules = $self->get_rules;
     }
@@ -247,7 +247,7 @@ sub _pointer_match {
     }
     return $nodes[0]
         if $nodes[0];
-    return undef;
+    return;
 }
 
 # find and save all its:*Rule's elements to be applied in
@@ -259,7 +259,6 @@ sub _resolve_doc_rules {
     my ($doc, %params) = @_;
 
     # first, grab internal its:rules elements
-    my @rule_containers;
     my @internal_rules_containers = _get_its_rules_els($doc);
     if(@internal_rules_containers == 0){
         return [];
