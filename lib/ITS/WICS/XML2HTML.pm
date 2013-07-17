@@ -3,8 +3,6 @@ use strict;
 use warnings;
 use Carp;
 our @CARP_NOT = qw(ITS::WICS::XML2HTML);
-use XML::Twig;
-use XML::Twig::XPath;
 use Path::Tiny;
 use Try::Tiny;
 use feature 'say';
