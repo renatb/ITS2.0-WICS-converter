@@ -7,5 +7,7 @@
     <?foo_pi some content?>
     <fifth baz="qux" boo="far"/>
     <foo:sixth foo:stuff="junk"/>
-    <seventh xmlns:bar="www.foo.com"/>
+    <seventh xmlns:bar="www.foo.com">
+        <bar:eighth/>
+    </seventh>
 </xml>

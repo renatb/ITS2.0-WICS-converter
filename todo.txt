@@ -13,7 +13,6 @@ Later To Do:
     - enforce value of idValueRule XPath being a string
     - enforce pointers being nodes
     - check test coverage and fill it in!
-    - clean up test code
 
 Testing:
     Besides testing each piece of functionality, we need a comprehensive end-to-end XML2HTML test suite for Renat and Serge
