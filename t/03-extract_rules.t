@@ -3,7 +3,7 @@
 
 use strict;
 use warnings;
-use ITS;
+use XML::ITS;
 use Test::More 0.88;
 plan tests => 6;
 use Test::NoWarnings;
@@ -17,7 +17,7 @@ subtest 'internal rules' => sub {
     plan tests => 4;
     my $internal_test = path($xml_dir, 'basic_rules.xml');
 
-    my $ITS = ITS->new('xml', doc => $internal_test);
+    my $ITS = XML::ITS->new('xml', doc => $internal_test);
     my $rules = $ITS->get_rules();
     is($#$rules, 2, 'three rules in basic_rules.xml');
     is($rules->[0]->node->att('xml:id'), 'first', 'correct first rule');
@@ -28,7 +28,7 @@ subtest 'internal rules' => sub {
 subtest 'external and internal rules' => sub {
     plan tests => 5;
     my $external_test = path($xml_dir, 'test_external.xml');
-    my $ITS = ITS->new('xml', doc => $external_test);
+    my $ITS = XML::ITS->new('xml', doc => $external_test);
     my $rules = $ITS->get_rules();
 
     is($#$rules, 3, 'four rules in file');
@@ -41,7 +41,7 @@ subtest 'external and internal rules' => sub {
 subtest 'parameters resolved' => sub {
     plan tests => 7;
     my $param_test = path($xml_dir, 'test_param.xml');
-    my $ITS = ITS->new('xml', doc => $param_test);
+    my $ITS = XML::ITS->new('xml', doc => $param_test);
     my $rules = $ITS->get_rules();
 
     is($#$rules, 2, 'three rules in file');
@@ -76,7 +76,7 @@ subtest 'parameters resolved' => sub {
 
 subtest 'params contained to one its:rules element' => sub {
     plan tests => 5;
-    my $ITS = ITS->new('xml', doc => \<<'XML');
+    my $ITS = XML::ITS->new('xml', doc => \<<'XML');
     <myDoc>
      <head>
         <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
@@ -111,7 +111,7 @@ XML
 
 subtest 'rules and document from separate strings' => sub {
     plan tests => 3;
-    my $ITS = ITS->new('xml', doc => \<<'XML', rules => \<<'RULES');
+    my $ITS = XML::ITS->new('xml', doc => \<<'XML', rules => \<<'RULES');
 <myDoc>
  <body>
   <par id="100" title="Text">The

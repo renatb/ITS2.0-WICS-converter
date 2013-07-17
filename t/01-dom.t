@@ -1,7 +1,7 @@
 # Test DOM implementation
 use strict;
 use warnings;
-use ITS::DOM qw(new_element);
+use XML::ITS::DOM qw(new_element);
 use Test::More 0.88;
 plan tests => 61;
 use Test::Exception;
@@ -13,7 +13,7 @@ my $corpus_dir = path($Bin, 'corpus');
 my $dom_path = path($corpus_dir, 'dom_test.xml');
 test_errors($dom_path);
 
-my $dom = ITS::DOM->new( 'xml' => $dom_path );
+my $dom = XML::ITS::DOM->new( 'xml' => $dom_path );
 
 test_dom_props($dom, $dom_path);
 test_nodes($dom);
@@ -28,26 +28,26 @@ sub test_errors {
 
     note 'testing exceptions';
     throws_ok {
-        ITS::DOM->new(
+        XML::ITS::DOM->new(
             'xml' => path($corpus_dir, 'nonexistent.xml')
         )
     } qr/error parsing file.*No such file or directory/s,
         'dies for nonexistent file';
     throws_ok {
-        ITS::DOM->new(
+        XML::ITS::DOM->new(
             'xml' => \'<xml>stuff</xlm>'
         )
     } qr/error parsing string:.*mismatch/s,
         'dies for bad XML';
 
     lives_ok{
-        ITS::DOM->new(
+        XML::ITS::DOM->new(
             'xml' => \'<xml><first foo="bar"/></xml>'
         )
     } 'valid XML parses without error';
 
     lives_ok{
-        $dom = ITS::DOM->new(
+        $dom = XML::ITS::DOM->new(
             'xml' => $dom_path,
             'rules' => $dom_path
         )

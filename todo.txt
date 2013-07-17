@@ -1,7 +1,7 @@
-XML to HTML converter
+ITS
 
 TODO:
-- then write TODOs for HTML stuff
+    - try dzil test --release and fix all problems
 
 Engineering Tasks:
 
@@ -9,10 +9,8 @@ To Do on current task:
 
 Later To Do:
     - proper error checking for XPath execution
-    - enforce value of idValueRule XPath being a string
-    - enforce pointers being nodes
+    - ?enforce value of idValueRule XPath being a string
+    - ?enforce pointers being nodes
     - check test coverage and fill it in!
     - rename get_matches and iterate_rules to reflect what is being matched (single rule or all rules)
 
-Testing:
-    Besides testing each piece of functionality, we need a comprehensive end-to-end XML2HTML test suite for Renat and Serge

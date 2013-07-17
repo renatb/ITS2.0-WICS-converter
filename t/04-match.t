@@ -1,7 +1,7 @@
 # check that rule matches are found and iterated properly
 use strict;
 use warnings;
-use ITS;
+use XML::ITS;
 use Test::More 0.88;
 plan tests => 10;
 use Test::Warn;
@@ -34,7 +34,7 @@ sub test_basic {
     my ($doc_text, $rules_text) = @_;
     subtest 'basic rule with no pointers' => sub {
         plan tests => 3;
-        my $ITS = ITS->new(
+        my $ITS = XML::ITS->new(
             'xml',
             doc => $doc_text,
             rules => $rules_text,
@@ -60,7 +60,7 @@ sub test_param {
     my ($doc_text, $rules_text) = @_;
     subtest 'rule with parameter' => sub {
         plan tests => 3;
-        my $ITS = ITS->new(
+        my $ITS = XML::ITS->new(
             'xml',
             doc => $doc_text,
             rules => $rules_text,
@@ -86,7 +86,7 @@ sub test_pointer {
     my ($doc_text, $rules_text) = @_;
     subtest 'rule with pointer' => sub {
         plan tests => 7;
-        my $ITS = ITS->new(
+        my $ITS = XML::ITS->new(
             'xml',
             doc => $doc_text,
             rules => $rules_text,
@@ -128,7 +128,7 @@ sub test_pointer_params {
     my ($doc_text, $rules_text) = @_;
     subtest 'pointer with parameter' => sub {
         plan tests => 7;
-        my $ITS = ITS->new(
+        my $ITS = XML::ITS->new(
             'xml',
             doc => $doc_text,
             rules => $rules_text,
@@ -171,7 +171,7 @@ sub test_pointer_position_size {
     my ($doc_text, $rules_text) = @_;
     subtest 'pointer with position() and last()' => sub {
         plan tests => 16;
-        my $ITS = ITS->new(
+        my $ITS = XML::ITS->new(
             'xml',
             doc => $doc_text,
             rules => $rules_text,
@@ -209,7 +209,7 @@ sub test_pointer_position_size {
 sub test_namespaces {
     my ($doc_text, $rules_text) = @_;
 
-    my $ITS = ITS->new(
+    my $ITS = XML::ITS->new(
         'xml',
         doc => $doc_text,
         rules => $rules_text,
@@ -261,7 +261,7 @@ sub test_namespaces {
 
 sub test_warnings {
     my ($doc_text, $rules_text) = @_;
-    my $ITS = ITS->new(
+    my $ITS = XML::ITS->new(
         'xml',
         doc => $doc_text,
         rules => $rules_text,
@@ -319,7 +319,7 @@ sub test_iterator {
 
     subtest 'Iterate all rule matches in order' => sub {
         plan tests => 2;
-        my $ITS = ITS->new(
+        my $ITS = XML::ITS->new(
             'xml',
             doc => $doc_path,
         );

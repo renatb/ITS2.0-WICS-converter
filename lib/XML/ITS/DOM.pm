@@ -1,4 +1,4 @@
-package ITS::DOM;
+package XML::ITS::DOM;
 use strict;
 use warnings;
 # VERSION
@@ -15,9 +15,9 @@ use Exporter::Easy (
 
 =head1 SYNOPSIS
 
-    use ITS::DOM;
+    use XML::ITS::DOM;
     use feature 'say';
-    my $dom = ITS::DOM->new(xml => 'path/to/file');
+    my $dom = XML::ITS::DOM->new(xml => 'path/to/file');
     my @nodes = $dom->get_nodes('//@foo');
 
 =head1 DESCRIPTION
@@ -62,7 +62,7 @@ sub new {
 
 sub get_root {
     my ($self) = @_;
-    return ITS::DOM::Node->new($self->{dom}->documentElement);
+    return XML::ITS::DOM::Node->new($self->{dom}->documentElement);
 }
 
 =head2 C<get_base_uri>
@@ -114,11 +114,11 @@ sub _get_xml_dom {
 }
 
 #for exporting purposes
-*new_element = *ITS::DOM::Node::new_element;
+*new_element = *XML::ITS::DOM::Node::new_element;
 
 1;
 
-package ITS::DOM::Node;
+package XML::ITS::DOM::Node;
 use strict;
 use warnings;
 # VERSION
@@ -128,9 +128,9 @@ use feature 'switch';
 
 =head1 SYNOPSIS
 
-    use ITS::DOM;
+    use XML::ITS::DOM;
     use feature 'say';
-    my $dom = ITS::DOM->new(xml => 'path/to/file');
+    my $dom = XML::ITS::DOM->new(xml => 'path/to/file');
     my @nodes = $dom->get_nodes('//@foo');
     for(@nodes){
         say $node->text;
@@ -254,10 +254,10 @@ sub get_xpath {
     my @nodes;
     if(ref $object eq 'XML::LibXML::NodeList'){
         @nodes =
-            map {ITS::DOM::Node->new($_)}
+            map {XML::ITS::DOM::Node->new($_)}
             $object->get_nodelist();
     }else{
-        push @nodes, ITS::DOM::Value->new($object);
+        push @nodes, XML::ITS::DOM::Value->new($object);
     }
     return @nodes;
 }
@@ -393,7 +393,7 @@ child nodes of this element.
 sub children {
     my ($self) = @_;
     my @children =
-        map {ITS::DOM::Node->new($_)}
+        map {XML::ITS::DOM::Node->new($_)}
         $self->{node}->getChildrenByTagName('*');
     return \@children;
 }
@@ -411,14 +411,14 @@ sub paste {
 
 =head1 EXPORTS
 
-The following functions may be exported from ITS::DOM.
+The following functions may be exported from XML::ITS::DOM.
 
 =head2 C<new_element>
 
 Arguments: a tag name and optionally a hash of attribute name-value pairs
 and text to store in the element
 
-Creates and returns a new ITS::DOM::Node object representing an element with
+Creates and returns a new XML::ITS::DOM::Node object representing an element with
 the given name and attributes.
 
 =cut
@@ -439,7 +439,7 @@ sub new_element {
 
 1;
 
-package ITS::DOM::Value;
+package XML::ITS::DOM::Value;
 
 use strict;
 use warnings;
@@ -448,9 +448,9 @@ use warnings;
 
 =head1 SYNOPSIS
 
-    use ITS::DOM;
+    use XML::ITS::DOM;
     use feature 'say';
-    my $dom = ITS::DOM->new(xml => 'path/to/file');
+    my $dom = XML::ITS::DOM->new(xml => 'path/to/file');
     my @nodes = $dom->get_nodes('"some string"');
     for(@nodes){
         say $node->value;

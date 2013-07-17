@@ -2,12 +2,12 @@
 
 use strict;
 use warnings;
-use ITS;
+use XML::ITS;
 use Test::More 0.88;
 plan tests => 5;
 use Test::Warn;
 use Test::NoWarnings;
-use ITS::DOM qw(new_element);
+use XML::ITS::DOM qw(new_element);
 
 subtest 'basic rule' => sub {
     plan tests => 5;

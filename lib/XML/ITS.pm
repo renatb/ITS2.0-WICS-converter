@@ -1,14 +1,14 @@
-package ITS;
+package XML::ITS;
 use strict;
 use warnings;
 # ABSTRACT: Work with ITS-decorated XML
 # VERSION
+use XML::ITS::DOM;
+use XML::ITS::Rule;
 use Carp;
 our @CARP_NOT = qw(ITS);
-use ITS::DOM;
 use Path::Tiny;
 use Try::Tiny;
-use ITS::Rule;
 use feature 'say';
 use Data::Dumper; #debug
 
@@ -62,7 +62,7 @@ sub new {
     if($file_type !~ /^xml|html$/ or !$args{doc}){
         croak 'usage: ITS->new("(xml|html)", doc => "file", [rules => "file"]';
     }
-    my $doc = ITS::DOM->new($file_type => $args{doc});
+    my $doc = XML::ITS::DOM->new($file_type => $args{doc});
 
     my $self = bless {
         doc => $doc,
@@ -70,7 +70,7 @@ sub new {
 
     my $rules_doc = $doc;
     if($args{rules}){
-        $rules_doc = ITS::DOM->new($file_type => $args{rules});
+        $rules_doc = XML::ITS::DOM->new($file_type => $args{rules});
     }
 
     $self->{rules} = _resolve_doc_rules($rules_doc);
@@ -80,7 +80,7 @@ sub new {
 =head2 C<get_rules>
 
 Returns an arrayref containing the ITS rule elements
-(in the form of ITS::Rule objects) which are to be
+(in the form of XML::ITS::Rule objects) which are to be
 applied to the document, in the order in which they will
 be applied.
 
@@ -177,7 +177,7 @@ sub get_matches {
     return \@matches;
 }
 
-# return an array ref of ITS::DOM::Nodes matching selector of given rule
+# return an array ref of XML::ITS::DOM::Nodes matching selector of given rule
 # From the spec, the selector is an "absolute selector":
 # Context for evaluation of the XPath expression is as follows:
 # Context node is set to Root Node.
@@ -210,7 +210,7 @@ sub _selector_matches {
     return \@nodes;
 }
 
-# return ITS::DOM::Node or ITS::DOM::Value object, or, if nothing matched, undef.
+# return XML::ITS::DOM::Node or XML::ITS::DOM::Value object, or, if nothing matched, undef.
 # Context for evaluation of the XPath expression is same as for absolute selector
 # with the following changes:
 # Nodes selected by the expression in the selector attribute form the current node list.
@@ -322,7 +322,7 @@ sub _get_external_rules {
     my $doc;
     try{
         #TODO: will it always be 'xml'?
-        $doc = ITS::DOM->new('xml' => $path );
+        $doc = XML::ITS::DOM->new('xml' => $path );
     } catch {
         carp "Skipping rules in file '$path': $_";
         return [];
