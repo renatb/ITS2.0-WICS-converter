@@ -73,7 +73,7 @@ sub new {
         $rules_doc = ITS::DOM->new($file_type => $args{rules});
     }
 
-    $self->{rules} = _resolve_rules($rules_doc);
+    $self->{rules} = _resolve_doc_rules($rules_doc);
     return $self;
 }
 
@@ -232,9 +232,13 @@ sub get_twig {
 }
 
 # find and save all its:*Rule's elements to be applied in
-# $twig, in order of application, including external ones
-sub _resolve_rules {
+# the given document, in order of application, including external ones
+# %params are all of the parameters already defined for this document
+sub _resolve_doc_rules {
+    # note that we don't pass around hash pointers for the params so that
+    # all parameters are correctly scoped for each document or its:rules element.
     my ($doc, %params) = @_;
+
     # first, grab internal its:rules elements
     my @rule_containers;
     my @internal_rules_containers = _get_its_rules_els($doc);
@@ -242,30 +246,44 @@ sub _resolve_rules {
         return [];
     }
 
-    # then find external its:rules elements and store individual rules in
-    # application order (external first)
+    # then store individual rules in application order (external first)
     my @rules;
     for my $container(@internal_rules_containers){
-        my $children = $container->children();
-
-        while($children->[0]->local_name eq 'param' and
-            $children->[0]->namespaceURI eq $ITS_NS){
-            my $param = shift @$children;
-            $params{$param->att('name')} = $param->text;
-        }
-        if($container->att('href', $XLINK_NS)){
-            #path to file is relative to current file
-            my $path = path( $container->att('href', $XLINK_NS) )->
-                absolute($doc->get_base_uri);
-            push @rules, @{ _get_external_rules($path, \%params) };
-        }
-        # TODO: remove added rules
-        push @rules, map {ITS::Rule->new($_, %params)} @$children;
+        my $container_rules =
+        _resolve_container_rules(
+            $doc,
+            $container,
+            %params
+        );
+        push @rules, @{$container_rules};
     }
 
     if(@rules == 0){
         carp 'no rules found in ' . $doc->get_source;
     }
+    return \@rules;
+}
+
+# input: document, its:rules element, and list of param names/values.
+# return an array ref containing application-order rules retreived from
+# given container (and referenced external rules).
+sub _resolve_container_rules {
+    my ($doc, $container, %params) = @_;
+
+    my $children = $container->children();
+    while($children->[0]->local_name eq 'param' and
+        $children->[0]->namespaceURI eq $ITS_NS){
+        my $param = shift @$children;
+        $params{$param->att('name')} = $param->text;
+    }
+    my @rules;
+    if($container->att('href', $XLINK_NS)){
+        #path to file is relative to current file
+        my $path = path( $container->att('href', $XLINK_NS) )->
+            absolute($doc->get_base_uri);
+        push @rules, @{ _get_external_rules($path, \%params) };
+    }
+    push @rules, map {ITS::Rule->new($_, %params)} @$children;
     return \@rules;
 }
 
@@ -290,7 +308,7 @@ sub _get_external_rules {
         carp "Skipping rules in file '$path': $_";
         return [];
     };
-    return _resolve_rules($doc, %$params);
+    return _resolve_doc_rules($doc, %$params);
 }
 
 1;
