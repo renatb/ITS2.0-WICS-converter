@@ -7,7 +7,6 @@ use Test::More 0.88;
 plan tests => 5;
 use Test::Warn;
 use Test::NoWarnings;
-use XML::Twig::XPath;
 use ITS::DOM qw(new_element);
 
 subtest 'basic rule' => sub {
