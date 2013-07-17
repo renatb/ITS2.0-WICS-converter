@@ -29,9 +29,8 @@ if(!caller){
     my $ITS = ITS->new(file => 'myfile.xml', rules);
     my $rules = $ITS->get_rules;
     $ITS->iterate_matches(sub{
-        my ($rule, $selectorMatch, $pointerMatches) = @_;
-        say "$rule matched " . $selectorMatch->id . " and pointers " .
-            join ', ', map {$_->id} @$pointerMatches;
+        my ($rule, $matches) = @_;
+        # do something with matches here
     });
 
 =head1 DESCRIPTION
@@ -77,7 +76,6 @@ sub new {
     $self->{rules} = _resolve_rules($rules_doc);
     return $self;
 }
-
 
 =head2 C<get_rules>
 
@@ -154,8 +152,12 @@ sub get_matches {
 # Context node is set to Root Node.
 # Both context position and context size are 1.
 # All variables defined by param elements are bind.
-# All functions defined in the XPath Core Function Library are available. It is an error for an expression to include a call to any other function.
-# The set of namespace declarations are those in scope on the element which has the attribute in which the expression occurs. This includes the implicit declaration of the prefix xml required by the XML Namespaces Recommendation; the default namespace (as declared by xmlns) is not part of this set.
+# All functions defined in the XPath Core Function Library are available. It
+# is an error for an expression to include a call to any other function.
+# The set of namespace declarations are those in scope on the element which
+# has the attribute in which the expression occurs. This includes the implicit
+# declaration of the prefix xml required by the XML Namespaces Recommendation;
+# the default namespace (as declared by xmlns) is not part of this set.
 sub _selector_matches {
     my ($self, $rule) = @_;
 
@@ -177,10 +179,13 @@ sub _selector_matches {
     return \@nodes;
 }
 
-#Context for evaluation of the XPath expression is same as for absolute selector with the following changes:
+# return ITS::DOM::Node or ITS::DOM::Value object, or, if nothing matched, undef.
+# Context for evaluation of the XPath expression is same as for absolute selector
+# with the following changes:
 # Nodes selected by the expression in the selector attribute form the current node list.
 # Context node comes from the current node list.
-# The context position comes from the position of the current node in the current node list; the first position is 1.
+# The context position comes from the position of the current node in the current
+# node list; the first position is 1.
 # The context size comes from the size of the current node list.
 sub _pointer_match {
     my (
@@ -192,8 +197,6 @@ sub _pointer_match {
         $context_pos
     ) = @_;
 
-    # TODO: not sure about parameters
-    # my $params = $rule->params;
     my @nodes = $context_node->get_xpath(
         $xpath,
         size => $context_size,
@@ -228,12 +231,8 @@ sub get_twig {
     return $self->{twig};
 }
 
-
 # find and save all its:*Rule's elements to be applied in
-# $twig, in order of application
-# $base is the base URI to resolve relative ones
-# $name is a name for the input to use in errors
-# (like filename or 'string')
+# $twig, in order of application, including external ones
 sub _resolve_rules {
     my ($doc, %params) = @_;
     # first, grab internal its:rules elements
@@ -243,22 +242,24 @@ sub _resolve_rules {
         return [];
     }
 
-    # then store their rules, placing external file rules before internal ones
+    # then find external its:rules elements and store individual rules in
+    # application order (external first)
     my @rules;
     for my $container(@internal_rules_containers){
         my $children = $container->children();
+
         while($children->[0]->local_name eq 'param' and
             $children->[0]->namespaceURI eq $ITS_NS){
             my $param = shift @$children;
             $params{$param->att('name')} = $param->text;
         }
-        # warn $children->[0]->name;
         if($container->att('href', $XLINK_NS)){
             #path to file is relative to current file
-            my $path = path($container->att('href', $XLINK_NS))->
+            my $path = path( $container->att('href', $XLINK_NS) )->
                 absolute($doc->get_base_uri);
             push @rules, @{ _get_external_rules($path, \%params) };
         }
+        # TODO: remove added rules
         push @rules, map {ITS::Rule->new($_, %params)} @$children;
     }
 
@@ -268,6 +269,7 @@ sub _resolve_rules {
     return \@rules;
 }
 
+#returns the set of its:rules nodes from the input document
 sub _get_its_rules_els {
     my ($doc) = @_;
     return $doc->get_root->get_xpath(
@@ -277,7 +279,7 @@ sub _get_its_rules_els {
 }
 
 # return list of its:*Rule's, in application order, given the name of a file
-# containing an its:rules element
+# containing an its:rules element, and parameters so far
 sub _get_external_rules {
     my ($path, $params) = @_;
     my $doc;
