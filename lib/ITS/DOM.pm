@@ -8,7 +8,6 @@ our @CARP_NOT = qw(ITS::DOM ITS);
 use Try::Tiny;
 use Path::Tiny;
 #the XML engine currently used
-# use XML::Twig::XPath;
 use XML::LibXML;
 use Exporter::Easy (
     OK => [qw(new_element)]
@@ -112,24 +111,6 @@ sub _get_xml_dom {
         };
     }
     return $dom;
-}
-
-#Returns an XML::Twig object with proper settings for parsing ITS
-sub _create_twig {
-    my $twig = XML::Twig::XPath->new(
-        map_xmlns               => {
-            'http://www.w3.org/2005/11/its' => 'its',
-            'http://www.w3.org/1999/xlink' => 'xlink'
-        },
-        # empty_tags              => 'html',
-        pretty_print            => 'indented',
-        output_encoding         => 'UTF-8',
-        keep_spaces             => 0,
-        no_prolog               => 1,
-        #can be important when things get complicated
-        do_not_chain_handlers   => 1,
-    );
-    return $twig;
 }
 
 #for exporting purposes

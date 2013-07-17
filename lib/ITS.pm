@@ -250,18 +250,6 @@ sub _pointer_match {
     return undef;
 }
 
-=head2 C<get_twig>
-
-Returns the XML::Twig::XPath object used internally to represent and process
-the ITS document.
-
-=cut
-
-sub get_twig {
-    my ($self) = @_;
-    return $self->{twig};
-}
-
 # find and save all its:*Rule's elements to be applied in
 # the given document, in order of application, including external ones
 # %params are all of the parameters already defined for this document
