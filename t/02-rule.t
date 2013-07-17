@@ -1,4 +1,4 @@
-# Test Rule methods
+# Test Rule class methods (not creation from document)
 
 use strict;
 use warnings;
@@ -77,6 +77,7 @@ subtest 'pointer attributes' => sub {
     );
 };
 
+#test that a warning is given for a missing selector
 my $el = new_element(
     'its:locNoteRule' => {
         'xmlns:its' => 'http://www.w3.org/2005/11/its',
@@ -84,7 +85,6 @@ my $el = new_element(
         'selector' => '//*',
     }
 );
-
 $el = new_element(
     'its:storageSizeRule' => {
         'xmlns:its' => 'http://www.w3.org/2005/11/its',
