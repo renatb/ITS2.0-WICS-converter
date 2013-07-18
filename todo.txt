@@ -1,6 +1,7 @@
 WICS XML to HTML converter
 
 TODO:
+    - transform local ITS markup
     - create HTML match indexer
         - create a 'future-node' class to save match spots
     - Test logging

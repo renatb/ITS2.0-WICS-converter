@@ -10,7 +10,7 @@ use XML::ITS;
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
 # VERSION
 
-__PACKAGE__->new()->convert(doc => $ARGV[0]) unless caller;
+__PACKAGE__->new()->convert($ARGV[0]) unless caller;
 
 =head1 METHODS
 
@@ -49,8 +49,8 @@ Return value is a string pointer containing the output HTML string.
 =cut
 
 sub convert {
-	my ($self, @args) = @_;
-	my $ITS = XML::ITS->new('xml', @args);
+	my ($self, $doc) = @_;
+	my $ITS = XML::ITS->new('xml', doc => $doc);
 
 	#[rule, {selector => futureNode, *pointer => futureNode...}]
 	my @matches;
@@ -58,6 +58,7 @@ sub convert {
 	# make $ITS doc into HTML
 	# paste futureNodes and new matching rules
 	# stringify and return
+	return \'<foo/>';
 }
 
 # create an indexing sub which pushes matches onto input array pointer
