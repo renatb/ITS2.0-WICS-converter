@@ -76,6 +76,17 @@ sub new {
     return $self;
 }
 
+=head2 C<get_doc>
+
+Returns the XML::ITS::DOM object created from the input
+document.
+
+=cut
+sub get_doc {
+    my ($self) = @_;
+    return $self->{doc};
+}
+
 =head2 C<get_rules>
 
 Returns an arrayref containing the ITS rule elements

@@ -35,6 +35,11 @@ containing actual ITS data. The 'document' argument should point to the
 document to which ITS data is being applied, and the 'rules' argument
 should point to the document containing the ITS rules to apply.
 
+## `get_doc`
+
+Returns the XML::ITS::DOM object created from the input
+document.
+
 ## `get_rules`
 
 Returns an arrayref containing the ITS rule elements

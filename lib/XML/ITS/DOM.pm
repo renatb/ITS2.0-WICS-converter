@@ -65,7 +65,22 @@ Returns the root document element.
 =cut
 sub get_root {
     my ($self) = @_;
-    return XML::ITS::DOM::Node->new($self->{dom}->documentElement);
+    my $root = $self->{dom}->documentElement;
+    if($root){
+        return XML::ITS::DOM::Node->new($root);
+    }
+    return undef;
+}
+
+=head2 C<string>
+
+Returns a stringified version of the entire document
+
+=cut
+sub string {
+    my ($self) = @_;
+    # 1 is for adding whitespace to prettify
+    return $self->{dom}->toString(1);
 }
 
 =head2 C<get_base_uri>
