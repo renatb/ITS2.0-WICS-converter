@@ -4,7 +4,7 @@ use warnings;
 use XML::ITS::DOM;
 use XML::ITS::DOM::Node qw(new_element);
 use Test::More 0.88;
-plan tests => 61;
+plan tests => 62;
 use Test::Exception;
 use Test::NoWarnings;
 use Path::Tiny;
@@ -46,6 +46,11 @@ sub test_errors {
             'xml' => \'<xml><first foo="bar"/></xml>'
         )
     } 'valid XML parses without error';
+
+    lives_ok{
+        XML::ITS::DOM->new(
+            'html' => \'<html/>')
+    } 'valid HTML parses without error';
 
     lives_ok{
         $dom = XML::ITS::DOM->new(

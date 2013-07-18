@@ -6,7 +6,7 @@ use warnings;
 use XML::ITS::DOM::Node;
 use XML::ITS::DOM::Value;
 use Carp;
-our @CARP_NOT = qw(ITS::DOM ITS);
+our @CARP_NOT = qw(XML::ITS::DOM XML::ITS);
 use Try::Tiny;
 use Path::Tiny;
 #the XML engine currently used
@@ -20,7 +20,7 @@ use XML::LibXML;
 
 =head1 DESCRIPTION
 
-This module is meant for internal use by the ITS::* modules only.
+This module is meant for internal use by the XML::ITS::* modules only.
 It abstracts away XML/HTML processing to quarantine 3rd party code.
 
 =head1 METHODS
@@ -36,16 +36,10 @@ Parses the input document, creating a queryable DOM structure.
 =cut
 
 sub new {
-    my ($class, %args) = @_;
-    my $dom;
-    my $source;
-    if($args{xml}){
-        $dom = _get_xml_dom($args{xml});
-        $source = $args{xml};
-    }elsif($args{html}){
-        # $source = $args{html};
-        croak 'HTML parsing not supported yet';
-    }
+    my ($class, @args) = @_;
+
+    my $dom = _get_dom(@args);
+    my $source = $args[1];
 
     my $base;
     if(ref $source eq 'SCALAR'){
@@ -107,15 +101,22 @@ sub get_source {
     return $self->{source};
 }
 
-sub _get_xml_dom {
-    my ($xml) = @_;
+#type is 'xml' or 'html'
+#data is filename or pointer to string content
+sub _get_dom {
+    my ($type, $data) = @_;
 
     my $parser = XML::LibXML->new();
     my $dom;
-    if(ref $xml eq 'SCALAR'){
-        #string refs are xml content;
+    if($type !~ /^xml|html$/){
+        croak 'must specify either "xml" or "html"';
+    }
+    if(ref $data eq 'SCALAR'){
+        #string refs are content;
         try{
-            $dom = $parser->load_xml( string => $xml );
+            $dom = $type eq 'xml' ?
+                $parser->load_xml( string => $data ) :
+                $parser->load_html( string => $data );
         } catch {
             croak "error parsing string: $_";
         };
@@ -123,9 +124,11 @@ sub _get_xml_dom {
     else{
         #strings are file names
         try{
-            $dom = $parser->load_xml( location => $xml );
+            $dom = $type eq 'xml' ?
+                $parser->load_xml( location => $data ) :
+                $parser->load_html( location => $data );
         } catch {
-            croak "error parsing file '$xml': $_";
+            croak "error parsing file '$data': $_";
         };
     }
     return $dom;
