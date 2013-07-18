@@ -1,12 +1,17 @@
 ITS
 
-TODO:
+Current task:
+    - any DOM methods still needed for HTML conversion
 
 Engineering Tasks:
 
 To Do on current task:
+    - stringify (DOM)
+    - is_inline (node)
+    - ITS_atts (node- list atts which are ITS)
 
 Later To Do:
+    - reorganize tests to match split DOM/Node/Value files
     - proper error checking for XPath execution
     - ?enforce value of idValueRule XPath being a string
     - ?enforce pointers being nodes

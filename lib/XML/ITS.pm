@@ -25,7 +25,6 @@ if(!caller){
 =head1 SYNOPSIS
 
     use XML::ITS;
-    use feature 'say';
     my $ITS = XML::ITS->new(file => 'myITSfile.xml');
     my $rules = $ITS->get_rules;
     $ITS->iterate_matches(sub{

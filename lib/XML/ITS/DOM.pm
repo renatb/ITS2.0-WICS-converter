@@ -15,7 +15,6 @@ use XML::LibXML;
 =head1 SYNOPSIS
 
     use XML::ITS::DOM;
-    use feature 'say';
     my $dom = XML::ITS::DOM->new(xml => 'path/to/file');
     my @nodes = $dom->get_nodes('//@foo');
 
