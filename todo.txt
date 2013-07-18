@@ -3,6 +3,7 @@ WICS XML to HTML converter
 TODO:
     - create HTML match indexer
         - create a 'future-node' class to save match spots
+    - Test logging
 
 Engineering Tasks:
     - testable logging via Log::Any;
