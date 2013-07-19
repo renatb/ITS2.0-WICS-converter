@@ -114,34 +114,34 @@ sub _htmlize {
 		# 	continue;
 		# }
 		my $title = $element->name;
-		# my @atts = $element->get_xpath('@*');
-		# if(@atts){
-		# 	my @save_atts;
-		# 	for my $att (@atts){
-		# 		push @save_atts, $att->name;
-		# 		if($att->name eq 'xml:id'){
-		# 			$element->set_att('id', $att->value);
-		# 			$att->remove;
-		# 		}elsif($att->name eq 'xml:lang'){
-		# 			$att->set_name('lang');
-		# 		}elsif($att->namespaceURI eq $ITS_NS){
-		# 			if($att->local_name eq 'translate'){
-		# 				$att->set_name('translate');
-		# 			}elsif($att->local_name eq 'dir'){
-		# 				$att->set_name('dir');
-		# 				# TODO: may need finagling of values
-		# 			}else{
-		# 				my $name = $att->local_name;
-		# 				$name =~ s/([A-Z])/-$1/g;
-		# 				$element->set_att($name, $att->value);
-		# 				$att->remove;
-		# 			}
-		# 		}else{
-		# 			$att->remove;
-		# 		}
-		# 	}
-		# 	$title .= '[' . (join ',', @save_atts) . ']';
-		# }
+		my @atts = $element->get_xpath('@*');
+		if(@atts){
+			my @save_atts;
+			for my $att (@atts){
+				push @save_atts, $att->name . q{='} . $att->value . q{'};
+				if($att->name eq 'xml:id'){
+					$element->set_att('id', $att->value);
+					$att->remove;
+				}elsif($att->name eq 'xml:lang'){
+					$att->set_name('lang');
+				}elsif($att->namespaceURI eq $ITS_NS){
+					if($att->local_name eq 'translate'){
+						$att->set_name('translate');
+					}elsif($att->local_name eq 'dir'){
+						$att->set_name('dir');
+						# TODO: may need finagling of values
+					}else{
+						my $name = $att->local_name;
+						$name =~ s/([A-Z])/-$1/g;
+						$element->set_att($name, $att->value);
+						$att->remove;
+					}
+				}else{
+					$att->remove;
+				}
+			}
+			$title .= '[' . (join ',', @save_atts) . ']';
+		}
 		$element->set_att('title', $title);
 		$element->set_name($element->is_inline ? 'span' : 'div');
 	}
