@@ -34,11 +34,14 @@ containing the actual data to be parsed.
 Parses the input document, creating a queryable DOM structure.
 
 =cut
-
 sub new {
     my ($class, @args) = @_;
 
     my $dom = _get_dom(@args);
+
+    # either xml or html
+    my $type = $args[0];
+    # source of data
     my $source = $args[1];
 
     my $base;
@@ -49,7 +52,12 @@ sub new {
     }
     my $identifier = (ref $source eq 'SCALAR') ? 'STRING' : $source;
 
-    return bless {dom => $dom, base => $base, source => $identifier}, $class;
+    return bless {
+        dom => $dom,
+        base => $base,
+        source => $identifier,
+        type => $type
+    }, $class;
 }
 
 =head2 C<get_root>
@@ -73,8 +81,12 @@ Returns a stringified version of the entire document
 =cut
 sub string {
     my ($self) = @_;
-    # 1 is for adding whitespace to prettify
-    return $self->{dom}->toString(1);
+    if($self->{type} eq 'xml'){
+        # 1 is for adding whitespace to prettify
+        return $self->{dom}->toString(1);
+    }else{
+        return $self->{dom}->toStringHTML;
+    }
 }
 
 =head2 C<get_base_uri>

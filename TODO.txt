@@ -6,9 +6,10 @@ Current task:
 Engineering Tasks:
 
 To Do on current task:
-    - stringify (DOM)
-    - is_inline (node)
-    - ITS_atts (node- list atts which are ITS)
+    - test is_inline (node)
+    - test ITS_atts (node- list atts which are ITS)
+    - test remove node
+    - test set node name
 
 Later To Do:
     - reorganize tests to match split DOM/Node/Value files

@@ -183,6 +183,27 @@ sub name {
     return $self->{node}->nodeName;
 }
 
+=head2 C<set_name>
+
+Sets the node's name to the given string. Is namespace aware.
+
+=cut
+sub set_name {
+    my ($self, $name) = @_;
+    $self->{node}->setNodeName($name);
+}
+
+=head2 C<remove>
+
+Unbinds this node from it's siblings and parents (but not
+the document, though it invisible).
+
+=cut
+sub remove {
+    my ($self) = @_;
+    $self->{node}->unbindNode;
+}
+
 =head2 C<namespaceURI>
 
 Returns the namespace URI of this node.
@@ -223,6 +244,25 @@ sub text {
     return $self->{node}->textContent;
 }
 
+=head2 C<is_inline>
+
+Returns true if this element appears to be inline. An element is considered inline
+if it has a text sibling with more than just whitespace.
+
+=cut
+sub is_inline {
+    my ($self)  = @_;
+    my $el = $self->{node};
+
+    my $prev = $el->previousNonBlankSibling;
+    my $next = $el->nextNonBlankSibling;
+    if( ($prev && $prev->nodeName() eq '#text') ||
+        ($next && $next->nodeName() eq '#text') ){
+        return 1;
+    }
+    return 0;
+}
+
 =head2 C<att>
 
 If this node is an element, returns the value of the given attribute.
@@ -237,6 +277,23 @@ sub att {
         return $self->{node}->getAttributeNS($ns, $name);
     }
     return $self->{node}->getAttribute($name);
+}
+
+=head2 C<set_att>
+
+Arguments: name, value, and optional namespace URI for the desired
+attribute.
+
+Sets the attribute with the given name to the given value/namespace
+for this element.
+
+=cut
+sub set_att {
+    my ($self, $name, $value, $ns) = @_;
+    if($ns){
+        return $self->{node}->setAttributeNS($ns, $name, $value);
+    }
+    return $self->{node}->setAttribute($name, $value);
 }
 
 =head2 C<atts>
