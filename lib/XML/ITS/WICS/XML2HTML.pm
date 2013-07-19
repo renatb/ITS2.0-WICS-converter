@@ -6,6 +6,10 @@ our @CARP_NOT = qw(XML::ITS::WICS::XML2HTML XML::ITS::WICS);
 use Log::Any qw($log);
 use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future);
 use XML::ITS;
+use XML::ITS::DOM;
+use XML::ITS::DOM::Node qw(new_element);
+
+my $ITS_NS = 'http://www.w3.org/2005/11/its';
 
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
 # VERSION
@@ -33,7 +37,7 @@ sub new {
 		title => 'WICS',
 		%args
 	);
-	return bless {}, $class;
+	return bless \%args, $class;
 }
 
 =head2 C<convert>
@@ -56,9 +60,10 @@ sub convert {
 	my @matches;
 	$ITS->iterate_matches(_create_indexer(\@matches));
 	# make $ITS doc into HTML
+	my $html_doc = $self->_htmlize($ITS->get_doc);
 	# paste futureNodes and new matching rules
-	# stringify and return
-	return \'<foo/>';
+	# return string pointer
+	return \($html_doc->string);
 }
 
 # create an indexing sub which pushes matches onto input array pointer
@@ -93,21 +98,84 @@ sub _log_match {
 	return;
 }
 
-#add doctype
-#put contents into body, and add html, head, and meta elements
-sub _make_html {
+sub _htmlize {
 	my ($self, $doc) = @_;
 
-	# my $root = $twig->root;
-	# my $html = $root->wrap_in('body', 'html');
-	# $html->set_att('xmlns', 'http://www.w3.org/1999/xhtml');
-	# # https://github.com/mirod/xmltwig/issues/5
-	# $twig->set_root($html);
+	#save the original document root for querying
+	my $root = $doc->get_root;
+	#make the document into an HTML structure
+	my $head;
+	($doc, $head) = $self->_html_structure($doc);
+	for my $element ($root->get_xpath('descendant-or-self::*')){
+		# its: elements other than 'rules' are standoff markup
+		# TODO: should paste as last child, not first (rules will be out of order!)
+		# if($element->namespaceURI eq $ITS_NS){
+		# 	_get_script($element)->paste($head);
+		# 	continue;
+		# }
+		my $title = $element->name;
+		# my @atts = $element->get_xpath('@*');
+		# if(@atts){
+		# 	my @save_atts;
+		# 	for my $att (@atts){
+		# 		push @save_atts, $att->name;
+		# 		if($att->name eq 'xml:id'){
+		# 			$element->set_att('id', $att->value);
+		# 			$att->remove;
+		# 		}elsif($att->name eq 'xml:lang'){
+		# 			$att->set_name('lang');
+		# 		}elsif($att->namespaceURI eq $ITS_NS){
+		# 			if($att->local_name eq 'translate'){
+		# 				$att->set_name('translate');
+		# 			}elsif($att->local_name eq 'dir'){
+		# 				$att->set_name('dir');
+		# 				# TODO: may need finagling of values
+		# 			}else{
+		# 				my $name = $att->local_name;
+		# 				$name =~ s/([A-Z])/-$1/g;
+		# 				$element->set_att($name, $att->value);
+		# 				$att->remove;
+		# 			}
+		# 		}else{
+		# 			$att->remove;
+		# 		}
+		# 	}
+		# 	$title .= '[' . (join ',', @save_atts) . ']';
+		# }
+		$element->set_att('title', $title);
+		$element->set_name($element->is_inline ? 'span' : 'div');
+	}
+	return $doc;
+}
 
-	# my $head = XML::Twig::Elt->new('head');
-	# XML::Twig::Elt->new( meta => { charset => 'utf-8' } )->paste('first_child' => $head);
-	# XML::Twig::Elt->new('title', $self->{title})->paste('first_child' => $head);
-	# $head->paste(first_child => $html);
+# create an ITS script element and paste the input element into it and return it
+sub _get_script {
+	my ($element) = @_;
+	my $script = XML::ITS::DOM->new('script', {type => 'application/its+xml'});
+	$element->paste($script);
+	return $script;
+}
+
+# put contents into body, and add html, head, and meta elements
+# return a new XML::ITS::DOM, and also the head element separately
+#
+sub _html_structure {
+	my ($self, $doc) = @_;
+
+	#TODO: this should be html, not xml
+	my $dom = XML::ITS::DOM->new('xml', \'<html/>');
+
+	my $html = $dom->get_root();
+	my $head = new_element('head');
+	my $meta = new_element('meta', { charset => 'utf-8' });
+	my $title = new_element('title', {}, $self->{title});
+	$title->paste($head);
+	$meta->paste($head);
+	$head->paste($html);
+	my $body = new_element('body');
+	$body->paste($html);
+	$doc->get_root->paste($body);
+	return ($dom, $head);
 }
 
 #add title attribute containing tag name

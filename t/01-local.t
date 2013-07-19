@@ -19,21 +19,24 @@ __DATA__
 --- expected
 <html>
   <head>
+    <meta charset="utf-8"/>
     <title>WICS</title>
   </head>
   <body>
     <div title="xml"/>
   </body>
 </html>
-=== paragraph elements
+=== correct div and span
 --- SKIP
 --- input
 <xml>
   <stuff/>
+  <foo><i>some stuff</i></foo>
 </xml>
 --- expected
 <div title="xml">
   <div title="stuff"/>
+  <div title="foo"><span title="i">some stuff</span></div>
 </div>
 === xml:id
 should be converted into id
