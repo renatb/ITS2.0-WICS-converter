@@ -4,7 +4,7 @@ use warnings;
 use XML::ITS::DOM;
 use XML::ITS::DOM::Node qw(new_element);
 use Test::More 0.88;
-plan tests => 63;
+plan tests => 66;
 use Test::Exception;
 use Test::NoWarnings;
 use Path::Tiny;
@@ -248,5 +248,29 @@ sub test_node_namespaces {
         'junk',
         'Correct att retrieved via name and ns'
     );
+
+    $dom = XML::ITS::DOM->new( 'xml' =>
+        \'<foo:xml foo:bar="qux" xmlns:foo="foo.io">
+            <foo:baz/>
+            stuff
+            # <?pi foo?>
+            <!--foo-->
+            </foo:xml>' );
+    my $root = $dom->get_root;
+    $root = $root->strip_ns;
+    is_deeply(
+        $root->atts,
+        {
+            bar => 'qux'
+        }, 'namespaces removed from attributes'
+    ) or note explain $root->atts;
+    @nodes = $root->get_xpath('foo:baz', namespaces => {foo => 'foo.io'});
+    is(scalar @nodes, 1, 'baz still prefixed');
+    is_deeply(
+        $nodes[0]->atts,
+        {
+            'xmlns:foo' => 'foo.io'
+        }, 'namespace declaration moved to child'
+    ) or note explain $nodes[0]->atts;
     return;
 }

@@ -340,6 +340,47 @@ sub get_ns_declarations {
     return \%namespaces;
 }
 
+=head2 C<strip_ns>
+
+Replaces an entire element with an identical node which is in the null
+namespace, and whose attributes are also in the null namespace.
+Also removes all namespace declarations. Any child elements who use the namespace
+will have the namespace declared on them, instead.
+The newly created element is returned.
+
+Creating a new element in order to remove namespacing is a requirement
+of LibXML's design.
+
+=cut
+sub strip_ns {
+    my ($self) = @_;
+    my $el = $self->{node};
+    # new element has same name, minus namespace
+    my $new = XML::LibXML::Element->new( $el->localname );
+    #copy attributes (minus namespace namespace)
+    for my $att($el->attributes){
+        if($att->nodeName !~ /xmlns(?::|$)/){
+            $new->setAttribute($att->localname, $att->value);
+        }
+    }
+    #move children
+    for my $child($el->childNodes){
+        $new->appendChild($child);
+    }
+
+    # if working with the root element, we have to set the new element
+    # to be the new root
+    my $doc = $el->ownerDocument;
+    if( $el->isSameNode($doc->documentElement) ){
+        $doc->setDocumentElement($new);
+    }else{
+        #otherwise just paste the new element in place of the old element
+        $el->parentNode->insertAfter($new, $el);
+        $el->unbindNode;
+    }
+    return XML::ITS::DOM::Node->new($new);
+}
+
 =head2 C<children>
 
 If this node is an element, returns an array pointer containing the
