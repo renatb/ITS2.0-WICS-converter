@@ -325,6 +325,21 @@ sub get_namespaces {
     return \%namespaces;
 }
 
+=head2 C<get_ns_declarations>
+
+Similar to C<get_namespaces>, but only returns values for namespaces
+declared on this element.
+
+=cut
+sub get_ns_declarations {
+    my ($self) = @_;
+    my @namespaces = $self->{node}->getNamespaces;
+    my %namespaces;
+    $namespaces{$_->getLocalName} = $_->getData
+        for @namespaces;
+    return \%namespaces;
+}
+
 =head2 C<children>
 
 If this node is an element, returns an array pointer containing the

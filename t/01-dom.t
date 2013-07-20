@@ -4,7 +4,7 @@ use warnings;
 use XML::ITS::DOM;
 use XML::ITS::DOM::Node qw(new_element);
 use Test::More 0.88;
-plan tests => 62;
+plan tests => 63;
 use Test::Exception;
 use Test::NoWarnings;
 use Path::Tiny;
@@ -233,6 +233,13 @@ sub test_node_namespaces {
         },
         'found namespaces in scope'
     ) or note explain $nodes[0]->get_namespaces;
+    is_deeply(
+        $nodes[0]->get_ns_declarations,
+        {
+            bar => 'www.foo.com',
+        },
+        'found namespace declarations on element'
+    ) or note explain $nodes[0]->get_namespace_decl;
 
     @nodes = $dom->get_root->get_xpath('//foo:sixth');
     is($nodes[0]->namespaceURI, 'www.bar.com', 'Correct namespace');
