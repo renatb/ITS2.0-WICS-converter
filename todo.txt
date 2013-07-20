@@ -7,6 +7,8 @@ TODO:
     - Test logging
 
 Engineering Tasks:
+    - figure out how to remove namespaces
+    - figure out how to set doctype to html5
     - testable logging via Log::Any;
 
 To Do on current task:

@@ -118,7 +118,7 @@ sub _htmlize {
 		if(@atts){
 			my @save_atts;
 			for my $att (@atts){
-				push @save_atts, $att->name . q{='} . $att->value . q{'};
+				# print "working on " . $att->name . "\n";
 				if($att->name eq 'xml:id'){
 					$element->set_att('id', $att->value);
 					$att->remove;
@@ -126,24 +126,35 @@ sub _htmlize {
 					$att->set_name('lang');
 				}elsif($att->namespaceURI eq $ITS_NS){
 					if($att->local_name eq 'translate'){
-						$att->set_name('translate');
+						$element->set_att('translate', $att->value);
+						$att->remove;
+						next;
 					}elsif($att->local_name eq 'dir'){
 						$att->set_name('dir');
+						next;
 						# TODO: may need finagling of values
 					}else{
 						my $name = $att->local_name;
 						$name =~ s/([A-Z])/-$1/g;
+						# print "clean $name\n";
 						$element->set_att($name, $att->value);
 						$att->remove;
+						next;
 					}
 				}else{
 					$att->remove;
 				}
+				push @save_atts, $att->name . q{='} . $att->value . q{'};
 			}
-			$title .= '[' . (join ',', @save_atts) . ']';
+			if(@save_atts){
+				$title .= '[' . (join ',', @save_atts) . ']';
+			}
 		}
 		$element->set_att('title', $title);
 		$element->set_name($element->is_inline ? 'span' : 'div');
+	}
+	for my $namespace($root->get_xpath('namespace::*')){
+		$namespace->remove;
 	}
 	return $doc;
 }
@@ -163,18 +174,21 @@ sub _html_structure {
 	my ($self, $doc) = @_;
 
 	#TODO: this should be html, not xml
-	my $dom = XML::ITS::DOM->new('xml', \'<html/>');
+	my $dom = XML::ITS::DOM->new('html', \'<!DOCTYPE html><html>');
 
-	my $html = $dom->get_root();
 	my $head = new_element('head');
 	my $meta = new_element('meta', { charset => 'utf-8' });
+	$meta->paste($head);
 	my $title = new_element('title', {}, $self->{title});
 	$title->paste($head);
-	$meta->paste($head);
-	$head->paste($html);
+
 	my $body = new_element('body');
+
+	my $html = $dom->get_root();
+	$head->paste($html);
 	$body->paste($html);
 	$doc->get_root->paste($body);
+
 	return ($dom, $head);
 }
 

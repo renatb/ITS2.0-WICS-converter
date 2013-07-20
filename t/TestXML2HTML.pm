@@ -15,5 +15,7 @@ sub htmlize {
     my ($self, $xml) = @_;
     # print $xml;
     my $wics = XML::ITS::WICS::XML2HTML->new();
-    return ${ $wics->convert(\$xml) };
+    my $converted = ${ $wics->convert(\$xml) };
+    # print $converted;
+    return $converted;
 }

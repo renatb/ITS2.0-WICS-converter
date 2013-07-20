@@ -3,12 +3,13 @@ use strict;
 use warnings;
 use t::TestXML2HTML;
 plan tests => 0+blocks();
-use Test::XML;
+# use Test::XML;
+use Test::LongString;
 
 filters {input => 'htmlize'};
 
 for my $block(blocks()){
-    is_xml($block->input, $block->expected, $block->name);
+    is_string_nows($block->input, $block->expected, $block->name);
     # print ${$block->input};
 }
 
@@ -17,13 +18,14 @@ __DATA__
 --- input
 <xml/>
 --- expected
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8">
     <title>WICS</title>
   </head>
   <body>
-    <div title="xml"/>
+    <div title="xml"></div>
   </body>
 </html>
 
@@ -34,14 +36,15 @@ __DATA__
   <foo>Some <i>stuff</i></foo>
 </xml>
 --- expected
+<!DOCTYPE html>
 <html>
   <head>
     <title>WICS</title>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8">
   </head>
   <body>
     <div title="xml">
-      <div title="stuff"/>
+      <div title="stuff"></div>
       <div title="foo">Some <span title="i">stuff</span></div>
     </div>
   </body>
@@ -54,14 +57,15 @@ should be converted into id
   <foo xml:id="bar"/>
 </xml>
 --- expected
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8">
     <title>WICS</title>
   </head>
   <body>
     <div title="xml">
-      <div title="foo[xml:id='bar']" id="bar"/>
+      <div title="foo[xml:id='bar']" id="bar"></div>
     </div>
   </body>
 </html>
@@ -73,14 +77,35 @@ should be converted into lang
   <foo xml:lang="lut"/>
 </xml>
 --- expected
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8">
     <title>WICS</title>
   </head>
   <body>
     <div title="xml">
-      <div title="foo[xml:lang='lut']" lang="lut"/>
+      <div title="foo[xml:lang='lut']" lang="lut"></div>
+    </div>
+  </body>
+</html>
+
+=== its:translate
+should be converted into translate
+--- input
+<xml>
+  <foo xmlns:its="http://www.w3.org/2005/11/its" its:translate="no"/>
+</xml>
+--- expected
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+  </head>
+  <body>
+    <div title="xml">
+      <div title="foo[xmlns:its='http://www.w3.org/2005/11/its']" translate="no"></div>
     </div>
   </body>
 </html>
