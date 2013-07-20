@@ -128,7 +128,8 @@ sub _get_dom {
         try{
             $dom = $type eq 'xml' ?
                 $parser->load_xml( string => $data ) :
-                $parser->load_html( string => $data );
+                #see cpan rt 87089
+                $parser->load_html( string => $$data );
         } catch {
             croak "error parsing string: $_";
         };

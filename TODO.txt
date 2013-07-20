@@ -12,6 +12,7 @@ To Do on current task:
     - test set node name
 
 Later To Do:
+    - reorganize code so that you can't call an XML::LibXML::Element sub with an attribute on accident.
     - reorganize tests to match split DOM/Node/Value files
     - proper error checking for XPath execution
     - ?enforce value of idValueRule XPath being a string
