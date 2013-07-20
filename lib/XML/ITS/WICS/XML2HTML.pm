@@ -144,17 +144,17 @@ sub _htmlize {
 				}else{
 					$att->remove;
 				}
-				push @save_atts, $att->name . q{='} . $att->value . q{'};
+				#save non-xmlns atts in the title
+				push @save_atts, $att->name . q{='} . $att->value . q{'}
+					unless $att->name =~ /xmlns(?::|$)/;
 			}
 			if(@save_atts){
 				$title .= '[' . (join ',', @save_atts) . ']';
 			}
 		}
+		$element = $element->strip_ns;
 		$element->set_att('title', $title);
 		$element->set_name($element->is_inline ? 'span' : 'div');
-	}
-	for my $namespace($root->get_xpath('namespace::*')){
-		$namespace->remove;
 	}
 	return $doc;
 }

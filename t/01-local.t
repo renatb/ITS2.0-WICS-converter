@@ -5,11 +5,12 @@ use t::TestXML2HTML;
 plan tests => 0+blocks();
 # use Test::XML;
 use Test::LongString;
+use Test::HTML::Differences;
 
 filters {input => 'htmlize'};
 
 for my $block(blocks()){
-    is_string_nows($block->input, $block->expected, $block->name);
+    eq_or_diff_html($block->input, $block->expected, $block->name);
     # print ${$block->input};
 }
 
@@ -39,13 +40,36 @@ __DATA__
 <!DOCTYPE html>
 <html>
   <head>
-    <title>WICS</title>
     <meta charset="utf-8">
+    <title>WICS</title>
   </head>
   <body>
     <div title="xml">
       <div title="stuff"></div>
       <div title="foo">Some <span title="i">stuff</span></div>
+    </div>
+  </body>
+</html>
+
+=== namespaces stripped
+--- input
+<xml xmlns:bar="bar.io">
+  <bar:foo bar:baz="gunk">
+    <qux/>
+  </bar:foo>
+</xml>
+--- expected
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+  </head>
+  <body>
+    <div title="xml">
+      <div title="bar:foo[bar:baz='gunk']">
+        <div title="qux"></div>
+      </div>
     </div>
   </body>
 </html>
@@ -105,7 +129,7 @@ should be converted into translate
   </head>
   <body>
     <div title="xml">
-      <div title="foo[xmlns:its='http://www.w3.org/2005/11/its']" translate="no"></div>
+      <div title="foo" translate="no"></div>
     </div>
   </body>
 </html>
