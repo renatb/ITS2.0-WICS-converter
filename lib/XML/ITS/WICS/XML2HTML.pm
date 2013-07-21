@@ -130,9 +130,19 @@ sub _htmlize {
 						$att->remove;
 						next;
 					}elsif($att->local_name eq 'dir'){
-						$att->set_name('dir');
+						if($att->value =~ /^(?:lro|rlo)$/){
+							#html requires an inline bdo element
+							my $bdo = new_element('bdo',{dir => $att->value});
+							for my $child(@{ $element->children }){
+								$child->paste($bdo);
+							}
+							$bdo->paste($element);
+							$att->remove;
+						}else{
+							#ltr and rtl are just 'dir' attributes
+							$att->set_name('dir');
+						}
 						next;
-						# TODO: may need finagling of values
 					}else{
 						my $name = $att->local_name;
 						$name =~ s/([A-Z])/-$1/g;

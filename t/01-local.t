@@ -117,8 +117,8 @@ should be converted into lang
 === its:translate
 should be converted into translate
 --- input
-<xml>
-  <foo xmlns:its="http://www.w3.org/2005/11/its" its:translate="no"/>
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  <foo its:translate="no"/>
 </xml>
 --- expected
 <!DOCTYPE html>
@@ -130,6 +130,33 @@ should be converted into translate
   <body>
     <div title="xml">
       <div title="foo" translate="no"></div>
+    </div>
+  </body>
+</html>
+
+=== its:dir
+ltr/rtl should be converted into a dir att, and
+rlo/lro should create an inline bdo element
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  <foo its:dir="rtl">foo</foo>
+  <foo its:dir="ltr">foo</foo>
+  <foo its:dir="lro">foo<bar/></foo>
+  <foo its:dir="rlo">foo</foo>
+</xml>
+--- expected
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+  </head>
+  <body>
+    <div title="xml">
+      <div title="foo" dir="rtl">foo</div>
+      <div title="foo" dir="ltr">foo</div>
+      <div title="foo"><bdo dir="lro">foo<span title="bar"></span></bdo></div>
+      <div title="foo"><bdo dir="rlo">foo</bdo></div>
     </div>
   </body>
 </html>
