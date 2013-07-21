@@ -381,9 +381,23 @@ sub strip_ns {
     return XML::ITS::DOM::Node->new($new);
 }
 
+=head2 C<child_els>
+
+Returns an array pointer containing the child elements of
+this element.
+
+=cut
+sub child_els {
+    my ($self) = @_;
+    my @children =
+        map {XML::ITS::DOM::Node->new($_)}
+        $self->{node}->getChildrenByTagName('*');
+    return \@children;
+}
+
 =head2 C<children>
 
-If this node is an element, returns an array pointer containing the
+Returns an array pointer containing the
 child nodes of this element.
 
 =cut
@@ -394,7 +408,6 @@ sub children {
         $self->{node}->childNodes;
     return \@children;
 }
-
 =head2 C<paste>
 
 Argument: ITS::Node to be used as new parent node.

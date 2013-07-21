@@ -298,7 +298,7 @@ sub _resolve_doc_rules {
 sub _resolve_container_rules {
     my ($doc, $container, %params) = @_;
 
-    my $children = $container->children();
+    my $children = $container->child_els();
     while($children->[0]->local_name eq 'param' and
         $children->[0]->namespaceURI eq $ITS_NS){
         my $param = shift @$children;

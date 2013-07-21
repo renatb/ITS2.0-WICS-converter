@@ -213,9 +213,9 @@ sub test_node_creation {
 
     my $child = new_element('b');
     $child->paste($el);
-    my @nodes = @{$el->children};
-    is(scalar @nodes, 2, 'Pasted child present in parent');
-    is($nodes[1]->name, 'b', 'Child has correct name');
+    my @nodes = @{$el->child_els};
+    is(scalar @nodes, 1, 'Pasted child present in parent');
+    is($nodes[0]->name, 'b', 'Child has correct name');
     return;
 }
 
