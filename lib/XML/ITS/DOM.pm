@@ -16,7 +16,7 @@ use XML::LibXML;
 
     use XML::ITS::DOM;
     my $dom = XML::ITS::DOM->new(xml => 'path/to/file');
-    my @nodes = $dom->get_nodes('//@foo');
+    my @nodes = $dom->get_xpath('//@foo');
 
 =head1 DESCRIPTION
 

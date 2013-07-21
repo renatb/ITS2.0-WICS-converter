@@ -15,7 +15,7 @@ use Exporter::Easy (
     use XML::ITS::DOM;
     use feature 'say';
     my $dom = XML::ITS::DOM->new(xml => 'path/to/file');
-    my @nodes = $dom->get_nodes('//@foo');
+    my @nodes = $dom->get_xpath('//@foo');
     for my $node(@nodes){
         say $node->text;
     }

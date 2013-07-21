@@ -12,7 +12,7 @@ use feature 'switch';
     use XML::ITS::DOM;
     use feature 'say';
     my $dom = XML::ITS::DOM->new(xml => 'path/to/file');
-    my @nodes = $dom->get_nodes('"some string"');
+    my @nodes = $dom->get_xpath('"some string"');
     for my $node (@nodes){
         say $node->value;
     }
