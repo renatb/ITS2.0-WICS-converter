@@ -103,16 +103,15 @@ sub _htmlize {
 
 	#save the original document root for querying
 	my $root = $doc->get_root;
-	#make the document into an HTML structure
-	my $head;
-	($doc, $head) = $self->_html_structure($doc);
+	my @its_els;
 	for my $element ($root->get_xpath('descendant-or-self::*')){
 		# its: elements other than 'rules' are standoff markup
 		# TODO: should paste as last child, not first (rules will be out of order!)
-		# if($element->namespaceURI eq $ITS_NS){
-		# 	_get_script($element)->paste($head);
-		# 	continue;
-		# }
+		if($element->namespaceURI &&
+			$element->namespaceURI eq $ITS_NS){
+			push @its_els, $element;
+			next;
+		}
 		my $title = $element->name;
 		my @atts = $element->get_xpath('@*');
 		if(@atts){
@@ -131,8 +130,11 @@ sub _htmlize {
 						next;
 					}elsif($att->local_name eq 'dir'){
 						if($att->value =~ /^(?:lro|rlo)$/){
+							my $dir = $att->value eq 'lro' ?
+								'ltr' :
+								'rtl';
 							#html requires an inline bdo element
-							my $bdo = new_element('bdo',{dir => $att->value});
+							my $bdo = new_element('bdo',{dir => $dir});
 							for my $child(@{ $element->children }){
 								$child->paste($bdo);
 							}
@@ -146,8 +148,7 @@ sub _htmlize {
 					}else{
 						my $name = $att->local_name;
 						$name =~ s/([A-Z])/-$1/g;
-						# print "clean $name\n";
-						$element->set_att($name, $att->value);
+						$element->set_att("its-$name", $att->value);
 						$att->remove;
 						next;
 					}
@@ -166,22 +167,15 @@ sub _htmlize {
 		$element->set_att('title', $title);
 		$element->set_name($element->is_inline ? 'span' : 'div');
 	}
-	return $doc;
+	#make the document into an HTML structure
+	return $self->_html_structure($doc, \@its_els);
 }
 
-# create an ITS script element and paste the input element into it and return it
-sub _get_script {
-	my ($element) = @_;
-	my $script = XML::ITS::DOM->new('script', {type => 'application/its+xml'});
-	$element->paste($script);
-	return $script;
-}
-
-# put contents into body, and add html, head, and meta elements
-# return a new XML::ITS::DOM, and also the head element separately
-#
+#create an HTML document with input doc root element as a child of body
+# create script elements for each el in $its_els, and paste in head
+# return the new XML::ITS::DOM object
 sub _html_structure {
-	my ($self, $doc) = @_;
+	my ($self, $doc, $its_els) = @_;
 
 	#TODO: this should be html, not xml
 	my $dom = XML::ITS::DOM->new('html', \'<!DOCTYPE html><html>');
@@ -192,6 +186,10 @@ sub _html_structure {
 	my $title = new_element('title', {}, $self->{title});
 	$title->paste($head);
 
+	for my $its(@$its_els){
+		_get_script($its)->paste($head);
+	}
+
 	my $body = new_element('body');
 
 	my $html = $dom->get_root();
@@ -199,7 +197,18 @@ sub _html_structure {
 	$body->paste($html);
 	$doc->get_root->paste($body);
 
-	return ($dom, $head);
+	return $dom;
+}
+
+# create an ITS script element and paste the input element into it and return it
+sub _get_script {
+	my ($element) = @_;
+	my $script = new_element('script', {type => 'application/its+xml'});
+	if(my $id = $element->att('xml:id')){
+		$script->set_att('id', $id);
+	}
+	$element->paste($script);
+	return $script;
 }
 
 #add title attribute containing tag name

@@ -155,8 +155,68 @@ rlo/lro should create an inline bdo element
     <div title="xml">
       <div title="foo" dir="rtl">foo</div>
       <div title="foo" dir="ltr">foo</div>
-      <div title="foo"><bdo dir="lro">foo<span title="bar"></span></bdo></div>
-      <div title="foo"><bdo dir="rlo">foo</bdo></div>
+      <div title="foo"><bdo dir="ltr">foo<span title="bar"></span></bdo></div>
+      <div title="foo"><bdo dir="rtl">foo</bdo></div>
     </div>
+  </body>
+</html>
+
+=== other its:* atts
+prefix its- and use dashes instead of camelCasing
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  <foo its:person="Boss">Pointy Hair</foo>
+  <bar its:locNote="foo">Elbonian</bar>
+  <baz its:blahBlahFooBar="qux">that's not a thing...</baz>
+</xml>
+--- expected
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+  </head>
+  <body>
+    <div title="xml">
+      <div title="foo" its-person="Boss">Pointy Hair</div>
+      <div title="bar" its-loc-note="foo">Elbonian</div>
+      <div title="baz" its-blah-blah-foo-bar="qux">that's not a thing...</div>
+    </div>
+  </body>
+</html>
+
+=== standoff markup
+prefix its- and use dashes instead of camelCasing
+--- ONLY
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  <its:locQualityIssues xml:id="lq1" xmlns:its="http://www.w3.org/2005/11/its">
+    <its:locQualityIssue locQualityIssueType="misspelling"/>
+  </its:locQualityIssues>
+  <its:provenanceRecords xml:id="pr1" xmlns:its="http://www.w3.org/2005/11/its">
+    <its:provenanceRecord
+     org="acme-CAT-v2.3"/>
+  </its:provenanceRecords>
+</xml>
+--- expected
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type=application/its+xml id=lq1>
+      <its:locQualityIssues xml:id="lq1">
+        <its:locQualityIssue locQualityIssueType="misspelling"/>
+      </its:locQualityIssues>
+    </script>
+    <script type=application/its+xml id=lq1>
+      <its:provenanceRecords xml:id="pr1">
+        <its:provenanceRecord
+         org="acme-CAT-v2.3"/>
+      </its:provenanceRecords>
+    </script>
+  </head>
+  <body>
+    <div title="xml"></div>
   </body>
 </html>

@@ -5,10 +5,13 @@ TODO:
     - create HTML match indexer
         - create a 'future-node' class to save match spots
     - Test logging
+    - div in a span is illegal. Fix, warn in software or warn in docs?
+    - div in bdo similarly (generated with its:dir lro and rlo)
 
 Engineering Tasks:
-    - figure out how to remove namespaces
-    - figure out how to set doctype to html5
+    - change HTML transform iterator to query each element for children instead of just looping through them with //*
+        - so we can avoid changing children of standoff
+        - so we can avoid div children of spans and bdos
     - testable logging via Log::Any;
 
 To Do on current task:
