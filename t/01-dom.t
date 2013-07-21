@@ -4,7 +4,7 @@ use warnings;
 use XML::ITS::DOM;
 use XML::ITS::DOM::Node qw(new_element);
 use Test::More 0.88;
-plan tests => 66;
+plan tests => 67;
 use Test::Exception;
 use Test::NoWarnings;
 use Path::Tiny;
@@ -101,8 +101,9 @@ sub test_nodes {
         or note explain $nodes[5]->atts;
 
     @nodes = @{$nodes[0]->children};
-    is(scalar @nodes, 5, '5 children of root');
-    is($nodes[0]->name, 'second', 'first child of root is "second"');
+    is(scalar @nodes, 15, '15 children of root');
+    is($nodes[0]->name, '#text', 'first child of root is text');
+    is($nodes[1]->name, 'second', 'second child of root is "second"');
 
     @nodes = $dom->get_root->get_xpath('//@*');
     is(scalar @nodes, 4, '4 (non-namespace) attribute nodes in doc')
@@ -213,8 +214,8 @@ sub test_node_creation {
     my $child = new_element('b');
     $child->paste($el);
     my @nodes = @{$el->children};
-    is(scalar @nodes, 1, 'Pasted child present in parent');
-    is($nodes[0]->name, 'b', 'Child has correct name');
+    is(scalar @nodes, 2, 'Pasted child present in parent');
+    is($nodes[1]->name, 'b', 'Child has correct name');
     return;
 }
 

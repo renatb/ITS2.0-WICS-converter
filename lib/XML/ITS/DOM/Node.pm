@@ -391,7 +391,7 @@ sub children {
     my ($self) = @_;
     my @children =
         map {XML::ITS::DOM::Node->new($_)}
-        $self->{node}->getChildrenByTagName('*');
+        $self->{node}->childNodes;
     return \@children;
 }
 
