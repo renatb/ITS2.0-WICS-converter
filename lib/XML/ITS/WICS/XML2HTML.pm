@@ -169,19 +169,26 @@ sub _traversal_sub {
 		# true if any child is a div;
 		my $div_child;
 		for my $child(@$children){
-			$div_child ||= $traverse_sub->($child, $inlined_children);
+			my $div_result = $traverse_sub->($child, $inlined_children);
+			$div_child ||= $div_result;
 		}
 
 		# take care not to create a span/bdo containing a div!
 		if($div_child){
 			$el->set_name('div');
+			return 1;
 		}elsif($inline_ancestor){
 			$el->set_name('span');
+			return 0;
+		}elsif($el->is_inline){
+			$el->set_name('span');
+			return 0;
 		}else{
-			$el->set_name(
-				$el->is_inline ? 'span' : 'div');
+			$el->set_name('div');
+			return 2;
 		}
-	}
+	};
+	# return $traverse_sub;
 }
 
 #process given attribute on given element;

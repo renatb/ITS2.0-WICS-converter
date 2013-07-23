@@ -36,6 +36,7 @@ __DATA__
 <xml>
   <stuff/>
   <foo>Some <i>stuff</i></foo>
+  <bar>Some <b><i>real</i></b> stuff</bar>
 </xml>
 --- expected
 <!DOCTYPE html>
@@ -48,6 +49,7 @@ __DATA__
     <div title="xml">
       <div title="stuff"></div>
       <div title="foo">Some <span title="i">stuff</span></div>
+      <div title="bar">Some <div title="b"><div title="i">real</div></div> stuff</div>
     </div>
   </body>
 </html>
