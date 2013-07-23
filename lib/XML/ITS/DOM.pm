@@ -9,8 +9,10 @@ use Carp;
 our @CARP_NOT = qw(XML::ITS::DOM XML::ITS);
 use Try::Tiny;
 use Path::Tiny;
-#the XML engine currently used
+# the XML and HTML engines currently used
 use XML::LibXML;
+# returns an XML::LibXML document, unifying the APIs
+use HTML::HTML5::Parser;
 
 =head1 SYNOPSIS
 
@@ -118,18 +120,20 @@ sub get_source {
 sub _get_dom {
     my ($type, $data) = @_;
 
-    my $parser = XML::LibXML->new();
     my $dom;
-    if($type !~ /^xml|html$/){
+    if($type !~ /^(?:xml|html)$/){
         croak 'must specify either "xml" or "html"';
     }
+    my $parser = $type eq 'xml' ?
+        XML::LibXML->new() :
+        HTML::HTML5::Parser->new;
+
     if(ref $data eq 'SCALAR'){
         #string refs are content;
         try{
             $dom = $type eq 'xml' ?
                 $parser->load_xml( string => $data ) :
-                #see cpan rt 87089
-                $parser->load_html( string => $$data );
+                $parser->parse_string( $$data );
         } catch {
             croak "error parsing string: $_";
         };
@@ -139,7 +143,7 @@ sub _get_dom {
         try{
             $dom = $type eq 'xml' ?
                 $parser->load_xml( location => $data ) :
-                $parser->load_html( location => $data );
+                $parser->parse_html_file( $data );
         } catch {
             croak "error parsing file '$data': $_";
         };

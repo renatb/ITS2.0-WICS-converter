@@ -47,10 +47,22 @@ sub test_errors {
         )
     } 'valid XML parses without error';
 
+    # use a script with XML in it to make sure
+    # HTML5 is ok. See http://mathiasbynens.be/notes/etago
     lives_ok{
         XML::ITS::DOM->new(
-            'html' => \'<html/>')
-    } 'valid HTML parses without error';
+            'html' => \"
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>WICS</title>
+                    <script type='application/xml'>
+                        <xml>some stuff</xml>
+                    </script>
+                </head>
+            <body></body>
+            </html>")
+    } 'valid HTML5 parses without error';
 
     lives_ok{
         $dom = XML::ITS::DOM->new(
