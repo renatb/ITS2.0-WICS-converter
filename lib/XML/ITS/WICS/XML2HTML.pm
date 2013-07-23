@@ -102,74 +102,125 @@ sub _htmlize {
 	my ($self, $doc) = @_;
 
 	#save the original document root for querying
-	my $root = $doc->get_root;
 	my @its_els;
-	for my $element ($root->get_xpath('descendant-or-self::*')){
-		# its: elements other than 'rules' are standoff markup
-		# TODO: should paste as last child, not first (rules will be out of order!)
-		if($element->namespaceURI &&
-			$element->namespaceURI eq $ITS_NS){
-			push @its_els, $element;
-			next;
+	my $processor = _traversal_sub(\@its_els);
+	my $root = $doc->get_root;
+	$processor->($root);
+
+	#make the document into an HTML structure
+	return $self->_html_structure($doc, \@its_els);
+}
+
+#return a sub which processes every element in the entire document
+#the input scalar is used as an array ref to store all its:* elements
+##(which have to be put in the HTML header)
+sub _traversal_sub {
+	my ($its_els) = @_;
+
+	#a recursive sub which returns true for a child renamed as a div,
+	#false otherwise
+	my $traverse_sub;
+	$traverse_sub = sub {
+		my ($el) = @_;
+		# print 'processing ' . $el->name . "\n";
+		# its: elements other than 'rules' are standoff markup;
+		# don't rename these, and save them for pasting in the head
+		if($el->namespaceURI &&
+			$el->namespaceURI eq $ITS_NS){
+			push @$its_els, $el;
+			return 0;
 		}
-		my $title = $element->name;
-		my @atts = $element->get_xpath('@*');
+
+		# process attributes; some will become different
+		# attributes, others will be deleted but indicated
+		# in the new title attribute
+		my $title = $el->name;
+		my @atts = $el->get_xpath('@*');
 		if(@atts){
 			my @save_atts;
 			for my $att (@atts){
-				# print "working on " . $att->name . "\n";
-				if($att->name eq 'xml:id'){
-					$element->set_att('id', $att->value);
-					$att->remove;
-				}elsif($att->name eq 'xml:lang'){
-					$att->set_name('lang');
-				}elsif($att->namespaceURI eq $ITS_NS){
-					if($att->local_name eq 'translate'){
-						$element->set_att('translate', $att->value);
-						$att->remove;
-						next;
-					}elsif($att->local_name eq 'dir'){
-						if($att->value =~ /^(?:lro|rlo)$/){
-							my $dir = $att->value eq 'lro' ?
-								'ltr' :
-								'rtl';
-							#html requires an inline bdo element
-							my $bdo = new_element('bdo',{dir => $dir});
-							for my $child(@{ $element->children }){
-								$child->paste($bdo);
-							}
-							$bdo->paste($element);
-							$att->remove;
-						}else{
-							#ltr and rtl are just 'dir' attributes
-							$att->set_name('dir');
-						}
-						next;
-					}else{
-						my $name = $att->local_name;
-						$name =~ s/([A-Z])/-$1/g;
-						$element->set_att("its-$name", $att->value);
-						$att->remove;
-						next;
-					}
-				}else{
-					$att->remove;
-				}
-				#save non-xmlns atts in the title
-				push @save_atts, $att->name . q{='} . $att->value . q{'}
-					unless $att->name =~ /xmlns(?::|$)/;
+				my $save = _process_att($el, $att);
+				push @save_atts, $save
+					if $save;
 			}
 			if(@save_atts){
 				$title .= '[' . (join ',', @save_atts) . ']';
 			}
 		}
-		$element = $element->strip_ns;
-		$element->set_att('title', $title);
-		$element->set_name($element->is_inline ? 'span' : 'div');
+		$el->set_att('title', $title);
+
+		# strip namespacing; this moves the namespace declaration to the children,
+		# if used by them
+		$el = $el->strip_ns;
+
+		# true if any child is a div;
+		my $div_child;
+		for my $child(@{ $el->child_els }){
+			$div_child ||= $traverse_sub->($child);
+		}
+
+		# take care not to create a span containing a div!
+		if($div_child){
+			$el->set_name('div');
+		}else{
+			$el->set_name(
+				$el->is_inline ? 'span' : 'div');
+		}
 	}
-	#make the document into an HTML structure
-	return $self->_html_structure($doc, \@its_els);
 }
+
+#process given attribute on given element;
+#return a string to save, representing the attribute, if
+#the attribute is deleted (and isn't an NS att)
+sub _process_att {
+	my ($el, $att) = @_;
+
+	#xml: attributes with ITS semantics
+	if($att->name eq 'xml:id'){
+		$el->set_att('id', $att->value);
+		$att->remove;
+	}elsif($att->name eq 'xml:lang'){
+		$att->set_name('lang');
+	#its:* attributes
+	}elsif($att->namespaceURI eq $ITS_NS){
+		if($att->local_name eq 'translate'){
+			$el->set_att('translate', $att->value);
+			$att->remove;
+			return;
+		}elsif($att->local_name eq 'dir'){
+			if($att->value =~ /^(?:lro|rlo)$/){
+				my $dir = $att->value eq 'lro' ?
+					'ltr':
+					'rtl';
+				#html requires an inline bdo element
+				my $bdo = new_element('bdo',{dir => $dir});
+				for my $child(@{ $el->children }){
+					$child->paste($bdo);
+				}
+				$bdo->paste($el);
+				$att->remove;
+			}else{
+				#ltr and rtl are just 'dir' attributes
+				$att->set_name('dir');
+			}
+			return;
+		}else{
+			my $name = $att->local_name;
+			$name =~ s/([A-Z])/-$1/g;
+			$el->set_att("its-$name", $att->value);
+			$att->remove;
+			return;
+		}
+	}else{
+		$att->remove;
+	}
+
+	#don't bother saving these
+	return '' if $att->name =~ /xmlns(?::|$)/;
+	# a short string to represent the att name/value
+	return $att->name . q{='} . $att->value . q{'};
+}
+
 
 #create an HTML document with input doc root element as a child of body
 # create script elements for each el in $its_els, and paste in head
@@ -179,8 +230,10 @@ sub _html_structure {
 
 	#TODO: this should be html, not xml
 	my $dom = XML::ITS::DOM->new('html', \'<!DOCTYPE html><html>');
-
-	my $head = new_element('head');
+	my ($head) = $dom->get_root->get_xpath(
+		'//html:head',
+		namespaces => {html => 'http://www.w3.org/1999/xhtml'}
+	);
 	my $meta = new_element('meta', { charset => 'utf-8' });
 	$meta->paste($head);
 	my $title = new_element('title', {}, $self->{title});
@@ -190,7 +243,10 @@ sub _html_structure {
 		_get_script($its)->paste($head);
 	}
 
-	my $body = new_element('body');
+	my ($body) = $dom->get_root->get_xpath(
+		'//html:body',
+		namespaces => {html => 'http://www.w3.org/1999/xhtml'}
+	);new_element('body');
 
 	my $html = $dom->get_root();
 	$head->paste($html);

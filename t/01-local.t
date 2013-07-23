@@ -10,6 +10,7 @@ use Test::HTML::Differences;
 filters {input => 'htmlize'};
 
 for my $block(blocks()){
+    # print $block->input;
     eq_or_diff_html($block->input, $block->expected, $block->name);
     # print ${$block->input};
 }
@@ -20,7 +21,7 @@ __DATA__
 <xml/>
 --- expected
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -38,7 +39,7 @@ __DATA__
 </xml>
 --- expected
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -60,7 +61,7 @@ __DATA__
 </xml>
 --- expected
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -82,7 +83,7 @@ should be converted into id
 </xml>
 --- expected
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -102,7 +103,7 @@ should be converted into lang
 </xml>
 --- expected
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -122,7 +123,7 @@ should be converted into translate
 </xml>
 --- expected
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -146,7 +147,7 @@ rlo/lro should create an inline bdo element
 </xml>
 --- expected
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -171,7 +172,7 @@ prefix its- and use dashes instead of camelCasing
 </xml>
 --- expected
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -186,35 +187,21 @@ prefix its- and use dashes instead of camelCasing
 </html>
 
 === standoff markup
-prefix its- and use dashes instead of camelCasing
---- ONLY
+<script> tags are treated as text, so to ease testing we remove all whitespace
+from standoff markup.
 --- input
 <xml xmlns:its="http://www.w3.org/2005/11/its">
-  <its:locQualityIssues xml:id="lq1" xmlns:its="http://www.w3.org/2005/11/its">
-    <its:locQualityIssue locQualityIssueType="misspelling"/>
-  </its:locQualityIssues>
-  <its:provenanceRecords xml:id="pr1" xmlns:its="http://www.w3.org/2005/11/its">
-    <its:provenanceRecord
-     org="acme-CAT-v2.3"/>
-  </its:provenanceRecords>
+  <its:locQualityIssues xml:id="lq1" xmlns:its="http://www.w3.org/2005/11/its"><its:locQualityIssue locQualityIssueType="misspelling"/></its:locQualityIssues>
+  <its:provenanceRecords xml:id="pr1" xmlns:its="http://www.w3.org/2005/11/its"><its:provenanceRecord org="acme-CAT-v2.3"/></its:provenanceRecords>
 </xml>
 --- expected
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
-    <script type=application/its+xml id=lq1>
-      <its:locQualityIssues xml:id="lq1">
-        <its:locQualityIssue locQualityIssueType="misspelling"/>
-      </its:locQualityIssues>
-    </script>
-    <script type=application/its+xml id=lq1>
-      <its:provenanceRecords xml:id="pr1">
-        <its:provenanceRecord
-         org="acme-CAT-v2.3"/>
-      </its:provenanceRecords>
-    </script>
+    <script id="lq1" type="application/its+xml"><its:locQualityIssues xmlns:its="http://www.w3.org/2005/11/its" xml:id="lq1"><its:locQualityIssue locQualityIssueType="misspelling"></its:locQualityIssue></its:locQualityIssues></script>
+    <script id="pr1" type="application/its+xml"><its:provenanceRecords xmlns:its="http://www.w3.org/2005/11/its" xml:id="pr1"><its:provenanceRecord org="acme-CAT-v2.3"></its:provenanceRecord></its:provenanceRecords></script>
   </head>
   <body>
     <div title="xml"></div>
