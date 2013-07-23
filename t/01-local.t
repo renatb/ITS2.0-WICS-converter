@@ -144,6 +144,7 @@ rlo/lro should create an inline bdo element
   <foo its:dir="ltr">foo</foo>
   <foo its:dir="lro">foo<bar/></foo>
   <foo its:dir="rlo">foo</foo>
+  <foo its:dir="rlo"><foo>bar</foo></foo>
 </xml>
 --- expected
 <!DOCTYPE html>
@@ -158,6 +159,7 @@ rlo/lro should create an inline bdo element
       <div title="foo" dir="ltr">foo</div>
       <div title="foo"><bdo dir="ltr">foo<span title="bar"></span></bdo></div>
       <div title="foo"><bdo dir="rtl">foo</bdo></div>
+      <div title="foo"><bdo dir="rtl"><span title="foo">bar</span></bdo></div>
     </div>
   </body>
 </html>

@@ -117,11 +117,13 @@ sub _htmlize {
 sub _traversal_sub {
 	my ($its_els) = @_;
 
-	#a recursive sub which returns true for a child renamed as a div,
-	#false otherwise
+	# a recursive sub which transforms elements into HTML and returns
+	# true for a child renamed as a div, false otherwise. Arguments
+	# are element to transform and boolean indicating inline ancestor
+	# (like <span> or <bdo>; so this element should not be made a <div>)
 	my $traverse_sub;
 	$traverse_sub = sub {
-		my ($el) = @_;
+		my ($el, $inline_ancestor) = @_;
 		# print 'processing ' . $el->name . "\n";
 		# its: elements other than 'rules' are standoff markup;
 		# don't rename these, and save them for pasting in the head
@@ -136,12 +138,16 @@ sub _traversal_sub {
 		# in the new title attribute
 		my $title = $el->name;
 		my @atts = $el->get_xpath('@*');
+		# true if the children were wrapped in an inline element (like bdo)
+		my $inlined_children;
 		if(@atts){
 			my @save_atts;
 			for my $att (@atts){
-				my $save = _process_att($el, $att);
+				#TODO: deal with its:dir stuff here
+				my ($save, $wrapped) = _process_att($el, $att);
 				push @save_atts, $save
 					if $save;
+				$inlined_children ||= $wrapped;
 			}
 			if(@save_atts){
 				$title .= '[' . (join ',', @save_atts) . ']';
@@ -153,15 +159,24 @@ sub _traversal_sub {
 		# if used by them
 		$el = $el->strip_ns;
 
+		my $children;
+		#if children were wrapped in an element, grab them from that element
+		if($inlined_children){
+			$children = ${$el->child_els}[0]->child_els;
+		}else{
+			$children = $el->child_els;
+		}
 		# true if any child is a div;
 		my $div_child;
-		for my $child(@{ $el->child_els }){
-			$div_child ||= $traverse_sub->($child);
+		for my $child(@$children){
+			$div_child ||= $traverse_sub->($child, $inlined_children);
 		}
 
-		# take care not to create a span containing a div!
+		# take care not to create a span/bdo containing a div!
 		if($div_child){
 			$el->set_name('div');
+		}elsif($inline_ancestor){
+			$el->set_name('span');
 		}else{
 			$el->set_name(
 				$el->is_inline ? 'span' : 'div');
@@ -170,11 +185,13 @@ sub _traversal_sub {
 }
 
 #process given attribute on given element;
-#return a string to save, representing the attribute, if
-#the attribute is deleted (and isn't an NS att)
+#return 2 things: a string to save, representing the attribute, if
+#the attribute is deleted (and isn't an NS att), and the name
+#of an element used to wrapp the children, if any.
 sub _process_att {
 	my ($el, $att) = @_;
 
+	my $wrapped;
 	#xml: attributes with ITS semantics
 	if($att->name eq 'xml:id'){
 		$el->set_att('id', $att->value);
@@ -199,11 +216,12 @@ sub _process_att {
 				}
 				$bdo->paste($el);
 				$att->remove;
+				return '', 'bdo';
 			}else{
 				#ltr and rtl are just 'dir' attributes
 				$att->set_name('dir');
+				return '';
 			}
-			return;
 		}else{
 			my $name = $att->local_name;
 			$name =~ s/([A-Z])/-$1/g;
