@@ -6,13 +6,14 @@ Current task:
 Engineering Tasks:
 
 To Do on current task:
+    * reorganize code so that you can't call an XML::LibXML::Element sub with an attribute on accident.
     - test is_inline (node)
     - test ITS_atts (node- list atts which are ITS)
     - test remove node
     - test set node name
 
 Later To Do:
-    - reorganize code so that you can't call an XML::LibXML::Element sub with an attribute on accident.
+    - return array, not array ref, from children()
     - reorganize tests to match split DOM/Node/Value files
     - proper error checking for XPath execution
     - ?enforce value of idValueRule XPath being a string

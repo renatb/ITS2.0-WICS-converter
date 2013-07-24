@@ -1,10 +1,12 @@
 # Test DOM implementation
 use strict;
 use warnings;
-use XML::ITS::DOM;
-use XML::ITS::DOM::Node qw(new_element);
 use Test::More 0.88;
 plan tests => 67;
+
+use XML::ITS::DOM;
+use XML::ITS::DOM::Element qw(new_element);
+# *new_element = *XML::ITS::DOM::Element::new_element;
 use Test::Exception;
 use Test::NoWarnings;
 use Path::Tiny;

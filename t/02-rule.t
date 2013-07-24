@@ -8,7 +8,7 @@ plan tests => 5;
 use Test::Warn;
 use Test::NoWarnings;
 use XML::ITS::DOM;
-use XML::ITS::DOM::Node qw(new_element);
+use XML::ITS::DOM::Element qw(new_element);
 
 subtest 'basic rule' => sub {
     plan tests => 5;

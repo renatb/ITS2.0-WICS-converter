@@ -5,6 +5,7 @@ use warnings;
 # ABSTRACT: Work with XML and HTML documents
 use XML::ITS::DOM::Node;
 use XML::ITS::DOM::Value;
+use XML::ITS::DOM::Element;
 use Carp;
 our @CARP_NOT = qw(XML::ITS::DOM XML::ITS);
 use Try::Tiny;
@@ -71,14 +72,15 @@ sub get_root {
     my ($self) = @_;
     my $root = $self->{dom}->documentElement;
     if($root){
-        return XML::ITS::DOM::Node->new($root);
+        return XML::ITS::DOM::Element->new($root);
     }
     return undef;
 }
 
 =head2 C<string>
 
-Returns a stringified version of the entire document
+Returns a stringified version of the entire document.
+HTML documents are given an HTML5 doctype.
 
 =cut
 sub string {
@@ -87,7 +89,7 @@ sub string {
         # 1 is for adding whitespace to prettify
         return $self->{dom}->toString(1);
     }else{
-        return $self->{dom}->toStringHTML;
+        return "<!DOCTYPE html>\n" . $self->{dom}->toStringHTML;
     }
 }
 
