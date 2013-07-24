@@ -234,12 +234,13 @@ sub local_name {
 
 =head2 C<value>
 
-(Attribute nodes only) Returns a string representing the value of the node.
+Returns a string representing the value of the node. This is not
+text content for elements (call L<text> for that).
 
 =cut
 sub value {
     my ($self) = @_;
-    return $self->{node}->getValue;
+    return $self->{node}->nodeValue;
 }
 
 =head2 C<text>

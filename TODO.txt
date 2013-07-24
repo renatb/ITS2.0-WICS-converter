@@ -6,9 +6,10 @@ Current task:
 Engineering Tasks:
 
 To Do on current task:
-    * reorganize code so that you can't call an XML::LibXML::Element sub with an attribute on accident.
-    - test is_inline (node)
-    - test ITS_atts (node- list atts which are ITS)
+    - separate Node, Element, and Value test files
+    - test is_inline (Element)
+    - create $ITS_URI accessor
+    - create ITS_atts (element- get_xpath(@*[namespace-uri()='$ITS_URI'])
     - test remove node
     - test set node name
 
