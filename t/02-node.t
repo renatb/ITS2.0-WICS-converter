@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 44;
+plan tests => 35;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -10,8 +10,7 @@ use XML::ITS::DOM;
 use Path::Tiny;
 use FindBin qw($Bin);
 
-my $corpus_dir = path($Bin, 'corpus');
-my $dom_path = path($corpus_dir, 'dom_test.xml');
+my $dom_path = path($Bin, 'corpus', 'dom_test.xml');
 my $dom = XML::ITS::DOM->new( 'xml' => $dom_path );
 
 test_type_name_value($dom);
@@ -67,22 +66,6 @@ sub test_type_name_value {
     is(scalar @nodes, 1, '1 namespace node in root');
     is($nodes[0]->type, 'NS', 'Namespace type is "NS"');
     is($nodes[0]->value, 'www.bar.com', 'Namespace value is URI');
-
-    #node testing file
-    @nodes = $dom->get_root->get_xpath('"foo-bar"');
-    is(scalar @nodes, 1, '1 node returned');
-    is($nodes[0]->type, 'LIT', '...is a text value');
-    is($nodes[0]->value, 'foo-bar', '...with the correct value');
-
-    @nodes = $dom->get_root->get_xpath('not(1)');
-    is(scalar @nodes, 1, '1 node returned');
-    is($nodes[0]->type, 'BOOL', '...is a boolean node');
-    ok(!$nodes[0]->value, '...with the correct value');
-
-    @nodes = $dom->get_root->get_xpath('52');
-    is(scalar @nodes, 1, '1 node returned');
-    is($nodes[0]->type, 'NUM', '...is a text node');
-    is($nodes[0]->value, 52, '...with the correct value');
     return;
 }
 
