@@ -6,9 +6,7 @@ Current task:
 Engineering Tasks:
 
 To Do on current task:
-    * test is_inline (Element)
     - create $ITS_URI accessor
-    - create ITS_atts (element- get_xpath(@*[namespace-uri()='$ITS_URI'])
     - test remove node
     - test set node name
 

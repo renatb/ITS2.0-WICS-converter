@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 20;
+plan tests => 22;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -16,12 +16,12 @@ my $dom = XML::ITS::DOM->new( 'xml' => $dom_path );
 
 test_atts($dom);
 test_namespaces($dom);
+test_inlininess($dom);
 test_element_editing();
 
 # test element attribute methods
 sub test_atts {
     my ($dom) = @_;
-    note 'testing node methods';
     my @nodes = $dom->get_root->get_xpath('//*');
 
     is($nodes[1]->name, 'second', 'Working with "second" element');
@@ -89,6 +89,14 @@ sub test_namespaces {
         }, 'namespace declaration moved to foo:baz'
     ) or note explain $el->atts;
     return;
+}
+
+sub test_inlininess {
+    my ($dom) = @_;
+    my ($el) = $dom->get_root->get_xpath('//i');
+    ok($el->is_inline, '<i> is inline');
+    ($el) = $dom->get_root->get_xpath('//second');
+    ok(!$el->is_inline, '<second> is not inline');
 }
 
 sub test_element_editing {
