@@ -3,10 +3,9 @@ use strict;
 use warnings;
 use Test::More 0.88;
 plan tests => 44;
+use Test::NoWarnings;
 
 use XML::ITS::DOM;
-use Test::Exception;
-use Test::NoWarnings;
 
 use Path::Tiny;
 use FindBin qw($Bin);

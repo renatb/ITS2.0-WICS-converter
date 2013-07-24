@@ -6,7 +6,7 @@ Current task:
 Engineering Tasks:
 
 To Do on current task:
-    - separate Node, Element, and Value test files
+    * Create separate Value test file
     - test is_inline (Element)
     - create $ITS_URI accessor
     - create ITS_atts (element- get_xpath(@*[namespace-uri()='$ITS_URI'])
