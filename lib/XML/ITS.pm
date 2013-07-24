@@ -5,14 +5,23 @@ use warnings;
 # VERSION
 use XML::ITS::DOM;
 use XML::ITS::Rule;
+
 use Carp;
 our @CARP_NOT = qw(ITS);
+
 use Path::Tiny;
 use Try::Tiny;
 use feature 'say';
-use Data::Dumper; #debug
+# use Data::Dumper; #debug
+use Exporter::Easy (
+    OK => [qw(its_ns)],
+);
 
 my $ITS_NS = 'http://www.w3.org/2005/11/its';
+sub its_ns{
+    return $ITS_NS;
+}
+
 my $XLINK_NS = 'http://www.w3.org/1999/xlink';
 
 # as script: extract ITS rules from input doc and list IDs

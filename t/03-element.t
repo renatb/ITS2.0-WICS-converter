@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 22;
+plan tests => 24;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -108,10 +108,17 @@ sub test_element_editing {
     is_deeply($el->atts, $atts, 'Correct element attributes');
     is($el->text, $text, 'Correct element text');
 
+    $el->set_name('x');
+    is($el->name, 'x', 'element name changed to "x"');
+
     my $child = new_element('b');
     $child->paste($el);
     my @nodes = @{$el->child_els};
     is(scalar @nodes, 1, 'Pasted child present in parent');
     is($nodes[0]->name, 'b', 'Child has correct name');
+
+    $child->remove;
+    @nodes = @{$el->child_els};
+    is(scalar @nodes, 0, 'Child removed');
     return;
 }

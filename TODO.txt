@@ -1,21 +1,17 @@
 ITS
 
 Current task:
-    - any DOM methods still needed for HTML conversion
 
 Engineering Tasks:
 
 To Do on current task:
     - create $ITS_URI accessor
-    - test remove node
-    - test set node name
 
 Later To Do:
     - return array, not array ref, from children()
-    - reorganize tests to match split DOM/Node/Value files
     - proper error checking for XPath execution
     - ?enforce value of idValueRule XPath being a string
     - ?enforce pointers being nodes
     - check test coverage and fill it in!
-    - rename get_matches and iterate_rules to reflect what is being matched (single rule or all rules)
+    - rename get_matches and iterate_matches to reflect what is being matched (single rule or all rules)
 
