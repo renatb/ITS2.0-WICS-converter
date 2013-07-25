@@ -141,7 +141,7 @@ sub _traversal_sub {
 		}
 		if($log->is_debug){
 			my $id = $el->att('xml:id');
-			$log->debug('processing ' . $el->name . ($id ? " ($id)" : ''));
+			$log->debug('processing ' . _el_log_id($el));
 		}
 
 		# process attributes; some will become different
@@ -166,12 +166,18 @@ sub _traversal_sub {
 		}
 		$el->set_att('title', $title);
 		if($log->is_debug){
-			$log->debug('setting title of ' . _el_log_id($el) . " to $title");
+			$log->debug('setting @title of ' . _el_log_id($el) . " to '$title'");
 		}
 
 		# strip namespacing; this moves the namespace declaration to the children,
 		# if used by them
-		$el = $el->strip_ns;
+		my $new_el = $el->strip_ns;
+		if(!$el->is_same_node($new_el)){
+			if($log->is_debug){
+				$log->debug('stripping namespaces from ' . _el_log_id($el));
+			}
+			$el = $new_el;
+		}
 
 		my $children;
 		#if children were wrapped in an element, grab them from that element
@@ -211,19 +217,21 @@ sub _rename_el {
 	}
 
 	if($log->is_debug){
-		$log->debug('renaming ' . _el_log_id($el) . " to $new_name");
+		$log->debug('renaming ' . _el_log_id($el) . " to <$new_name>");
 	}
 	$el->set_name($new_name);
 	return $new_name eq 'div' ? 1 : 0;
 }
 
 #get a string to indicate the given element in a log
+#<el> or <el id="val">
 sub _el_log_id {
 	my ($el) = @_;
 	my $id = $el->att('id');
-	my $string = $el->name;
-	$string .= " ($id)"
+	my $string = '<' . $el->name;
+	$string .= qq{ xml:id="$id"}
 		if $id;
+	$string .= '>';
 	return $string;
 }
 
@@ -251,7 +259,7 @@ sub _process_att {
 					'ltr':
 					'rtl';
 				if($log->is_debug){
-					$log->debug('replacing ' . $att->name . ' of ' .
+					$log->debug('replacing @' . $att->name . ' of ' .
 						_el_log_id($el) .
 						" with bdo[dir=$dir] wrapped around children");
 				}
@@ -274,7 +282,7 @@ sub _process_att {
 			$name = "its-$name";
 			$el->set_att($name, $att->value);
 			if($log->is_debug){
-				$log->debug('Replacing ' . $att->name . ' of ' .
+				$log->debug('Replacing @' . $att->name . ' of ' .
 				_el_log_id($el) . " with $name");
 			}
 			$att->remove;
@@ -294,7 +302,7 @@ sub _process_att {
 sub _att_rename {
 	my ($el, $att, $new_name) = @_;
 	if($log->is_debug){
-		$log->debug('setting ' . $att->name . ' of ' . _el_log_id($el) .
+		$log->debug('setting @' . $att->name . ' of ' . _el_log_id($el) .
 			" to $new_name");
 	}
 	$att->set_name($new_name);

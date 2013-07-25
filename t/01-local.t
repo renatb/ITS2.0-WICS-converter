@@ -2,20 +2,21 @@
 use strict;
 use warnings;
 use t::TestXML2HTML;
-plan tests => 0+blocks();
+use Test::More 0.88;
+plan tests => 2*blocks();
 use Test::HTML::Differences;
 
 filters {input => 'htmlize', log => [qw(lines chomp debug_log_entries)]};
 
 for my $block(blocks()){
-    my ($html, $logs) = $block->input;
+    my ($html, $log) = $block->input;
     eq_or_diff_html($html, $block->output, $block->name . ' (HTML output)');
-    is_deeply($logs, $block->log, $block->name . ' (logs)');
+    is_deeply($log, $block->log, $block->name . ' (logs)')
+      or note explain $log;
 }
 
 __DATA__
 === html skeleton
---- ONLY
 --- input
 <xml/>
 --- output
@@ -31,8 +32,9 @@ __DATA__
 </html>
 --- log
 converting document elements into HTML
-processing xml
-renaming xml to div
+processing <xml>
+setting @title of <xml> to 'xml'
+renaming <xml> to <div>
 wrapping document in HTML structure
 
 === correct div and span
@@ -57,8 +59,33 @@ wrapping document in HTML structure
     </div>
   </body>
 </html>
+--- log
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+processing <stuff>
+setting @title of <stuff> to 'stuff'
+renaming <stuff> to <div>
+processing <foo>
+setting @title of <foo> to 'foo'
+processing <i>
+setting @title of <i> to 'i'
+renaming <i> to <span>
+renaming <foo> to <div>
+processing <bar>
+setting @title of <bar> to 'bar'
+processing <b>
+setting @title of <b> to 'b'
+processing <i>
+setting @title of <i> to 'i'
+renaming <i> to <span>
+renaming <b> to <span>
+renaming <bar> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
 
 === namespaces stripped
+--- LAST
 --- input
 <xml xmlns:bar="bar.io">
   <bar:foo bar:baz="gunk">
@@ -80,6 +107,20 @@ wrapping document in HTML structure
     </div>
   </body>
 </html>
+--- log
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+stripping namespaces from <xml>
+processing <bar:foo>
+setting @title of <bar:foo> to 'bar:foo[bar:baz='gunk']'
+stripping namespaces from <bar:foo>
+processing <qux>
+setting @title of <qux> to 'qux'
+renaming <qux> to <div>
+renaming <foo> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
 
 === xml:id
 should be converted into id
