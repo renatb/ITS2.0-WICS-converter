@@ -45,7 +45,7 @@ __DATA__
     <div title="xml">
       <div title="stuff"></div>
       <div title="foo">Some <span title="i">stuff</span></div>
-      <div title="bar">Some <div title="b"><div title="i">real</div></div> stuff</div>
+      <div title="bar">Some <span title="b"><span title="i">real</span></span> stuff</div>
     </div>
   </body>
 </html>
