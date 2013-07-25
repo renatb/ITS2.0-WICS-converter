@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 26;
+plan tests => 30;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -15,6 +15,7 @@ my $dom_path = path($Bin, 'corpus', 'dom_test.xml');
 my $dom = XML::ITS::DOM->new( 'xml' => $dom_path );
 
 test_atts($dom);
+test_equality($dom);
 test_namespaces($dom);
 test_inlininess($dom);
 test_element_editing();
@@ -43,6 +44,16 @@ sub test_atts {
     return;
 }
 
+sub test_equality {
+    my ($dom) = @_;
+
+    my ($el) = $dom->get_root->get_xpath('//i');
+    my ($el2) = $dom->get_root->get_xpath('//third');
+
+    ok(!$el->is_same_node($el2), 'two elements are different');
+    ok($el->is_same_node($el), 'element is equal to itself');
+}
+
 #test node methods involving namespaces
 sub test_namespaces {
     my ($dom) = @_;
@@ -56,6 +67,15 @@ sub test_namespaces {
         },
         'found namespace declaration on element'
     ) or note explain $el->get_namespace_decl;
+    my $new_el = $el->strip_ns;
+    ok(!$el->is_same_node($new_el),
+        'new element created for element with ns declaration');
+
+    ($el) = $dom->get_root->get_xpath('//third');
+    $new_el = $el->strip_ns;
+    ok($el->is_same_node($new_el),
+        'no element created for element without ns declaration');
+
 
     ($el) = $dom->get_root->get_xpath('//foo:sixth');
     is(
@@ -72,7 +92,8 @@ sub test_namespaces {
             <!--foo-->
             </foo:xml>' );
     my $root = $dom->get_root;
-    $root = $root->strip_ns;
+    my $changed;
+    ($root, $changed) = $root->strip_ns;
     is($root->name, 'xml', 'namespace stripped from name');
     is_deeply(
         $root->atts,

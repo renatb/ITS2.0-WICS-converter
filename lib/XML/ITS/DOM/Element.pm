@@ -87,7 +87,7 @@ sub is_inline {
     my $prev = $el->previousSibling;
     my $next = $el->nextSibling;
     # has text siblings on both sides
-    if( ($prev && $prev->nodeName() eq '#text') ||
+    if( ($prev && $prev->nodeName() eq '#text') &&
         ($next && $next->nodeName() eq '#text') ){
         # and they include adjacent newline with optional whitespace
         my $prevText = $prev->nodeValue;
@@ -168,7 +168,8 @@ Replaces an entire element with an identical node which is in the null
 namespace, and whose attributes are also in the null namespace.
 Also removes all namespace declarations. Any child elements who use the namespace
 will have the namespace declared on them, instead.
-The newly created element is returned.
+If the input element had any namespacing to remove, the newly created element returned.
+Otherwise, the original element is returned.
 
 Creating a new element in order to remove namespacing is a requirement
 of LibXML's design.
@@ -177,13 +178,22 @@ of LibXML's design.
 sub strip_ns {
     my ($self) = @_;
     my $el = $self->{node};
+    my $changed = 0;
     # new element has same name, minus namespace
     my $new = XML::LibXML::Element->new( $el->localname );
+    if($el->localname ne $el->nodeName){
+        $changed = 1;
+    }
     #copy attributes (minus namespace namespace)
     for my $att($el->attributes){
         if($att->nodeName !~ /xmlns(?::|$)/){
             $new->setAttribute($att->localname, $att->value);
+        }else{
+            $changed ||= 1;
         }
+    }
+    if(!$changed){
+        return $self;
     }
     #move children
     for my $child($el->childNodes){

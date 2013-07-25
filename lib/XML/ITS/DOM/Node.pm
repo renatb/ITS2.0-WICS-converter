@@ -293,4 +293,14 @@ sub paste {
     return;
 }
 
+=head2 C<is_same_node>
+
+Return true if this node is the same node as the input node.
+
+=cut
+sub is_same_node {
+    my ($self, $other) = @_;
+    return $self->{node}->isSameNode($other->{node});
+}
+
 1;
