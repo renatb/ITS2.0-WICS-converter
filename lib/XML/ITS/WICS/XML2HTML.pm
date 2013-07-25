@@ -134,7 +134,9 @@ sub _traversal_sub {
 		if($el->namespaceURI &&
 			$el->namespaceURI eq its_ns()){
 			push @$its_els, $el;
-			_log_script($el);
+			if($log->is_debug){
+				$log->debug('placing ' . _el_log_id($el) . ' in script element');
+			}
 			return 0;
 		}
 		if($log->is_debug){
@@ -163,6 +165,9 @@ sub _traversal_sub {
 			}
 		}
 		$el->set_att('title', $title);
+		if($log->is_debug){
+			$log->debug('setting title of ' . _el_log_id($el) . " to $title");
+		}
 
 		# strip namespacing; this moves the namespace declaration to the children,
 		# if used by them
@@ -182,36 +187,44 @@ sub _traversal_sub {
 			$div_child ||= $div_result;
 		}
 
-		# take care not to create a span/bdo containing a div!
-		if($div_child){
-			$el->set_name('div');
-			return 1;
-		}elsif($inline_ancestor){
-			$el->set_name('span');
-			return 0;
-		}elsif($el->is_inline){
-			$el->set_name('span');
-			return 0;
-		}else{
-			$el->set_name('div');
-			return 2;
-		}
+		return _rename_el($el, $div_child, $inline_ancestor);
 	};
 	return $traverse_sub;
 }
 
-sub _log_script {
-	my ($el) = @_;
-	if($log->is_debug){
-		my $id = $el->att('xml:id');
-		my $msg = 'placing ' . $el->name;
-		if($id){
-			$msg .= "($id) ";
-		}
-		$msg .= 'in script element';
-		$log->debug($msg);
+# rename the given element to either div or span; return true for div,
+# false for span.
+# args: element, boolean for existing block child (div, etc.),
+# boolean for existing inline ancestor (span, bdo, etc.)
+sub _rename_el {
+	my ($el, $div_child, $inline_ancestor) = @_;
+
+	my $new_name;
+	# if a child is a div, this has to be a div
+	if($div_child){
+		$new_name = 'div';
+	# if an ancestor was a span/bdo, this has to be a span
+	}elsif($inline_ancestor || $el->is_inline){
+		$new_name = 'span';
+	}else{
+		$new_name = 'div';
 	}
-	return;
+
+	if($log->is_debug){
+		$log->debug('renaming ' . _el_log_id($el) . " to $new_name");
+	}
+	$el->set_name($new_name);
+	return $new_name eq 'div' ? 1 : 0;
+}
+
+#get a string to indicate the given element in a log
+sub _el_log_id {
+	my ($el) = @_;
+	my $id = $el->att('id');
+	my $string = $el->name;
+	$string .= " ($id)"
+		if $id;
+	return $string;
 }
 
 #process given attribute on given element;
@@ -224,22 +237,25 @@ sub _process_att {
 	my $wrapped;
 	#xml: attributes with ITS semantics
 	if($att->name eq 'xml:id'){
-		$el->set_att('id', $att->value);
-		$att->remove;
+		_att_rename($el, $att, 'id');
 	}elsif($att->name eq 'xml:lang'){
-		$att->set_name('lang');
+		_att_rename($el, $att, 'lang');
 	#its:* attributes
 	}elsif($att->namespaceURI eq its_ns()){
 		if($att->local_name eq 'translate'){
-			$el->set_att('translate', $att->value);
-			$att->remove;
+			_att_rename($el, $att, 'translate');
 			return;
 		}elsif($att->local_name eq 'dir'){
 			if($att->value =~ /^(?:lro|rlo)$/){
 				my $dir = $att->value eq 'lro' ?
 					'ltr':
 					'rtl';
-				#html requires an inline bdo element
+				if($log->is_debug){
+					$log->debug('replacing ' . $att->name . ' of ' .
+						_el_log_id($el) .
+						" with bdo[dir=$dir] wrapped around children");
+				}
+				#inline bdo element
 				my $bdo = new_element('bdo',{dir => $dir});
 				for my $child(@{ $el->children }){
 					$child->paste($bdo);
@@ -249,13 +265,18 @@ sub _process_att {
 				return '', 'bdo';
 			}else{
 				#ltr and rtl are just 'dir' attributes
-				$att->set_name('dir');
+				_att_rename($el, $att, 'dir');
 				return '';
 			}
 		}else{
 			my $name = $att->local_name;
 			$name =~ s/([A-Z])/-$1/g;
-			$el->set_att("its-$name", $att->value);
+			$name = "its-$name";
+			$el->set_att($name, $att->value);
+			if($log->is_debug){
+				$log->debug('Replacing ' . $att->name . ' of ' .
+				_el_log_id($el) . " with $name");
+			}
 			$att->remove;
 			return;
 		}
@@ -267,6 +288,16 @@ sub _process_att {
 	return '' if $att->name =~ /xmlns(?::|$)/;
 	# a short string to represent the att name/value
 	return $att->name . q{='} . $att->value . q{'};
+}
+
+#rename given att on given el to new_name and log it.
+sub _att_rename {
+	my ($el, $att, $new_name) = @_;
+	if($log->is_debug){
+		$log->debug('setting ' . $att->name . ' of ' . _el_log_id($el) .
+			" to $new_name");
+	}
+	$att->set_name($new_name);
 }
 
 

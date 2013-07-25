@@ -16,9 +16,10 @@ use XML::ITS::WICS::XML2HTML;
 #convert the input XML into html and return the html string
 sub htmlize {
     my ($self, $xml) = @_;
+    $log->clear();
     my $wics = XML::ITS::WICS::XML2HTML->new();
     my $converted = ${ $wics->convert(\$xml) };
-    return $converted;
+    return ($converted, $log->msgs());
 }
 
 # convert the input XML into html, and returns

@@ -5,17 +5,20 @@ use t::TestXML2HTML;
 plan tests => 0+blocks();
 use Test::HTML::Differences;
 
-filters {input => 'htmlize'};
+filters {input => 'htmlize', log => [qw(lines chomp debug_log_entries)]};
 
 for my $block(blocks()){
-    eq_or_diff_html($block->input, $block->expected, $block->name);
+    my ($html, $logs) = $block->input;
+    eq_or_diff_html($html, $block->output, $block->name . ' (HTML output)');
+    is_deeply($logs, $block->log, $block->name . ' (logs)');
 }
 
 __DATA__
 === html skeleton
+--- ONLY
 --- input
 <xml/>
---- expected
+--- output
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -26,6 +29,11 @@ __DATA__
     <div title="xml"></div>
   </body>
 </html>
+--- log
+converting document elements into HTML
+processing xml
+renaming xml to div
+wrapping document in HTML structure
 
 === correct div and span
 --- input
@@ -34,7 +42,7 @@ __DATA__
   <foo>Some <i>stuff</i></foo>
   <bar>Some <b><i>real</i></b> stuff</bar>
 </xml>
---- expected
+--- output
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -57,7 +65,7 @@ __DATA__
     <qux/>
   </bar:foo>
 </xml>
---- expected
+--- output
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -79,7 +87,7 @@ should be converted into id
 <xml>
   <foo xml:id="bar"/>
 </xml>
---- expected
+--- output
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -99,7 +107,7 @@ should be converted into lang
 <xml>
   <foo xml:lang="lut"/>
 </xml>
---- expected
+--- output
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -119,7 +127,7 @@ should be converted into translate
 <xml xmlns:its="http://www.w3.org/2005/11/its">
   <foo its:translate="no"/>
 </xml>
---- expected
+--- output
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -144,7 +152,7 @@ rlo/lro should create an inline bdo element
   <foo its:dir="rlo">foo</foo>
   <foo its:dir="rlo"><foo>bar</foo></foo>
 </xml>
---- expected
+--- output
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -170,7 +178,7 @@ prefix its- and use dashes instead of camelCasing
   <bar its:locNote="foo">Elbonian</bar>
   <baz its:blahBlahFooBar="qux">that's not a thing...</baz>
 </xml>
---- expected
+--- output
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -194,7 +202,7 @@ from standoff markup.
   <its:locQualityIssues xml:id="lq1" xmlns:its="http://www.w3.org/2005/11/its"><its:locQualityIssue locQualityIssueType="misspelling"/></its:locQualityIssues>
   <its:provenanceRecords xml:id="pr1" xmlns:its="http://www.w3.org/2005/11/its"><its:provenanceRecord org="acme-CAT-v2.3"/></its:provenanceRecords>
 </xml>
---- expected
+--- output
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
