@@ -8,25 +8,38 @@ package t::TestXML2HTML::Filter;
 use Test::Base::Filter -base;
 use strict;
 use warnings;
-use XML::ITS::WICS::XML2HTML;
+use Log::Any::Test;
+use Log::Any qw($log);
 use XML::ITS::DOM;
+use XML::ITS::WICS::XML2HTML;
 
 #convert the input XML into html and return the html string
 sub htmlize {
     my ($self, $xml) = @_;
-    # print $xml;
     my $wics = XML::ITS::WICS::XML2HTML->new();
     my $converted = ${ $wics->convert(\$xml) };
-    # print "converting: $converted";
     return $converted;
 }
 
-#parse the input HTML, then stringify the parse and return it.
-#this normalizes the contents of script elements (which contain ITS:XML
-#but are compared as strings)
-sub restring {
-    my ($self, $html) = @_;
-    my $string = XML::ITS::DOM->new('html' => \$html)->string;
-    # print "restringing: $string";
-    return $string;
+# convert the input XML into html, and returns
+# the logging statements made in the process
+sub htmlize_log {
+    my ($self, $xml) = @_;
+    $log->clear();
+    my $wics = XML::ITS::WICS::XML2HTML->new();
+    $wics->convert(\$xml);
+    return $log->msgs();
+}
+
+sub debug_log_entries {
+    my ($self, @lines) = @_;
+    my @entries;
+    for(@lines){
+        push @entries, {
+            category => 'XML::ITS::WICS::XML2HTML',
+            message => $_,
+            level => 'debug'
+        };
+    }
+    return \@entries;
 }

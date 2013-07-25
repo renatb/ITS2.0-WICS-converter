@@ -4,12 +4,11 @@ use warnings;
 use Carp;
 our @CARP_NOT = qw(XML::ITS::WICS::XML2HTML XML::ITS::WICS);
 use Log::Any qw($log);
-use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future);
-use XML::ITS;
-use XML::ITS::DOM;
-use XML::ITS::DOM::Node qw(new_element);
 
-my $ITS_NS = 'http://www.w3.org/2005/11/its';
+use XML::ITS qw(its_ns);
+use XML::ITS::DOM;
+use XML::ITS::DOM::Element qw(new_element);
+use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future);
 
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
 # VERSION
@@ -101,13 +100,17 @@ sub _log_match {
 sub _htmlize {
 	my ($self, $doc) = @_;
 
-	#save the original document root for querying
+	# traverse every document element, converting into HTML
+	# save standoff or rules elements in @its_els
+	$log->debug('converting document elements into HTML')
+		if $log->is_debug;
 	my @its_els;
 	my $processor = _traversal_sub(\@its_els);
-	my $root = $doc->get_root;
-	$processor->($root);
+	$processor->($doc->get_root);
 
 	#make the document into an HTML structure
+	$log->debug('wrapping document in HTML structure')
+		if $log->is_debug;
 	return $self->_html_structure($doc, \@its_els);
 }
 
@@ -124,12 +127,12 @@ sub _traversal_sub {
 	my $traverse_sub;
 	$traverse_sub = sub {
 		my ($el, $inline_ancestor) = @_;
-		# print 'processing ' . $el->name . "\n";
 		# its: elements other than 'rules' are standoff markup;
 		# don't rename these, and save them for pasting in the head
 		if($el->namespaceURI &&
-			$el->namespaceURI eq $ITS_NS){
+			$el->namespaceURI eq its_ns()){
 			push @$its_els, $el;
+			_log_script($el);
 			return 0;
 		}
 
@@ -188,7 +191,21 @@ sub _traversal_sub {
 			return 2;
 		}
 	};
-	# return $traverse_sub;
+	return $traverse_sub;
+}
+
+sub _log_script {
+	my ($el) = @_;
+	if($log->is_debug){
+		my $id = $el->att('xml:id');
+		my $msg = 'placing ' . $el->name;
+		if($id){
+			$msg .= "($id) ";
+		}
+		$msg .= 'in script element';
+		$log->debug($msg);
+	}
+	return;
 }
 
 #process given attribute on given element;
@@ -206,7 +223,7 @@ sub _process_att {
 	}elsif($att->name eq 'xml:lang'){
 		$att->set_name('lang');
 	#its:* attributes
-	}elsif($att->namespaceURI eq $ITS_NS){
+	}elsif($att->namespaceURI eq its_ns()){
 		if($att->local_name eq 'translate'){
 			$el->set_att('translate', $att->value);
 			$att->remove;

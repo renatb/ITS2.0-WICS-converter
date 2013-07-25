@@ -3,16 +3,12 @@ use strict;
 use warnings;
 use t::TestXML2HTML;
 plan tests => 0+blocks();
-# use Test::XML;
-use Test::LongString;
 use Test::HTML::Differences;
 
 filters {input => 'htmlize'};
 
 for my $block(blocks()){
-    # print $block->input;
     eq_or_diff_html($block->input, $block->expected, $block->name);
-    # print ${$block->input};
 }
 
 __DATA__

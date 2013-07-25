@@ -12,11 +12,11 @@ use Exporter::Easy (
 
 =head1 SYNOPSIS
 
-    use XML::ITS::WICS::XML2HTML::FutureNode;
+    use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future);
     use XML::ITS;
     my $ITS = XML::ITS->new('xml', doc => 'myITSfile.xml');
-    my $comment = $ITS->get_root->get_xpath(/*/comment());
-    my $f_comment = XML::ITS::WICS::XML2HTML::FutureNode->new($comment);
+    my ($comment) = $ITS->get_root->get_xpath(//comment());
+    my $f_comment = create_future($comment);
     # change the document around, but don't delete any elements...
     $f_comment->ensure_visible;
 
