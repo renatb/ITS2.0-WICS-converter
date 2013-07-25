@@ -47,6 +47,23 @@ to the owning DOM.
 sub create_future {
     my ($node) = @_;
 
+        # case ELEMENT:
+        #     return placeholder object
+        #         (use existing placeholder if found in %placeholders)
+        #         (placeholder just holds element, and paste does nothing)
+        #     return $domNode;
+        #     break;
+        # case ATTRIBUTE, COMMENT, PI, DOCUMENT, NAMESPACE:
+        #     return placeholder object
+        #         (use existing placeholder if found in %placeholders)
+        #         (create new element representing $domNode;
+        #             also save prev/next sibling/parent)
+        # case TEXT:
+        #     push @{$matchIndex->{$rule}}, placeholder object
+        #         (use existing placeholder if found in %placeholders)
+        #         (create new element representing $domNode;
+        #             also save prev/next sibling/parent;
+        #             should destroy original text when pasted into document)
 }
 
 =head1 METHODS

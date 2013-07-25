@@ -68,13 +68,15 @@ sub convert {
 # create an indexing sub which pushes matches onto input array pointer
 sub _create_indexer {
 	my ($index_array) = @_;
+	#don't create futureNodes for the same node twice!
+	my %future_cache;
 	return sub {
 		my ($rule, $match) = @_;
 		_log_match($rule, $match);
 		my $futureNodes = {};
 		for (keys %$match) {
 			$futureNodes->{$_} =
-				create_future($match->{$_});
+				$future_cache{$_} ||= create_future($match->{$_});
 		}
 		push @{ $index_array }, [$rule, $futureNodes];
 	};
@@ -134,6 +136,10 @@ sub _traversal_sub {
 			push @$its_els, $el;
 			_log_script($el);
 			return 0;
+		}
+		if($log->is_debug){
+			my $id = $el->att('xml:id');
+			$log->debug('processing ' . $el->name . ($id ? " ($id)" : ''));
 		}
 
 		# process attributes; some will become different
