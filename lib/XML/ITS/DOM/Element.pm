@@ -53,21 +53,51 @@ sub new_element {
 
 =head2 C<is_inline>
 
-Returns true if this element appears to be inline. An element is considered inline
-if it has a text sibling with more than just whitespace.
+Returns true if this element appears to be inline, false if block. An element
+is considered block if it is preceded and followed by a newline (and optionally
+other whitespace), or if it is the root element.
+
+For example, here are some block elements:
+
+    ...some text...
+    <block1>
+    <block2>...text...</block2>
+    </block1>
+    ...some text...
+
+and here are some inline elements:
+
+    ...some text...
+    <block>
+    ...text1...<inline1>...text2</inline1>text2...
+    <inline2>...text1...</inline2> ...text2...
+    ...text1...<inline3>...text2</inline3>
+    </block>
+    ...some text...
 
 =cut
 sub is_inline {
     my ($self)  = @_;
     my $el = $self->{node};
 
-    my $prev = $el->previousNonBlankSibling;
-    my $next = $el->nextNonBlankSibling;
+    #the root is never inline
+    if($el->isSameNode($el->ownerDocument->documentElement)){
+        return 0;
+    }
+    my $prev = $el->previousSibling;
+    my $next = $el->nextSibling;
+    # has text siblings on both sides
     if( ($prev && $prev->nodeName() eq '#text') ||
         ($next && $next->nodeName() eq '#text') ){
-        return 1;
+        # and they include adjacent newline with optional whitespace
+        my $prevText = $prev->nodeValue;
+        my $nextText = $next->nodeValue;
+        if($prevText =~ /[\r\n]\s*$/
+            && $nextText =~ /^\s*[\r\n]/){
+            return 0;
+        }
     }
-    return 0;
+    return 1;
 }
 
 =head2 C<att>

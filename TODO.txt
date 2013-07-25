@@ -5,7 +5,6 @@ Current task:
 Engineering Tasks:
 
 To Do on current task:
-    - create $ITS_URI accessor
 
 Later To Do:
     - return array, not array ref, from children()

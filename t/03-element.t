@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 24;
+plan tests => 26;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -95,6 +95,13 @@ sub test_inlininess {
     my ($dom) = @_;
     my ($el) = $dom->get_root->get_xpath('//i');
     ok($el->is_inline, '<i> is inline');
+
+    ($el) = $dom->get_root->get_xpath('//third');
+    ok($el->is_inline, '<third> is inline');
+
+    ($el) = $dom->get_root->get_xpath('//fifth');
+    ok($el->is_inline, '<fifth> is inline');
+
     ($el) = $dom->get_root->get_xpath('//second');
     ok(!$el->is_inline, '<second> is not inline');
 }
