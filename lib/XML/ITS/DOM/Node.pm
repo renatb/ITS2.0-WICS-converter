@@ -293,6 +293,19 @@ sub paste {
     return;
 }
 
+=head2 C<paste_before>
+
+Argument: ITS::Node to be new next sibling of this node.
+Inserts this node in the DOM immediately before the input node.
+
+=cut
+sub paste_before {
+    my ($self, $next_sib) = @_;
+    my $parent = $next_sib->{node}->parentNode;
+    $parent->insertBefore($self->{node}, $next_sib->{node});
+    return;
+}
+
 =head2 C<is_same_node>
 
 Return true if this node is the same node as the input node.
