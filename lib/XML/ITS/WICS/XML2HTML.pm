@@ -10,6 +10,11 @@ use XML::ITS::DOM;
 use XML::ITS::DOM::Element qw(new_element);
 use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future);
 
+use Memoize;
+# this way we always get back the same string, even if xml:id has
+# been removed from an element
+memoize('_el_log_id');
+
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
 # VERSION
 
@@ -140,7 +145,7 @@ sub _traversal_sub {
 			return 0;
 		}
 		if($log->is_debug){
-			my $id = $el->att('xml:id');
+			# print "processing " . $el->name . $el->att('xml:id');
 			$log->debug('processing ' . _el_log_id($el));
 		}
 
@@ -172,6 +177,7 @@ sub _traversal_sub {
 		# strip namespacing; this moves the namespace declaration to the children,
 		# if used by them
 		my $new_el = $el->strip_ns;
+		my $old_el = $el; # for logging purposes
 		if(!$el->is_same_node($new_el)){
 			if($log->is_debug){
 				$log->debug('stripping namespaces from ' . _el_log_id($el));
@@ -193,7 +199,12 @@ sub _traversal_sub {
 			$div_child ||= $div_result;
 		}
 
-		return _rename_el($el, $div_child, $inline_ancestor);
+		my $is_div = _rename_el($el, $div_child, $inline_ancestor);
+		if($log->is_debug){
+			my $new_name = $is_div ? 'div' : 'span';
+			$log->debug('renaming ' . _el_log_id($old_el) . " to <$new_name>");
+		}
+		return $is_div;
 	};
 	return $traverse_sub;
 }
@@ -216,18 +227,15 @@ sub _rename_el {
 		$new_name = 'div';
 	}
 
-	if($log->is_debug){
-		$log->debug('renaming ' . _el_log_id($el) . " to <$new_name>");
-	}
 	$el->set_name($new_name);
 	return $new_name eq 'div' ? 1 : 0;
 }
 
 #get a string to indicate the given element in a log
-#<el> or <el id="val">
+#<el> or <el xml:id="val">
 sub _el_log_id {
 	my ($el) = @_;
-	my $id = $el->att('id');
+	my $id = $el->att('xml:id');
 	my $string = '<' . $el->name;
 	$string .= qq{ xml:id="$id"}
 		if $id;
@@ -302,10 +310,12 @@ sub _process_att {
 sub _att_rename {
 	my ($el, $att, $new_name) = @_;
 	if($log->is_debug){
-		$log->debug('setting @' . $att->name . ' of ' . _el_log_id($el) .
-			" to $new_name");
+		$log->debug('renaming @' . $att->name . ' of ' . _el_log_id($el) .
+			" to \@$new_name");
 	}
-	$att->set_name($new_name);
+	#have to replace with new att because renaming doesn't work with namespaces
+	$el->set_att($new_name, $att->value);
+	$att->remove;
 }
 
 

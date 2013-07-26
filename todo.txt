@@ -3,10 +3,8 @@ WICS XML to HTML converter
 TODO:
     - create HTML match indexer
         * create a 'future-node' class to save match spots
-    - Test logging
 
 Engineering Tasks:
-    - testable logging via Log::Any;
 
 To Do on current task:
 
@@ -14,8 +12,7 @@ Later To Do:
     - Decide on organization of end-project
         - WICS.pm one file that can convert anything?
             - GUI?
-            - Inject logger (via Log::Any)?
-
+    - Inject logger
 
 Testing:
     Besides testing each piece of functionality, we need a comprehensive end-to-end XML2HTML test suite for Renat and Serge

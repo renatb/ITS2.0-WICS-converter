@@ -12,7 +12,11 @@ for my $block(blocks()){
     my ($html, $log) = $block->input;
     eq_or_diff_html($html, $block->output, $block->name . ' (HTML output)');
     is_deeply($log, $block->log, $block->name . ' (logs)')
-      or note explain $log;
+      or do{
+        my $string;
+        $string .= "$_->{message}\n" for (@$log);
+        note $string;
+      };
 }
 
 __DATA__
@@ -85,7 +89,6 @@ renaming <xml> to <div>
 wrapping document in HTML structure
 
 === namespaces stripped
---- LAST
 --- input
 <xml xmlns:bar="bar.io">
   <bar:foo bar:baz="gunk">
@@ -118,7 +121,7 @@ stripping namespaces from <bar:foo>
 processing <qux>
 setting @title of <qux> to 'qux'
 renaming <qux> to <div>
-renaming <foo> to <div>
+renaming <bar:foo> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
 
@@ -141,6 +144,16 @@ should be converted into id
     </div>
   </body>
 </html>
+--- log
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+processing <foo xml:id="bar">
+renaming @xml:id of <foo xml:id="bar"> to @id
+setting @title of <foo xml:id="bar"> to 'foo[xml:id='bar']'
+renaming <foo xml:id="bar"> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
 
 === xml:lang
 should be converted into lang
@@ -161,6 +174,16 @@ should be converted into lang
     </div>
   </body>
 </html>
+--- log
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+processing <foo>
+renaming @xml:lang of <foo> to @lang
+setting @title of <foo> to 'foo[xml:lang='lut']'
+renaming <foo> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
 
 === its:translate
 should be converted into translate
@@ -181,17 +204,29 @@ should be converted into translate
     </div>
   </body>
 </html>
+--- log
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+stripping namespaces from <xml>
+processing <foo>
+renaming @its:translate of <foo> to @translate
+setting @title of <foo> to 'foo'
+stripping namespaces from <foo>
+renaming <foo> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
 
 === its:dir
 ltr/rtl should be converted into a dir att, and
 rlo/lro should create an inline bdo element
 --- input
 <xml xmlns:its="http://www.w3.org/2005/11/its">
-  <foo its:dir="rtl">foo</foo>
-  <foo its:dir="ltr">foo</foo>
-  <foo its:dir="lro">foo<bar/></foo>
-  <foo its:dir="rlo">foo</foo>
-  <foo its:dir="rlo"><foo>bar</foo></foo>
+  <foo xml:id="i1" its:dir="rtl">foo</foo>
+  <foo xml:id="i2" its:dir="ltr">foo</foo>
+  <foo xml:id="i3" its:dir="lro">foo<bar/></foo>
+  <foo xml:id="i4" its:dir="rlo">foo</foo>
+  <foo xml:id="i5" its:dir="rlo"><bar>bar</bar></foo>
 </xml>
 --- output
 <!DOCTYPE html>
@@ -202,14 +237,57 @@ rlo/lro should create an inline bdo element
   </head>
   <body>
     <div title="xml">
-      <div title="foo" dir="rtl">foo</div>
-      <div title="foo" dir="ltr">foo</div>
-      <div title="foo"><bdo dir="ltr">foo<span title="bar"></span></bdo></div>
-      <div title="foo"><bdo dir="rtl">foo</bdo></div>
-      <div title="foo"><bdo dir="rtl"><span title="foo">bar</span></bdo></div>
+      <div id="i1" title="foo[xml:id='i1']" dir="rtl">foo</div>
+      <div id="i2" title="foo[xml:id='i2']" dir="ltr">foo</div>
+      <div id="i3" title="foo[xml:id='i3']"><bdo dir="ltr">foo<span title="bar"></span></bdo></div>
+      <div id="i4" title="foo[xml:id='i4']"><bdo dir="rtl">foo</bdo></div>
+      <div id="i5" title="foo[xml:id='i5']"><bdo dir="rtl"><span title="bar">bar</span></bdo></div>
     </div>
   </body>
 </html>
+--- log
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+stripping namespaces from <xml>
+processing <foo xml:id="i1">
+renaming @xml:id of <foo xml:id="i1"> to @id
+renaming @its:dir of <foo xml:id="i1"> to @dir
+setting @title of <foo xml:id="i1"> to 'foo[xml:id='i1']'
+stripping namespaces from <foo xml:id="i1">
+renaming <foo xml:id="i1"> to <div>
+processing <foo xml:id="i2">
+renaming @xml:id of <foo xml:id="i2"> to @id
+renaming @its:dir of <foo xml:id="i2"> to @dir
+setting @title of <foo xml:id="i2"> to 'foo[xml:id='i2']'
+stripping namespaces from <foo xml:id="i2">
+renaming <foo xml:id="i2"> to <div>
+processing <foo xml:id="i3">
+renaming @xml:id of <foo xml:id="i3"> to @id
+replacing @its:dir of <foo xml:id="i3"> with bdo[dir=ltr] wrapped around children
+setting @title of <foo xml:id="i3"> to 'foo[xml:id='i3']'
+stripping namespaces from <foo xml:id="i3">
+processing <bar>
+setting @title of <bar> to 'bar'
+renaming <bar> to <span>
+renaming <foo xml:id="i3"> to <div>
+processing <foo xml:id="i4">
+renaming @xml:id of <foo xml:id="i4"> to @id
+replacing @its:dir of <foo xml:id="i4"> with bdo[dir=rtl] wrapped around children
+setting @title of <foo xml:id="i4"> to 'foo[xml:id='i4']'
+stripping namespaces from <foo xml:id="i4">
+renaming <foo xml:id="i4"> to <div>
+processing <foo xml:id="i5">
+renaming @xml:id of <foo xml:id="i5"> to @id
+replacing @its:dir of <foo xml:id="i5"> with bdo[dir=rtl] wrapped around children
+setting @title of <foo xml:id="i5"> to 'foo[xml:id='i5']'
+stripping namespaces from <foo xml:id="i5">
+processing <bar>
+setting @title of <bar> to 'bar'
+renaming <bar> to <span>
+renaming <foo xml:id="i5"> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
 
 === other its:* atts
 prefix its- and use dashes instead of camelCasing
@@ -234,6 +312,28 @@ prefix its- and use dashes instead of camelCasing
     </div>
   </body>
 </html>
+--- log
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+stripping namespaces from <xml>
+processing <foo>
+Replacing @its:person of <foo> with its-person
+setting @title of <foo> to 'foo'
+stripping namespaces from <foo>
+renaming <foo> to <div>
+processing <bar>
+Replacing @its:locNote of <bar> with its-loc-Note
+setting @title of <bar> to 'bar'
+stripping namespaces from <bar>
+renaming <bar> to <div>
+processing <baz>
+Replacing @its:blahBlahFooBar of <baz> with its-blah-Blah-Foo-Bar
+setting @title of <baz> to 'baz'
+stripping namespaces from <baz>
+renaming <baz> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
 
 === standoff markup
 <script> tags are treated as text, so to ease testing we remove all whitespace
@@ -256,3 +356,12 @@ from standoff markup.
     <div title="xml"></div>
   </body>
 </html>
+--- log
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+stripping namespaces from <xml>
+placing <its:locQualityIssues xml:id="lq1"> in script element
+placing <its:provenanceRecords xml:id="pr1"> in script element
+renaming <xml> to <div>
+wrapping document in HTML structure
