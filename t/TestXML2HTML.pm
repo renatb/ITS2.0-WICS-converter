@@ -19,6 +19,7 @@ sub htmlize {
     $log->clear();
     my $wics = XML::ITS::WICS::XML2HTML->new();
     my $converted = ${ $wics->convert(\$xml) };
+    # print $converted;
     return ($converted, [@{$log->msgs()}]);
 }
 

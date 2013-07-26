@@ -5,6 +5,7 @@ TODO:
         * create a 'future-node' class to save match spots
 
 Engineering Tasks:
+    - change FutureNodes in matches array when strip_ns changes elements
 
 To Do on current task:
 

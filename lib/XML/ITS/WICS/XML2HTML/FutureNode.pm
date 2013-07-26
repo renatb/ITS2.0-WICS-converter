@@ -46,6 +46,7 @@ to the owning DOM.
 =cut
 sub create_future {
     my ($node) = @_;
+    return bless {node => $node}, __PACKAGE__;
 
         # case ELEMENT:
         #     return placeholder object
@@ -68,14 +69,25 @@ sub create_future {
 
 =head1 METHODS
 
-=head2 C<ensure_visible>
+=head2 C<elemental>
 
-Ensures that the information in the contained node is visible in the
-HTML DOM. This causes changes to the owning DOM.
+Ensures that the information in the contained node is represented by an element
+in the HTML DOM. This may cause changes to the owning DOM.
+
+Returns the ITS::DOM::Element object representing the node.
 
 =cut
-sub ensure_visible {
+sub elemental {
     my ($self) = @_;
+    #only elementalize a node once!
+    if(exists $self->{element}){
+        return $self->{element};
+    }
+    #elements are already visible
+    if($self->{node}->type eq 'ELT'){
+        $self->{element} = $self->{node};
+    }
+    return $self->{element};
 }
 
 1;

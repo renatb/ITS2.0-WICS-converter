@@ -10,6 +10,7 @@ use XML::ITS::DOM;
 use XML::ITS::DOM::Element qw(new_element);
 use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future);
 
+use feature 'state';
 use Memoize;
 # this way we always get back the same string, even if xml:id has
 # been removed from an element
@@ -66,6 +67,7 @@ sub convert {
 	# make $ITS doc into HTML
 	my $html_doc = $self->_htmlize($ITS->get_doc);
 	# paste futureNodes and new matching rules
+	# _update_rules(\@matches);
 	# return string pointer
 	return \($html_doc->string);
 }
@@ -90,15 +92,9 @@ sub _create_indexer {
 sub _log_match {
 	my ($rule, $match) = @_;
 	if ($log->is_debug()){
-		my $message = $rule->type . ' rule ';
-		if(my $id = $rule->node->att('xml:id')){
-			$message .= "($id) ";
-		}
-		$message .= 'matched ' .
-			$match->{selector}->name;
-		if(my $id = $match->{selector}->att('xml:id')){
-			$message .= " ($id)"
-		}
+		my $message = 'match: rule=' . _el_log_id($rule->node);
+		$message .= "; $_=" . _el_log_id($match->{$_})
+			for keys $match;
 		$log->debug($message);
 	}
 	return;
@@ -382,6 +378,50 @@ sub _choose_name {
 		($next && $next->tag() eq '#PCDATA') ){
 		$twig->{span_list}->{$el->tag}++;
 	}
+}
+
+#make sure all rule matches are elemental, and paste rules that match them
+sub _update_rules {
+	my ($matches) = @_;
+
+	#create a new rule for each match
+	for my $match (@$matches){
+		my ($rule, $futureNodes) = @$match;
+		my $new_rule = $rule->node->copy;
+		for my $key(keys %$futureNodes){
+			my $el = $futureNodes->{$key}->elemental;
+			$new_rule->set_att($key, q{id('} . _get_or_set_id($el) . q{')})
+		}
+		_get_or_set_id($new_rule);
+		if($log->is_debug){
+			$log->debug('Creating new rule ' . _el_log_id($new_rule) .
+				'to match ' . _el_log_id($futureNodes->{'selector'}->elemental));
+		}
+		$new_rule->paste_before($rule->node);
+	}
+	#now remove all original matching rules
+	for my $match (@$matches){
+		$match->[0]->remove;
+	}
+	return;
+}
+
+#returns the id attribute of the given element; creates one if none exists.
+sub _get_or_set_id {
+	my ($el) = @_;
+	my $id = $el->att('id');
+	if(!$id){
+		$id = _next_id();
+		$el->set_att('id', $id);
+	}
+	return $id;
+}
+
+#returns a unique string "ITS_#", '#' being some number.
+sub _next_id {
+	state $num = 0;
+	$num++;
+	return "ITS_$num";
 }
 
 1;
