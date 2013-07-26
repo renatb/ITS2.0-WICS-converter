@@ -13,7 +13,7 @@ for my $block(blocks()){
     eq_or_diff_html($html, $block->output, $block->name . ' (HTML output)');
     is_deeply($log, $block->log, $block->name . ' (logs)')
       or do{
-        my $string;
+        my $string = 'expected:';
         $string .= "$_->{message}\n" for (@$log);
         note $string;
       };
