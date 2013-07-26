@@ -108,7 +108,7 @@ sub selector {
 
 =head2 C<node>
 
-Returns the ITS::DOM::Node that this rule represents.
+Returns the ITS::DOM::Element that this rule represents.
 
 =cut
 

@@ -1,13 +1,15 @@
 ITS
 
-Current task:
+Next:
+    - test copy()
+    - rename Rule::node() to element()
+    - return array, not array ref, from children()
 
 Engineering Tasks:
 
 To Do on current task:
 
 Later To Do:
-    - return array, not array ref, from children()
     - proper error checking for XPath execution
     - ?enforce value of idValueRule XPath being a string
     - ?enforce pointers being nodes

@@ -303,4 +303,16 @@ sub is_same_node {
     return $self->{node}->isSameNode($other->{node});
 }
 
+=head2 C<copy>
+
+Returns a copy of this node. A single boolean argument indicates
+whether a deep copy should be performed; that is, whether children
+should also be copied.
+
+=cut
+sub copy {
+    my ($self, $deep) = @_;
+    return __PACKAGE__->new($self->{node}->cloneNode($deep));
+}
+
 1;
