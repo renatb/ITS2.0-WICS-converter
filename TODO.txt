@@ -2,6 +2,7 @@ ITS
 
 Next:
     - test copy()
+    - test Value::as_xpath
     - rename Rule::node() to element()
     - return array, not array ref, from children()
 

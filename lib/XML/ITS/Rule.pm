@@ -77,8 +77,8 @@ sub params {
 
 =head2 C<pointers>
 
-Returns an array pointer containing the names of attributes which are pointers
-(or relative selectors).
+Returns an array ref containing the names of attributes which are pointers
+(relative selectors).
 
 =cut
 
@@ -115,19 +115,6 @@ Returns the ITS::DOM::Element that this rule represents.
 sub node {
     my ($self) = @_;
     return $self->{node};
-}
-
-=head2 C<copy>
-
-Creates and returns a copy of this Rule. The new rule contains a new ITS::DOM::Node,
-which is pasted as the next sibling of the rule being copied.
-
-=cut
-
-sub copy {
-    my ($self) = @_;
-    #Don't forget to get the namespace right!
-    return 'TODO';
 }
 
 1;

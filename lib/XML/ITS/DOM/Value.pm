@@ -62,6 +62,25 @@ sub value {
     return $self->{value};
 }
 
+=head2 C<as_xpath>
+
+Returns the value of this object as an XPath expression.
+
+=cut
+sub as_xpath {
+    my ($self) = @_;
+    if($self->type eq 'BOOL'){
+        return $self->value ? 'true()' : 'false()';
+    }elsif($self->type eq 'NUM'){
+        return $self->value;
+    }
+    #$self->type eq 'LIT'
+    my $lit = $self->value;
+    #escape single quotes and return single quoted string
+    $lit =~ s/'/&#39;/g;
+    return "'$lit'";
+}
+
 sub _get_type {
     my ($value) = @_;
     #get the type from the XML::LibXML::* class name
