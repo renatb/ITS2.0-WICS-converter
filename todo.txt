@@ -6,8 +6,11 @@ TODO:
 
 Engineering Tasks:
     - change FutureNodes in matches array when strip_ns changes elements
+    - make HTML comparison tests less fragile (whitespace in script element) ?
 
 To Do on current task:
+    - test rule conversions
+    - special semantics for idValueRule conversion
 
 Later To Do:
     - Decide on organization of end-project

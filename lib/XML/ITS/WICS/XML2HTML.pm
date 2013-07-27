@@ -67,7 +67,7 @@ sub convert {
 	# make $ITS doc into HTML
 	my $html_doc = $self->_htmlize($ITS->get_doc);
 	# paste futureNodes and new matching rules
-	# _update_rules(\@matches);
+	$self->_update_rules(\@matches);
 	# return string pointer
 	return \($html_doc->string);
 }
@@ -253,7 +253,7 @@ sub _process_att {
 	}elsif($att->name eq 'xml:lang'){
 		_att_rename($el, $att, 'lang');
 	#its:* attributes
-	}elsif($att->namespaceURI eq its_ns()){
+	}elsif($att->namespaceURI && $att->namespaceURI eq its_ns()){
 		if($att->local_name eq 'translate'){
 			_att_rename($el, $att, 'translate');
 			return;
@@ -382,36 +382,36 @@ sub _choose_name {
 
 #make sure all rule matches are elemental, and paste rules that match them
 sub _update_rules {
-	my ($matches) = @_;
+	my ($self, $matches) = @_;
 
 	#create a new rule for each match
 	for my $match (@$matches){
 		my ($rule, $futureNodes) = @$match;
-		my $new_rule = $rule->node->copy;
+		my $new_rule = $rule->node->copy(0);
 		for my $key(keys %$futureNodes){
 			my $el = $futureNodes->{$key}->elemental;
-			$new_rule->set_att($key, q{id('} . _get_or_set_id($el) . q{')})
+			$new_rule->set_att($key, q{id('} . $self->_get_or_set_id($el) . q{')})
 		}
-		_get_or_set_id($new_rule);
+		# _get_or_set_id($new_rule);
 		if($log->is_debug){
 			$log->debug('Creating new rule ' . _el_log_id($new_rule) .
-				'to match ' . _el_log_id($futureNodes->{'selector'}->elemental));
+				' to match ' . _el_log_id($futureNodes->{'selector'}->elemental));
 		}
 		$new_rule->paste_before($rule->node);
 	}
 	#now remove all original matching rules
 	for my $match (@$matches){
-		$match->[0]->remove;
+		$match->[0]->node->remove;
 	}
 	return;
 }
 
 #returns the id attribute of the given element; creates one if none exists.
 sub _get_or_set_id {
-	my ($el) = @_;
+	my ($self, $el) = @_;
 	my $id = $el->att('id');
 	if(!$id){
-		$id = _next_id();
+		$id = $self->_next_id();
 		$el->set_att('id', $id);
 	}
 	return $id;
@@ -419,9 +419,9 @@ sub _get_or_set_id {
 
 #returns a unique string "ITS_#", '#' being some number.
 sub _next_id {
-	state $num = 0;
-	$num++;
-	return "ITS_$num";
+	my ($self) = @_;
+	$self->{num}++;
+	return "ITS_$self->{num}";
 }
 
 1;

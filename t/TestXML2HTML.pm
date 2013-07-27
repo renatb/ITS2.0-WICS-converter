@@ -20,19 +20,14 @@ sub htmlize {
     my $wics = XML::ITS::WICS::XML2HTML->new();
     my $converted = ${ $wics->convert(\$xml) };
     # print $converted;
-    return ($converted, [@{$log->msgs()}]);
+    return ($converted, _get_messages($log->msgs()) );
 }
 
-#turn input lines into a list of debug log entries as created by Log::Any::Test
-sub debug_log_entries {
-    my ($self, @lines) = @_;
-    my @entries;
-    for(@lines){
-        push @entries, {
-            category => 'XML::ITS::WICS::XML2HTML',
-            message => $_,
-            level => 'debug'
-        };
+sub _get_messages {
+    my ($logs) = @_;
+    my $messages = [];
+    for(@$logs){
+        push @$messages, $_->{message};
     }
-    return \@entries;
+    return $messages;
 }

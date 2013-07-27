@@ -6,17 +6,13 @@ use Test::More 0.88;
 plan tests => 2*blocks();
 use Test::HTML::Differences;
 
-filters {input => 'htmlize', log => [qw(lines chomp debug_log_entries)]};
+filters {input => 'htmlize', log => [qw(lines chomp array)]};
 
 for my $block(blocks()){
     my ($html, $log) = $block->input;
     eq_or_diff_html($html, $block->output, $block->name . ' (HTML output)');
     is_deeply($log, $block->log, $block->name . ' (logs)')
-      or do{
-        my $string = 'expected:';
-        $string .= "$_->{message}\n" for (@$log);
-        note $string;
-      };
+      or note explain $log;
 }
 
 __DATA__
