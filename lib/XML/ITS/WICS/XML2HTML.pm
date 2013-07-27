@@ -82,6 +82,7 @@ sub _create_indexer {
 		_log_match($rule, $match);
 		my $futureNodes = {};
 		for (keys %$match) {
+			#TODO: this cache won't actually work
 			$futureNodes->{$_} =
 				$future_cache{$_} ||= create_future($match->{$_});
 		}
@@ -231,6 +232,11 @@ sub _rename_el {
 #<el> or <el xml:id="val">
 sub _el_log_id {
 	my ($el) = @_;
+	# values
+	if((ref $el) =~ /Value/){
+		return $el->value;
+	}
+	# elements
 	my $id = $el->att('xml:id');
 	my $string = '<' . $el->name;
 	$string .= qq{ xml:id="$id"}
@@ -389,8 +395,14 @@ sub _update_rules {
 		my ($rule, $futureNodes) = @$match;
 		my $new_rule = $rule->node->copy(0);
 		for my $key(keys %$futureNodes){
-			my $el = $futureNodes->{$key}->elemental;
-			$new_rule->set_att($key, q{id('} . $self->_get_or_set_id($el) . q{')})
+			#FutureNodes- make it visible in the dom and match the rule with its ID
+			if((ref $futureNodes->{$key}) =~ /FutureNode/){
+				my $el = $futureNodes->{$key}->elemental;
+				$new_rule->set_att($key, q{id('} . $self->_get_or_set_id($el) . q{')})
+			}else{
+				#DOM values- match the rule with the value
+				$new_rule->set_att($key, $futureNodes->{$key}->as_xpath);
+			}
 		}
 		# _get_or_set_id($new_rule);
 		if($log->is_debug){

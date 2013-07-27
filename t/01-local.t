@@ -12,7 +12,7 @@ for my $block(blocks()){
     my ($html, $log) = $block->input;
     eq_or_diff_html($html, $block->output, $block->name . ' (HTML output)');
     is_deeply($log, $block->log, $block->name . ' (logs)')
-      or note explain $log;
+      or note join "\n", @$log;
 }
 
 __DATA__

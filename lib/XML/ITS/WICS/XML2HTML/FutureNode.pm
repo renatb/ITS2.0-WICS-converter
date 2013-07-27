@@ -40,12 +40,19 @@ The following subroutine may be exported:
 
 =head2 C<create_future>
 
-Creates a FutureNode object and returns it. No changes are made
-to the owning DOM.
+If the input is an XML::ITS::DOM::Node (or Element), this method creates
+a FutureNode object and returns it. If it is an XML::ITS::DOM::Value,
+it simply returns it.
+
+No changes are made to the owning DOM in this method.
 
 =cut
 sub create_future {
     my ($node) = @_;
+    #Values
+    if(ref $node eq 'XML::ITS::DOM::Value'){
+        return $node;
+    }
     return bless {node => $node}, __PACKAGE__;
 
         # case ELEMENT:
