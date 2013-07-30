@@ -11,10 +11,9 @@ use XML::ITS::DOM::Element qw(new_element);
 use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future);
 
 use feature 'state';
-use Memoize;
-# this way we always get back the same string, even if xml:id has
-# been removed from an element
-memoize('_el_log_id');
+#Memoize is used to speed up, and make consistent, log messages
+#relate to a particular element
+use Memoize qw(memoize unmemoize);
 
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
 # VERSION
@@ -61,30 +60,40 @@ sub convert {
 	my ($self, $doc) = @_;
 	my $ITS = XML::ITS->new('xml', doc => $doc);
 
-	#[rule, {selector => futureNode, *pointer => futureNode...}]
+	# this way we always get back the same string, even if xml:id has
+	# been removed from an element
+	memoize('_el_log_id');
+
+	# [rule, {selector => futureNode, *pointer => futureNode...}]
 	my @matches;
-	$ITS->iterate_matches(_create_indexer(\@matches));
+	# pointers to all existing future nodes; keys are represented nodes
+	my %future_cache;
+	$ITS->iterate_matches(_create_indexer(\@matches, \%future_cache));
 	# make $ITS doc into HTML
-	my $html_doc = $self->_htmlize($ITS->get_doc);
+	my $html_doc = $self->_htmlize($ITS->get_doc, \%future_cache);
 	# paste futureNodes and new matching rules
 	$self->_update_rules(\@matches);
+
+	unmemoize('_el_log_id');
 	# return string pointer
 	return \($html_doc->string);
 }
 
 # create an indexing sub which pushes matches onto input array pointer
 sub _create_indexer {
-	my ($index_array) = @_;
-	#don't create futureNodes for the same node twice!
-	my %future_cache;
+	my ($index_array, $future_cache) = @_;
 	return sub {
 		my ($rule, $match) = @_;
 		_log_match($rule, $match);
 		my $futureNodes = {};
 		for (keys %$match) {
-			#TODO: this cache won't actually work
+			# TODO: this cache won't actually work
+			# don't create futureNodes for the same node twice!
+			# store pointer to future node so that the futureNodes hash
+			# contents can be edited via future_cache
 			$futureNodes->{$_} =
-				$future_cache{$_} ||= create_future($match->{$_});
+				$future_cache->{ $match->{$_}->unique_key } ||=
+				 \( create_future($match->{$_}) );
 		}
 		push @{ $index_array }, [$rule, $futureNodes];
 	};
@@ -101,8 +110,11 @@ sub _log_match {
 	return;
 }
 
+# pass in document to be htmlized and a hash containing node->futureNode ref pairs
+# (these are nodes which have been selected; this is needed in case the node is
+# replaced because of namespace removal)
 sub _htmlize {
-	my ($self, $doc) = @_;
+	my ($self, $doc, $future_cache) = @_;
 
 	# traverse every document element, converting into HTML
 	# save standoff or rules elements in @its_els
@@ -110,7 +122,7 @@ sub _htmlize {
 		if $log->is_debug;
 	my @its_els;
 	my $processor = _traversal_sub(\@its_els);
-	$processor->($doc->get_root);
+	$processor->($doc->get_root, 0, $future_cache);
 
 	#make the document into an HTML structure
 	$log->debug('wrapping document in HTML structure')
@@ -126,11 +138,13 @@ sub _traversal_sub {
 
 	# a recursive sub which transforms elements into HTML and returns
 	# true for a child renamed as a div, false otherwise. Arguments
-	# are element to transform and boolean indicating inline ancestor
-	# (like <span> or <bdo>; so this element should not be made a <div>)
+	# are element to transform; boolean indicating inline ancestor
+	# (like <span> or <bdo>; so this element should not be made a <div>);
+	# and the node->futureNode ref hash ref (in case of node replacement
+	# for namespace removal)
 	my $traverse_sub;
 	$traverse_sub = sub {
-		my ($el, $inline_ancestor) = @_;
+		my ($el, $inline_ancestor, $future_cache) = @_;
 		# its: elements other than 'rules' are standoff markup;
 		# don't rename these, and save them for pasting in the head
 		if($el->namespaceURI &&
@@ -179,6 +193,10 @@ sub _traversal_sub {
 			if($log->is_debug){
 				$log->debug('stripping namespaces from ' . _el_log_id($el));
 			}
+			# if this element has an associated future (match), change the future
+			# to one for the new node
+			exists $future_cache->{$old_el->unique_key} and
+				${ $future_cache->{$old_el->unique_key} } = create_future($new_el);
 			$el = $new_el;
 		}
 
@@ -192,7 +210,8 @@ sub _traversal_sub {
 		# true if any child is a div;
 		my $div_child;
 		for my $child(@$children){
-			my $div_result = $traverse_sub->($child, $inlined_children);
+			my $div_result = $traverse_sub->(
+				$child, $inlined_children, $future_cache);
 			$div_child ||= $div_result;
 		}
 
@@ -395,19 +414,21 @@ sub _update_rules {
 		my ($rule, $futureNodes) = @$match;
 		my $new_rule = $rule->node->copy(0);
 		for my $key(keys %$futureNodes){
+			my $futureNode = ${ $futureNodes->{$key} };
 			#FutureNodes- make it visible in the dom and match the rule with its ID
-			if((ref $futureNodes->{$key}) =~ /FutureNode/){
-				my $el = $futureNodes->{$key}->elemental;
+			if((ref $futureNode) =~ /FutureNode/){
+				my $el = $futureNode->elemental;
 				$new_rule->set_att($key, q{id('} . $self->_get_or_set_id($el) . q{')})
 			}else{
 				#DOM values- match the rule with the value
-				$new_rule->set_att($key, $futureNodes->{$key}->as_xpath);
+				$new_rule->set_att($key, $futureNode->as_xpath);
 			}
 		}
 		# _get_or_set_id($new_rule);
 		if($log->is_debug){
+			my $selected = ${ $futureNodes->{'selector'} };
 			$log->debug('Creating new rule ' . _el_log_id($new_rule) .
-				' to match ' . _el_log_id($futureNodes->{'selector'}->elemental));
+				' to match ' . _el_log_id($selected->elemental));
 		}
 		$new_rule->paste_before($rule->node);
 	}

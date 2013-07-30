@@ -3,11 +3,10 @@ WICS XML to HTML converter
 TODO:
 
 Engineering Tasks:
-    - change FutureNodes in matches array when strip_ns changes elements
-    - redesign FutureNodes cache to work properly
     - make HTML comparison tests less fragile (whitespace in script element) ?
 
 To Do on current task:
+    - remove memoization and redo logs
     - test rule conversions
 
 Later To Do:
