@@ -247,10 +247,12 @@ renaming <head> to <div>
 processing <foo:para>
 setting @title of <foo:para> to 'foo:para'
 stripping namespaces from <foo:para>
-renaming <foo:para> to <div>
+renaming <para> to <div>
 processing <content>
 setting @title of <content> to 'content'
 renaming <content> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
-Creating new rule <its:domainRule> to match <foo:para>
+Setting id of <div> to ITS_1
+Setting id of <div> to ITS_2
+Creating new rule <its:domainRule> to match <div id="ITS_1">

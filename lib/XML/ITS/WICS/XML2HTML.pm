@@ -11,9 +11,6 @@ use XML::ITS::DOM::Element qw(new_element);
 use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future);
 
 use feature 'state';
-#Memoize is used to speed up, and make consistent, log messages
-#relate to a particular element
-use Memoize qw(memoize unmemoize);
 
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
 # VERSION
@@ -60,10 +57,6 @@ sub convert {
 	my ($self, $doc) = @_;
 	my $ITS = XML::ITS->new('xml', doc => $doc);
 
-	# this way we always get back the same string, even if xml:id has
-	# been removed from an element
-	memoize('_el_log_id');
-
 	# [rule, {selector => futureNode, *pointer => futureNode...}]
 	my @matches;
 	# pointers to all existing future nodes; keys are represented nodes
@@ -74,7 +67,6 @@ sub convert {
 	# paste futureNodes and new matching rules
 	$self->_update_rules(\@matches);
 
-	unmemoize('_el_log_id');
 	# return string pointer
 	return \($html_doc->string);
 }
@@ -216,10 +208,6 @@ sub _traversal_sub {
 		}
 
 		my $is_div = _rename_el($el, $div_child, $inline_ancestor);
-		if($log->is_debug){
-			my $new_name = $is_div ? 'div' : 'span';
-			$log->debug('renaming ' . _el_log_id($old_el) . " to <$new_name>");
-		}
 		return $is_div;
 	};
 	return $traverse_sub;
@@ -242,8 +230,12 @@ sub _rename_el {
 	}else{
 		$new_name = 'div';
 	}
+	if($log->is_debug){
+		$log->debug('renaming ' . _el_log_id($el) . " to <$new_name>");
+	}
 
 	$el->set_name($new_name);
+
 	return $new_name eq 'div' ? 1 : 0;
 }
 
@@ -255,13 +247,16 @@ sub _el_log_id {
 	if((ref $el) =~ /Value/){
 		return $el->value;
 	}
-	# elements
-	my $id = $el->att('xml:id');
-	my $string = '<' . $el->name;
-	$string .= qq{ xml:id="$id"}
-		if $id;
-	$string .= '>';
-	return $string;
+	# take XML ID if possible; otherwise, HTML id
+	my $id;
+	if($id = $el->att('xml:id')){
+		$id = qq{ xml:id="$id"};
+	}elsif($id = $el->att('id')){
+		$id = qq{ id="$id"};
+	}else{
+		$id = '';
+	}
+	return '<' . $el->name . $id . '>';
 }
 
 #process given attribute on given element;
@@ -418,7 +413,8 @@ sub _update_rules {
 			#FutureNodes- make it visible in the dom and match the rule with its ID
 			if((ref $futureNode) =~ /FutureNode/){
 				my $el = $futureNode->elemental;
-				$new_rule->set_att($key, q{id('} . $self->_get_or_set_id($el) . q{')})
+				my $id = $self->_get_or_set_id($el);
+				$new_rule->set_att($key, q{id('} . $id . q{')})
 			}else{
 				#DOM values- match the rule with the value
 				$new_rule->set_att($key, $futureNode->as_xpath);
@@ -445,6 +441,9 @@ sub _get_or_set_id {
 	my $id = $el->att('id');
 	if(!$id){
 		$id = $self->_next_id();
+		if($log->is_debug){
+			$log->debug('Setting id of ' . _el_log_id($el) . " to $id");
+		}
 		$el->set_att('id', $id);
 	}
 	return $id;
