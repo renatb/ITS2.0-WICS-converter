@@ -1,6 +1,7 @@
 ITS
 
 Next:
+    - test unique_key()
     - test copy()
     - test Value::as_xpath
     - rename Rule::node() to element()

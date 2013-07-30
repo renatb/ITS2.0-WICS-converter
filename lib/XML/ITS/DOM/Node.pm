@@ -328,4 +328,16 @@ sub copy {
     return __PACKAGE__->new($self->{node}->cloneNode($deep));
 }
 
+=head2 C<unique_key>
+
+Returns a unique integer guaranteed to always be the same for this node.
+In other words, if and only if the unique key for two node objects
+are the same, then is_same_node will return true.
+
+=cut
+sub unique_key {
+    my ($self) = @_;
+    return ${$self->{node}};
+}
+
 1;
