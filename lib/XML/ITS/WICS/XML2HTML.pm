@@ -79,13 +79,17 @@ sub _create_indexer {
 		_log_match($rule, $match);
 		my $futureNodes = {};
 		for (keys %$match) {
-			# TODO: this cache won't actually work
 			# don't create futureNodes for the same node twice!
 			# store pointer to future node so that the futureNodes hash
 			# contents can be edited via future_cache
-			$futureNodes->{$_} =
-				$future_cache->{ $match->{$_}->unique_key } ||=
-				 \( create_future($match->{$_}) );
+			if((ref $match->{$_}) =~ /Value$/){
+				$futureNodes->{$_} =
+					 \( create_future($match->{$_}) );
+			}else{#Nodes
+				$futureNodes->{$_} =
+					$future_cache->{ $match->{$_}->unique_key } ||=
+					 \( create_future($match->{$_}) );
+			}
 		}
 		push @{ $index_array }, [$rule, $futureNodes];
 	};
@@ -413,8 +417,8 @@ sub _update_rules {
 			#FutureNodes- make it visible in the dom and match the rule with its ID
 			if((ref $futureNode) =~ /FutureNode/){
 				my $el = $futureNode->elemental;
-				my $id = $self->_get_or_set_id($el);
-				$new_rule->set_att($key, q{id('} . $id . q{')})
+				$new_rule->set_att( $key, q{id('} .
+					$self->_get_or_set_id($el). q{')} );
 			}else{
 				#DOM values- match the rule with the value
 				$new_rule->set_att($key, $futureNode->as_xpath);
@@ -422,9 +426,21 @@ sub _update_rules {
 		}
 		# _get_or_set_id($new_rule);
 		if($log->is_debug){
-			my $selected = ${ $futureNodes->{'selector'} };
-			$log->debug('Creating new rule ' . _el_log_id($new_rule) .
-				' to match ' . _el_log_id($selected->elemental));
+			my $string = 'Creating new rule ' . _el_log_id($new_rule) .
+				' to match [';
+			my @match_strings;
+			for my $key(keys %$futureNodes){
+				my $futureNode = ${ $futureNodes->{$key} };
+				if((ref $futureNode) =~ /FutureNode/){
+					push @match_strings, "$key=" .
+						 _el_log_id($futureNode->elemental);
+				}else{
+					push @match_strings, "$key=" . $futureNode->as_xpath;
+				}
+			}
+			$string .= join '; ', @match_strings;
+			$string .= ']';
+			$log->debug($string);
 		}
 		$new_rule->paste_before($rule->node);
 	}

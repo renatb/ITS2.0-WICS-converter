@@ -1,15 +1,14 @@
 WICS XML to HTML converter
 
 TODO:
+    - find possible code reuse
 
 Engineering Tasks:
-    - make HTML comparison tests less fragile (whitespace in script element) ?
 
 To Do on current task:
-    - remove memoization and redo logs
-    - test rule conversions
 
 Later To Do:
+    - make HTML comparison tests less fragile (whitespace in script element) ?
     - Decide on organization of end-project
         - WICS.pm one file that can convert anything?
             - GUI?

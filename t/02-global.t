@@ -56,11 +56,11 @@ placing <its:rules> in script element
 renaming <head> to <div>
 processing <para xml:id="i1">
 renaming @xml:id of <para xml:id="i1"> to @id
-setting @title of <para xml:id="i1"> to 'para[xml:id='i1']'
-renaming <para xml:id="i1"> to <div>
+setting @title of <para id="i1"> to 'para[xml:id='i1']'
+renaming <para id="i1"> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
-Creating new rule <its:translateRule> to match <para xml:id="i1">
+Creating new rule <its:translateRule> to match [selector=<div id="i1">]
 
 === single selector of element without id
 --- input
@@ -104,7 +104,8 @@ setting @title of <para> to 'para'
 renaming <para> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
-Creating new rule <its:translateRule> to match <para>
+Setting id of <div> to ITS_1
+Creating new rule <its:translateRule> to match [selector=<div id="ITS_1">]
 
 === multiple selectors
 --- input
@@ -154,7 +155,9 @@ setting @title of <content> to 'content'
 renaming <content> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
-Creating new rule <its:domainRule> to match <para>
+Setting id of <div> to ITS_1
+Setting id of <div> to ITS_2
+Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<div id="ITS_2">]
 
 === DOM values handled correctly
 Below idValue is a literal string;
@@ -201,10 +204,10 @@ setting @title of <para> to 'para'
 renaming <para> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
-Creating new rule <its:idValueRule> to match <para>
+Setting id of <div> to ITS_1
+Creating new rule <its:idValueRule> to match [selector=<div id="ITS_1">; idValue='p1']
 
 === namespaced nodes handled properly
---- ONLY
 --- input
 <?xml version="1.0"?>
 <xml>
@@ -255,4 +258,4 @@ renaming <xml> to <div>
 wrapping document in HTML structure
 Setting id of <div> to ITS_1
 Setting id of <div> to ITS_2
-Creating new rule <its:domainRule> to match <div id="ITS_1">
+Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<div id="ITS_2">]
