@@ -255,7 +255,7 @@ sub text {
 
 =head2 C<get_namespaces>
 
-Returns an array ref containing prefix/URI pairs for all of the namespaces
+Returns a hash ref containing prefix/URI pairs for all of the namespaces
 in scope for this node.
 
 =cut
@@ -270,16 +270,14 @@ sub get_namespaces {
 
 =head2 C<children>
 
-Returns an array pointer containing the
+Returns a list containing the
 child nodes of this node.
 
 =cut
 sub children {
     my ($self) = @_;
-    my @children =
-        map {XML::ITS::DOM::Node->new($_)}
+    return map {XML::ITS::DOM::Node->new($_)}
         $self->{node}->childNodes;
-    return \@children;
 }
 =head2 C<paste>
 

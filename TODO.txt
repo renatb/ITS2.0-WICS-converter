@@ -2,7 +2,6 @@ ITS
 
 Next:
     - rename Rule::node() to element()
-    - return array, not array ref, from children()
 
 Engineering Tasks:
 

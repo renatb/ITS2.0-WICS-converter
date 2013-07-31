@@ -33,7 +33,7 @@ sub test_type_name_value {
 
     is($nodes[5]->name, 'foo:sixth', 'Sixth element is "foo:sixth"');
 
-    @nodes = @{$nodes[0]->children};
+    @nodes = $nodes[0]->children;
     is(scalar @nodes, 15, '15 children of root');
     is($nodes[0]->name, '#text', 'first child of root is text');
     is($nodes[1]->name, 'second', 'second child of root is "second"');
@@ -160,10 +160,10 @@ sub test_copy {
     my $copy = $third->copy(0);
     ok($third->unique_key != $copy->unique_key, 'new node created');
     ok($copy->name eq 'third', 'new node has correct name');
-    ok(@{ $copy->children } == 0, 'no children copied');
+    ok($copy->children == 0, 'no children copied');
 
     $copy = $third->copy(1);
     ok($third->unique_key != $copy->unique_key, 'new node created');
     ok($copy->name eq 'third', 'new node has correct name');
-    ok(@{ $copy->children } != 0, 'children also copied');
+    ok($copy->children != 0, 'children also copied');
 }
