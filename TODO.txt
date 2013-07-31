@@ -2,6 +2,7 @@ ITS
 
 Next:
     - proper error checking for XPath execution
+    - test its_ns()
 
 Engineering Tasks:
 

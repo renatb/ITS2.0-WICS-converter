@@ -279,6 +279,17 @@ sub children {
     return map {XML::ITS::DOM::Node->new($_)}
         $self->{node}->childNodes;
 }
+
+=head2 C<parent>
+
+Returns the parent node of this node.
+
+=cut
+sub parent {
+    my ($self) = @_;
+    return __PACKAGE__->new($self->{node}->parentNode);
+}
+
 =head2 C<paste>
 
 Argument: ITS::Node to be used as new parent node.
