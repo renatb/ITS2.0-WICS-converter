@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 37;
+plan tests => 43;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -17,12 +17,13 @@ test_type_name_value($dom);
 test_xpath($dom);
 test_node_namespaces($dom);
 test_unique_key($dom);
+test_copy($dom);
 
 # test types, names and values of all types of nodes
 # (and test quite a bit of XPath functionality in the process)
 sub test_type_name_value {
     my ($dom) = @_;
-    note 'testing node methods';
+    note 'testing type, name and value';
     my @nodes = $dom->get_root->get_xpath('//*');
     is(scalar @nodes, 8, '8 nodes in doc');
     is($nodes[0]->name, 'xml', 'First element name is "xml"');
@@ -143,8 +144,26 @@ sub test_node_namespaces {
 sub test_unique_key {
     my ($dom) = @_;
 
+    note 'testing unique_key';
     my $third = ($dom->get_root->get_xpath('//third'))[0];
     my $third_2 = ($dom->get_root->get_xpath('//third'))[0];
-    ok($third != $third_2, 'two separate objects two represent the same node');
+    ok($third != $third_2, 'two separate objects to represent the same node');
     ok($third->unique_key == $third_2->unique_key, '...have the same unique key');
+}
+
+sub test_copy {
+    my ($dom) = @_;
+
+    note 'testing copy';
+    my $third = ($dom->get_root->get_xpath('//third'))[0];
+
+    my $copy = $third->copy(0);
+    ok($third->unique_key != $copy->unique_key, 'new node created');
+    ok($copy->name eq 'third', 'new node has correct name');
+    ok(@{ $copy->children } == 0, 'no children copied');
+
+    $copy = $third->copy(1);
+    ok($third->unique_key != $copy->unique_key, 'new node created');
+    ok($copy->name eq 'third', 'new node has correct name');
+    ok(@{ $copy->children } != 0, 'children also copied');
 }
