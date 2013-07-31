@@ -11,6 +11,7 @@ use XML::ITS::DOM::Element qw(new_element);
 use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future);
 
 use feature 'state';
+our $HTML_NS = 'http://www.w3.org/1999/xhtml';
 
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
 # VERSION
@@ -61,47 +62,65 @@ sub convert {
 	my @matches;
 	# pointers to all existing future nodes; keys are represented nodes
 	my %future_cache;
+	# find all rule matches and save them @matches,
+	# and FutureNode pointers in %future_cache
 	$ITS->iterate_matches(_create_indexer(\@matches, \%future_cache));
-	# make $ITS doc into HTML
+
+	# convert $ITS into an HTML document; rename elements, process atts,
+	# and paste the root in an HTML body. %future_cache is necessary
+	# when an element originally matched by a rule is to be replaced.
 	my $html_doc = $self->_htmlize($ITS->get_doc, \%future_cache);
 
 	#grab the head to put rules in it
-	my $head = ${ $html_doc->get_root->children }[0];
-	# paste futureNodes and new matching rules
+	my $head = ( $html_doc->get_root->children )[0];
+	# paste FutureNodes and create new rules to match them
 	$self->_update_rules(\@matches, $head);
 
 	# return string pointer
 	return \($html_doc->string);
 }
 
-# create an indexing sub which pushes matches onto input array pointer
+# create an indexing sub for ITS::iterate_matches, and use a
+# closure to create some indices during processing.
+# This sub pushes matches and FutureNodes onto $index_array,
+# and saves pointers to all FutureNodes in $future_cache.
 sub _create_indexer {
 	my ($index_array, $future_cache) = @_;
+
+	#iterate_matches passes in a rule and it's matched nodes
 	return sub {
-		my ($rule, $match) = @_;
-		_log_match($rule, $match);
+		my ($rule, $matches) = @_;
+		_log_match($rule, $matches);
+
+		# create FutureNodes to represent each matched node;
+		# $futureNodes is $match, but with FutureNodes instead of Nodes
 		my $futureNodes = {};
-		for (keys %$match) {
-			# don't create futureNodes for the same node twice!
-			# store pointer to future node so that the futureNodes hash
-			# contents can be edited via future_cache
-			if((ref $match->{$_}) =~ /Value$/){
-				$futureNodes->{$_} =
-					 \( create_future($match->{$_}) );
-			}else{#Nodes
-				$futureNodes->{$_} =
-					$future_cache->{ $match->{$_}->unique_key } ||=
-					 \( create_future($match->{$_}) );
+		# $name is 'selector', 'locNotePointer', etc.
+		for my $name (keys %$matches) {
+			my $match = $matches->{$name};
+			# nothing special for literal values
+			if((ref $match) =~ /Value$/){
+				$futureNodes->{$name} = \$match;
+			}
+			# Cache FutureNodes so that we don't create one for the
+			# same node multiple times.
+			# Store pointers so that the futureNodes hash
+			# contents can be edited via $future_cache later.
+			else{
+				$futureNodes->{$name} =
+					$future_cache->{ $match->unique_key } ||=
+					 \( create_future($match) );
 			}
 		}
 		push @{ $index_array }, [$rule, $futureNodes];
+		return;
 	};
 }
 
 sub _log_match {
 	my ($rule, $match) = @_;
 	if ($log->is_debug()){
-		my $message = 'match: rule=' . _el_log_id($rule->node);
+		my $message = 'match: rule=' . _el_log_id($rule->element);
 		$message .= "; $_=" . _el_log_id($match->{$_})
 			for keys $match;
 		$log->debug($message);
@@ -109,41 +128,42 @@ sub _log_match {
 	return;
 }
 
-# pass in document to be htmlized and a hash containing node->futureNode ref pairs
-# (these are nodes which have been selected; this is needed in case the node is
-# replaced because of namespace removal)
+# Pass in document to be htmlized and a hash containing node->futureNode ref pairs
+# (these are nodes which have been matched by rules; this is needed in case the
+# element is replaced because of namespace removal)
 sub _htmlize {
 	my ($self, $doc, $future_cache) = @_;
 
-	# traverse every document element, converting into HTML
-	# save standoff or rules elements in @its_els
 	$log->debug('converting document elements into HTML')
 		if $log->is_debug;
+	# traverse every document element, converting into HTML
+	# save standoff or rules elements in @its_els
 	my @its_els;
-	my $processor = _traversal_sub(\@its_els);
-	$processor->($doc->get_root, 0, $future_cache);
+	my $processor = _traversal_sub(\@its_els, $future_cache);
+	# 0 means there is no inline ancestor
+	$processor->($doc->get_root, 0);
 
-	#make the document into an HTML structure
-	$log->debug('wrapping document in HTML structure')
-		if $log->is_debug;
+	# return an HTML doc with the current doc as its body contents
 	return $self->_html_structure($doc, \@its_els);
 }
 
-#return a sub which processes every element in the entire document
-#the input scalar is used as an array ref to store all its:* elements
-##(which have to be put in the HTML header)
+# return a sub which recursively processes an element and all of its children.
+# All its:* elements are stored in $its_els (for pasting in the HTML head later),
+# and contents of $future_cache are edited when elements are replaced due to
+# namespace removal.
 sub _traversal_sub {
-	my ($its_els) = @_;
+	my ($its_els, $future_cache) = @_;
 
 	# a recursive sub which transforms elements into HTML and returns
-	# true for a child renamed as a div, false otherwise. Arguments
-	# are element to transform; boolean indicating inline ancestor
-	# (like <span> or <bdo>; so this element should not be made a <div>);
-	# and the node->futureNode ref hash ref (in case of node replacement
-	# for namespace removal)
+	# true for a child renamed as a div, false otherwise.
+	# Arguments are the element to transform and a boolean indicating
+	# the existence of an inline ancestor (so this element should not
+	# be made a <div>)
 	my $traverse_sub;
 	$traverse_sub = sub {
-		my ($el, $inline_ancestor, $future_cache) = @_;
+		my ($el, $inline_ancestor) = @_;
+
+		#its:* elements are either rules or standoff
 		if($el->namespaceURI &&
 			$el->namespaceURI eq its_ns()){
 			#its:rules; just remove these and paste new ones later
@@ -154,8 +174,7 @@ sub _traversal_sub {
 				}
 				return 0;
 			}
-			# its: elements other than 'rules' are standoff markup;
-			# don't rename these, and save them for pasting in the head
+			# save standoff markup for pasting in the head
 			push @$its_els, $el;
 			if($log->is_debug){
 				$log->debug('placing ' . _el_log_id($el) . ' in script element');
@@ -167,63 +186,66 @@ sub _traversal_sub {
 			$log->debug('processing ' . _el_log_id($el));
 		}
 
-		# process attributes; some will become different
-		# attributes, others will be deleted but indicated
-		# in the new title attribute
+		# true if the children are wrapped in an inline element
+		# (as with its:dir=rlo)
+		my $inlined_children;
+
+		# process attributes
 		my $title = $el->name;
 		my @atts = $el->get_xpath('@*');
-		# true if the children were wrapped in an inline element (like bdo)
-		my $inlined_children;
 		if(@atts){
 			my @save_atts;
 			for my $att (@atts){
-				#TODO: deal with its:dir stuff here
 				my ($save, $wrapped) = _process_att($el, $att);
 				push @save_atts, $save
 					if $save;
 				$inlined_children ||= $wrapped;
 			}
+			#save previous attributes in new title attribute
 			if(@save_atts){
 				$title .= '[' . (join ',', @save_atts) . ']';
 			}
 		}
-		$el->set_att('title', $title);
 		if($log->is_debug){
 			$log->debug('setting @title of ' . _el_log_id($el) . " to '$title'");
 		}
+		$el->set_att('title', $title);
 
-		# strip namespacing; this moves the namespace declaration to the children,
-		# if used by them
+		# strip namespacing; requires special care because it replaces
+		# an element, requiring reworking of FutureNode indices
 		my $new_el = $el->strip_ns;
-		my $old_el = $el; # for logging purposes
 		if(!$el->is_same_node($new_el)){
 			if($log->is_debug){
 				$log->debug('stripping namespaces from ' . _el_log_id($el));
 			}
 			# if this element has an associated future (match), change the future
 			# to one for the new node
-			exists $future_cache->{$old_el->unique_key} and
-				${ $future_cache->{$old_el->unique_key} } = create_future($new_el);
+			if(exists $future_cache->{$el->unique_key}){
+				${ $future_cache->{$el->unique_key} } = create_future($new_el);
+			}
 			$el = $new_el;
 		}
 
+		# grab children for recursive processing
 		my $children;
-		#if children were wrapped in an element, grab them from that element
-		if($inlined_children){
-			$children = ${$el->child_els}[0]->child_els;
-		}else{
+		if(!$inlined_children){
 			$children = $el->child_els;
+		}else{
+			# if children were wrapped in a new HTML element,
+			# grab them from that element
+			$children = ${$el->child_els}[0]->child_els;
 		}
-		# true if any child is a div;
+
+		# recursively process children
+		# true if any child is a div
 		my $div_child;
 		for my $child(@$children){
 			my $div_result = $traverse_sub->(
-				$child, $inlined_children, $future_cache);
+				$child, $inlined_children);
 			$div_child ||= $div_result;
 		}
 
-		my $is_div = _rename_el($el, $div_child, $inline_ancestor);
-		return $is_div;
+		return _rename_el($el, $div_child, $inline_ancestor);
 	};
 	return $traverse_sub;
 }
@@ -240,8 +262,12 @@ sub _rename_el {
 	if($div_child){
 		$new_name = 'div';
 	# if an ancestor was a span/bdo, this has to be a span
-	}elsif($inline_ancestor || $el->is_inline){
+	}elsif($inline_ancestor){
 		$new_name = 'span';
+	# inline elements become spans
+	}elsif($el->is_inline){
+		$new_name = 'span';
+	# other elements become divs
 	}else{
 		$new_name = 'div';
 	}
@@ -250,15 +276,15 @@ sub _rename_el {
 	}
 
 	$el->set_name($new_name);
-
 	return $new_name eq 'div' ? 1 : 0;
 }
 
-#get a string to indicate the given element in a log
-#<el> or <el xml:id="val">
+# get a string to indicate the given element or Value in a log
+# for elements: <el> or <el xml:id="val"> or <el id="val">
+# for values: the value itself.
 sub _el_log_id {
 	my ($el) = @_;
-	# values
+
 	if((ref $el) =~ /Value/){
 		return $el->value;
 	}
@@ -274,41 +300,27 @@ sub _el_log_id {
 	return '<' . $el->name . $id . '>';
 }
 
-#process given attribute on given element;
-#return 2 things: a string to save, representing the attribute, if
-#the attribute is deleted (and isn't an NS att), and the name
-#of an element used to wrapp the children, if any.
+# process given attribute on given element;
+# return 2 things: a string to save, representing the attribute, if
+# the attribute is deleted (empty for NS declarations), and the name
+# of the element used to wrap the children, if any.
 sub _process_att {
 	my ($el, $att) = @_;
 
 	my $wrapped;
-	#xml: attributes with ITS semantics
+	# xml:* attributes with ITS semantics
 	if($att->name eq 'xml:id'){
 		_att_rename($el, $att, 'id');
 	}elsif($att->name eq 'xml:lang'){
 		_att_rename($el, $att, 'lang');
-	#its:* attributes
+	#its:* attributes with HTML semantics
 	}elsif($att->namespaceURI && $att->namespaceURI eq its_ns()){
 		if($att->local_name eq 'translate'){
 			_att_rename($el, $att, 'translate');
 			return;
 		}elsif($att->local_name eq 'dir'){
 			if($att->value =~ /^(?:lro|rlo)$/){
-				my $dir = $att->value eq 'lro' ?
-					'ltr':
-					'rtl';
-				if($log->is_debug){
-					$log->debug('replacing @' . $att->name . ' of ' .
-						_el_log_id($el) .
-						" with bdo[dir=$dir] wrapped around children");
-				}
-				#inline bdo element
-				my $bdo = new_element('bdo',{dir => $dir});
-				for my $child(@{ $el->children }){
-					$child->paste($bdo);
-				}
-				$bdo->paste($el);
-				$att->remove;
+				_process_dir_override($el, $att);
 				return '', 'bdo';
 			}else{
 				#ltr and rtl are just 'dir' attributes
@@ -316,28 +328,22 @@ sub _process_att {
 				return '';
 			}
 		}else{
-			my $name = $att->local_name;
-			$name =~ s/([A-Z])/-$1/g;
-			$name = "its-$name";
-			$el->set_att($name, $att->value);
-			if($log->is_debug){
-				$log->debug('Replacing @' . $att->name . ' of ' .
-				_el_log_id($el) . " with $name");
-			}
-			$att->remove;
+			# default transformation for all other its:* atts
+			_htmlize_its_att($el, $att);
 			return;
 		}
 	}else{
+		# just delete other atts
 		$att->remove;
 	}
 
-	#don't bother saving these
+	#don't bother saving NS declarations in new element title
 	return '' if $att->name =~ /xmlns(?::|$)/;
-	# a short string to represent the att name/value
+	# a short string to represent the att name and value
 	return $att->name . q{='} . $att->value . q{'};
 }
 
-#rename given att on given el to new_name and log it.
+#rename given att on given el to new_name.
 sub _att_rename {
 	my ($el, $att, $new_name) = @_;
 	if($log->is_debug){
@@ -349,80 +355,112 @@ sub _att_rename {
 	$att->remove;
 }
 
+# process an element with an att which is its:dir=lro or rlo;
+# this requires the wrapping of children with the <bdo> element
+# in HTML.
+sub _process_dir_override {
+	my ($el, $att) = @_;
 
-#create an HTML document with input doc root element as a child of body
-# create script elements for each el in $its_els, and paste in head
-# return the new XML::ITS::DOM object
+	my $dir = $att->value eq 'lro' ?
+		'ltr':
+		'rtl';
+	if($log->is_debug){
+		$log->debug('replacing @' . $att->name . ' of ' .
+			_el_log_id($el) .
+			" with bdo[dir=$dir] wrapped around children");
+	}
+	#inline bdo element
+	my $bdo = new_element('bdo',{dir => $dir});
+	for my $child($el->children){
+		$child->paste($bdo);
+	}
+	$bdo->paste($el);
+	$att->remove;
+	return;
+}
+
+# convert a given its att into an HTML one by replacing
+# caps with dashes and appending its- on the front.
+sub _htmlize_its_att {
+	my ($el, $att) = @_;
+
+	my $name = $att->local_name;
+	$name =~ s/([A-Z])/-$1/g;
+	$name = "its-$name";
+	$el->set_att($name, $att->value);
+	if($log->is_debug){
+		$log->debug('Replacing @' . $att->name . ' of ' .
+		_el_log_id($el) . " with $name");
+	}
+	$att->remove;
+	return;
+}
+
+# Create and return an HTML document with the input doc's root element
+# inside of the body. Create script elements for each el in $its_els
+# and paste them in the head
 sub _html_structure {
 	my ($self, $doc, $its_els) = @_;
 
-	#TODO: this should be html, not xml
+	$log->debug('wrapping document in HTML structure')
+		if $log->is_debug;
+
+	# the new HTML document
 	my $dom = XML::ITS::DOM->new('html', \'<!DOCTYPE html><html>');
+
+	# grab the HTML head and paste in the
+	# encoding, title, and standoff markup
 	my ($head) = $dom->get_root->get_xpath(
 		'//html:head',
-		namespaces => {html => 'http://www.w3.org/1999/xhtml'}
+		namespaces => {html => $HTML_NS}
 	);
 	my $meta = new_element('meta', { charset => 'utf-8' });
 	$meta->paste($head);
 	my $title = new_element('title', {}, $self->{title});
 	$title->paste($head);
 
+	#paste all standoff markup
 	for my $its(@$its_els){
 		_get_script($its)->paste($head);
 	}
 
+	#paste the doc root into the HTML body
 	my ($body) = $dom->get_root->get_xpath(
 		'//html:body',
-		namespaces => {html => 'http://www.w3.org/1999/xhtml'}
-	);new_element('body');
-
+		namespaces => {html => $HTML_NS}
+	);
 	my $html = $dom->get_root();
-	$head->paste($html);
-	$body->paste($html);
 	$doc->get_root->paste($body);
 
 	return $dom;
 }
 
-# create an ITS script element and paste the input element into it,
-# with surrounding whitespace, and return it
+# create and return an ITS script element with the input element
+# as its contents. The input element id (if there is one)is used
+# as the script id.
 sub _get_script {
 	my ($element) = @_;
 	my $script = new_element('script', {type => 'application/its+xml'});
 	if(my $id = $element->att('xml:id')){
 		$script->set_att('id', $id);
 	}
+
+	# we hand-indent the contents of script elements because they are not
+	# formatted like the rest of the document
 	$script->append_text("\n    ");
 	$element->paste($script);
 	$script->append_text("\n");
 	return $script;
 }
 
-#add title attribute containing tag name
-#save list of tags needing to be 'span' in $twig->{span_list}
-sub _choose_name {
-	my ($twig, $el) = @_;
-	# $el->set_att('title', $el->tag);
-	#save a list to rename later
-	push @{$twig->{els_to_rename}}, $el;
-	#we already know that this will be a span
-	return if $twig->{span_list}->{$el->tag};
-
-	#find out if this should be a span or is a viable div
-	#only elements with no #PCDATA before/after can be divs
-	my $prev = $el->prev_sibling;
-	my $next = $el->next_sibling;
-	if( ($prev && $prev->tag() eq '#PCDATA') ||
-		($next && $next->tag() eq '#PCDATA') ){
-		$twig->{span_list}->{$el->tag}++;
-	}
-}
-
-#make sure all rule matches are elemental, and paste rules that match them
+# make sure all rule matches are elements, and create new rules that give them
+# the same information as in the original document
 sub _update_rules {
 	my ($self, $matches, $head) = @_;
 
+	# don't do anything if there were no rule matches
 	return unless @$matches;
+
 	if($log->is_debug){
 		$log->debug('Creating new its:rules element to contain all rules');
 	}
@@ -432,6 +470,8 @@ sub _update_rules {
 			version 	=> '2.0',
 		 }
 	);
+	# we hand-indent the contents of script elements because they are not
+	# formatted like the rest of the document
 	my $indent = '  ';#two spaces
 	$rules_el->append_text("\n" . $indent x 4);
 	my $script = _get_script($rules_el);
@@ -441,10 +481,14 @@ sub _update_rules {
 	for my $i (0 .. $#$matches){
 		my $match = $matches->[$i];
 		my ($rule, $futureNodes) = @$match;
-		my $new_rule = $rule->node->copy(0);
+
+		# create a new rule, and set its selectors/pointers to either a
+		# FutureNode's element or an XPath literal. value
+		my $new_rule = $rule->element->copy(1);
 		for my $key(keys %$futureNodes){
 			my $futureNode = ${ $futureNodes->{$key} };
-			#FutureNodes- make it visible in the dom and match the rule with its ID
+			# FutureNode- make it visible in the dom and
+			# match the rule selector with its ID
 			if((ref $futureNode) =~ /FutureNode/){
 				my $el = $futureNode->elemental;
 				$new_rule->set_att( $key, q{id('} .
@@ -454,36 +498,40 @@ sub _update_rules {
 				$new_rule->set_att($key, $futureNode->as_xpath);
 			}
 		}
-		# _get_or_set_id($new_rule);
+
 		if($log->is_debug){
-			my $string = 'Creating new rule ' . _el_log_id($new_rule) .
-				' to match [';
-			my @match_strings;
-			for my $key(keys %$futureNodes){
-				my $futureNode = ${ $futureNodes->{$key} };
-				if((ref $futureNode) =~ /FutureNode/){
-					push @match_strings, "$key=" .
-						 _el_log_id($futureNode->elemental);
-				}else{
-					push @match_strings, "$key=" . $futureNode->as_xpath;
-				}
-			}
-			$string .= join '; ', @match_strings;
-			$string .= ']';
-			$log->debug($string);
+			_log_new_rule($new_rule, $futureNodes);
 		}
+
 		$new_rule->paste($rules_el);
-		#use more indentation to introduce rules than the ending tag
+		#use more indentation before another rule than at the end
 		if($i != $#$matches){
 			$rules_el->append_text("\n" . $indent x 3);
 		}else{
 			$rules_el->append_text("\n" . $indent x 2);
 		}
 	}
-	#now remove all original matching rules
-	for my $match (@$matches){
-		$match->[0]->node->remove;
+	return;
+}
+
+#log the creation of a new rule (given the rule and its associated FutureNodes)
+sub _log_new_rule {
+	my ($new_rule, $futureNodes) = @_;
+	my $string = 'Creating new rule ' . _el_log_id($new_rule) .
+		' to match [';
+	my @match_strings;
+	for my $key(keys %$futureNodes){
+		my $futureNode = ${ $futureNodes->{$key} };
+		if((ref $futureNode) =~ /FutureNode/){
+			push @match_strings, "$key=" .
+				 _el_log_id($futureNode->elemental);
+		}else{
+			push @match_strings, "$key=" . $futureNode->as_xpath;
+		}
 	}
+	$string .= join '; ', @match_strings;
+	$string .= ']';
+	$log->debug($string);
 	return;
 }
 

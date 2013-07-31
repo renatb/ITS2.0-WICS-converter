@@ -59,6 +59,7 @@ __DATA__
     </div>
   </body>
 </html>
+
 @@ log
 match: rule=<its:translateRule xml:id="ext3rule">; selector=<myDoc xml:id="root">
 match: rule=<foo:translateRule xml:id="ext2rule">; selector=<trmark xml:id="trmark">

@@ -1,14 +1,21 @@
 WICS XML to HTML converter
 
 TODO:
-    - find possible code reuse
+    - FutureNodes:
+        - attribute
+        - text
+        - comment
+        - PI
+        - namespace
+        - document
 
 Engineering Tasks:
 
 To Do on current task:
+    - find a way to keep attribute matches after namespace stripping
 
 Later To Do:
-    - make HTML comparison tests less fragile (whitespace in script element) ?
+    - find possible code reuse in converter
     - Decide on organization of end-project
         - WICS.pm one file that can convert anything?
             - GUI?

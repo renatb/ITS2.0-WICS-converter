@@ -168,6 +168,62 @@ Setting id of <div> to ITS_1
 Setting id of <div> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<div id="ITS_2">]
 
+=== namespaced nodes handled properly
+--- input
+<?xml version="1.0"?>
+<xml>
+  <head>
+    <its:rules version="2.0" xmlns:its="http://www.w3.org/2005/11/its">
+      <its:domainRule selector="//foo:para"
+        domainPointer="//content" xmlns:foo="www.foo.com"/>
+    </its:rules>
+  </head>
+  <foo:para xmlns:foo="www.foo.com">Some text</foo:para>
+  <content>foo</content>
+</xml>
+--- output
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+        <its:domainRule xmlns:foo="www.foo.com" selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    </its:rules>
+    </script>
+  </head>
+  <body>
+    <div title="xml">
+        <div title="head"></div>
+        <div title="foo:para" id="ITS_1">Some text</div>
+        <div title="content" id="ITS_2">foo</div>
+    </div>
+  </body>
+</html>
+--- log
+match: rule=<its:domainRule>; selector=<foo:para>; domainPointer=<content>
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <foo:para>
+setting @title of <foo:para> to 'foo:para'
+stripping namespaces from <foo:para>
+renaming <para> to <div>
+processing <content>
+setting @title of <content> to 'content'
+renaming <content> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Setting id of <div> to ITS_2
+Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<div id="ITS_2">]
+
 === DOM values handled correctly
 Below idValue is a literal string;
 it should just be copied to the final rule.
@@ -219,18 +275,18 @@ Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
 Creating new rule <its:idValueRule> to match [selector=<div id="ITS_1">; idValue='p1']
 
-=== namespaced nodes handled properly
+=== attribute handled correctly
+--- SKIP
 --- input
 <?xml version="1.0"?>
 <xml>
   <head>
     <its:rules version="2.0" xmlns:its="http://www.w3.org/2005/11/its">
-      <its:domainRule selector="//foo:para"
-        domainPointer="//content" xmlns:foo="www.foo.com"/>
+      <its:domainRule selector="//para"
+        domainPointer="@content"/>
     </its:rules>
   </head>
-  <foo:para xmlns:foo="www.foo.com">Some text</foo:para>
-  <content>foo</content>
+  <para content="foo">Some text</para>
 </xml>
 --- output
 <!DOCTYPE html>
@@ -240,20 +296,24 @@ Creating new rule <its:idValueRule> to match [selector=<div id="ITS_1">; idValue
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-        <its:domainRule xmlns:foo="www.foo.com" selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+        <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
     </its:rules>
     </script>
   </head>
   <body>
     <div title="xml">
         <div title="head"></div>
-        <div title="foo:para" id="ITS_1">Some text</div>
-        <div title="content" id="ITS_2">foo</div>
+        <div title="para" id="ITS_1">
+          <span title="content" id="ITS_2" class="_ITS_ATT">
+            foo
+          </span>
+          Some text
+        </div>
     </div>
   </body>
 </html>
 --- log
-match: rule=<its:domainRule>; selector=<foo:para>; domainPointer=<content>
+match: rule=<its:domainRule>; selector=<para>; domainPointer=<content>
 converting document elements into HTML
 processing <xml>
 setting @title of <xml> to 'xml'
@@ -261,9 +321,8 @@ processing <head>
 setting @title of <head> to 'head'
 removing <its:rules>
 renaming <head> to <div>
-processing <foo:para>
-setting @title of <foo:para> to 'foo:para'
-stripping namespaces from <foo:para>
+processing <para>
+setting @title of <para> to 'para'
 renaming <para> to <div>
 processing <content>
 setting @title of <content> to 'content'
