@@ -384,14 +384,17 @@ sub _html_structure {
 	return $dom;
 }
 
-# create an ITS script element and paste the input element into it and return it
+# create an ITS script element and paste the input element into it,
+# with surrounding whitespace, and return it
 sub _get_script {
 	my ($element) = @_;
 	my $script = new_element('script', {type => 'application/its+xml'});
 	if(my $id = $element->att('xml:id')){
 		$script->set_att('id', $id);
 	}
+	$script->append_text("\n    ");
 	$element->paste($script);
+	$script->append_text("\n");
 	return $script;
 }
 
@@ -429,11 +432,14 @@ sub _update_rules {
 			version 	=> '2.0',
 		 }
 	);
+	my $indent = '  ';#two spaces
+	$rules_el->append_text("\n" . $indent x 4);
 	my $script = _get_script($rules_el);
 	$script->paste($head);
 
 	#create a new rule for each match
-	for my $match (@$matches){
+	for my $i (0 .. $#$matches){
+		my $match = $matches->[$i];
 		my ($rule, $futureNodes) = @$match;
 		my $new_rule = $rule->node->copy(0);
 		for my $key(keys %$futureNodes){
@@ -467,6 +473,12 @@ sub _update_rules {
 			$log->debug($string);
 		}
 		$new_rule->paste($rules_el);
+		#use more indentation to introduce rules than the ending tag
+		if($i != $#$matches){
+			$rules_el->append_text("\n" . $indent x 3);
+		}else{
+			$rules_el->append_text("\n" . $indent x 2);
+		}
 	}
 	#now remove all original matching rules
 	for my $match (@$matches){

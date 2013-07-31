@@ -34,9 +34,11 @@ __DATA__
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
-    <script type="application/its+xml"><its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:translateRule selector="id('i1')" translate="yes"></its:translateRule>
-    </its:rules></script>
+    <script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+        <its:translateRule selector="id('i1')" translate="yes"></its:translateRule>
+    </its:rules>
+    </script>
   </head>
   <body>
     <div title="xml">
@@ -52,7 +54,7 @@ processing <xml>
 setting @title of <xml> to 'xml'
 processing <head>
 setting @title of <head> to 'head'
-placing <its:rules> in script element
+removing <its:rules>
 renaming <head> to <div>
 processing <para xml:id="i1">
 renaming @xml:id of <para xml:id="i1"> to @id
@@ -60,6 +62,7 @@ setting @title of <para id="i1"> to 'para[xml:id='i1']'
 renaming <para id="i1"> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
+Creating new its:rules element to contain all rules
 Creating new rule <its:translateRule> to match [selector=<div id="i1">]
 
 === single selector of element without id
@@ -79,9 +82,11 @@ Creating new rule <its:translateRule> to match [selector=<div id="i1">]
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
-    <script type="application/its+xml"><its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:translateRule selector="id('ITS_1')" translate="yes"></its:translateRule>
-    </its:rules></script>
+    <script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+        <its:translateRule selector="id('ITS_1')" translate="yes"></its:translateRule>
+    </its:rules>
+    </script>
   </head>
   <body>
     <div title="xml">
@@ -97,13 +102,14 @@ processing <xml>
 setting @title of <xml> to 'xml'
 processing <head>
 setting @title of <head> to 'head'
-placing <its:rules> in script element
+removing <its:rules>
 renaming <head> to <div>
 processing <para>
 setting @title of <para> to 'para'
 renaming <para> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
+Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
 Creating new rule <its:translateRule> to match [selector=<div id="ITS_1">]
 
@@ -126,9 +132,11 @@ Creating new rule <its:translateRule> to match [selector=<div id="ITS_1">]
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
-    <script type="application/its+xml"><its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
-    </its:rules></script>
+    <script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+        <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    </its:rules>
+    </script>
   </head>
   <body>
     <div title="xml">
@@ -145,7 +153,7 @@ processing <xml>
 setting @title of <xml> to 'xml'
 processing <head>
 setting @title of <head> to 'head'
-placing <its:rules> in script element
+removing <its:rules>
 renaming <head> to <div>
 processing <para>
 setting @title of <para> to 'para'
@@ -155,6 +163,7 @@ setting @title of <content> to 'content'
 renaming <content> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
+Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
 Setting id of <div> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<div id="ITS_2">]
@@ -179,9 +188,11 @@ it should just be copied to the final rule.
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
-    <script type="application/its+xml"><its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:idValueRule selector="id('ITS_1')" idValue="'p1'"></its:idValueRule>
-    </its:rules></script>
+    <script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+        <its:idValueRule selector="id('ITS_1')" idValue="'p1'"></its:idValueRule>
+    </its:rules>
+    </script>
   </head>
   <body>
     <div title="xml">
@@ -197,13 +208,14 @@ processing <xml>
 setting @title of <xml> to 'xml'
 processing <head>
 setting @title of <head> to 'head'
-placing <its:rules> in script element
+removing <its:rules>
 renaming <head> to <div>
 processing <para>
 setting @title of <para> to 'para'
 renaming <para> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
+Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
 Creating new rule <its:idValueRule> to match [selector=<div id="ITS_1">; idValue='p1']
 
@@ -226,9 +238,11 @@ Creating new rule <its:idValueRule> to match [selector=<div id="ITS_1">; idValue
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
-    <script type="application/its+xml"><its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:domainRule xmlns:foo="www.foo.com" selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
-    </its:rules></script>
+    <script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+        <its:domainRule xmlns:foo="www.foo.com" selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    </its:rules>
+    </script>
   </head>
   <body>
     <div title="xml">
@@ -245,7 +259,7 @@ processing <xml>
 setting @title of <xml> to 'xml'
 processing <head>
 setting @title of <head> to 'head'
-placing <its:rules> in script element
+removing <its:rules>
 renaming <head> to <div>
 processing <foo:para>
 setting @title of <foo:para> to 'foo:para'
@@ -256,6 +270,7 @@ setting @title of <content> to 'content'
 renaming <content> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
+Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
 Setting id of <div> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<div id="ITS_2">]
