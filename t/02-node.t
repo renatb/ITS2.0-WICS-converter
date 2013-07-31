@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 35;
+plan tests => 37;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -16,6 +16,7 @@ my $dom = XML::ITS::DOM->new( 'xml' => $dom_path );
 test_type_name_value($dom);
 test_xpath($dom);
 test_node_namespaces($dom);
+test_unique_key($dom);
 
 # test types, names and values of all types of nodes
 # (and test quite a bit of XPath functionality in the process)
@@ -137,4 +138,13 @@ sub test_node_namespaces {
     @nodes = $dom->get_root->get_xpath('//foo:sixth');
     is($nodes[0]->namespaceURI, 'www.bar.com', 'Correct namespace');
     return;
+}
+
+sub test_unique_key {
+    my ($dom) = @_;
+
+    my $third = ($dom->get_root->get_xpath('//third'))[0];
+    my $third_2 = ($dom->get_root->get_xpath('//third'))[0];
+    ok($third != $third_2, 'two separate objects two represent the same node');
+    ok($third->unique_key == $third_2->unique_key, '...have the same unique key');
 }
