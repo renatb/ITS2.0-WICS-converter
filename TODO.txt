@@ -1,16 +1,13 @@
 ITS
 
 Next:
-    - rename Rule::node() to element()
+    - proper error checking for XPath execution
 
 Engineering Tasks:
 
 To Do on current task:
 
 Later To Do:
-    - proper error checking for XPath execution
-    - ?enforce value of idValueRule XPath being a string
-    - ?enforce pointers being nodes
     - check test coverage and fill it in!
     - rename get_matches and iterate_matches to reflect what is being matched (single rule or all rules)
 

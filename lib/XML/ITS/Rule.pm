@@ -112,7 +112,7 @@ Returns the ITS::DOM::Element that this rule represents.
 
 =cut
 
-sub node {
+sub element {
     my ($self) = @_;
     return $self->{node};
 }

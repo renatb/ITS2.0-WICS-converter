@@ -20,8 +20,8 @@ subtest 'basic rule' => sub {
     };
     my $rule = ITS::Rule->new(new_element('its:storageSizeRule' => $attributes));
     is($rule->type, 'storageSize', 'rule name');
-    is_deeply($rule->node->atts, $attributes, 'rule attributes');
-    is($rule->node->att('storageSize'), '8', 'attribute accessor');
+    is_deeply($rule->element->atts, $attributes, 'rule attributes');
+    is($rule->element->att('storageSize'), '8', 'attribute accessor');
     is($rule->selector, 'id("id_1")', 'selector accessor');
     is_deeply($rule->params, {}, 'no parameters');
 };

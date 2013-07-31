@@ -28,7 +28,7 @@ my $XLINK_NS = 'http://www.w3.org/1999/xlink';
 if(!caller){
     my $ITS =  XML::ITS->new('xml', doc => $ARGV[0]);
     say 'Extracted rules:';
-    say $_->node->att('xml:id') for @{ $ITS->get_rules() };
+    say $_->element->att('xml:id') for @{ $ITS->get_rules() };
 }
 
 =head1 SYNOPSIS
@@ -164,7 +164,7 @@ sub get_matches {
 
     # first, find the matches for the selector attribute
     my $selector_matches = $self->_selector_matches($rule);
-    my $namespaces = $rule->node->get_namespaces;
+    my $namespaces = $rule->element->get_namespaces;
     my $params = $rule->params;
 
     # $selector_matches is the "current node list", which is
@@ -180,7 +180,7 @@ sub get_matches {
             my $pointer_match =
                 _pointer_match(
                     $selector_match,
-                    $rule->node->att($pointer),
+                    $rule->element->att($pointer),
                     $namespaces,
                     $params,
                     $context_size,
@@ -218,7 +218,7 @@ sub _selector_matches {
     my $context_pos  = 1;
     my $context_size = 1;
     my $params = $rule->params;
-    my $namespaces = $rule->node->get_namespaces;
+    my $namespaces = $rule->element->get_namespaces;
     my @nodes = $context_node->get_xpath(
         $xpath,
         position => $context_pos,

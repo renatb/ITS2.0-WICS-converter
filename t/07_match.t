@@ -336,7 +336,7 @@ sub test_iterator {
                 my ($rule, $match) = @_;
                 push @rule_match_pairs,
                     [
-                        $rule->node->att('xml:id'),
+                        $rule->element->att('xml:id'),
                         $match->{selector}->att('xml:id')
                     ];
             }
