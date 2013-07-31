@@ -117,7 +117,7 @@ stripping namespaces from <bar:foo>
 processing <qux>
 setting @title of <qux> to 'qux'
 renaming <qux> to <div>
-renaming <bar:foo> to <div>
+renaming <foo> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
 
@@ -146,8 +146,8 @@ processing <xml>
 setting @title of <xml> to 'xml'
 processing <foo xml:id="bar">
 renaming @xml:id of <foo xml:id="bar"> to @id
-setting @title of <foo xml:id="bar"> to 'foo[xml:id='bar']'
-renaming <foo xml:id="bar"> to <div>
+setting @title of <foo id="bar"> to 'foo[xml:id='bar']'
+renaming <foo id="bar"> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
 
@@ -248,40 +248,40 @@ setting @title of <xml> to 'xml'
 stripping namespaces from <xml>
 processing <foo xml:id="i1">
 renaming @xml:id of <foo xml:id="i1"> to @id
-renaming @its:dir of <foo xml:id="i1"> to @dir
-setting @title of <foo xml:id="i1"> to 'foo[xml:id='i1']'
-stripping namespaces from <foo xml:id="i1">
-renaming <foo xml:id="i1"> to <div>
+renaming @its:dir of <foo id="i1"> to @dir
+setting @title of <foo id="i1"> to 'foo[xml:id='i1']'
+stripping namespaces from <foo id="i1">
+renaming <foo id="i1"> to <div>
 processing <foo xml:id="i2">
 renaming @xml:id of <foo xml:id="i2"> to @id
-renaming @its:dir of <foo xml:id="i2"> to @dir
-setting @title of <foo xml:id="i2"> to 'foo[xml:id='i2']'
-stripping namespaces from <foo xml:id="i2">
-renaming <foo xml:id="i2"> to <div>
+renaming @its:dir of <foo id="i2"> to @dir
+setting @title of <foo id="i2"> to 'foo[xml:id='i2']'
+stripping namespaces from <foo id="i2">
+renaming <foo id="i2"> to <div>
 processing <foo xml:id="i3">
 renaming @xml:id of <foo xml:id="i3"> to @id
-replacing @its:dir of <foo xml:id="i3"> with bdo[dir=ltr] wrapped around children
-setting @title of <foo xml:id="i3"> to 'foo[xml:id='i3']'
-stripping namespaces from <foo xml:id="i3">
+replacing @its:dir of <foo id="i3"> with bdo[dir=ltr] wrapped around children
+setting @title of <foo id="i3"> to 'foo[xml:id='i3']'
+stripping namespaces from <foo id="i3">
 processing <bar>
 setting @title of <bar> to 'bar'
 renaming <bar> to <span>
-renaming <foo xml:id="i3"> to <div>
+renaming <foo id="i3"> to <div>
 processing <foo xml:id="i4">
 renaming @xml:id of <foo xml:id="i4"> to @id
-replacing @its:dir of <foo xml:id="i4"> with bdo[dir=rtl] wrapped around children
-setting @title of <foo xml:id="i4"> to 'foo[xml:id='i4']'
-stripping namespaces from <foo xml:id="i4">
-renaming <foo xml:id="i4"> to <div>
+replacing @its:dir of <foo id="i4"> with bdo[dir=rtl] wrapped around children
+setting @title of <foo id="i4"> to 'foo[xml:id='i4']'
+stripping namespaces from <foo id="i4">
+renaming <foo id="i4"> to <div>
 processing <foo xml:id="i5">
 renaming @xml:id of <foo xml:id="i5"> to @id
-replacing @its:dir of <foo xml:id="i5"> with bdo[dir=rtl] wrapped around children
-setting @title of <foo xml:id="i5"> to 'foo[xml:id='i5']'
-stripping namespaces from <foo xml:id="i5">
+replacing @its:dir of <foo id="i5"> with bdo[dir=rtl] wrapped around children
+setting @title of <foo id="i5"> to 'foo[xml:id='i5']'
+stripping namespaces from <foo id="i5">
 processing <bar>
 setting @title of <bar> to 'bar'
 renaming <bar> to <span>
-renaming <foo xml:id="i5"> to <div>
+renaming <foo id="i5"> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
 
