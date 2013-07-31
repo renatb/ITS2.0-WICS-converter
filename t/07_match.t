@@ -26,7 +26,7 @@ test_namespaces(
 test_warnings(
     \($all_data->{document}), \($all_data->{warning_rules}));
 
-my $doc_path = path($Bin, 'corpus', 'test_external.xml');
+my $doc_path = path($Bin, 'corpus', 'test_external_internal.xml');
 test_iterator($doc_path);
 
 #test out a basic rule match, no pointers or parameters

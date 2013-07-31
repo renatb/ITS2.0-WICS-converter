@@ -308,10 +308,13 @@ sub _resolve_container_rules {
     my ($doc, $container, %params) = @_;
 
     my $children = $container->child_els();
-    while($children->[0]->local_name eq 'param' and
-        $children->[0]->namespaceURI eq $ITS_NS){
-        my $param = shift @$children;
-        $params{$param->att('name')} = $param->text;
+
+    if(@$children){
+        while($children->[0]->local_name eq 'param' and
+            $children->[0]->namespaceURI eq $ITS_NS){
+            my $param = shift @$children;
+            $params{$param->att('name')} = $param->text;
+        }
     }
     my @rules;
     if($container->att('href', $XLINK_NS)){

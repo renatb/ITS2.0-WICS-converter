@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use XML::ITS;
 use Test::More 0.88;
-plan tests => 6;
+plan tests => 7;
 use Test::NoWarnings;
 use Path::Tiny;
 use FindBin qw($Bin);
@@ -19,19 +19,31 @@ subtest 'internal rules' => sub {
 
     my $ITS = XML::ITS->new('xml', doc => $internal_test);
     my $rules = $ITS->get_rules();
-    is($#$rules, 2, 'three rules in basic_rules.xml');
+    is(@$rules, 3, 'three rules in basic_rules.xml');
     is($rules->[0]->node->att('xml:id'), 'first', 'correct first rule');
     is($rules->[1]->node->att('xml:id'), 'second', 'correct second rule');
     is($rules->[2]->node->att('xml:id'), 'third', 'correct third rule');
 };
 
-subtest 'external and internal rules' => sub {
-    plan tests => 5;
+subtest 'external rules' => sub {
+    plan tests => 4;
     my $external_test = path($xml_dir, 'test_external.xml');
     my $ITS = XML::ITS->new('xml', doc => $external_test);
     my $rules = $ITS->get_rules();
 
-    is($#$rules, 3, 'four rules in file');
+    is(@$rules, 3, 'four rules in file');
+    is($rules->[0]->node->att('xml:id'), 'ext3rule', 'correct first rule');
+    is($rules->[1]->node->att('xml:id'), 'ext2rule', 'correct second rule');
+    is($rules->[2]->node->att('xml:id'), 'ext1rule', 'correct third rule');
+};
+
+subtest 'external and internal rules' => sub {
+    plan tests => 5;
+    my $external_test = path($xml_dir, 'test_external_internal.xml');
+    my $ITS = XML::ITS->new('xml', doc => $external_test);
+    my $rules = $ITS->get_rules();
+
+    is(@$rules, 4, 'four rules in file');
     is($rules->[0]->node->att('xml:id'), 'ext3rule', 'correct first rule');
     is($rules->[1]->node->att('xml:id'), 'ext2rule', 'correct second rule');
     is($rules->[2]->node->att('xml:id'), 'ext1rule', 'correct third rule');
@@ -44,7 +56,7 @@ subtest 'parameters resolved' => sub {
     my $ITS = XML::ITS->new('xml', doc => $param_test);
     my $rules = $ITS->get_rules();
 
-    is($#$rules, 2, 'three rules in file');
+    is(@$rules, 3, 'three rules in file');
 
     my $ext_rule = $rules->[0];
     is($ext_rule->node->att('xml:id'), 'ext_rule', 'external rule first');
