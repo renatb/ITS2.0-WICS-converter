@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 30;
+plan tests => 31;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -135,6 +135,10 @@ sub test_element_editing {
     is($el->name, 'a', 'Correct element name');
     is_deeply($el->atts, $atts, 'Correct element attributes');
     is($el->text, $text, 'Correct element text');
+
+    my $new_text = 'new text';
+    $el->append_text($new_text);
+    is($el->text, "$text$new_text", 'text appended properly');
 
     $el->set_name('x');
     is($el->name, 'x', 'element name changed to "x"');
