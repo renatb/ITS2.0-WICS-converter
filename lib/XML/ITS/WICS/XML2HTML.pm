@@ -64,8 +64,11 @@ sub convert {
 	$ITS->iterate_matches(_create_indexer(\@matches, \%future_cache));
 	# make $ITS doc into HTML
 	my $html_doc = $self->_htmlize($ITS->get_doc, \%future_cache);
+
+	#grab the head to put rules in it
+	my $head = ${ $html_doc->get_root->children }[0];
 	# paste futureNodes and new matching rules
-	$self->_update_rules(\@matches);
+	$self->_update_rules(\@matches, $head);
 
 	# return string pointer
 	return \($html_doc->string);
@@ -141,10 +144,18 @@ sub _traversal_sub {
 	my $traverse_sub;
 	$traverse_sub = sub {
 		my ($el, $inline_ancestor, $future_cache) = @_;
-		# its: elements other than 'rules' are standoff markup;
-		# don't rename these, and save them for pasting in the head
 		if($el->namespaceURI &&
 			$el->namespaceURI eq its_ns()){
+			#its:rules; just remove these and paste new ones later
+			if($el->local_name eq 'rules'){
+				$el->remove;
+				if($log->is_debug){
+					$log->debug('removing ' . _el_log_id($el));
+				}
+				return 0;
+			}
+			# its: elements other than 'rules' are standoff markup;
+			# don't rename these, and save them for pasting in the head
 			push @$its_els, $el;
 			if($log->is_debug){
 				$log->debug('placing ' . _el_log_id($el) . ' in script element');
@@ -406,7 +417,20 @@ sub _choose_name {
 
 #make sure all rule matches are elemental, and paste rules that match them
 sub _update_rules {
-	my ($self, $matches) = @_;
+	my ($self, $matches, $head) = @_;
+
+	return unless @$matches;
+	if($log->is_debug){
+		$log->debug('Creating new its:rules element to contain all rules');
+	}
+	my $rules_el = new_element('its:rules',
+		{
+			'xmlns:its'	=> its_ns(),
+			version 	=> '2.0',
+		 }
+	);
+	my $script = _get_script($rules_el);
+	$script->paste($head);
 
 	#create a new rule for each match
 	for my $match (@$matches){
@@ -442,7 +466,7 @@ sub _update_rules {
 			$string .= ']';
 			$log->debug($string);
 		}
-		$new_rule->paste_before($rule->node);
+		$new_rule->paste($rules_el);
 	}
 	#now remove all original matching rules
 	for my $match (@$matches){
