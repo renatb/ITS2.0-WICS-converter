@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 31;
+plan tests => 37;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -127,6 +127,8 @@ sub test_inlininess {
     ok(!$el->is_inline, '<second> is not inline');
 }
 
+# paste is technically a node method,
+# but it's easiest to test with elements
 sub test_element_editing {
     my $atts = {foo => 'bar', baz => 'qux'};
     my $text = 'some text';
@@ -149,8 +151,23 @@ sub test_element_editing {
     is(scalar @nodes, 1, 'Pasted child present in parent');
     is($nodes[0]->name, 'b', 'Child has correct name');
 
+    new_element('c')->paste($el);
+    is(${$el->child_els}[1]->name, 'c', 'default paste location is last_child');
+
+    new_element('d')->paste($el, 'last_child');
+    is(${$el->child_els}[2]->name, 'd', 'paste last_child');
+
+    new_element('e')->paste($el, 'first_child');
+    is(${$el->child_els}[0]->name, 'e', 'paste first_child');
+
+    new_element('f')->paste($child, 'before');
+    is(${$el->child_els}[1]->name, 'f', 'paste before');
+
+    new_element('g')->paste($child, 'after');
+    is(${$el->child_els}[3]->name, 'g', 'paste after');
+
+    is(@{$el->child_els}, 6, '6 children');
     $child->remove;
-    @nodes = @{$el->child_els};
-    is(scalar @nodes, 0, 'Child removed');
+    is(@{$el->child_els}, 5, '...and then 5 (one removed)');
     return;
 }

@@ -292,29 +292,34 @@ sub parent {
 
 =head2 C<paste>
 
-Argument: ITS::Node to be used as new parent node.
-Inserts this node as the last child of the input parent node.
+Paste this node into the given relation with the given node.
+The arguments are another node, and an optional relation.
+The possible relations are C<last_child>, C<first_child>,
+C<before> and C<after>. The default is C<last_child>.
 
 =cut
 sub paste {
-    my ($self, $parent) = @_;
-    $parent->{node}->appendChild($self->{node});
+    my ($self, $other, $loc) = @_;
+
+    $loc ||= 'last_child';
+    my $this_node = $self->{node};
+    my $o_node = $other->{node};
+
+    if($loc eq 'last_child'){
+        $o_node->appendChild($this_node);
+    }elsif($loc eq 'first_child'){
+        $o_node->insertBefore($this_node, $o_node->firstChild);
+    }elsif($loc eq 'before'){
+        my $parent = $o_node->parentNode;
+        $parent->insertBefore($this_node, $o_node);
+    }elsif($loc eq 'after'){
+        my $parent = $o_node->parentNode;
+        $parent->insertAfter($this_node, $o_node);
+    }else{
+        croak "unknown paste location: $loc";
+    }
     return;
 }
-
-# no longer needed
-# =head2 C<paste_before>
-
-# Argument: ITS::Node to be new next sibling of this node.
-# Inserts this node in the DOM immediately before the input node.
-
-# =cut
-# sub paste_before {
-#     my ($self, $next_sib) = @_;
-#     my $parent = $next_sib->{node}->parentNode;
-#     $parent->insertBefore($self->{node}, $next_sib->{node});
-#     return;
-# }
 
 =head2 C<is_same_node>
 
