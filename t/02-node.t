@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 46;
+plan tests => 49;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -173,7 +173,14 @@ sub test_family {
     my ($dom) = @_;
     note 'testing parent and siblings';
     my $third = ($dom->get_root->get_xpath('//third'))[0];
+
     is($third->parent->name, 'xml', 'element parent retrieved');
     is($third->prev_sibling->name, '#text', 'previous sibling retrieved');
     is($third->next_sibling->name, '#text', 'next sibling retrieved');
+
+    my $root = $dom->get_root;
+    #first parent is DOC node, which has no parent
+    is($root->parent->parent, undef, 'no parent of document');
+    is($root->prev_sibling, undef, 'no previous sibling of root');
+    is($root->next_sibling, undef, 'no next sibling of root');
 }

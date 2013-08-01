@@ -282,12 +282,16 @@ sub children {
 
 =head2 C<parent>
 
-Returns the parent node of this node.
+Returns the parent node of this node, or undef if there is none.
 
 =cut
 sub parent {
     my ($self) = @_;
-    return __PACKAGE__->new($self->{node}->parentNode);
+    my $parent = $self->{node}->parentNode;
+    if($parent){
+        return __PACKAGE__->new($parent);
+    }
+    return undef;
 }
 
 =head2 C<next_sibling>
@@ -297,7 +301,11 @@ Returns the next sibling node of this node, or undef if there is none.
 =cut
 sub next_sibling {
     my ($self) = @_;
-    return __PACKAGE__->new($self->{node}->nextSibling);
+    my $sib = $self->{node}->nextSibling;
+    if($sib){
+        return __PACKAGE__->new($sib);
+    }
+    return;
 }
 
 =head2 C<prev_sibling>
@@ -307,7 +315,11 @@ Returns the previous sibling node of this node, or undef if there is none.
 =cut
 sub prev_sibling {
     my ($self) = @_;
-    return __PACKAGE__->new($self->{node}->previousSibling);
+    my $sib = $self->{node}->previousSibling;
+    if($sib){
+        return __PACKAGE__->new($sib);
+    }
+    return;
 }
 
 =head2 C<paste>
