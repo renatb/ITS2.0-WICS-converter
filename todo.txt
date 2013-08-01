@@ -2,17 +2,19 @@ WICS XML to HTML converter
 
 TODO:
     - FutureNodes:
-        * attribute
-        - text
+        - attribute
         - comment
         - PI
-        - namespace
+        * namespace
+        - text
         - document
 
 Engineering Tasks:
+    - find a way to keep non-element matches after namespace stripping
+        - probably need to save element refs instead of elements, and then replace
+        them through a central index
 
 To Do on current task:
-    - find a way to keep attribute matches after namespace stripping
 
 Later To Do:
     - find possible code reuse in converter

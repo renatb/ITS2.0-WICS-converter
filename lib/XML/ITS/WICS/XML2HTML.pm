@@ -303,6 +303,13 @@ sub _el_log_id {
 		return '<' . $el->name . $id . '>';
 	}elsif($type eq 'ATT'){
 		return '@' . $el->name . '[' . $el->value . ']';
+	}elsif($type eq 'COM'){
+		#use at most 10 characters from the comment for display purposes
+		my $length = length $el->value;
+		$length > 10 && ($length = 10);
+		return '<!--' . substr($el->value, 0, $length)  . '-->';
+	}elsif($type eq 'PI'){
+		return '<?' . $el->name  . '?>';
 	}else{
 		croak 'Need logic for logging ' . $type;
 	}

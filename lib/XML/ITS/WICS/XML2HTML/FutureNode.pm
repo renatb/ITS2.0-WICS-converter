@@ -7,6 +7,8 @@ use Exporter::Easy (
     OK => [qw(create_future)]
 );
 use XML::ITS::DOM::Element qw(new_element);
+use Carp;
+use Log::Any qw($log);
 
 # VERSION
 # ABSTRACT: Ensure the future existence of an element without changing the DOM now
@@ -59,24 +61,30 @@ sub create_future {
     my $state = {type => $type};
     if($type eq 'ELT'){
         $state->{node} = $node;
-    }
-    if($type eq 'ATT'){
+    }elsif($type eq 'ATT'){
         $state->{parent} = $node->parent;
         $state->{name} = $node->name;
         $state->{value} = $node->value;
     }
-    elsif($type eq 'COM'){
+    #find sibling, if possible, to keep exact location
+    elsif($type =~ /COM|PI/){
+        $state->{nextSib} = $node->next_sibling or
+            $state->{parent} = $node->parent;
+        $state->{value} = $node->value;
+        $state->{name} = $node->name;
+    }elsif($type eq 'DOC'){
+        #TODO: not sure here.
+    }elsif($type eq 'TXT'){
+        $state->{nextSib} = $node->next_sibling;
+        $state->{prevSib} = $node->prev_sibling;
         $state->{parent} = $node->parent;
+        $state->{value} = $node->value;
+    }elsif($type eq 'NS'){
+        $state->{name} = $node->name;
         $state->{value} = $node->value;
     }
     return bless $state, __PACKAGE__;
 
-        # case ELEMENT:
-        #     return placeholder object
-        #         (use existing placeholder if found in %placeholders)
-        #         (placeholder just holds element, and paste does nothing)
-        #     return $domNode;
-        #     break;
         # case ATTRIBUTE, COMMENT, PI, DOCUMENT, NAMESPACE:
         #     return placeholder object
         #         (use existing placeholder if found in %placeholders)
@@ -120,9 +128,39 @@ sub elemental {
         );
         $el->paste($self->{parent}, 'first_child');
         $self->{element} = $el;
+    }elsif($self->{type} =~ /COM|PI/){
+        my $el = new_element(
+            'span',
+            {
+                 title => $self->{name},
+                 class => '_ITS_' . uc $self->{type}
+            },
+            $self->{value}
+        );
+        $self->_paste_el($el);
+        $self->{element} = $el;
     }
 
     return $self->{element};
+}
+
+# pastes the given element in an appropriate location, given parent and possibly
+# siblings stored in $self
+sub _paste_el {
+    my ($self, $el) = @_;
+    # if there is no next sibling, then paste this
+    # element as last child of parent
+    if(my $sib = $self->{nextSib}){
+        $el->paste($sib, 'before');
+    }elsif(my $parent = $self->{parent}){
+        $el->paste($parent);
+    }else{
+        croak 'Don\'t know where to paste ' . $el->name;
+    }
+    if($log->is_debug){
+        $log->debug('Creating new <span> element to represent node of type ' .
+            $self->{type});
+    }
 }
 
 1;

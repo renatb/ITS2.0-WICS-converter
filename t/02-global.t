@@ -276,7 +276,6 @@ Setting id of <div> to ITS_1
 Creating new rule <its:idValueRule> to match [selector=<div id="ITS_1">; idValue='p1']
 
 === attribute handled correctly
---- ONLY
 --- input
 <?xml version="1.0"?>
 <xml>
@@ -328,5 +327,118 @@ renaming <xml> to <div>
 wrapping document in HTML structure
 Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
+Setting id of <span> to ITS_2
+Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
+
+=== comments handled correctly
+--- input
+<?xml version="1.0"?>
+<xml>
+  <head>
+    <its:rules version="2.0" xmlns:its="http://www.w3.org/2005/11/its">
+      <its:domainRule selector="//para"
+        domainPointer="comment()"/>
+    </its:rules>
+  </head>
+  <para>Some text<!--foo--></para>
+</xml>
+--- output
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+        <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    </its:rules>
+    </script>
+  </head>
+  <body>
+    <div title="xml">
+        <div title="head"></div>
+        <div title="para" id="ITS_1">
+          Some text
+          <!--foo-->
+          <span title="#comment" id="ITS_2" class="_ITS_COM">
+            foo
+          </span>
+        </div>
+    </div>
+  </body>
+</html>
+--- log
+match: rule=<its:domainRule>; selector=<para>; domainPointer=<!--foo-->
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <para>
+setting @title of <para> to 'para'
+renaming <para> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Creating new <span> element to represent node of type COM
+Setting id of <span> to ITS_2
+Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
+
+=== processing instructions handled correctly
+--- input
+<?xml version="1.0"?>
+<xml>
+  <head>
+    <its:rules version="2.0" xmlns:its="http://www.w3.org/2005/11/its">
+      <its:domainRule selector="//para"
+        domainPointer="processing-instruction()"/>
+    </its:rules>
+  </head>
+  <para>Some text<?foo_pi some content?></para>
+</xml>
+--- output
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+        <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    </its:rules>
+    </script>
+  </head>
+  <body>
+    <div title="xml">
+        <div title="head"></div>
+        <div title="para" id="ITS_1">
+          Some text
+          <span title="foo_pi" id="ITS_2" class="_ITS_PI">
+            some content
+          </span>
+        </div>
+    </div>
+  </body>
+</html>
+--- log
+match: rule=<its:domainRule>; selector=<para>; domainPointer=<?foo_pi?>
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <para>
+setting @title of <para> to 'para'
+renaming <para> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Creating new <span> element to represent node of type PI
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
