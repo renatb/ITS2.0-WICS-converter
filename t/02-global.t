@@ -276,7 +276,7 @@ Setting id of <div> to ITS_1
 Creating new rule <its:idValueRule> to match [selector=<div id="ITS_1">; idValue='p1']
 
 === attribute handled correctly
---- SKIP
+--- ONLY
 --- input
 <?xml version="1.0"?>
 <xml>
@@ -303,7 +303,7 @@ Creating new rule <its:idValueRule> to match [selector=<div id="ITS_1">; idValue
   <body>
     <div title="xml">
         <div title="head"></div>
-        <div title="para" id="ITS_1">
+        <div title="para[content='foo']" id="ITS_1">
           <span title="content" id="ITS_2" class="_ITS_ATT">
             foo
           </span>
@@ -313,7 +313,7 @@ Creating new rule <its:idValueRule> to match [selector=<div id="ITS_1">; idValue
   </body>
 </html>
 --- log
-match: rule=<its:domainRule>; selector=<para>; domainPointer=<content>
+match: rule=<its:domainRule>; selector=<para>; domainPointer=@content[foo]
 converting document elements into HTML
 processing <xml>
 setting @title of <xml> to 'xml'
@@ -322,14 +322,11 @@ setting @title of <head> to 'head'
 removing <its:rules>
 renaming <head> to <div>
 processing <para>
-setting @title of <para> to 'para'
+setting @title of <para> to 'para[content='foo']'
 renaming <para> to <div>
-processing <content>
-setting @title of <content> to 'content'
-renaming <content> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
 Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
-Setting id of <div> to ITS_2
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<div id="ITS_2">]
+Setting id of <span> to ITS_2
+Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]

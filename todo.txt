@@ -2,7 +2,7 @@ WICS XML to HTML converter
 
 TODO:
     - FutureNodes:
-        - attribute
+        * attribute
         - text
         - comment
         - PI

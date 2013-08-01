@@ -6,6 +6,7 @@ use warnings;
 use Exporter::Easy (
     OK => [qw(create_future)]
 );
+use XML::ITS::DOM::Element qw(new_element);
 
 # VERSION
 # ABSTRACT: Ensure the future existence of an element without changing the DOM now
@@ -53,7 +54,22 @@ sub create_future {
     if(ref $node eq 'XML::ITS::DOM::Value'){
         return $node;
     }
-    return bless {node => $node}, __PACKAGE__;
+
+    my $type = $node->type;
+    my $state = {type => $type};
+    if($type eq 'ELT'){
+        $state->{node} = $node;
+    }
+    if($type eq 'ATT'){
+        $state->{parent} = $node->parent;
+        $state->{name} = $node->name;
+        $state->{value} = $node->value;
+    }
+    elsif($type eq 'COM'){
+        $state->{parent} = $node->parent;
+        $state->{value} = $node->value;
+    }
+    return bless $state, __PACKAGE__;
 
         # case ELEMENT:
         #     return placeholder object
@@ -91,9 +107,21 @@ sub elemental {
         return $self->{element};
     }
     #elements are already visible
-    if($self->{node}->type eq 'ELT'){
+    if($self->{type} eq 'ELT'){
         $self->{element} = $self->{node};
+    }elsif($self->{type} eq 'ATT'){
+        my $el = new_element(
+            'span',
+            {
+                 title => $self->{name},
+                 class => "_ITS_ATT"
+            },
+            $self->{value}
+        );
+        $el->paste($self->{parent}, 'first_child');
+        $self->{element} = $el;
     }
+
     return $self->{element};
 }
 

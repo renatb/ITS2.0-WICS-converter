@@ -285,19 +285,27 @@ sub _rename_el {
 sub _el_log_id {
 	my ($el) = @_;
 
+
 	if((ref $el) =~ /Value/){
 		return $el->value;
 	}
-	# take XML ID if possible; otherwise, HTML id
-	my $id;
-	if($id = $el->att('xml:id')){
-		$id = qq{ xml:id="$id"};
-	}elsif($id = $el->att('id')){
-		$id = qq{ id="$id"};
+	my $type = $el->type;
+	if($type eq 'ELT'){
+		# take XML ID if possible; otherwise, HTML id
+		my $id;
+		if($id = $el->att('xml:id')){
+			$id = qq{ xml:id="$id"};
+		}elsif($id = $el->att('id')){
+			$id = qq{ id="$id"};
+		}else{
+			$id = '';
+		}
+		return '<' . $el->name . $id . '>';
+	}elsif($type eq 'ATT'){
+		return '@' . $el->name . '[' . $el->value . ']';
 	}else{
-		$id = '';
+		croak 'Need logic for logging ' . $type;
 	}
-	return '<' . $el->name . $id . '>';
 }
 
 # process given attribute on given element;
