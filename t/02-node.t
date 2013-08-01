@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 44;
+plan tests => 46;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -18,7 +18,7 @@ test_xpath($dom);
 test_node_namespaces($dom);
 test_unique_key($dom);
 test_copy($dom);
-test_parent($dom);
+test_family($dom);
 
 # test types, names and values of all types of nodes
 # (and test quite a bit of XPath functionality in the process)
@@ -169,9 +169,11 @@ sub test_copy {
     ok($copy->children != 0, 'children also copied');
 }
 
-sub test_parent {
+sub test_family {
     my ($dom) = @_;
-    note 'testing parent';
+    note 'testing parent and siblings';
     my $third = ($dom->get_root->get_xpath('//third'))[0];
     is($third->parent->name, 'xml', 'element parent retrieved');
+    is($third->prev_sibling->name, '#text', 'previous sibling retrieved');
+    is($third->next_sibling->name, '#text', 'next sibling retrieved');
 }

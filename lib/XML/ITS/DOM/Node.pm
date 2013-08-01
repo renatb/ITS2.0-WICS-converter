@@ -290,6 +290,26 @@ sub parent {
     return __PACKAGE__->new($self->{node}->parentNode);
 }
 
+=head2 C<next_sibling>
+
+Returns the next sibling node of this node, or undef if there is none.
+
+=cut
+sub next_sibling {
+    my ($self) = @_;
+    return __PACKAGE__->new($self->{node}->nextSibling);
+}
+
+=head2 C<prev_sibling>
+
+Returns the previous sibling node of this node, or undef if there is none.
+
+=cut
+sub prev_sibling {
+    my ($self) = @_;
+    return __PACKAGE__->new($self->{node}->previousSibling);
+}
+
 =head2 C<paste>
 
 Paste this node into the given relation with the given node.
