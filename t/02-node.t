@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 49;
+plan tests => 50;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -171,7 +171,7 @@ sub test_copy {
 
 sub test_family {
     my ($dom) = @_;
-    note 'testing parent and siblings';
+    note 'testing parent, siblings, and owning document';
     my $third = ($dom->get_root->get_xpath('//third'))[0];
 
     is($third->parent->name, 'xml', 'element parent retrieved');
@@ -183,4 +183,7 @@ sub test_family {
     is($root->parent->parent, undef, 'no parent of document');
     is($root->prev_sibling, undef, 'no previous sibling of root');
     is($root->next_sibling, undef, 'no next sibling of root');
+
+    my $doc_node = $third->doc_node;
+    is($doc_node->type, 'DOC', 'Retrieved owning document');
 }

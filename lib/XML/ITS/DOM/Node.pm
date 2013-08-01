@@ -294,6 +294,17 @@ sub parent {
     return undef;
 }
 
+=head2 C<doc_node>
+
+Returns the document node for the document which owns this node.
+
+=cut
+sub doc_node {
+    my ($self) = @_;
+    my $doc = $self->{node}->ownerDocument;
+    return __PACKAGE__->new($doc);
+}
+
 =head2 C<next_sibling>
 
 Returns the next sibling node of this node, or undef if there is none.
