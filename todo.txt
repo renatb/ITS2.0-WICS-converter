@@ -5,9 +5,10 @@ TODO:
         - attribute
         - comment
         - PI
-        * namespace
         - text
+        * namespace
         - document
+            - these last two require access to the DOM object...
 
 Engineering Tasks:
     - find a way to keep non-element matches after namespace stripping

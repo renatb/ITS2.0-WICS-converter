@@ -62,9 +62,9 @@ sub convert {
 	my @matches;
 	# pointers to all existing future nodes; keys are represented nodes
 	my %future_cache;
-	# find all rule matches and save them @matches,
+	# find all rule matches and save them in @matches,
 	# and FutureNode pointers in %future_cache
-	$ITS->iterate_matches(_create_indexer(\@matches, \%future_cache));
+	$ITS->iterate_matches(_create_indexer(\@matches, \%future_cache, $ITS->get_doc));
 
 	# convert $ITS into an HTML document; rename elements, process atts,
 	# and paste the root in an HTML body. %future_cache is necessary
@@ -81,11 +81,12 @@ sub convert {
 }
 
 # create an indexing sub for ITS::iterate_matches, and use a
-# closure to create some indices during processing.
+# closure to create some indices during processing, as well
+# as provide access to the containing document.
 # This sub pushes matches and FutureNodes onto $index_array,
 # and saves pointers to all FutureNodes in $future_cache.
 sub _create_indexer {
-	my ($index_array, $future_cache) = @_;
+	my ($index_array, $future_cache, $doc) = @_;
 
 	#iterate_matches passes in a rule and it's matched nodes
 	return sub {
@@ -109,7 +110,7 @@ sub _create_indexer {
 			else{
 				$futureNodes->{$name} =
 					$future_cache->{ $match->unique_key } ||=
-					 \( create_future($match) );
+					 \( create_future($match, $doc) );
 			}
 		}
 		push @{ $index_array }, [$rule, $futureNodes];
@@ -310,6 +311,13 @@ sub _el_log_id {
 		return '<!--' . substr($el->value, 0, $length)  . '-->';
 	}elsif($type eq 'PI'){
 		return '<?' . $el->name  . '?>';
+	}elsif($type eq 'TXT'){
+		#use at most 10 characters from the text for display purposes
+		my $length = length $el->value;
+		$length > 10 && ($length = 10);
+		return '[text: ' . substr($el->value, 0, $length)  . ']';
+	}elsif($type eq 'NS'){
+		return '[namespace: ' . $el->name  . ']';
 	}else{
 		croak 'Need logic for logging ' . $type;
 	}

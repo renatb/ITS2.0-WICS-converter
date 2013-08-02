@@ -43,20 +43,24 @@ The following subroutine may be exported:
 
 =head2 C<create_future>
 
-If the input is an XML::ITS::DOM::Node (or Element), this method creates
+If the input node is an XML::ITS::DOM::Node (or Element), this method creates
 a FutureNode object and returns it. If it is an XML::ITS::DOM::Value,
 it simply returns it.
+
+The owning document as a second argument is required for namespace nodes, which
+store no reference to any other nodes.
 
 No changes are made to the owning DOM in this method.
 
 =cut
 sub create_future {
-    my ($node) = @_;
+    my ($node, $doc) = @_;
     #Values
     if(ref $node eq 'XML::ITS::DOM::Value'){
         return $node;
     }
 
+    #store the state required to paste a representative node later
     my $type = $node->type;
     my $state = {type => $type};
     if($type eq 'ELT'){
@@ -66,36 +70,26 @@ sub create_future {
         $state->{name} = $node->name;
         $state->{value} = $node->value;
     }
-    #find sibling, if possible, to keep exact location
+    #use sibling to keep exact location
     elsif($type =~ /COM|PI/){
         $state->{nextSib} = $node->next_sibling or
             $state->{parent} = $node->parent;
         $state->{value} = $node->value;
         $state->{name} = $node->name;
-    }elsif($type eq 'DOC'){
-        #TODO: not sure here.
     }elsif($type eq 'TXT'){
-        $state->{nextSib} = $node->next_sibling;
-        $state->{prevSib} = $node->prev_sibling;
-        $state->{parent} = $node->parent;
-        $state->{value} = $node->value;
+        $state->{nextSib} = $node->next_sibling or
+            $state->{parent} = $node->parent;
+        $state->{node} = $node;
     }elsif($type eq 'NS'){
         $state->{name} = $node->name;
         $state->{value} = $node->value;
+        #convoluted way of saying to put this as first child of root
+        ($state->{nextSib}) = $doc->get_root->children  or
+            ($state->{parent}) = $node->get_root;
+    }elsif($type eq 'DOC'){
+        #TODO: not sure here.
     }
     return bless $state, __PACKAGE__;
-
-        # case ATTRIBUTE, COMMENT, PI, DOCUMENT, NAMESPACE:
-        #     return placeholder object
-        #         (use existing placeholder if found in %placeholders)
-        #         (create new element representing $domNode;
-        #             also save prev/next sibling/parent)
-        # case TEXT:
-        #     push @{$matchIndex->{$rule}}, placeholder object
-        #         (use existing placeholder if found in %placeholders)
-        #         (create new element representing $domNode;
-        #             also save prev/next sibling/parent;
-        #             should destroy original text when pasted into document)
 }
 
 =head1 METHODS
@@ -128,7 +122,9 @@ sub elemental {
         );
         $el->paste($self->{parent}, 'first_child');
         $self->{element} = $el;
-    }elsif($self->{type} =~ /COM|PI/){
+    }
+    #create an elemental representation in an appropriate location
+    elsif($self->{type} =~ /COM|PI/){
         my $el = new_element(
             'span',
             {
@@ -138,6 +134,32 @@ sub elemental {
             $self->{value}
         );
         $self->_paste_el($el);
+        $self->{element} = $el;
+    }
+    elsif($self->{type} eq 'NS'){
+        my $el = new_element(
+            'span',
+            {
+                 title => $self->{name},
+                 class => '_ITS_NS'
+            },
+            $self->{value}
+        );
+        $self->_paste_el($el);
+        $self->{element} = $el;
+    }
+    #paste the text node into a new element in its place
+    elsif($self->{type} eq 'TXT'){
+        my $el = new_element(
+            'span',
+            {
+                 title => $self->{node}->name,
+                 class => '_ITS_TXT',
+            },
+            $self->{value}
+        );
+        $self->_paste_el($el);
+        $self->{node}->paste($el);
         $self->{element} = $el;
     }
 
