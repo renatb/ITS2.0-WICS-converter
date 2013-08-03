@@ -1,19 +1,21 @@
 WICS XML to HTML converter
 
 TODO:
-    - FutureNodes:
-        - attribute
-        - comment
-        - PI
-        - text
-        * namespace
-        - document
-            - these last two require access to the DOM object...
 
 Engineering Tasks:
-    - find a way to keep non-element matches after namespace stripping
+    * find a way to keep non-element matches after namespace stripping, text wrapping
         - probably need to save element refs instead of elements, and then replace
         them through a central index
+        - p = parent, s = sibling, e = element itself
+        Special processing required for each category of FutureNode
+                _bdo wrap_      _ns replace or TXT FutureNode wrap_
+        ELT     no              yes [e]✓
+        ATT     no              yes [p]
+        COM     yes [s]         yes [ps]
+        PI      yes [s]         yes [ps]
+        TXT     no              no
+        NS      yes [s]         yes [ps]
+        DOC     no              yes [e]
 
 To Do on current task:
 

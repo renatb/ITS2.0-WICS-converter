@@ -77,17 +77,16 @@ sub create_future {
         $state->{value} = $node->value;
         $state->{name} = $node->name;
     }elsif($type eq 'TXT'){
-        $state->{nextSib} = $node->next_sibling or
-            $state->{parent} = $node->parent;
         $state->{node} = $node;
     }elsif($type eq 'NS'){
         $state->{name} = $node->name;
         $state->{value} = $node->value;
-        #convoluted way of saying to put this as first child of root
+        # convoluted way of saying to put this as first child of root
         ($state->{nextSib}) = $doc->get_root->children  or
             ($state->{parent}) = $node->get_root;
     }elsif($type eq 'DOC'){
-        #TODO: not sure here.
+        # just match the document root instead
+        ($state->{node}) = $node->children;
     }
     return bless $state, __PACKAGE__;
 }
@@ -161,6 +160,8 @@ sub elemental {
         $self->_paste_el($el);
         $self->{node}->paste($el);
         $self->{element} = $el;
+    }elsif($self->{type} eq 'DOC'){
+        return $self->{node};
     }
 
     return $self->{element};
@@ -176,6 +177,8 @@ sub _paste_el {
         $el->paste($sib, 'before');
     }elsif(my $parent = $self->{parent}){
         $el->paste($parent);
+    }elsif(my $node = $self->{node}){
+        $el->paste($node, 'after');
     }else{
         croak 'Don\'t know where to paste ' . $el->name;
     }

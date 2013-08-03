@@ -318,6 +318,8 @@ sub _el_log_id {
 		return '[text: ' . substr($el->value, 0, $length)  . ']';
 	}elsif($type eq 'NS'){
 		return '[namespace: ' . $el->name  . ']';
+	}elsif($type eq 'DOC'){
+		return '[DOCUMENT]';
 	}else{
 		croak 'Need logic for logging ' . $type;
 	}

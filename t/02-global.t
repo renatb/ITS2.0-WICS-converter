@@ -168,7 +168,7 @@ Setting id of <div> to ITS_1
 Setting id of <div> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<div id="ITS_2">]
 
-=== namespaced nodes handled properly
+=== namespaced element match handled properly
 --- input
 <?xml version="1.0"?>
 <xml>
@@ -224,7 +224,7 @@ Setting id of <div> to ITS_1
 Setting id of <div> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<div id="ITS_2">]
 
-=== DOM values handled correctly
+=== DOM value match handled correctly
 Below idValue is a literal string;
 it should just be copied to the final rule.
 --- input
@@ -275,7 +275,7 @@ Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
 Creating new rule <its:idValueRule> to match [selector=<div id="ITS_1">; idValue='p1']
 
-=== attribute handled correctly
+=== attribute match handled correctly
 --- input
 <?xml version="1.0"?>
 <xml>
@@ -330,7 +330,7 @@ Setting id of <div> to ITS_1
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
 
-=== comments handled correctly
+=== comment match handled correctly
 --- input
 <?xml version="1.0"?>
 <xml>
@@ -387,7 +387,7 @@ Creating new <span> element to represent node of type COM
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
 
-=== processing instructions handled correctly
+=== processing instruction match handled correctly
 PIs are illegal in HTML. They should all be removed; matched ones should have
 a representing node.
 --- input
@@ -555,3 +555,56 @@ Setting id of <div> to ITS_1
 Creating new <span> element to represent node of type NS
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
+
+=== document matches handled correctly
+--- input
+<?xml version="1.0"?>
+<xml>
+  <head>
+    <its:rules version="2.0" xmlns:its="http://www.w3.org/2005/11/its" xmlns:foo="www.foo.com">
+      <its:domainRule selector="//foo:para"
+        domainPointer="/"/>
+    </its:rules>
+  </head>
+  <foo:para xmlns:foo="www.foo.com">Some text</foo:para>
+</xml>
+--- output
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+        <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    </its:rules>
+    </script>
+  </head>
+  <body>
+    <div title="xml" id="ITS_2">
+        <div title="head"></div>
+        <div title="foo:para" id="ITS_1">
+          Some text
+        </div>
+    </div>
+  </body>
+</html>
+--- log
+match: rule=<its:domainRule>; selector=<foo:para>; domainPointer=[DOCUMENT]
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <foo:para>
+setting @title of <foo:para> to 'foo:para'
+stripping namespaces from <foo:para>
+renaming <para> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Setting id of <div> to ITS_2
+Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<div id="ITS_2">]
