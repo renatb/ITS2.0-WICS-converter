@@ -18,8 +18,17 @@ Engineering Tasks:
         DOC     no              yes [e]
 
 To Do on current task:
+    -add global rules un-doing inheritance, when needed:
+    <its:translateRule translate="no" selector="every converted node ID here"/>
+    <its:dirRule dir="ltr" selector="converted nodes, except the atts"/>
+    <its:localFilterRule localeFilterList="*" localeFilterType="include" selector="converted nodes, except the atts"/>
+    <!-- Not for HTML docs, but for others--><its:preserveSpaceRule preserve="default" selector="converted nodes, except the atts">
 
 Later To Do:
+    - ITS reset for elementalized nodes.
+        - don't worry about ELT, TXT
+        - att is extra annoying, because it might not inherit, but might be selected globally
+        - term="no" translate="no" dir="ltr" preserve-space="default" localeFilterList="*" localeFilterType="include"
     - find possible code reuse in converter
     - Decide on organization of end-project
         - WICS.pm one file that can convert anything?
