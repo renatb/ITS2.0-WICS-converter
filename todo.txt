@@ -2,8 +2,15 @@ WICS XML to HTML converter
 
 TODO:
 
+*NEXT THING:
+    turn FutureNodes into the complete manager for future nodes. It should track and
+    manage the cache. It should use the cache to prevent futureNodes from being created twice.
+
+
 Engineering Tasks:
-    * find a way to keep non-element matches after namespace stripping, text wrapping
+    - make FutureNode into a FutureNode manager
+        - refactor future_cache into FutureNode package
+    - find a way to keep non-element matches after namespace stripping, text wrapping
         - probably need to save element refs instead of elements, and then replace
         them through a central index
         - p = parent, s = sibling, e = element itself
@@ -19,16 +26,14 @@ Engineering Tasks:
 
 To Do on current task:
     -add global rules un-doing inheritance, when needed:
-    <its:translateRule translate="no" selector="every converted node ID here"/>
-    <its:dirRule dir="ltr" selector="converted nodes, except the atts"/>
-    <its:localFilterRule localeFilterList="*" localeFilterType="include" selector="converted nodes, except the atts"/>
-    <!-- Not for HTML docs, but for others--><its:preserveSpaceRule preserve="default" selector="converted nodes, except the atts">
+        <its:translateRule translate="no" selector="every converted node ID here"/>
+        <its:dirRule dir="ltr" selector="converted nodes, except the atts"/>
+        <its:localFilterRule localeFilterList="*" localeFilterType="include" selector="converted nodes, except the atts"/>
+        <!-- Not for HTML docs, but for others--><its:preserveSpaceRule preserve="default" selector="converted nodes, except the atts">
+        - test this with multiple future nodes
+    - test multiple matches on one future node
 
 Later To Do:
-    - ITS reset for elementalized nodes.
-        - don't worry about ELT, TXT
-        - att is extra annoying, because it might not inherit, but might be selected globally
-        - term="no" translate="no" dir="ltr" preserve-space="default" localeFilterList="*" localeFilterType="include"
     - find possible code reuse in converter
     - Decide on organization of end-project
         - WICS.pm one file that can convert anything?

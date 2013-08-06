@@ -4,14 +4,41 @@ package XML::ITS::WICS::XML2HTML::FutureNode;
 use strict;
 use warnings;
 use Exporter::Easy (
-    OK => [qw(create_future)]
+    OK => [qw(create_future clear_indices get_all_atts get_all_non_atts replace_el_future)]
 );
 use XML::ITS::DOM::Element qw(new_element);
 use Carp;
 use Log::Any qw($log);
+use Data::Dumper; #DEBUG
 
 # VERSION
 # ABSTRACT: Ensure the future existence of an element without changing the DOM now
+
+# some indices to manage
+my %future_cache;
+#todo: change these to just holding ID, and return nodes retrieved from
+#future_cache in get methods. Will help in document editing.
+my %atts; #atts
+my %non_atts; #everything but text, elements, and atts
+
+sub clear_indices {
+    %atts = ();
+    %non_atts = ();
+    %future_cache = ();
+}
+
+sub replace_el_future {
+    my ($old_el, $new_el) = @_;
+    ${ $future_cache{$old_el->unique_key} } = ${ create_future($new_el) };
+}
+
+sub get_all_atts {
+    return values %atts;
+}
+
+sub get_all_non_atts {
+    return values %non_atts;
+}
 
 =head1 SYNOPSIS
 
@@ -55,9 +82,9 @@ No changes are made to the owning DOM in this method.
 =cut
 sub create_future {
     my ($node, $doc) = @_;
-    #Values
-    if(ref $node eq 'XML::ITS::DOM::Value'){
-        return $node;
+
+    if($future_cache{$node->unique_key}){
+        return $future_cache{$node->unique_key};
     }
 
     #store the state required to paste a representative node later
@@ -88,7 +115,14 @@ sub create_future {
         # just match the document root instead
         ($state->{node}) = $node->children;
     }
-    return bless $state, __PACKAGE__;
+
+    my $future_node = bless $state, __PACKAGE__;
+    # Cache FutureNodes so that we don't create one for the
+    # same node multiple times.
+    # Store pointers so that changes in future_cache can propagate.
+    $future_cache{$node->unique_key} = \$future_node;
+
+    return \$future_node;
 }
 
 =head1 METHODS
@@ -121,6 +155,7 @@ sub elemental {
         );
         $el->paste($self->{parent}, 'first_child');
         $self->{element} = $el;
+        $atts{$el->unique_key} = $el;
     }
     #create an elemental representation in an appropriate location
     elsif($self->{type} =~ /COM|PI/){
@@ -134,6 +169,7 @@ sub elemental {
         );
         $self->_paste_el($el);
         $self->{element} = $el;
+        $non_atts{$el->unique_key} = $el;
     }
     elsif($self->{type} eq 'NS'){
         my $el = new_element(
@@ -146,6 +182,7 @@ sub elemental {
         );
         $self->_paste_el($el);
         $self->{element} = $el;
+        $non_atts{$el->unique_key} = $el;
     }
     #paste the text node into a new element in its place
     elsif($self->{type} eq 'TXT'){
@@ -161,7 +198,9 @@ sub elemental {
         $self->{node}->paste($el);
         $self->{element} = $el;
     }elsif($self->{type} eq 'DOC'){
-        return $self->{node};
+        my $el = $self->{element} = $self->{node};
+        $non_atts{$el->unique_key} = $el;
+        return $el;
     }
 
     return $self->{element};

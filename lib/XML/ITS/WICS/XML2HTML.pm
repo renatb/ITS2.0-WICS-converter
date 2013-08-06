@@ -8,7 +8,7 @@ use Log::Any qw($log);
 use XML::ITS qw(its_ns);
 use XML::ITS::DOM;
 use XML::ITS::DOM::Element qw(new_element);
-use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future);
+use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future clear_indices get_all_atts get_all_non_atts replace_el_future);
 
 use feature 'state';
 our $HTML_NS = 'http://www.w3.org/1999/xhtml';
@@ -61,15 +61,13 @@ sub convert {
 	# [rule, {selector => futureNode, *pointer => futureNode...}]
 	my @matches;
 	# pointers to all existing future nodes; keys are represented nodes
-	my %future_cache;
-	# find all rule matches and save them in @matches,
-	# and FutureNode pointers in %future_cache
-	$ITS->iterate_matches(_create_indexer(\@matches, \%future_cache, $ITS->get_doc));
+	clear_indices();
+	# find all rule matches and save them in @matches
+	$ITS->iterate_matches(_create_indexer(\@matches, $ITS->get_doc));
 
 	# convert $ITS into an HTML document; rename elements, process atts,
-	# and paste the root in an HTML body. %future_cache is necessary
-	# when an element originally matched by a rule is to be replaced.
-	my $html_doc = $self->_htmlize($ITS->get_doc, \%future_cache);
+	# and paste the root in an HTML body.
+	my $html_doc = $self->_htmlize($ITS->get_doc);
 
 	#grab the head to put rules in it
 	my $head = ( $html_doc->get_root->children )[0];
@@ -83,10 +81,9 @@ sub convert {
 # create an indexing sub for ITS::iterate_matches, and use a
 # closure to create some indices during processing, as well
 # as provide access to the containing document.
-# This sub pushes matches and FutureNodes onto $index_array,
-# and saves pointers to all FutureNodes in $future_cache.
+# This sub pushes matches and FutureNodes onto $index_array
 sub _create_indexer {
-	my ($index_array, $future_cache, $doc) = @_;
+	my ($index_array, $doc) = @_;
 
 	#iterate_matches passes in a rule and it's matched nodes
 	return sub {
@@ -103,14 +100,10 @@ sub _create_indexer {
 			if((ref $match) =~ /Value$/){
 				$futureNodes->{$name} = \$match;
 			}
-			# Cache FutureNodes so that we don't create one for the
-			# same node multiple times.
-			# Store pointers so that the futureNodes hash
-			# contents can be edited via $future_cache later.
+			# store futureNode in place of match in new structure
 			else{
 				$futureNodes->{$name} =
-					$future_cache->{ $match->unique_key } ||=
-					 \( create_future($match, $doc) );
+					 create_future($match, $doc);
 			}
 		}
 		push @{ $index_array }, [$rule, $futureNodes];
@@ -133,14 +126,14 @@ sub _log_match {
 # (these are nodes which have been matched by rules; this is needed in case the
 # element is replaced because of namespace removal)
 sub _htmlize {
-	my ($self, $doc, $future_cache) = @_;
+	my ($self, $doc) = @_;
 
 	$log->debug('converting document elements into HTML')
 		if $log->is_debug;
 	# traverse every document element, converting into HTML
 	# save standoff or rules elements in @its_els
 	my @its_els;
-	my $processor = _traversal_sub(\@its_els, $future_cache);
+	my $processor = _traversal_sub(\@its_els);
 	# 0 means there is no inline ancestor
 	$processor->($doc->get_root, 0);
 
@@ -149,11 +142,9 @@ sub _htmlize {
 }
 
 # return a sub which recursively processes an element and all of its children.
-# All its:* elements are stored in $its_els (for pasting in the HTML head later),
-# and contents of $future_cache are edited when elements are replaced due to
-# namespace removal.
+# All its:* elements are stored in $its_els (for pasting in the HTML head later)
 sub _traversal_sub {
-	my ($its_els, $future_cache) = @_;
+	my ($its_els) = @_;
 
 	# a recursive sub which transforms elements into HTML and returns
 	# true for a child renamed as a div, false otherwise.
@@ -221,9 +212,7 @@ sub _traversal_sub {
 			}
 			# if this element has an associated future (match), change the future
 			# to one for the new node
-			if(exists $future_cache->{$el->unique_key}){
-				${ $future_cache->{$el->unique_key} } = create_future($new_el);
-			}
+			replace_el_future($el, $new_el);
 			$el = $new_el;
 		}
 
@@ -536,6 +525,27 @@ sub _update_rules {
 			$rules_el->append_text("\n" . $indent x 2);
 		}
 	}
+
+	# create rules to undo incorrect inheritance in elementalized nodes
+	# as best we can;
+	# only possible for three categories
+	# my $att_ids_string = join '|', map {q{id('} . _get_or_set_id($self, $_) . q{')}} get_all_atts();
+	# my $non_att_ids_string = join '|', map {q{id('} . _get_or_set_id($self, $_) . q{')}} get_all_non_atts();
+	# my $all_ids_string = join '|', ($att_ids_string, $non_att_ids_string);
+	# if($all_ids_string){
+	# 	#no translate rule
+
+	# 	$rules_el->append_text("\n" . $indent x 3);
+	# 	my $new_rule = new_element('its:translateRule', {translate => 'no', selector => $all_ids_string});
+	# 	$new_rule->paste($rules_el, 'first_child');
+	# 	if($log->is_debug){
+	# 		$log->debug('Creating new rule ' . _el_log_id($new_rule) .
+	# 			' to prevent false inheritance');
+	# 	}
+	# }
+	# if($non_att_ids_string){
+
+	# }
 	return;
 }
 

@@ -276,6 +276,7 @@ Setting id of <div> to ITS_1
 Creating new rule <its:idValueRule> to match [selector=<div id="ITS_1">; idValue='p1']
 
 === attribute match handled correctly
+# --- ONLY
 --- input
 <?xml version="1.0"?>
 <xml>
