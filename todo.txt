@@ -3,8 +3,7 @@ WICS XML to HTML converter
 TODO:
 
 *NEXT THING:
-    turn FutureNodes into the complete manager for future nodes. It should track and
-    manage the cache. It should use the cache to prevent futureNodes from being created twice.
+    turn FutureNodes into the complete manager for future nodes. It should handle element replacement and wrapping.
 
 
 Engineering Tasks:
@@ -34,6 +33,9 @@ To Do on current task:
     - test multiple matches on one future node
 
 Later To Do:
+    - test copying of stuff inside rules (locNote)
+    - simplify bdo by wrapping actual element instead of children
+        - will simplify attribute futureNodes, which are supposed to inherit this
     - find possible code reuse in converter
     - Decide on organization of end-project
         - WICS.pm one file that can convert anything?

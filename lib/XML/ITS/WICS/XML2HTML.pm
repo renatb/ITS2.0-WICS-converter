@@ -155,9 +155,11 @@ sub _traversal_sub {
 	$traverse_sub = sub {
 		my ($el, $inline_ancestor) = @_;
 
-		#its:* elements are either rules or standoff
+		#its:* elements are either rules, span, or standoff
+		#let its:span be renamed to span later
 		if($el->namespaceURI &&
-			$el->namespaceURI eq its_ns()){
+			$el->namespaceURI eq its_ns() &&
+			$el->local_name ne 'span'){
 			#its:rules; just remove these and paste new ones later
 			if($el->local_name eq 'rules'){
 				$el->remove;
@@ -248,10 +250,19 @@ sub _rename_el {
 	my ($el, $div_child, $inline_ancestor) = @_;
 
 	my $new_name;
-	# if a child is a div, this has to be a div
+	#true if element was its:span
+	my $its_span = $el->att('title') =~ m/^its:span/;
+
+	# if a child is a div, $el has to be a div
 	if($div_child){
 		$new_name = 'div';
-	# if an ancestor was a span/bdo, this has to be a span
+		if($its_span && $log->is_warn){
+			$log->warn('its:span converted to div due to div child');
+		}
+	# its:spans must be inline (conformance clause 1-4)
+	}elsif($its_span){
+		$new_name = 'span';
+	# if an ancestor was a span/bdo, $el has to be a span
 	}elsif($inline_ancestor){
 		$new_name = 'span';
 	# inline elements become spans
@@ -261,7 +272,9 @@ sub _rename_el {
 	}else{
 		$new_name = 'div';
 	}
-	if($log->is_debug){
+	# log element rename,
+	# but log "renaming span to span" for its:spans!
+	if($log->is_debug && !($new_name eq 'span' && $its_span)){
 		$log->debug('renaming ' . _el_log_id($el) . " to <$new_name>");
 	}
 
@@ -371,7 +384,8 @@ sub _att_rename {
 
 # process an element with an att which is its:dir=lro or rlo;
 # this requires the wrapping of children with the <bdo> element
-# in HTML.
+# in HTML. (we don't wrap the element in a bdo so that in can
+# still be a div)
 sub _process_dir_override {
 	my ($el, $att) = @_;
 

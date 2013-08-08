@@ -361,3 +361,35 @@ placing <its:locQualityIssues xml:id="lq1"> in script element
 placing <its:provenanceRecords xml:id="pr1"> in script element
 renaming <xml> to <div>
 wrapping document in HTML structure
+
+=== its:span
+<its:span> are just converted to <span>
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  <its:span its:person="Boss">Pointy Hair</its:span>
+</xml>
+--- output
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+  </head>
+  <body>
+    <div title="xml">
+      <span title="its:span" its-person="Boss">Pointy Hair</span>
+    </div>
+  </body>
+</html>
+--- log
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+stripping namespaces from <xml>
+processing <its:span>
+Replacing @its:person of <its:span> with its-person
+setting @title of <its:span> to 'its:span'
+stripping namespaces from <its:span>
+renaming <xml> to <div>
+wrapping document in HTML structure
+
