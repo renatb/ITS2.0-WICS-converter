@@ -3,6 +3,7 @@ WICS XML to HTML converter
 TODO:
 
 *NEXT THING:
+    separate out a FutureNodes test file.
     turn FutureNodes into the complete manager for future nodes. It should handle FutureNode placement correctly even after element replacement and wrapping.
 
 
