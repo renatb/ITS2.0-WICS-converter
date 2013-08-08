@@ -235,9 +235,9 @@ rlo/lro should create an inline bdo element
     <div title="xml">
       <div id="i1" title="foo[xml:id='i1']" dir="rtl">foo</div>
       <div id="i2" title="foo[xml:id='i2']" dir="ltr">foo</div>
-      <div id="i3" title="foo[xml:id='i3']"><bdo dir="ltr">foo<span title="bar"></span></bdo></div>
-      <div id="i4" title="foo[xml:id='i4']"><bdo dir="rtl">foo</bdo></div>
-      <div id="i5" title="foo[xml:id='i5']"><bdo dir="rtl"><span title="bar">bar</span></bdo></div>
+      <bdo id="i3" title="foo[xml:id='i3']" dir="ltr">foo<span title="bar"></span></bdo>
+      <bdo id="i4" title="foo[xml:id='i4']" dir="rtl">foo</bdo>
+      <bdo id="i5" title="foo[xml:id='i5']" dir="rtl"><span title="bar">bar</span></bdo>
     </div>
   </body>
 </html>
@@ -260,28 +260,25 @@ stripping namespaces from <foo id="i2">
 renaming <foo id="i2"> to <div>
 processing <foo xml:id="i3">
 renaming @xml:id of <foo xml:id="i3"> to @id
-replacing @its:dir of <foo id="i3"> with bdo[dir=ltr] wrapped around children
-setting @title of <foo id="i3"> to 'foo[xml:id='i3']'
-stripping namespaces from <foo id="i3">
+found its:dir=lro; renaming <foo id="i3"> to bdo and adding @dir=ltr
+setting @title of <bdo id="i3"> to 'foo[xml:id='i3']'
+stripping namespaces from <bdo id="i3">
 processing <bar>
 setting @title of <bar> to 'bar'
 renaming <bar> to <span>
-renaming <foo id="i3"> to <div>
 processing <foo xml:id="i4">
 renaming @xml:id of <foo xml:id="i4"> to @id
-replacing @its:dir of <foo id="i4"> with bdo[dir=rtl] wrapped around children
-setting @title of <foo id="i4"> to 'foo[xml:id='i4']'
-stripping namespaces from <foo id="i4">
-renaming <foo id="i4"> to <div>
+found its:dir=rlo; renaming <foo id="i4"> to bdo and adding @dir=rtl
+setting @title of <bdo id="i4"> to 'foo[xml:id='i4']'
+stripping namespaces from <bdo id="i4">
 processing <foo xml:id="i5">
 renaming @xml:id of <foo xml:id="i5"> to @id
-replacing @its:dir of <foo id="i5"> with bdo[dir=rtl] wrapped around children
-setting @title of <foo id="i5"> to 'foo[xml:id='i5']'
-stripping namespaces from <foo id="i5">
+found its:dir=rlo; renaming <foo id="i5"> to bdo and adding @dir=rtl
+setting @title of <bdo id="i5"> to 'foo[xml:id='i5']'
+stripping namespaces from <bdo id="i5">
 processing <bar>
 setting @title of <bar> to 'bar'
 renaming <bar> to <span>
-renaming <foo id="i5"> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
 

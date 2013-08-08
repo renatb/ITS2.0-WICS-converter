@@ -180,9 +180,9 @@ sub _traversal_sub {
 			$log->debug('processing ' . _el_log_id($el));
 		}
 
-		# true if the children are wrapped in an inline element
-		# (as with its:dir=rlo)
-		my $inlined_children;
+		# true if the element has been renamed to bdo, an
+		# inline element (happens with its:dir=rlo)
+		my $bdo_rename;
 
 		# process attributes
 		my $title = $el->name;
@@ -190,10 +190,10 @@ sub _traversal_sub {
 		if(@atts){
 			my @save_atts;
 			for my $att (@atts){
-				my ($save, $wrapped) = _process_att($el, $att);
+				my ($save, $renamed) = _process_att($el, $att);
 				push @save_atts, $save
 					if $save;
-				$inlined_children ||= $wrapped;
+				$bdo_rename ||= $renamed;
 			}
 			#save previous attributes in new title attribute
 			if(@save_atts){
@@ -219,24 +219,23 @@ sub _traversal_sub {
 		}
 
 		# grab children for recursive processing
-		my $children;
-		if(!$inlined_children){
-			$children = $el->child_els;
-		}else{
-			# if children were wrapped in a new HTML element,
-			# grab them from that element
-			$children = ${$el->child_els}[0]->child_els;
-		}
+		my $children = $el->child_els;
 
-		# recursively process children
 		# true if any child is a div
 		my $div_child;
+		# recursively process children
 		for my $child(@$children){
 			my $div_result = $traverse_sub->(
-				$child, $inlined_children);
+				$child, $bdo_rename);
 			$div_child ||= $div_result;
 		}
 
+		#if already renamed to bdo, return indication of inline element
+		if($bdo_rename){
+			return 0;
+		}
+
+		#otherwise rename it and return indication of div or span
 		return _rename_el($el, $div_child, $inline_ancestor);
 	};
 	return $traverse_sub;
@@ -251,7 +250,7 @@ sub _rename_el {
 
 	my $new_name;
 	#true if element was its:span
-	my $its_span = $el->att('title') =~ m/^its:span/;
+	my $its_span = $el->att('title') =~ m/^its:span(?:\[|$)/;
 
 	# if a child is a div, $el has to be a div
 	if($div_child){
@@ -383,9 +382,7 @@ sub _att_rename {
 }
 
 # process an element with an att which is its:dir=lro or rlo;
-# this requires the wrapping of children with the <bdo> element
-# in HTML. (we don't wrap the element in a bdo so that in can
-# still be a div)
+# this requires renaming the element to 'bdo' in HTML.
 sub _process_dir_override {
 	my ($el, $att) = @_;
 
@@ -393,16 +390,13 @@ sub _process_dir_override {
 		'ltr':
 		'rtl';
 	if($log->is_debug){
-		$log->debug('replacing @' . $att->name . ' of ' .
-			_el_log_id($el) .
-			" with bdo[dir=$dir] wrapped around children");
+		$log->debug('found ' . $att->name . '=' .
+		 	$att->value . '; renaming ' . _el_log_id($el) .
+			" to bdo and adding \@dir=$dir");
 	}
 	#inline bdo element
-	my $bdo = new_element('bdo',{dir => $dir});
-	for my $child($el->children){
-		$child->paste($bdo);
-	}
-	$bdo->paste($el);
+	$el->set_name('bdo');
+	$el->set_att(dir => $dir);
 	$att->remove;
 	return;
 }
