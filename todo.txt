@@ -33,6 +33,7 @@ To Do on current task:
     - test multiple matches on one future node
 
 Later To Do:
+    - move special log functions into separate class
     - test copying of stuff inside rules (locNote)
     - find possible code reuse in converter
     - Decide on organization of end-project

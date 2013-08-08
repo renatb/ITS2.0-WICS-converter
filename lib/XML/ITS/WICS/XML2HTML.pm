@@ -182,28 +182,7 @@ sub _traversal_sub {
 
 		# true if the element has been renamed to bdo, an
 		# inline element (happens with its:dir=rlo)
-		my $bdo_rename;
-
-		# process attributes
-		my $title = $el->name;
-		my @atts = $el->get_xpath('@*');
-		if(@atts){
-			my @save_atts;
-			for my $att (@atts){
-				my ($save, $renamed) = _process_att($el, $att);
-				push @save_atts, $save
-					if $save;
-				$bdo_rename ||= $renamed;
-			}
-			#save previous attributes in new title attribute
-			if(@save_atts){
-				$title .= '[' . (join ',', @save_atts) . ']';
-			}
-		}
-		if($log->is_debug){
-			$log->debug('setting @title of ' . _el_log_id($el) . " to '$title'");
-		}
-		$el->set_att('title', $title);
+		my $bdo_rename = _convert_atts($el);
 
 		# strip namespacing; requires special care because it replaces
 		# an element, requiring reworking of FutureNode indices
@@ -239,6 +218,36 @@ sub _traversal_sub {
 		return _rename_el($el, $div_child, $inline_ancestor);
 	};
 	return $traverse_sub;
+}
+
+#handle all attribute converting for the given element. Return true
+#if the element was renamed 'bdo', false if not renamed at all.
+sub _convert_atts {
+	my ($el) = @_;
+
+	my $title = $el->name;
+	my @atts = $el->get_xpath('@*');
+
+	#true if this element has been renamed (to 'bdo')
+	my $bdo_rename;
+	if(@atts){
+		my @save_atts;
+		for my $att (@atts){
+			my ($save, $renamed) = _process_att($el, $att);
+			push @save_atts, $save
+				if $save;
+			$bdo_rename ||= $renamed;
+		}
+		#save previous attributes in new title attribute
+		if(@save_atts){
+			$title .= '[' . (join ',', @save_atts) . ']';
+		}
+	}
+	if($log->is_debug){
+		$log->debug('setting @title of ' . _el_log_id($el) . " to '$title'");
+	}
+	$el->set_att('title', $title);
+	return $bdo_rename;
 }
 
 # rename the given element to either div or span; return true for div,
@@ -279,51 +288,6 @@ sub _rename_el {
 
 	$el->set_name($new_name);
 	return $new_name eq 'div' ? 1 : 0;
-}
-
-# get a string to indicate the given element or Value in a log
-# for elements: <el> or <el xml:id="val"> or <el id="val">
-# for values: the value itself.
-sub _el_log_id {
-	my ($el) = @_;
-
-
-	if((ref $el) =~ /Value/){
-		return $el->value;
-	}
-	my $type = $el->type;
-	if($type eq 'ELT'){
-		# take XML ID if possible; otherwise, HTML id
-		my $id;
-		if($id = $el->att('xml:id')){
-			$id = qq{ xml:id="$id"};
-		}elsif($id = $el->att('id')){
-			$id = qq{ id="$id"};
-		}else{
-			$id = '';
-		}
-		return '<' . $el->name . $id . '>';
-	}elsif($type eq 'ATT'){
-		return '@' . $el->name . '[' . $el->value . ']';
-	}elsif($type eq 'COM'){
-		#use at most 10 characters from the comment for display purposes
-		my $length = length $el->value;
-		$length > 10 && ($length = 10);
-		return '<!--' . substr($el->value, 0, $length)  . '-->';
-	}elsif($type eq 'PI'){
-		return '<?' . $el->name  . '?>';
-	}elsif($type eq 'TXT'){
-		#use at most 10 characters from the text for display purposes
-		my $length = length $el->value;
-		$length > 10 && ($length = 10);
-		return '[text: ' . substr($el->value, 0, $length)  . ']';
-	}elsif($type eq 'NS'){
-		return '[namespace: ' . $el->name  . ']';
-	}elsif($type eq 'DOC'){
-		return '[DOCUMENT]';
-	}else{
-		croak 'Need logic for logging ' . $type;
-	}
 }
 
 # process given attribute on given element;
@@ -597,6 +561,50 @@ sub _next_id {
 	my ($self) = @_;
 	$self->{num}++;
 	return "ITS_$self->{num}";
+}
+
+# get a string to indicate the given element or Value in a log
+# for elements: <el> or <el xml:id="val"> or <el id="val">
+# for values: the value itself.
+sub _el_log_id {
+	my ($el) = @_;
+
+	if((ref $el) =~ /Value/){
+		return $el->value;
+	}
+	my $type = $el->type;
+	if($type eq 'ELT'){
+		# take XML ID if possible; otherwise, HTML id
+		my $id;
+		if($id = $el->att('xml:id')){
+			$id = qq{ xml:id="$id"};
+		}elsif($id = $el->att('id')){
+			$id = qq{ id="$id"};
+		}else{
+			$id = '';
+		}
+		return '<' . $el->name . $id . '>';
+	}elsif($type eq 'ATT'){
+		return '@' . $el->name . '[' . $el->value . ']';
+	}elsif($type eq 'COM'){
+		#use at most 10 characters from the comment for display purposes
+		my $length = length $el->value;
+		$length > 10 && ($length = 10);
+		return '<!--' . substr($el->value, 0, $length)  . '-->';
+	}elsif($type eq 'PI'){
+		return '<?' . $el->name  . '?>';
+	}elsif($type eq 'TXT'){
+		#use at most 10 characters from the text for display purposes
+		my $length = length $el->value;
+		$length > 10 && ($length = 10);
+		return '[text: ' . substr($el->value, 0, $length)  . ']';
+	}elsif($type eq 'NS'){
+		return '[namespace: ' . $el->name  . ']';
+	}elsif($type eq 'DOC'){
+		return '[DOCUMENT]';
+	}else{
+		croak 'Need logic for logging ' . $type;
+	}
 }
 
 1;
