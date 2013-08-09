@@ -5,7 +5,7 @@ TODO:
 Engineering Tasks:
     * make general FutureNode methods more object oriented
         - FutureNode manager object
-    - proper attribute inheritance
+    - proper attribute inheritance (Maybe not? [please please please])
         - changes needed in _traversal_sub; also requires new indices and domain logic
             - create attribute FutureNodes whenever the inherited value is different from default. Or not?
 
