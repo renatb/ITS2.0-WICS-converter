@@ -98,7 +98,7 @@ sub create_future {
     if($type eq 'ELT'){
         $state->{node} = $node;
     }elsif($type eq 'ATT'){
-        $state->{parent} = $node->parent;
+        $state->{parent} = create_future($node->parent, $doc);
         $state->{name} = $node->name;
         $state->{value} = $node->value;
     }
@@ -121,12 +121,19 @@ sub create_future {
         ($state->{node}) = $node->children;
     }
 
+    return _new($node, $state);
+}
+
+#create a FutureNode representing $node with the given $state,
+# and add a pointer to it to the future cache. Return the pointer.
+sub _new {
+    my ($node, $state) = @_;
+
     my $future_node = bless $state, __PACKAGE__;
     # Cache FutureNodes so that we don't create one for the
     # same node multiple times.
     # Store pointers so that changes in future_cache can propagate.
     $future_cache{$node->unique_key} = \$future_node;
-
     return \$future_node;
 }
 
@@ -158,7 +165,7 @@ sub elemental {
             },
             $self->{value}
         );
-        $el->paste($self->{parent}, 'first_child');
+        $el->paste(${$self->{parent}}->elemental, 'first_child');
         $self->{element} = $el;
         $atts{$el->unique_key} = $el;
     }

@@ -10,7 +10,7 @@ filters {input => 'htmlize', log => [qw(lines chomp array)]};
 
 for my $block(blocks()){
     my ($html, $log) = $block->input;
-    # print $html;
+    print $html;
     eq_or_diff_html($html, $block->output, $block->name . ' (HTML output)');
     is_deeply($log, $block->log, $block->name . ' (logs)')
       or note join "\n", @$log;
@@ -19,6 +19,7 @@ for my $block(blocks()){
 __DATA__
 FutureNode management is used to remember matches and match locations,
 even when elements are replaced or nodes are deleted
+
 === namespaced element match handled properly
 --- input
 <?xml version="1.0"?>
@@ -129,6 +130,64 @@ Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
+
+=== attribute match on namespaced element handled correctly
+--- ONLY
+--- input
+<?xml version="1.0"?>
+<xml>
+  <head>
+    <its:rules version="2.0"
+      xmlns:its="http://www.w3.org/2005/11/its"
+      xmlns:foo="foo.com">
+      <its:translateRule selector="//foo:para/@content"
+        translate="yes"/>
+    </its:rules>
+  </head>
+  <foo:para content="foo" xmlns:foo="foo.com">Some text</foo:para>
+</xml>
+--- output
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+        <its:translateRule selector="id('ITS_1')" translate="yes"></its:translateRule>
+    </its:rules>
+    </script>
+  </head>
+  <body>
+    <div title="xml">
+        <div title="head"></div>
+        <div title="foo:para[content='foo']">
+          <span title="content" id="ITS_1" class="_ITS_ATT">
+            foo
+          </span>
+          Some text
+        </div>
+    </div>
+  </body>
+</html>
+--- log
+match: rule=<its:translateRule>; selector=@content[foo]
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <foo:para>
+setting @title of <foo:para> to 'foo:para[content='foo']'
+stripping namespaces from <foo:para>
+renaming <para> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Creating new rule <its:translateRule> to match [selector=<span id="ITS_1">]
 
 === comment match handled correctly
 --- input
