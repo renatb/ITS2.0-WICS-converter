@@ -19,7 +19,7 @@ Engineering Tasks:
         ELT     yes [n]✓
         ATT     yes [p]✓
         COM     yes [n]✓ (to be redone)
-        PI      yes [ps]
+        PI      yes [p]✓
         TXT     no
         NS      yes [ps]
         DOC     yes [e]
@@ -34,6 +34,7 @@ To Do on current task:
     - test multiple matches on one future node
 
 Later To Do:
+    - handle inheritance for attributes
     - move special log functions into separate class
     - test copying of stuff inside rules (locNote)
     - find possible code reuse in converter

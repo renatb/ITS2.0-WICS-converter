@@ -100,11 +100,7 @@ sub create_future {
     }
     #use sibling to keep exact location
     elsif($type eq 'PI'){
-        if(my $sib = $node->next_sibling){
-            $state->{nextSib} = $sib;
-        }else{
-            $state->{parent} = $node->parent;
-        }
+        $state->{parent} = create_future($node->parent);
         $state->{value} = $node->value;
         $state->{name} = $node->name;
     }elsif($type eq 'TXT'){
@@ -164,9 +160,11 @@ sub elemental {
             },
             $self->{value}
         );
+        #paste in current version of original parent
         $el->paste(${$self->{parent}}->elemental, 'first_child');
         $self->{element} = $el;
         $atts{$el->unique_key} = $el;
+        _log_new_el('ATT');
     }
     # comments aren't deleted, so just place a new element next to them.
     # TODO: might be better just to leave it as a comment and use nodePath
@@ -183,7 +181,8 @@ sub elemental {
         );
         $el->paste($node, 'after');
         $self->{element} = $el;
-        _log_new_el($self->{type});
+        _log_new_el('COM');
+        return $el;
     }
     #create an elemental representation in an appropriate location
     elsif($self->{type} eq 'PI'){
@@ -191,13 +190,16 @@ sub elemental {
             'span',
             {
                  title => $self->{name},
-                 class => '_ITS_' . uc $self->{type}
+                 class => '_ITS_PI'
             },
             $self->{value}
         );
-        $self->_paste_el($el);
+        #paste in current version of original parent
+        $el->paste(${$self->{parent}}->elemental);
+        _log_new_el('PI');
         $self->{element} = $el;
         $non_atts{$el->unique_key} = $el;
+        return $el;
     }
     elsif($self->{type} eq 'NS'){
         my $el = new_element(
