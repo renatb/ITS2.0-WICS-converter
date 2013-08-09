@@ -13,12 +13,12 @@ Engineering Tasks:
     - find a way to keep non-element matches after namespace stripping, text wrapping
         - probably need to save element refs instead of elements, and then replace
         them through a central index
-        - p = parent, s = sibling, e = element itself
+        - p = parent, s = sibling, n = node itself
         Special processing required for each category of FutureNode
                 _ns replace or TXT FutureNode wrap_
-        ELT     yes [e]✓
-        ATT     yes [p]
-        COM     yes [ps]
+        ELT     yes [n]✓
+        ATT     yes [p]✓
+        COM     yes [n]✓ (to be redone)
         PI      yes [ps]
         TXT     no
         NS      yes [ps]

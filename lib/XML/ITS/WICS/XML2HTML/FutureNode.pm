@@ -39,12 +39,6 @@ sub get_all_non_atts {
     return values %non_atts;
 }
 
-# sub elementalize_all {
-#     for my $future_ref(values %future_cache){
-#         ${$future_ref}->elemental;
-#     }
-# }
-
 =head1 SYNOPSIS
 
     use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future);
@@ -101,11 +95,16 @@ sub create_future {
         $state->{parent} = create_future($node->parent, $doc);
         $state->{name} = $node->name;
         $state->{value} = $node->value;
+    }elsif($type eq 'COM'){
+        $state->{node} = $node;
     }
     #use sibling to keep exact location
-    elsif($type =~ /COM|PI/){
-        $state->{nextSib} = $node->next_sibling or
+    elsif($type eq 'PI'){
+        if(my $sib = $node->next_sibling){
+            $state->{nextSib} = $sib;
+        }else{
             $state->{parent} = $node->parent;
+        }
         $state->{value} = $node->value;
         $state->{name} = $node->name;
     }elsif($type eq 'TXT'){
@@ -169,8 +168,25 @@ sub elemental {
         $self->{element} = $el;
         $atts{$el->unique_key} = $el;
     }
+    # comments aren't deleted, so just place a new element next to them.
+    # TODO: might be better just to leave it as a comment and use nodePath
+    # or something like that.
+    elsif($self->{type} eq 'COM'){
+        my $node = $self->{node};
+        my $el = new_element(
+            'span',
+            {
+                 title => $node->name,
+                 class => '_ITS_COM'
+            },
+            $node->value
+        );
+        $el->paste($node, 'after');
+        $self->{element} = $el;
+        _log_new_el($self->{type});
+    }
     #create an elemental representation in an appropriate location
-    elsif($self->{type} =~ /COM|PI/){
+    elsif($self->{type} eq 'PI'){
         my $el = new_element(
             'span',
             {
@@ -209,7 +225,9 @@ sub elemental {
         $self->_paste_el($el);
         $self->{node}->paste($el);
         $self->{element} = $el;
-    }elsif($self->{type} eq 'DOC'){
+    }
+    #todo: probably better just to assign the '/' XPath.
+    elsif($self->{type} eq 'DOC'){
         my $el = $self->{element} = $self->{node};
         $non_atts{$el->unique_key} = $el;
         return $el;
@@ -233,9 +251,15 @@ sub _paste_el {
     }else{
         croak 'Don\'t know where to paste ' . $el->name;
     }
+    _log_new_el($self->{type});
+}
+
+#log the creation of a new element to represent the input node type.
+sub _log_new_el {
+    my ($type) = @_;
     if($log->is_debug){
         $log->debug('Creating new <span> element to represent node of type ' .
-            $self->{type});
+            $type);
     }
 }
 
