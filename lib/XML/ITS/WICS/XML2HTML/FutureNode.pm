@@ -108,9 +108,7 @@ sub create_future {
     }elsif($type eq 'NS'){
         $state->{name} = $node->name;
         $state->{value} = $node->value;
-        # convoluted way of saying to put this as first child of root
-        ($state->{nextSib}) = $doc->get_root->children  or
-            ($state->{parent}) = $node->get_root;
+        $state->{parent} = create_future($doc->get_root);
     }elsif($type eq 'DOC'){
         # just match the document root instead
         ($state->{node}) = $node->children;
@@ -210,7 +208,8 @@ sub elemental {
             },
             $self->{value}
         );
-        $self->_paste_el($el);
+        $el->paste(${ $self->{parent} }->elemental);
+        _log_new_el('NS');
         $self->{element} = $el;
         $non_atts{$el->unique_key} = $el;
     }

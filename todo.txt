@@ -21,8 +21,8 @@ Engineering Tasks:
         COM     yes [n]✓ (to be redone)
         PI      yes [p]✓
         TXT     no
-        NS      yes [ps]
-        DOC     yes [e]
+        NS      yes [p]✓
+        DOC     yes [e]✓ (to be redone)
 
 To Do on current task:
     -add global rules un-doing inheritance, when needed:
