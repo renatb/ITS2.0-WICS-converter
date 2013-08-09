@@ -305,6 +305,16 @@ sub doc_node {
     return __PACKAGE__->new($doc);
 }
 
+=head2 C<path>
+
+Returns an XPath uniquely identifying this node in the current document
+
+=cut
+sub path {
+    my ($self) = @_;
+    return $self->{node}->nodePath();
+}
+
 =head2 C<next_sibling>
 
 Returns the next sibling node of this node, or undef if there is none.

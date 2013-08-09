@@ -1,6 +1,7 @@
 ITS
 
 Next:
+    - allow positions for append text
     - proper error checking for XPath execution
     - test its_ns()
 

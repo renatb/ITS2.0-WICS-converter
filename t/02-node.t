@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 50;
+plan tests => 54;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -14,6 +14,7 @@ my $dom_path = path($Bin, 'corpus', 'dom_test.xml');
 my $dom = XML::ITS::DOM->new( 'xml' => $dom_path );
 
 test_type_name_value($dom);
+test_path($dom);
 test_xpath($dom);
 test_node_namespaces($dom);
 test_unique_key($dom);
@@ -70,6 +71,20 @@ sub test_type_name_value {
     is($nodes[0]->type, 'NS', 'Namespace type is "NS"');
     is($nodes[0]->value, 'www.bar.com', 'Namespace value is URI');
     return;
+}
+
+#test generated xpath values
+sub test_path {
+    my ($dom) = @_;
+
+    is($dom->get_root->doc_node->path, '/', 'path to document node');
+
+    my ($root) = $dom->get_root->get_xpath('/*');
+    my @nodes = $root->children;
+    is($nodes[0]->path, '/xml/text()[1]', 'path to first text');
+    is($nodes[1]->path, '/xml/second', 'path to "second" element');
+    my ($comment) = $dom->get_root->get_xpath('//comment()');
+    is($comment->path, '/xml/comment()', 'path to comment')
 }
 
 #test specifics of XPath context setting
