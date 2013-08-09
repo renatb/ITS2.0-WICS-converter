@@ -459,7 +459,7 @@ sub _update_rules {
 	# we hand-indent the contents of script elements because they are not
 	# formatted like the rest of the document
 	my $indent = '  ';#two spaces
-	$rules_el->append_text("\n" . $indent x 4);
+	$rules_el->append_text("\n" . $indent x 3);
 	my $script = _get_script($rules_el);
 	$script->paste($head);
 

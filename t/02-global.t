@@ -36,7 +36,7 @@ __DATA__
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-        <its:translateRule selector="id('i1')" translate="yes"></its:translateRule>
+      <its:translateRule selector="id('i1')" translate="yes"></its:translateRule>
     </its:rules>
     </script>
   </head>
@@ -84,7 +84,7 @@ Creating new rule <its:translateRule> to match [selector=<div id="i1">]
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-        <its:translateRule selector="id('ITS_1')" translate="yes"></its:translateRule>
+      <its:translateRule selector="id('ITS_1')" translate="yes"></its:translateRule>
     </its:rules>
     </script>
   </head>
@@ -134,7 +134,7 @@ Creating new rule <its:translateRule> to match [selector=<div id="ITS_1">]
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-        <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
     </its:rules>
     </script>
   </head>
@@ -190,7 +190,7 @@ it should just be copied to the final rule.
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-        <its:idValueRule selector="id('ITS_1')" idValue="'p1'"></its:idValueRule>
+      <its:idValueRule selector="id('ITS_1')" idValue="'p1'"></its:idValueRule>
     </its:rules>
     </script>
   </head>

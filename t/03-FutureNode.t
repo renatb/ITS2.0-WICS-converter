@@ -10,7 +10,7 @@ filters {input => 'htmlize', log => [qw(lines chomp array)]};
 
 for my $block(blocks()){
     my ($html, $log) = $block->input;
-    print $html;
+    # print $html;
     eq_or_diff_html($html, $block->output, $block->name . ' (HTML output)');
     is_deeply($log, $block->log, $block->name . ' (logs)')
       or note join "\n", @$log;
@@ -41,7 +41,7 @@ even when elements are replaced or nodes are deleted
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-        <its:domainRule xmlns:foo="www.foo.com" selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+      <its:domainRule xmlns:foo="www.foo.com" selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
     </its:rules>
     </script>
   </head>
@@ -96,7 +96,7 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-        <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
     </its:rules>
     </script>
   </head>
@@ -132,7 +132,6 @@ Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
 
 === attribute match on namespaced element handled correctly
---- ONLY
 --- input
 <?xml version="1.0"?>
 <xml>
@@ -154,7 +153,7 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-        <its:translateRule selector="id('ITS_1')" translate="yes"></its:translateRule>
+      <its:translateRule selector="id('ITS_1')" translate="yes"></its:translateRule>
     </its:rules>
     </script>
   </head>
@@ -200,6 +199,7 @@ Creating new rule <its:translateRule> to match [selector=<span id="ITS_1">]
     </its:rules>
   </head>
   <para>Some text<!--foo--></para>
+  <para>Some text<!--foo-->more text</para>
 </xml>
 --- output
 <!DOCTYPE html>
@@ -209,7 +209,8 @@ Creating new rule <its:translateRule> to match [selector=<span id="ITS_1">]
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-        <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+      <its:domainRule selector="id('ITS_3')" domainPointer="id('ITS_4')"></its:domainRule>
     </its:rules>
     </script>
   </head>
@@ -223,10 +224,19 @@ Creating new rule <its:translateRule> to match [selector=<span id="ITS_1">]
             foo
           </span>
         </div>
+        <div title="para" id="ITS_3">
+          Some text
+          <!--foo-->
+          <span title="#comment" id="ITS_4" class="_ITS_COM">
+            foo
+          </span>
+          more text
+        </div>
     </div>
   </body>
 </html>
 --- log
+match: rule=<its:domainRule>; selector=<para>; domainPointer=<!--foo-->
 match: rule=<its:domainRule>; selector=<para>; domainPointer=<!--foo-->
 converting document elements into HTML
 processing <xml>
@@ -238,6 +248,9 @@ renaming <head> to <div>
 processing <para>
 setting @title of <para> to 'para'
 renaming <para> to <div>
+processing <para>
+setting @title of <para> to 'para'
+renaming <para> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
 Creating new its:rules element to contain all rules
@@ -245,6 +258,10 @@ Setting id of <div> to ITS_1
 Creating new <span> element to represent node of type COM
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
+Setting id of <div> to ITS_3
+Creating new <span> element to represent node of type COM
+Setting id of <span> to ITS_4
+Creating new rule <its:domainRule> to match [selector=<div id="ITS_3">; domainPointer=<span id="ITS_4">]
 
 === processing instruction match handled correctly
 PIs are illegal in HTML. They should all be removed; matched ones should have
@@ -269,7 +286,7 @@ a representing node.
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-        <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
     </its:rules>
     </script>
   </head>
@@ -325,7 +342,7 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-        <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
     </its:rules>
     </script>
   </head>
@@ -380,7 +397,7 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-        <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
     </its:rules>
     </script>
   </head>
@@ -435,7 +452,7 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-        <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
     </its:rules>
     </script>
   </head>
