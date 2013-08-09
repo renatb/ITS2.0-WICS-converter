@@ -9,6 +9,7 @@ use XML::ITS qw(its_ns);
 use XML::ITS::DOM;
 use XML::ITS::DOM::Element qw(new_element);
 use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future clear_indices get_all_atts get_all_non_atts replace_el_future);
+use XML::ITS::WICS::LogUtils qw(node_log_id);
 
 use feature 'state';
 our $HTML_NS = 'http://www.w3.org/1999/xhtml';
@@ -114,8 +115,8 @@ sub _create_indexer {
 sub _log_match {
 	my ($rule, $match) = @_;
 	if ($log->is_debug()){
-		my $message = 'match: rule=' . _el_log_id($rule->element);
-		$message .= "; $_=" . _el_log_id($match->{$_})
+		my $message = 'match: rule=' . node_log_id($rule->element);
+		$message .= "; $_=" . node_log_id($match->{$_})
 			for keys $match;
 		$log->debug($message);
 	}
@@ -164,20 +165,20 @@ sub _traversal_sub {
 			if($el->local_name eq 'rules'){
 				$el->remove;
 				if($log->is_debug){
-					$log->debug('removing ' . _el_log_id($el));
+					$log->debug('removing ' . node_log_id($el));
 				}
 				return 0;
 			}
 			# save standoff markup for pasting in the head
 			push @$its_els, $el;
 			if($log->is_debug){
-				$log->debug('placing ' . _el_log_id($el) . ' in script element');
+				$log->debug('placing ' . node_log_id($el) . ' in script element');
 			}
 			return 0;
 		}
 		if($log->is_debug){
 			# print "processing " . $el->name . $el->att('xml:id');
-			$log->debug('processing ' . _el_log_id($el));
+			$log->debug('processing ' . node_log_id($el));
 		}
 
 		# true if the element has been renamed to bdo, an
@@ -189,7 +190,7 @@ sub _traversal_sub {
 		my $new_el = $el->strip_ns;
 		if(!$el->is_same_node($new_el)){
 			if($log->is_debug){
-				$log->debug('stripping namespaces from ' . _el_log_id($el));
+				$log->debug('stripping namespaces from ' . node_log_id($el));
 			}
 			# if this element has an associated future (match), change the future
 			# to one for the new node
@@ -244,7 +245,7 @@ sub _convert_atts {
 		}
 	}
 	if($log->is_debug){
-		$log->debug('setting @title of ' . _el_log_id($el) . " to '$title'");
+		$log->debug('setting @title of ' . node_log_id($el) . " to '$title'");
 	}
 	$el->set_att('title', $title);
 	return $bdo_rename;
@@ -283,7 +284,7 @@ sub _rename_el {
 	# log element rename,
 	# but log "renaming span to span" for its:spans!
 	if($log->is_debug && !($new_name eq 'span' && $its_span)){
-		$log->debug('renaming ' . _el_log_id($el) . " to <$new_name>");
+		$log->debug('renaming ' . node_log_id($el) . " to <$new_name>");
 	}
 
 	$el->set_name($new_name);
@@ -337,7 +338,7 @@ sub _process_att {
 sub _att_rename {
 	my ($el, $att, $new_name) = @_;
 	if($log->is_debug){
-		$log->debug('renaming @' . $att->name . ' of ' . _el_log_id($el) .
+		$log->debug('renaming @' . $att->name . ' of ' . node_log_id($el) .
 			" to \@$new_name");
 	}
 	#have to replace with new att because renaming doesn't work with namespaces
@@ -355,7 +356,7 @@ sub _process_dir_override {
 		'rtl';
 	if($log->is_debug){
 		$log->debug('found ' . $att->name . '=' .
-		 	$att->value . '; renaming ' . _el_log_id($el) .
+		 	$att->value . '; renaming ' . node_log_id($el) .
 			" to bdo and adding \@dir=$dir");
 	}
 	#inline bdo element
@@ -376,7 +377,7 @@ sub _htmlize_its_att {
 	$el->set_att($name, $att->value);
 	if($log->is_debug){
 		$log->debug('Replacing @' . $att->name . ' of ' .
-		_el_log_id($el) . " with $name");
+		node_log_id($el) . " with $name");
 	}
 	$att->remove;
 	return;
@@ -476,11 +477,10 @@ sub _update_rules {
 			# FutureNode- make it visible in the dom and
 			# match the rule selector with its ID
 			if((ref $futureNode) =~ /FutureNode/){
-				my $el = $futureNode->elemental;
-				$new_rule->set_att( $key, q{id('} .
-					$self->_get_or_set_id($el). q{')} );
+				$new_rule->set_att($key, $futureNode->new_path);
 			}else{
-				#DOM values- match the rule with the value
+				# DOM values (not a FutureNode object)
+				# match the rule with the literal value
 				$new_rule->set_att($key, $futureNode->as_xpath);
 			}
 		}
@@ -511,7 +511,7 @@ sub _update_rules {
 	# 	my $new_rule = new_element('its:translateRule', {translate => 'no', selector => $all_ids_string});
 	# 	$new_rule->paste($rules_el, 'first_child');
 	# 	if($log->is_debug){
-	# 		$log->debug('Creating new rule ' . _el_log_id($new_rule) .
+	# 		$log->debug('Creating new rule ' . node_log_id($new_rule) .
 	# 			' to prevent false inheritance');
 	# 	}
 	# }
@@ -524,14 +524,14 @@ sub _update_rules {
 #log the creation of a new rule (given the rule and its associated FutureNodes)
 sub _log_new_rule {
 	my ($new_rule, $futureNodes) = @_;
-	my $string = 'Creating new rule ' . _el_log_id($new_rule) .
+	my $string = 'Creating new rule ' . node_log_id($new_rule) .
 		' to match [';
 	my @match_strings;
 	for my $key(keys %$futureNodes){
 		my $futureNode = ${ $futureNodes->{$key} };
 		if((ref $futureNode) =~ /FutureNode/){
 			push @match_strings, "$key=" .
-				 _el_log_id($futureNode->elemental);
+				 node_log_id($futureNode->elemental);
 		}else{
 			push @match_strings, "$key=" . $futureNode->as_xpath;
 		}
@@ -540,71 +540,6 @@ sub _log_new_rule {
 	$string .= ']';
 	$log->debug($string);
 	return;
-}
-
-#returns the id attribute of the given element; creates one if none exists.
-sub _get_or_set_id {
-	my ($self, $el) = @_;
-	my $id = $el->att('id');
-	if(!$id){
-		$id = $self->_next_id();
-		if($log->is_debug){
-			$log->debug('Setting id of ' . _el_log_id($el) . " to $id");
-		}
-		$el->set_att('id', $id);
-	}
-	return $id;
-}
-
-#returns a unique string "ITS_#", '#' being some number.
-sub _next_id {
-	my ($self) = @_;
-	$self->{num}++;
-	return "ITS_$self->{num}";
-}
-
-# get a string to indicate the given element or Value in a log
-# for elements: <el> or <el xml:id="val"> or <el id="val">
-# for values: the value itself.
-sub _el_log_id {
-	my ($el) = @_;
-
-	if((ref $el) =~ /Value/){
-		return $el->value;
-	}
-	my $type = $el->type;
-	if($type eq 'ELT'){
-		# take XML ID if possible; otherwise, HTML id
-		my $id;
-		if($id = $el->att('xml:id')){
-			$id = qq{ xml:id="$id"};
-		}elsif($id = $el->att('id')){
-			$id = qq{ id="$id"};
-		}else{
-			$id = '';
-		}
-		return '<' . $el->name . $id . '>';
-	}elsif($type eq 'ATT'){
-		return '@' . $el->name . '[' . $el->value . ']';
-	}elsif($type eq 'COM'){
-		#use at most 10 characters from the comment for display purposes
-		my $length = length $el->value;
-		$length > 10 && ($length = 10);
-		return '<!--' . substr($el->value, 0, $length)  . '-->';
-	}elsif($type eq 'PI'){
-		return '<?' . $el->name  . '?>';
-	}elsif($type eq 'TXT'){
-		#use at most 10 characters from the text for display purposes
-		my $length = length $el->value;
-		$length > 10 && ($length = 10);
-		return '[text: ' . substr($el->value, 0, $length)  . ']';
-	}elsif($type eq 'NS'){
-		return '[namespace: ' . $el->name  . ']';
-	}elsif($type eq 'DOC'){
-		return '[DOCUMENT]';
-	}else{
-		croak 'Need logic for logging ' . $type;
-	}
 }
 
 1;

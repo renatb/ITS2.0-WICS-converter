@@ -2,29 +2,16 @@ WICS XML to HTML converter
 
 TODO:
 
-*NEXT THING:
-    separate out a FutureNodes test file.
-    turn FutureNodes into the complete manager for future nodes. It should handle FutureNode placement correctly even after element replacement and wrapping.
-
-
 Engineering Tasks:
-    - make FutureNode into a FutureNode manager
-        - refactor future_cache into FutureNode package
-    - find a way to keep non-element matches after namespace stripping, text wrapping
-        - probably need to save element refs instead of elements, and then replace
-        them through a central index
-        - p = parent, s = sibling, n = node itself
-        Special processing required for each category of FutureNode
-                _ns replace or TXT FutureNode wrap_
-        ELT     yes [n]✓
-        ATT     yes [p]✓
-        COM     yes [n]✓ (to be redone)
-        PI      yes [p]✓
-        TXT     no
-        NS      yes [p]✓
-        DOC     yes [e]✓ (to be redone)
+    * make general FutureNode methods more object oriented
+        - FutureNode manager object
+    - proper attribute inheritance
+        - changes needed in _traversal_sub; also requires new indices and domain logic
+            - create attribute FutureNodes whenever the inherited value is different from default. Or not?
 
 To Do on current task:
+
+Later To Do:
     -add global rules un-doing inheritance, when needed:
         <its:translateRule translate="no" selector="every converted node ID here"/>
         <its:dirRule dir="ltr" selector="converted nodes, except the atts"/>
@@ -32,8 +19,6 @@ To Do on current task:
         <!-- Not for HTML docs, but for others--><its:preserveSpaceRule preserve="default" selector="converted nodes, except the atts">
         - test this with multiple future nodes
     - test multiple matches on one future node
-
-Later To Do:
     - handle inheritance for attributes
     - move special log functions into separate class
     - test copying of stuff inside rules (locNote)

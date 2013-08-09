@@ -211,8 +211,8 @@ Creating new rule <its:translateRule> to match [selector=<span id="ITS_1">]
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
-      <its:domainRule selector="id('ITS_3')" domainPointer="id('ITS_4')"></its:domainRule>
+      <its:domainRule selector="id('ITS_1')" domainPointer="/*/*[2]/div/div[2]/comment()"></its:domainRule>
+      <its:domainRule selector="id('ITS_2')" domainPointer="/*/*[2]/div/div[3]/comment()"></its:domainRule>
     </its:rules>
     </script>
   </head>
@@ -222,16 +222,10 @@ Creating new rule <its:translateRule> to match [selector=<span id="ITS_1">]
         <div title="para" id="ITS_1">
           Some text
           <!--foo-->
-          <span title="#comment" id="ITS_2" class="_ITS_COM">
-            foo
-          </span>
         </div>
-        <div title="para" id="ITS_3">
+        <div title="para" id="ITS_2">
           Some text
           <!--foo-->
-          <span title="#comment" id="ITS_4" class="_ITS_COM">
-            foo
-          </span>
           more text
         </div>
     </div>
@@ -257,13 +251,9 @@ renaming <xml> to <div>
 wrapping document in HTML structure
 Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
-Creating new <span> element to represent node of type COM
-Setting id of <span> to ITS_2
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
-Setting id of <div> to ITS_3
-Creating new <span> element to represent node of type COM
-Setting id of <span> to ITS_4
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_3">; domainPointer=<span id="ITS_4">]
+Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<!--foo-->]
+Setting id of <div> to ITS_2
+Creating new rule <its:domainRule> to match [selector=<div id="ITS_2">; domainPointer=<!--foo-->]
 
 === PI match handled correctly
 PIs are illegal in HTML. They should all be removed; matched ones should have
@@ -402,7 +392,7 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+      <its:domainRule selector="id('ITS_1')" domainPointer="/*/*[2]/div/div[2]/span/text()"></its:domainRule>
     </its:rules>
     </script>
   </head>
@@ -410,7 +400,7 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
-          <span class="_ITS_TXT" id="ITS_2" title="#text">
+          <span class="_ITS_TXT" title="#text">
           Some text
           </span>
         </div>
@@ -433,9 +423,8 @@ renaming <xml> to <div>
 wrapping document in HTML structure
 Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
-Creating new <span> element to represent node of type TXT
-Setting id of <span> to ITS_2
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
+wrapping [text: Some text] with <span> to prevent matching any merged text
+Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=[text: Some text]]
 
 === namespace matches handled correctly
 --- input
@@ -520,9 +509,9 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
   </head>
   <body>
     <div title="bar:xml">
+        <span title="xmlns:foo" class="_ITS_NS" id="ITS_2">www.foo.com</span>
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">Some text</div>
-        <span title="xmlns:foo" class="_ITS_NS" id="ITS_2">www.foo.com</span>
     </div>
   </body>
 </html>
@@ -568,12 +557,12 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+      <its:domainRule selector="id('ITS_1')" domainPointer="/"></its:domainRule>
     </its:rules>
     </script>
   </head>
   <body>
-    <div title="xml" id="ITS_2">
+    <div title="xml">
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">
           Some text
@@ -598,5 +587,4 @@ renaming <xml> to <div>
 wrapping document in HTML structure
 Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
-Setting id of <div> to ITS_2
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<div id="ITS_2">]
+Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=[DOCUMENT]]

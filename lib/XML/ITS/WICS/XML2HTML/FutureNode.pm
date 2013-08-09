@@ -1,11 +1,19 @@
 package XML::ITS::WICS::XML2HTML::FutureNode;
 
+# several cases to handle:
+# namespaces, attributes and PIs are destroyed during conversion;
+# elements stay but are sometimes replaced
+# text stays
+# the document is replaced, but keeps same XPath
+# comments stay, but XPath changes.
+
 use strict;
 use warnings;
 use Exporter::Easy (
     OK => [qw(create_future clear_indices get_all_atts get_all_non_atts replace_el_future)]
 );
 use XML::ITS::DOM::Element qw(new_element);
+use XML::ITS::WICS::LogUtils qw(node_log_id);
 use Carp;
 use Log::Any qw($log);
 use Data::Dumper; #DEBUG
@@ -19,11 +27,13 @@ my %future_cache;
 #future_cache in get methods. Will help in document editing.
 my %atts; #atts
 my %non_atts; #everything but text, elements, and atts
+my $id_num = 0;
 
 sub clear_indices {
     %atts = ();
     %non_atts = ();
     %future_cache = ();
+    $id_num = 0;
 }
 
 sub replace_el_future {
@@ -168,19 +178,7 @@ sub elemental {
     # TODO: might be better just to leave it as a comment and use nodePath
     # or something like that.
     elsif($self->{type} eq 'COM'){
-        my $node = $self->{node};
-        my $el = new_element(
-            'span',
-            {
-                 title => $node->name,
-                 class => '_ITS_COM'
-            },
-            $node->value
-        );
-        $el->paste($node, 'after');
-        $self->{element} = $el;
-        _log_new_el('COM');
-        return $el;
+        $self->{element} = $self->{node};
     }
     #create an elemental representation in an appropriate location
     elsif($self->{type} eq 'PI'){
@@ -197,7 +195,6 @@ sub elemental {
         _log_new_el('PI');
         $self->{element} = $el;
         $non_atts{$el->unique_key} = $el;
-        return $el;
     }
     elsif($self->{type} eq 'NS'){
         my $el = new_element(
@@ -208,12 +205,15 @@ sub elemental {
             },
             $self->{value}
         );
-        $el->paste(${ $self->{parent} }->elemental);
+        $el->paste(${ $self->{parent} }->elemental, 'first_child');
         _log_new_el('NS');
         $self->{element} = $el;
         $non_atts{$el->unique_key} = $el;
     }
-    #paste the text node into a new element in its place
+    # paste the text node into a new element in its place,
+    # to guarantee that the deletion of other nodes won't
+    # merge it with another text node. Return value is still
+    # the original text node
     elsif($self->{type} eq 'TXT'){
         my $el = new_element(
             'span',
@@ -223,18 +223,35 @@ sub elemental {
             },
             $self->{value}
         );
-        $self->_paste_el($el);
+        $el->paste($self->{node}, 'after');
         $self->{node}->paste($el);
-        $self->{element} = $el;
+        if($log->is_debug){
+            $log->debug('wrapping ' .
+                node_log_id($self->{node}) .
+                ' with ' . node_log_id($el) .
+                ' to prevent matching any merged text');
+        }
+        $self->{element} = $self->{node};
     }
-    #todo: probably better just to assign the '/' XPath.
     elsif($self->{type} eq 'DOC'){
-        my $el = $self->{element} = $self->{node};
-        $non_atts{$el->unique_key} = $el;
-        return $el;
+        #return the root document
+        $self->{element} = $self->{node}->doc_node('/');
     }
 
     return $self->{element};
+}
+
+#returns an XPath uniquely identifying this node
+sub new_path {
+    my ($self) = @_;
+    my $node = $self->elemental;
+    my $type = $node->type;
+    if($type eq 'ELT'){
+        return q{id('} .
+            _get_or_set_id($node). q{')}
+    }else{
+        return $node->path;
+    }
 }
 
 # pastes the given element in an appropriate location, given parent and possibly
@@ -262,6 +279,26 @@ sub _log_new_el {
         $log->debug('Creating new <span> element to represent node of type ' .
             $type);
     }
+}
+
+#returns the id attribute of the given element; creates one if none exists.
+sub _get_or_set_id {
+    my ($el) = @_;
+    my $id = $el->att('id');
+    if(!$id){
+        $id = _next_id();
+        if($log->is_debug){
+            $log->debug('Setting id of ' . node_log_id($el) . " to $id");
+        }
+        $el->set_att('id', $id);
+    }
+    return $id;
+}
+
+#returns a unique string "ITS_#", '#' being some number.
+sub _next_id {
+    $id_num++;
+    return "ITS_$id_num";
 }
 
 1;
