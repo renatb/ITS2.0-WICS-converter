@@ -131,25 +131,41 @@ sub _get_dom {
 
     if(ref $data eq 'SCALAR'){
         #string refs are content;
-        try{
-            $dom = $type eq 'xml' ?
-                $parser->load_xml( string => $data ) :
-                $parser->parse_string( $$data );
-        } catch {
-            croak "error parsing string: $_";
-        };
+        if($type eq 'xml'){
+            try{
+                $dom = $parser->load_xml( string => $data );
+            } catch {
+                croak "error parsing string: $_";
+            };
+        }else{
+            $dom = $parser->parse_string( $$data );
+            carp_parse_errors($parser);
+        }
     }
     else{
         #strings are file names
-        try{
-            $dom = $type eq 'xml' ?
-                $parser->load_xml( location => $data ) :
-                $parser->parse_html_file( $data );
-        } catch {
-            croak "error parsing file '$data': $_";
-        };
+        if($type eq 'xml'){
+            try{
+                $dom = $parser->load_xml( location => $data );
+            } catch {
+                croak "error parsing file '$data': $_";
+            };
+        }else{
+            $dom = $parser->parse_html_file( $data );
+            carp_parse_errors($parser);
+        }
     }
     return $dom;
+}
+
+sub carp_parse_errors {
+    my ($parser) = @_;
+    if(my @err = $parser->errors){
+        @err = grep {
+            defined $_->level and
+            $_->level ne 'INFO'} @err;
+        carp @err if @err;
+    }
 }
 
 1;
