@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 37;
+plan tests => 41;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -138,19 +138,37 @@ sub test_element_editing {
     is_deeply($el->atts, $atts, 'Correct element attributes');
     is($el->text, $text, 'Correct element text');
 
+    # test append_text
     my $new_text = 'new text';
+    # default (last_child)
     $el->append_text($new_text);
-    is($el->text, "$text$new_text", 'text appended properly');
+    is($el->text, "$text$new_text",
+        'append_text default (last_child)');
+    # last_child
+    $el->append_text($new_text, 'last_child');
+    is($el->text, "$text$new_text$new_text",
+        'append_text last_child');
+    # first_child
+    $el->append_text($new_text, 'first_child');
+    is($el->text, "$new_text$text$new_text$new_text",
+        'append_text first_child');
 
-    $el->set_name('x');
-    is($el->name, 'x', 'element name changed to "x"');
-
+    # create new child and paste it
     my $child = new_element('b');
     $child->paste($el);
     my @nodes = @{$el->child_els};
     is(scalar @nodes, 1, 'Pasted child present in parent');
     is($nodes[0]->name, 'b', 'Child has correct name');
 
+    # finish testing append_text (before and after)
+    $child->append_text($new_text, 'before');
+    is($child->prev_sibling->value, "$new_text",
+        'text placed before <b>');
+    $child->append_text($new_text, 'after');
+    is($child->next_sibling->value, "$new_text",
+        'text placed after <b>');
+
+    # test all positions for paste
     new_element('c')->paste($el);
     is(${$el->child_els}[1]->name, 'c', 'default paste location is last_child');
 
@@ -169,5 +187,8 @@ sub test_element_editing {
     is(@{$el->child_els}, 6, '6 children');
     $child->remove;
     is(@{$el->child_els}, 5, '...and then 5 (one removed)');
+
+    $el->set_name('x');
+    is($el->name, 'x', 'element name changed to "x"');
     return;
 }

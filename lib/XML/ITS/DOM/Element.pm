@@ -227,14 +227,4 @@ sub child_els {
     return \@children;
 }
 
-=head2 C<append_text>
-
-Appends the input text as the last child of this element.
-
-=cut
-sub append_text {
-    my ($self, $text) = @_;
-    $self->{node}->appendText($text);
-}
-
 1;

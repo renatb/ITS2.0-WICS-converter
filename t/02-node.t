@@ -21,6 +21,7 @@ test_node_namespaces($dom);
 test_unique_key($dom);
 test_copy($dom);
 test_family($dom);
+test_text($dom);
 
 # test types, names and values of all types of nodes
 # (and test quite a bit of XPath functionality in the process)

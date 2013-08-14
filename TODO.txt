@@ -1,7 +1,8 @@
 ITS
 
 Next:
-    - allow positions for append text
+    - submit pull request to XML::LibXML to add unique_key method to Namespace class.
+        - once that's released, switch to using the unique_key method.
 
 Engineering Tasks:
 
