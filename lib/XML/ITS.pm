@@ -331,8 +331,8 @@ sub _resolve_container_rules {
 sub _get_its_rules_els {
     my ($doc) = @_;
     return $doc->get_root->get_xpath(
-        "//*[namespace-uri()='$ITS_NS'
-            and local-name()='rules']",
+        "//*[namespace-uri()='$ITS_NS'" .
+            q{and local-name()='rules']},
     );
 }
 

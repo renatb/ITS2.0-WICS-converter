@@ -199,6 +199,7 @@ Sets the node's name to the given string. Is namespace aware.
 sub set_name {
     my ($self, $name) = @_;
     $self->{node}->setNodeName($name);
+    return;
 }
 
 =head2 C<remove>
@@ -210,6 +211,7 @@ the document, though it invisible).
 sub remove {
     my ($self) = @_;
     $self->{node}->unbindNode;
+    return;
 }
 
 =head2 C<namespaceURI>
@@ -291,7 +293,7 @@ sub parent {
     if($parent){
         return __PACKAGE__->new($parent);
     }
-    return undef;
+    return;
 }
 
 =head2 C<doc_node>

@@ -47,7 +47,7 @@ sub new {
 
     my $base;
     if(ref $source eq 'SCALAR'){
-        $base = path('.');
+        $base = path(q{.});
     }else{
         $base = path($source)->parent;
     }
@@ -63,7 +63,8 @@ sub new {
 
 =head2 C<get_root>
 
-Returns the root document element.
+Returns the root document element, or undef if there is none (this
+node is not associated with a document).
 
 =cut
 sub get_root {
@@ -72,7 +73,7 @@ sub get_root {
     if($root){
         return XML::ITS::DOM::Element->new($root);
     }
-    return undef;
+    return;
 }
 
 =head2 C<string>
@@ -165,6 +166,7 @@ sub carp_parse_errors {
             $_->level ne 'INFO'} @err;
         carp @err if @err;
     }
+    return;
 }
 
 1;
