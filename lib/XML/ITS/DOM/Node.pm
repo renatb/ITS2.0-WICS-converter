@@ -39,16 +39,17 @@ sub new {
     my ($class, $node) = @_;
     my $type = _get_type($node);
 
-    #why subclassing isn't supported; class names are hard-coded
+    # why subclassing isn't supported; class names are hard-coded
+    my $node_class;
     if($type eq 'ELT'){
-        $class = 'XML::ITS::DOM::Element';
+        $node_class = 'XML::ITS::DOM::Element';
     }else{
-        $class = 'XML::ITS::DOM::Node';
+        $node_class = 'XML::ITS::DOM::Node';
     }
     return bless {
         node => $node,
         type => _get_type($node),
-    }, $class;
+    }, $node_class;
 }
 
 sub _get_type {
