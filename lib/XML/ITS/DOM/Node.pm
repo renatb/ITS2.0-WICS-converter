@@ -376,7 +376,8 @@ sub paste {
 
 =head2 C<append_text>
 
-Appends the input text in the document relative to this node.
+Appends the input text in the document relative to this node,
+and returns the new text node.
 
 The arguments are the string to append, and an optional
 relation to specify where to paste the text relative to this
@@ -386,14 +387,10 @@ and the default is C<last_child>.
 =cut
 sub append_text {
     my ($self, $text, $position) = @_;
-    if(!$position){
-        $self->{node}->appendText($text);
-    }else{
-        my $txt_node = XML::LibXML::Text->new($text);
-        $txt_node = XML::ITS::DOM::Node->new($txt_node);
-        $txt_node->paste($self, $position);
-    }
-    return;
+    my $txt_node = XML::LibXML::Text->new($text);
+    $txt_node = XML::ITS::DOM::Node->new($txt_node);
+    $txt_node->paste($self, $position);
+    return $txt_node;
 }
 
 =head2 C<is_same_node>

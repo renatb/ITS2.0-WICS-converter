@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 41;
+plan tests => 42;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -161,9 +161,11 @@ sub test_element_editing {
     is($nodes[0]->name, 'b', 'Child has correct name');
 
     # finish testing append_text (before and after)
-    $child->append_text($new_text, 'before');
+    my $txt_node = $child->append_text($new_text, 'before');
     is($child->prev_sibling->value, "$new_text",
         'text placed before <b>');
+    ok($child->prev_sibling->is_same_node($txt_node),
+        'created text node is returned');
     $child->append_text($new_text, 'after');
     is($child->next_sibling->value, "$new_text",
         'text placed after <b>');
