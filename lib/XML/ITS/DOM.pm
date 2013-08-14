@@ -6,7 +6,6 @@ use warnings;
 use XML::ITS::DOM::Element;
 use Carp;
 our @CARP_NOT = qw(XML::ITS Try::Tiny);
-# $Carp::Verbose++;
 use Try::Tiny;
 use Path::Tiny;
 # the XML and HTML engines currently used

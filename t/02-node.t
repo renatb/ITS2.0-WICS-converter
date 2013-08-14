@@ -2,8 +2,9 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 54;
+plan tests => 55;
 use Test::NoWarnings;
+use Test::Exception;
 
 use XML::ITS::DOM;
 
@@ -87,10 +88,19 @@ sub test_path {
     is($comment->path, '/xml/comment()', 'path to comment')
 }
 
-#test specifics of XPath context setting
+#test specifics of XPath context setting along with error handling
 sub test_xpath {
     my ($dom) = @_;
-    note 'testing XPath context creation';
+    note 'testing XPath context and error handling';
+
+    # check that error message contains this file (02-node.t), but
+    # not Node.pm
+    throws_ok {
+        $dom->get_root->get_xpath(
+            '$foo');
+    } qr/Failed evaluating XPath:.*evaluation failed at (?:(?!Node.pm).)*02-node.t/s,
+        'dies for non-existent variable';
+
     subtest 'string parameters' => sub {
         plan tests => 3;
         my @nodes = $dom->get_root->get_xpath(

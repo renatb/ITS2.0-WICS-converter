@@ -4,6 +4,8 @@ use warnings;
 # VERSION
 # ABSTRACT: thin wrapper around underlying XML engine node objects
 use XML::ITS::DOM::Value;
+our @CARP_NOT = qw(XML::ITS::DOM);
+use Try::Tiny;
 use Carp;
 use feature 'switch';
 
@@ -120,15 +122,9 @@ sub get_xpath {
         $xpc->registerVarLookupFunc(\&_var_lookup, $context{params});
     }
     if($context{namespaces}){
-        # my $old_namespaces = $self->get_namespaces;
-        # for(keys %$old_namespaces){
-        #     print "trying to unregister $_\n";
-        #     $xpc->unregisterNs($_);
-        # }
         $xpc->registerNs($_, $context{namespaces}->{$_})
             for keys %{ $context{namespaces} };
     }
-    # print $xpc->lookupNs('bar');
     if($context{size}){
         $xpc->setContextSize($context{size});
     }
@@ -137,12 +133,15 @@ sub get_xpath {
     }
 
     my $object;
-    #TODO: catch errors and clean up the stack trace
-    # try{
+    try{
         $object = $xpc->find($xpath);
-    # }catch{
-    #     croak "Problem evaluating XPath: $_";
-    # };
+    }catch{
+        # get rid of the part of the error which mentions
+        # this file, which would be useless to users trying
+        # to find a bad XPath expression.
+        s/ at .*Node.pm line \d+\.\v+//;
+        croak ("Failed evaluating XPath: $_");
+    };
     my @nodes;
     if(ref $object eq 'XML::LibXML::NodeList'){
         @nodes =
