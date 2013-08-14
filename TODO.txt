@@ -2,7 +2,6 @@ ITS
 
 Next:
     - allow positions for append text
-    - test its_ns()
 
 Engineering Tasks:
 
