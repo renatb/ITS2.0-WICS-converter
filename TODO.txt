@@ -3,6 +3,7 @@ ITS
 Next:
     - allow positions for append text
     - proper error checking for XPath execution
+        - http://search.cpan.org/~phish/XML-LibXML-1.54/LibXML.pm#Error_Handling
     - test its_ns()
 
 Engineering Tasks:

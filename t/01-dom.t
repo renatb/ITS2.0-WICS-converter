@@ -20,7 +20,10 @@ test_dom_props($dom, $dom_path);
 
 
 # make sure that errors are thrown for bad input
-# and that none are thrown for good input
+# and that none are thrown for good input.
+# The '.*01-dom.t' part of the regexes make sure
+# the error location reported is for this file
+# (not the library file)
 sub test_errors {
     my ($dom_path) = @_;
 
@@ -28,13 +31,13 @@ sub test_errors {
         XML::ITS::DOM->new(
             'xml' => path($corpus_dir, 'nonexistent.xml')
         )
-    } qr/error parsing file.*No such file or directory/s,
+    } qr/error parsing file.*No such file or directory.*01-dom.t/s,
         'dies for nonexistent file';
     throws_ok {
         XML::ITS::DOM->new(
             'xml' => \'<xml>stuff</xlm>'
-        )
-    } qr/error parsing string:.*mismatch/s,
+        );
+    } qr/error parsing string:.*mismatch.*01-dom.t/s,
         'dies for bad XML';
 
     lives_ok{

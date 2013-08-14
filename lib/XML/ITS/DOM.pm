@@ -3,11 +3,10 @@ use strict;
 use warnings;
 # VERSION
 # ABSTRACT: Work with XML and HTML documents
-use XML::ITS::DOM::Node;
-use XML::ITS::DOM::Value;
 use XML::ITS::DOM::Element;
 use Carp;
-our @CARP_NOT = qw(XML::ITS::DOM XML::ITS);
+our @CARP_NOT = qw(XML::ITS Try::Tiny);
+# $Carp::Verbose++;
 use Try::Tiny;
 use Path::Tiny;
 # the XML and HTML engines currently used
