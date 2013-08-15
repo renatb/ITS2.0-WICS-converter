@@ -1,51 +1,18 @@
 package XML::ITS::WICS::XML2HTML::FutureNode;
-
-# several cases to handle:
-# namespaces, attributes and PIs are destroyed during conversion;
-# elements stay but are sometimes replaced
-# text stays
-# the document is replaced, but keeps same XPath
-# comments stay, but XPath changes.
-
 use strict;
 use warnings;
-use Exporter::Easy (
-    OK => [qw(
-        create_future
-        clear_indices
-        att_futures
-        non_att_futures
-        replace_el_future
-    )]
-);
 use XML::ITS::DOM::Element qw(new_element);
 use XML::ITS::WICS::LogUtils qw(node_log_id get_or_set_id);
 use Carp;
 use Log::Any qw($log);
-use Data::Dumper; #DEBUG
+use Exporter::Easy (OK => [qw(new_pointer)]);
 
-# VERSION
-# ABSTRACT: Ensure the future existence of an element without changing the DOM now
-
-# this contains pointers to every FutureNode ever created. This allows changing
-# out nodes which are contained in other structures.
-my %future_cache;
-
-# these contain futureNodes that create elements in the document;
-# these must be saved so that special rules combating inheritance
-# can be created
-my %att_elements; #elements representing atts
-my %non_att_elements; #elements representing PIs and namespaces
+#VERSION
+#ABSTRACT: Save a single node during DOM transformation.
 
 =head1 SYNOPSIS
 
-    use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future);
-    use XML::ITS;
-    my $ITS = XML::ITS->new('xml', doc => 'myITSfile.xml');
-    my ($comment) = $ITS->get_root->get_xpath(//comment());
-    my $f_comment = create_future($comment);
-    # change the document around, but don't delete any elements...
-    $f_comment->ensure_visible;
+
 
 =head1 DESCRIPTION
 
@@ -53,126 +20,14 @@ This class provides a way to ensure the existence of a visible,
 selectable HTML element to represent a given node.
 If you pass in an attribute node, for example, it will remember
 it's spot and make sure that there is a visible element representing
-that attribute after you call the ensure_visible method. This means
+that attribute after you call the C<realize> method. This means
 that you can delete the original attribute without losing information.
-The document is not changed at all until you call ensure_visible,
+The document is not changed at all until you call C<realize>,
 so that no XPath selectors are broken.
 
 This is only guaranteed to work if document elements are not deleted
-after this object's creation.
-
-=head1 EXPORTS
-
-The following subroutines may be exported:
-
-=head2 C<clear_indices>
-
-This must be called to reset the global state in this package.
-TODO: make a real class out of this.
-
-=cut
-sub clear_indices {
-    %att_elements = ();
-    %non_att_elements = ();
-    %future_cache = ();
-}
-
-=head2 C<replace_el_future>
-
-Arguments: an old element and a new element.
-
-This method replaces the FutureNode pointer for the given element
-with a FutureNode pointer for the new element. This is useful
-for keeping track of matches while replacing nodes.
-
-=cut
-sub replace_el_future {
-    my ($old_el, $new_el) = @_;
-    ${ $future_cache{$old_el->unique_key} } = ${ create_future($new_el) };
-}
-
-=head2 C<att_futures>
-
-This returns a list of all of the FutureNodes that represent attributes
-(which are converted into attributes upon realization)
-
-=cut
-sub att_futures {
-    return values %att_elements;
-}
-
-=head2 C<non_att_futures>
-
-This returns a list of all of the FutureNodes that represent non-attribute
-nodes that are converted into elements.
-
-=cut
-sub non_att_futures {
-    return values %non_att_elements;
-}
-
-=head2 C<create_future>
-
-If the input node is an XML::ITS::DOM::Node (or Element), this method creates
-a FutureNode object and returns it. If it is an XML::ITS::DOM::Value,
-it simply returns it.
-
-The owning document as a second argument is required for namespace nodes, which
-store no reference to any other nodes.
-
-No changes are made to the owning DOM in this method.
-
-=cut
-sub create_future {
-    my ($node, $doc) = @_;
-
-    if($future_cache{$node->unique_key}){
-        return $future_cache{$node->unique_key};
-    }
-
-    #store the state required to paste a representative node later
-    my $type = $node->type;
-    my $state = {type => $type};
-    if($type eq 'ELT'){
-        $state->{node} = $node;
-    }elsif($type eq 'ATT'){
-        $state->{parent} = create_future($node->parent, $doc);
-        $state->{name} = $node->name;
-        $state->{value} = $node->value;
-    }elsif($type eq 'COM'){
-        $state->{node} = $node;
-    }
-    #use sibling to keep exact location
-    elsif($type eq 'PI'){
-        $state->{parent} = create_future($node->parent);
-        $state->{value} = $node->value;
-        $state->{name} = $node->name;
-    }elsif($type eq 'TXT'){
-        $state->{node} = $node;
-    }elsif($type eq 'NS'){
-        $state->{name} = $node->name;
-        $state->{value} = $node->value;
-        $state->{parent} = create_future($doc->get_root);
-    }elsif($type eq 'DOC'){
-        # just match the document root instead
-        ($state->{node}) = $node->children;
-    }
-
-    return _new($node, $state);
-}
-
-#create a FutureNode representing $node with the given $state,
-# and add a pointer to it to the future cache. Return the pointer.
-sub _new {
-    my ($node, $state) = @_;
-
-    my $future_node = bless $state, __PACKAGE__;
-    # Cache FutureNodes so that we don't create one for the
-    # same node multiple times.
-    # Store pointers so that changes in future_cache can propagate.
-    $future_cache{$node->unique_key} = \$future_node;
-    return \$future_node;
-}
+after this object's creation. This is because some FutureNodes remember
+their location by their original parent.
 
 =head1 METHODS
 
@@ -205,7 +60,6 @@ sub elemental {
         #paste in current version of original parent
         $el->paste(${$self->{parent}}->elemental, 'first_child');
         $self->{element} = $el;
-        $att_elements{$el->unique_key} = $self;
         _log_new_el('ATT');
     }
     # comments aren't deleted, so just place a new element next to them.
@@ -228,7 +82,6 @@ sub elemental {
         $el->paste(${$self->{parent}}->elemental);
         _log_new_el('PI');
         $self->{element} = $el;
-        $non_att_elements{$el->unique_key} = $self;
     }
     elsif($self->{type} eq 'NS'){
         my $el = new_element(
@@ -242,17 +95,17 @@ sub elemental {
         $el->paste(${ $self->{parent} }->elemental, 'first_child');
         _log_new_el('NS');
         $self->{element} = $el;
-        $non_att_elements{$el->unique_key} = $self;
     }
     # Return the original text node. Don't wrap with an
     # element (that would prevent application of rules with
-    # no inheritance). Just make sure not to paste extra text
-    # as a sibling, or the final match will be different.
+    # no inheritance, like termRule). Just make sure not to
+    # paste extra text as a sibling, or the final match will
+    # be different.
     elsif($self->{type} eq 'TXT'){
         $self->{element} = $self->{node};
     }
     elsif($self->{type} eq 'DOC'){
-        #return the root document
+        # return the root document
         $self->{element} = $self->{node}->doc_node('/');
     }
 

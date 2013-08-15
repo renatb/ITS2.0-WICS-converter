@@ -1,77 +1,89 @@
-package XML::ITS::WICS::XML2HTML::FutureNode;
-
+package XML::ITS::WICS::XML2HTML::FutureNodeManager;
 use strict;
 use warnings;
 use Exporter::Easy (
-    OK => [qw(create_future clear_indices get_all_atts get_all_non_atts replace_el_future)]
+    OK => [qw(
+        create_future
+        clear_indices
+        att_futures
+        non_att_futures
+        replace_el_future
+    )]
 );
-use XML::ITS::DOM::Element qw(new_element);
-use Carp;
-use Log::Any qw($log);
-use Data::Dumper; #DEBUG
+use XML::ITS::WICS::XML2HTML::FutureNode;
 
 # VERSION
-# ABSTRACT: Ensure the future existence of an element without changing the DOM now
+# ABSTRACT: Track and replace FutureNodes
 
-# some indices to manage
+# this contains pointers to every FutureNode ever created. This allows changing
+# out nodes which are contained in other structures.
 my %future_cache;
-#todo: change these to just holding ID, and return nodes retrieved from
-#future_cache in get methods. Will help in document editing.
-my %atts; #atts
-my %non_atts; #everything but text, elements, and atts
 
-sub clear_indices {
-    %atts = ();
-    %non_atts = ();
-    %future_cache = ();
-}
-
-sub replace_el_future {
-    my ($old_el, $new_el) = @_;
-    ${ $future_cache{$old_el->unique_key} } = ${ create_future($new_el) };
-}
-
-sub get_all_atts {
-    return values %atts;
-}
-
-sub get_all_non_atts {
-    return values %non_atts;
-}
-
-# sub elementalize_all {
-#     for my $future_ref(values %future_cache){
-#         ${$future_ref}->elemental;
-#     }
-# }
+# these contain futureNodes that create elements in the document;
+# these must be saved so that special rules combating inheritance
+# can be created
+my @att_elements; #elements representing atts
+my @non_att_elements; #elements representing PIs and namespaces
 
 =head1 SYNOPSIS
 
-    use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future);
+    use XML::ITS::WICS::XML2HTML::FutureNodeManager qw(create_future);
     use XML::ITS;
     my $ITS = XML::ITS->new('xml', doc => 'myITSfile.xml');
     my ($comment) = $ITS->get_root->get_xpath(//comment());
     my $f_comment = create_future($comment);
     # change the document around, but don't delete any elements...
-    $f_comment->ensure_visible;
-
-=head1 DESCRIPTION
-
-This class provides a way to ensure the existence of a visible,
-selectable HTML element to represent a given node.
-If you pass in an attribute node, for example, it will remember
-it's spot and make sure that there is a visible element representing
-that attribute after you call the ensure_visible method. This means
-that you can delete the original attribute without losing information.
-The document is not changed at all until you call ensure_visible,
-so that no XPath selectors are broken.
-
-This is only guaranteed to work if document elements are not deleted
-after this object's creation.
+    $f_comment->realize;
 
 =head1 EXPORTS
 
-The following subroutine may be exported:
+The following subroutines may be exported:
+
+=head2 C<clear_indices>
+
+This must be called to reset the global state in this package.
+TODO: make a real class out of this.
+
+=cut
+sub clear_indices {
+    @att_elements = ();
+    @non_att_elements = ();
+    %future_cache = ();
+}
+
+=head2 C<replace_el_future>
+
+Arguments: an old element and a new element.
+
+This method replaces the FutureNode pointer for the given element
+with a FutureNode pointer for the new element. This is useful
+for keeping track of matches while replacing nodes.
+
+=cut
+sub replace_el_future {
+    my ($old_el, $new_el) = @_;
+    ${ $future_cache{$old_el->unique_key} } = ${ create_future($new_el) };
+}
+
+=head2 C<att_futures>
+
+This returns a list of all of the FutureNodes that represent attributes
+(which are converted into attributes upon realization)
+
+=cut
+sub att_futures {
+    return @att_elements;
+}
+
+=head2 C<non_att_futures>
+
+This returns a list of all of the FutureNodes that represent non-attribute
+nodes that are converted into elements.
+
+=cut
+sub non_att_futures {
+    return @non_att_elements;
+}
 
 =head2 C<create_future>
 
@@ -88,9 +100,34 @@ No changes are made to the owning DOM in this method.
 sub create_future {
     my ($node, $doc) = @_;
 
+    #don't create separate FutureNodes out of the same Node
     if($future_cache{$node->unique_key}){
         return $future_cache{$node->unique_key};
     }
+
+    my $future = _new_future(
+        'XML::ITS::WICS::XML2HTML::FutureNode',$node, $doc);
+
+    # Cache FutureNodes so that we don't create one for the
+    # same node multiple times.
+    # Store pointers so that changes in future_cache can propagate
+    # to other structures containing the same pointers.
+    $future_cache{$node->unique_key} = \$future;
+
+    #remember FutureNodes that are elementalized
+    my $type = $node->type;
+    if($type eq 'ATT'){
+        push @att_elements, $future;
+    }elsif($type eq 'PI' or $type eq 'NS'){
+        push @non_att_elements, $future;
+    }
+    return \$future;
+}
+
+# note that the logic contained in this method is highly coupled with
+# the realize() method logic in FutureNode.pm
+sub _new_future {
+    my ($class, $node, $doc) = @_;
 
     #store the state required to paste a representative node later
     my $type = $node->type;
@@ -98,14 +135,13 @@ sub create_future {
     if($type eq 'ELT'){
         $state->{node} = $node;
     }elsif($type eq 'ATT'){
-        $state->{parent} = $node->parent;
+        $state->{parent} = create_future($node->parent);
         $state->{name} = $node->name;
         $state->{value} = $node->value;
-    }
-    #use sibling to keep exact location
-    elsif($type =~ /COM|PI/){
-        $state->{nextSib} = $node->next_sibling or
-            $state->{parent} = $node->parent;
+    }elsif($type eq 'COM'){
+        $state->{node} = $node;
+    }elsif($type eq 'PI'){
+        $state->{parent} = create_future($node->parent);
         $state->{value} = $node->value;
         $state->{name} = $node->name;
     }elsif($type eq 'TXT'){
@@ -113,123 +149,12 @@ sub create_future {
     }elsif($type eq 'NS'){
         $state->{name} = $node->name;
         $state->{value} = $node->value;
-        # convoluted way of saying to put this as first child of root
-        ($state->{nextSib}) = $doc->get_root->children  or
-            ($state->{parent}) = $node->get_root;
+        $state->{parent} = create_future($doc->get_root);
     }elsif($type eq 'DOC'){
         # just match the document root instead
-        ($state->{node}) = $node->children;
+        $state->{node} = ($node->children)[0];
     }
-
-    my $future_node = bless $state, __PACKAGE__;
-    # Cache FutureNodes so that we don't create one for the
-    # same node multiple times.
-    # Store pointers so that changes in future_cache can propagate.
-    $future_cache{$node->unique_key} = \$future_node;
-
-    return \$future_node;
-}
-
-=head1 METHODS
-
-=head2 C<elemental>
-
-Ensures that the information in the contained node is represented by an element
-in the HTML DOM. This may cause changes to the owning DOM.
-
-Returns the ITS::DOM::Element object representing the node.
-
-=cut
-sub elemental {
-    my ($self) = @_;
-    #only elementalize a node once!
-    if(exists $self->{element}){
-        return $self->{element};
-    }
-    #elements are already visible
-    if($self->{type} eq 'ELT'){
-        $self->{element} = $self->{node};
-    }elsif($self->{type} eq 'ATT'){
-        my $el = new_element(
-            'span',
-            {
-                 title => $self->{name},
-                 class => "_ITS_ATT"
-            },
-            $self->{value}
-        );
-        $el->paste($self->{parent}, 'first_child');
-        $self->{element} = $el;
-        $atts{$el->unique_key} = $el;
-    }
-    #create an elemental representation in an appropriate location
-    elsif($self->{type} =~ /COM|PI/){
-        my $el = new_element(
-            'span',
-            {
-                 title => $self->{name},
-                 class => '_ITS_' . uc $self->{type}
-            },
-            $self->{value}
-        );
-        $self->_paste_el($el);
-        $self->{element} = $el;
-        $non_atts{$el->unique_key} = $el;
-    }
-    elsif($self->{type} eq 'NS'){
-        my $el = new_element(
-            'span',
-            {
-                 title => $self->{name},
-                 class => '_ITS_NS'
-            },
-            $self->{value}
-        );
-        $self->_paste_el($el);
-        $self->{element} = $el;
-        $non_atts{$el->unique_key} = $el;
-    }
-    #paste the text node into a new element in its place
-    elsif($self->{type} eq 'TXT'){
-        my $el = new_element(
-            'span',
-            {
-                 title => $self->{node}->name,
-                 class => '_ITS_TXT',
-            },
-            $self->{value}
-        );
-        $self->_paste_el($el);
-        $self->{node}->paste($el);
-        $self->{element} = $el;
-    }elsif($self->{type} eq 'DOC'){
-        my $el = $self->{element} = $self->{node};
-        $non_atts{$el->unique_key} = $el;
-        return $el;
-    }
-
-    return $self->{element};
-}
-
-# pastes the given element in an appropriate location, given parent and possibly
-# siblings stored in $self
-sub _paste_el {
-    my ($self, $el) = @_;
-    # if there is no next sibling, then paste this
-    # element as last child of parent
-    if(my $sib = $self->{nextSib}){
-        $el->paste($sib, 'before');
-    }elsif(my $parent = $self->{parent}){
-        $el->paste($parent);
-    }elsif(my $node = $self->{node}){
-        $el->paste($node, 'after');
-    }else{
-        croak 'Don\'t know where to paste ' . $el->name;
-    }
-    if($log->is_debug){
-        $log->debug('Creating new <span> element to represent node of type ' .
-            $self->{type});
-    }
+    return bless $state, $class;
 }
 
 1;

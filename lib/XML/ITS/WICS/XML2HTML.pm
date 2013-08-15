@@ -8,7 +8,13 @@ use Log::Any qw($log);
 use XML::ITS qw(its_ns);
 use XML::ITS::DOM;
 use XML::ITS::DOM::Element qw(new_element);
-use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future clear_indices att_futures non_att_futures replace_el_future);
+use XML::ITS::WICS::XML2HTML::FutureNodeManager qw(
+	create_future
+	clear_indices
+	att_futures
+	non_att_futures
+	replace_el_future
+);
 use XML::ITS::WICS::LogUtils qw(node_log_id get_or_set_id reset_id);
 
 use feature 'state';
