@@ -19,7 +19,7 @@ use Exporter::Easy (OK => [qw(new_pointer)]);
     my ($ns) = $ITS->get_root->get_xpath('namespace::*');
     my $f_ns = create_future($ns);
     # change the document around, but don't delete any elements...
-    $f_ns->realize;
+    $f_ns->new_node;
 
 =head1 DESCRIPTION
 
@@ -27,9 +27,9 @@ This class saves nodes during DOM transformation so that they will
 still be in the document later.
 If you create a FutureNode for an attribute node, for example, it
 will remember it's spot and create an element representing that
-attribute after you call the C<realize> method. This means
+attribute after you call the C<new_node> method. This means
 that you can delete the original attribute without losing information.
-The document is not changed at all until you call C<realize>,
+The document is not changed at all until you call C<new_node>,
 so no XPath selectors are broken before then.
 
 This is only guaranteed to work if document elements are not deleted
@@ -38,15 +38,18 @@ their location by their original parent.
 
 =head1 METHODS
 
-=head2 C<realize>
+=head2 C<new_node>
 
-Ensures that the information in the contained node is represented by an element
-in the HTML DOM. This may cause changes to the owning DOM.
+Ensures that the information in the contained node is represented
+in the HTML DOM. This may cause changes to the owning DOM. Calling this
+method multiple times, however, only changes the DOM once and always
+returns the same node.
 
-Returns the ITS::DOM::Element object representing the node.
+Returns the ITS::DOM::Node object corresponding to the original Node
+(which might or might not be the same Node object).
 
 =cut
-sub realize {
+sub new_node {
     my ($self) = @_;
     #only realize a node once!
     if(exists $self->{element}){
@@ -65,7 +68,7 @@ sub realize {
             $self->{value}
         );
         #paste in current version of original parent
-        $el->paste(${$self->{parent}}->realize, 'first_child');
+        $el->paste(${$self->{parent}}->new_node, 'first_child');
         $self->{element} = $el;
         _log_new_el('ATT');
     }
@@ -86,7 +89,7 @@ sub realize {
             $self->{value}
         );
         #paste in current version of original parent
-        $el->paste(${$self->{parent}}->realize);
+        $el->paste(${$self->{parent}}->new_node);
         _log_new_el('PI');
         $self->{element} = $el;
     }
@@ -99,7 +102,7 @@ sub realize {
             },
             $self->{value}
         );
-        $el->paste(${ $self->{parent} }->realize, 'first_child');
+        $el->paste(${ $self->{parent} }->new_node, 'first_child');
         _log_new_el('NS');
         $self->{element} = $el;
     }
@@ -113,16 +116,21 @@ sub realize {
     }
     elsif($self->{type} eq 'DOC'){
         # return the root document
-        $self->{element} = ${ $self->{node} }->realize->doc_node;
+        $self->{element} = ${ $self->{node} }->new_node->doc_node;
     }
 
     return $self->{element};
 }
 
-#returns an XPath uniquely identifying this node
+=head2 C<new_path>
+
+Returns an XPath uniquely identifying the new node returned by
+C<new_node>.
+
+=cut
 sub new_path {
     my ($self) = @_;
-    my $node = $self->realize;
+    my $node = $self->new_node;
     my $type = $node->type;
     if($type eq 'ELT'){
         return q{id('} .

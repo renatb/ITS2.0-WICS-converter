@@ -16,7 +16,7 @@ use Carp;
     my ($ns) = $ITS->get_root->get_xpath('namespace::*');
     my $f_ns = create_future($ns);
     # change the document around, but don't delete any elements...
-    $f_ns->realize;
+    $f_ns->new_node;
 
 =head1 METHODS
 
@@ -117,7 +117,7 @@ sub create_future {
 }
 
 # note that the logic contained in this method is highly coupled with
-# the realize() method logic in FutureNode.pm
+# the new_node() method logic in FutureNode.pm
 sub _new_future {
     my ($self, $node, $doc) = @_;
 
@@ -146,6 +146,30 @@ sub _new_future {
         croak "Unknown node type $type";
     }
     return bless $state, 'XML::ITS::WICS::XML2HTML::FutureNode';
+}
+
+
+=head2 C<realize_all>
+
+Calls the C<new_node> method on all FutureNodes managed by this instance,
+causing all DOM changes to occur.
+
+=cut
+sub realize_all {
+    my ($self) = @_;
+    for my $future_pointer (values %{ $self->{future_cache} }){
+        ${$future_pointer}->new_node;
+    }
+}
+
+=head2 C<total_futures>
+
+Returns the total number of FutureNodes maintained by this instance.
+
+=cut
+sub total_futures {
+    my ($self) = @_;
+    return scalar keys %{$self->{future_cache}};
 }
 
 1;

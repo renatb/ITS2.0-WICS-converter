@@ -185,7 +185,7 @@ sub _traversal_sub {
 
 		# true if the element has been renamed to bdo, an
 		# inline element (happens with its:dir=rlo)
-		my $bdo_rename = _convert_atts($el);
+		my $bdo_rename = $self->_convert_atts($el);
 
 		# strip namespacing; requires special care because it replaces
 		# an element, requiring reworking of FutureNode indices
@@ -226,7 +226,7 @@ sub _traversal_sub {
 #handle all attribute converting for the given element. Return true
 #if the element was renamed 'bdo', false if not renamed at all.
 sub _convert_atts {
-	my ($el) = @_;
+	my ($self, $el) = @_;
 
 	my $title = $el->name;
 	my @atts = $el->get_xpath('@*');
@@ -236,7 +236,8 @@ sub _convert_atts {
 	if(@atts){
 		my @save_atts;
 		for my $att (@atts){
-			my ($save, $renamed) = _process_att($el, $att);
+			my ($save, $renamed) =
+				$self->_process_att($el, $att);
 			push @save_atts, $save
 				if $save;
 			$bdo_rename ||= $renamed;
@@ -298,7 +299,7 @@ sub _rename_el {
 # the attribute is deleted (empty for NS declarations), and the name
 # of the element used to wrap the children, if any.
 sub _process_att {
-	my ($el, $att) = @_;
+	my ($self, $el, $att) = @_;
 
 	my $wrapped;
 	# xml:* attributes with ITS semantics
@@ -326,7 +327,9 @@ sub _process_att {
 			return;
 		}
 	}else{
-		# just delete other atts
+		# save other atts as FutureNodes, then delete
+		# (they are illegal in HTML)
+		$self->{futureNodeManager}->create_future($att);
 		$att->remove;
 	}
 
@@ -447,8 +450,11 @@ sub _get_script {
 sub _update_rules {
 	my ($self, $matches, $head) = @_;
 
-	# don't do anything if there were no rule matches
-	return unless @$matches;
+	#cause all DOM changes to occur
+	$self->{futureNodeManager}->realize_all;
+
+	# nothing else to do if there were no FutureNodes
+	return unless $self->{futureNodeManager}->total_futures;
 
 	if($log->is_debug){
 		$log->debug('Creating new its:rules element to contain all rules');
@@ -567,7 +573,7 @@ sub _log_new_rule {
 		my $futureNode = ${ $futureNodes->{$key} };
 		if((ref $futureNode) =~ /FutureNode/){
 			push @match_strings, "$key=" .
-				 node_log_id($futureNode->realize);
+				 node_log_id($futureNode->new_node);
 		}else{
 			push @match_strings, "$key=" . $futureNode->as_xpath;
 		}

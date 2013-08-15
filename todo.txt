@@ -6,6 +6,7 @@ Engineering Tasks:
 
 To Do on current task:
     - all non-its attributes should be saved/pasted
+        - then we won't need to create titles anymore!
 
 Later To Do:
     - correctly report error with default namespace and XPath

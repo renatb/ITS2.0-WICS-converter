@@ -666,3 +666,43 @@ wrapping document in HTML structure
 Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=[DOCUMENT]]
+
+=== non-ITS attributes are saved
+--- input
+<?xml version="1.0"?>
+<xml>
+  <para foo="bar">Some text</para>
+</xml>
+--- output
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+      <its:translateRule selector="id('ITS_1')" translate="no"></its:translateRule>
+      </its:rules>
+    </script>
+  </head>
+  <body>
+    <div title="xml">
+        <div title="para[foo='bar']">
+          <span id="ITS_1" class="_ITS_ATT" title="foo">bar</span>
+          Some text
+        </div>
+    </div>
+  </body>
+</html>
+--- log
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+processing <para>
+setting @title of <para> to 'para[foo='bar']'
+renaming <para> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
