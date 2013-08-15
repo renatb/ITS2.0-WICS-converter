@@ -244,27 +244,11 @@ sub elemental {
         $self->{element} = $el;
         $non_att_elements{$el->unique_key} = $self;
     }
-    # paste the text node into a new element in its place,
-    # to guarantee that the deletion of other nodes won't
-    # merge it with another text node. Return value is still
-    # the original text node
+    # Return the original text node. Don't wrap with an
+    # element (that would prevent application of rules with
+    # no inheritance). Just make sure not to paste extra text
+    # as a sibling, or the final match will be different.
     elsif($self->{type} eq 'TXT'){
-        my $el = new_element(
-            'span',
-            {
-                 title => $self->{node}->name,
-                 class => '_ITS_TXT',
-            },
-            $self->{value}
-        );
-        $el->paste($self->{node}, 'after');
-        $self->{node}->paste($el);
-        if($log->is_debug){
-            $log->debug('wrapping ' .
-                node_log_id($self->{node}) .
-                ' with ' . node_log_id($el) .
-                ' to prevent matching any merged text');
-        }
         $self->{element} = $self->{node};
     }
     elsif($self->{type} eq 'DOC'){

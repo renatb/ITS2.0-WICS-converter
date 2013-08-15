@@ -408,7 +408,7 @@ Creating new rule <its:localeFilterRule> to prevent false inheritance
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:domainRule selector="id('ITS_1')" domainPointer="/*/*[2]/div/div[2]/span/text()"></its:domainRule>
+      <its:domainRule selector="id('ITS_1')" domainPointer="/*/*[2]/div/div[2]/text()"></its:domainRule>
     </its:rules>
     </script>
   </head>
@@ -416,9 +416,7 @@ Creating new rule <its:localeFilterRule> to prevent false inheritance
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
-          <span class="_ITS_TXT" title="#text">
           Some text
-          </span>
         </div>
     </div>
   </body>
@@ -439,7 +437,6 @@ renaming <xml> to <div>
 wrapping document in HTML structure
 Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
-wrapping [text: Some text] with <span> to prevent matching any merged text
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=[text: Some text]]
 
 === namespace matches handled correctly
