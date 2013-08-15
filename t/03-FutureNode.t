@@ -96,6 +96,7 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+      <its:translateRule selector="id('ITS_2')" translate="no"></its:translateRule>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
     </its:rules>
     </script>
@@ -131,6 +132,7 @@ Setting id of <div> to ITS_1
 Creating new <span> element to represent node of type ATT
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
+Creating new rule <its:translateRule> to prevent false inheritance
 
 === attribute match on namespaced element handled correctly
 --- input
@@ -154,6 +156,7 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+      <its:translateRule selector="id('ITS_1')" translate="no"></its:translateRule>
       <its:translateRule selector="id('ITS_1')" translate="yes"></its:translateRule>
     </its:rules>
     </script>
@@ -189,6 +192,7 @@ Creating new its:rules element to contain all rules
 Creating new <span> element to represent node of type ATT
 Setting id of <span> to ITS_1
 Creating new rule <its:translateRule> to match [selector=<span id="ITS_1">]
+Creating new rule <its:translateRule> to prevent false inheritance
 
 === comment match handled correctly
 --- input
@@ -278,6 +282,9 @@ a representing node.
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+      <its:dirRule selector="id('ITS_2')" dir="ltr"></its:dirRule>
+      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"></its:localeFilterRule>
+      <its:translateRule selector="id('ITS_2')" translate="no"></its:translateRule>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
     </its:rules>
     </script>
@@ -313,6 +320,9 @@ Setting id of <div> to ITS_1
 Creating new <span> element to represent node of type PI
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:dirRule> to prevent false inheritance
+Creating new rule <its:localeFilterRule> to prevent false inheritance
 
 === PI match handled correctly inside namespaced node
 --- input
@@ -336,6 +346,9 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+      <its:dirRule selector="id('ITS_2')" dir="ltr"></its:dirRule>
+      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"></its:localeFilterRule>
+      <its:translateRule selector="id('ITS_2')" translate="no"></its:translateRule>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
     </its:rules>
     </script>
@@ -371,6 +384,9 @@ Setting id of <div> to ITS_1
 Creating new <span> element to represent node of type PI
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:dirRule> to prevent false inheritance
+Creating new rule <its:localeFilterRule> to prevent false inheritance
 
 === text node match handled correctly
 --- input
@@ -448,6 +464,9 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+      <its:dirRule selector="id('ITS_2')" dir="ltr"></its:dirRule>
+      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"></its:localeFilterRule>
+      <its:translateRule selector="id('ITS_2')" translate="no"></its:translateRule>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
     </its:rules>
     </script>
@@ -482,6 +501,9 @@ Setting id of <div> to ITS_1
 Creating new <span> element to represent node of type NS
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:dirRule> to prevent false inheritance
+Creating new rule <its:localeFilterRule> to prevent false inheritance
 
 === namespace match inside namespaced node is handled correctly
 --- input
@@ -503,6 +525,9 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+      <its:dirRule selector="id('ITS_2')" dir="ltr"></its:dirRule>
+      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"></its:localeFilterRule>
+      <its:translateRule selector="id('ITS_2')" translate="no"></its:translateRule>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
     </its:rules>
     </script>
@@ -536,6 +561,9 @@ Setting id of <div> to ITS_1
 Creating new <span> element to represent node of type NS
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:dirRule> to prevent false inheritance
+Creating new rule <its:localeFilterRule> to prevent false inheritance
 
 === document matches handled correctly
 --- input

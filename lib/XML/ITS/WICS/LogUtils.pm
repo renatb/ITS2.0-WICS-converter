@@ -2,7 +2,7 @@ package XML::ITS::WICS::LogUtils;
 use strict;
 use warnings;
 use XML::ITS::DOM::Node;
-use Exporter::Easy (OK => [qw(node_log_id)]);
+use Exporter::Easy (OK => [qw(node_log_id get_or_set_id reset_id)]);
 use Carp;
 
 # ABSTRACT: Log utility functions for WICS
@@ -56,6 +56,48 @@ sub node_log_id {
     }else{
         croak 'Need logic for logging ' . $type;
     }
+}
+
+=head2 C<get_or_set_id>
+
+First argument: element to get or set ID from/on.
+
+Second argument: Log::Any object to log ID setting with.
+
+Returns the id or xml:id attribute of the
+given element; if none exists, sets one
+and returns it.
+
+
+=cut
+sub get_or_set_id {
+    my ($el, $log) = @_;
+    my $id = $el->att('id');
+    if(!$id){
+        $id = _next_id();
+        if($log->is_debug){
+            $log->debug('Setting id of ' . node_log_id($el) . " to $id");
+        }
+        $el->set_att('id', $id);
+    }
+    return $id;
+}
+
+our $id_num = 0;
+#returns a unique string "ITS_#", '#' being some number.
+sub _next_id {
+    $id_num++;
+    return "ITS_$id_num";
+}
+
+=head2 C<reset_id>
+
+Resets the number used to create unique element IDs to 0.
+
+=cut
+sub reset_id {
+    $id_num = 0;
+    return;
 }
 
 1;

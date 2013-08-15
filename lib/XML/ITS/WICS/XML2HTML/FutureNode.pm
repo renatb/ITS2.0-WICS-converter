@@ -10,10 +10,16 @@ package XML::ITS::WICS::XML2HTML::FutureNode;
 use strict;
 use warnings;
 use Exporter::Easy (
-    OK => [qw(create_future clear_indices get_all_atts get_all_non_atts replace_el_future)]
+    OK => [qw(
+        create_future
+        clear_indices
+        att_futures
+        non_att_futures
+        replace_el_future
+    )]
 );
 use XML::ITS::DOM::Element qw(new_element);
-use XML::ITS::WICS::LogUtils qw(node_log_id);
+use XML::ITS::WICS::LogUtils qw(node_log_id get_or_set_id);
 use Carp;
 use Log::Any qw($log);
 use Data::Dumper; #DEBUG
@@ -21,33 +27,15 @@ use Data::Dumper; #DEBUG
 # VERSION
 # ABSTRACT: Ensure the future existence of an element without changing the DOM now
 
-# some indices to manage
+# this contains pointers to every FutureNode ever created. This allows changing
+# out nodes which are contained in other structures.
 my %future_cache;
-#todo: change these to just holding ID, and return nodes retrieved from
-#future_cache in get methods. Will help in document editing.
-my %atts; #atts
-my %non_atts; #everything but text, elements, and atts
-my $id_num = 0;
 
-sub clear_indices {
-    %atts = ();
-    %non_atts = ();
-    %future_cache = ();
-    $id_num = 0;
-}
-
-sub replace_el_future {
-    my ($old_el, $new_el) = @_;
-    ${ $future_cache{$old_el->unique_key} } = ${ create_future($new_el) };
-}
-
-sub get_all_atts {
-    return values %atts;
-}
-
-sub get_all_non_atts {
-    return values %non_atts;
-}
+# these contain futureNodes that create elements in the document;
+# these must be saved so that special rules combating inheritance
+# can be created
+my %att_elements; #elements representing atts
+my %non_att_elements; #elements representing PIs and namespaces
 
 =head1 SYNOPSIS
 
@@ -75,7 +63,53 @@ after this object's creation.
 
 =head1 EXPORTS
 
-The following subroutine may be exported:
+The following subroutines may be exported:
+
+=head2 C<clear_indices>
+
+This must be called to reset the global state in this package.
+TODO: make a real class out of this.
+
+=cut
+sub clear_indices {
+    %att_elements = ();
+    %non_att_elements = ();
+    %future_cache = ();
+}
+
+=head2 C<replace_el_future>
+
+Arguments: an old element and a new element.
+
+This method replaces the FutureNode pointer for the given element
+with a FutureNode pointer for the new element. This is useful
+for keeping track of matches while replacing nodes.
+
+=cut
+sub replace_el_future {
+    my ($old_el, $new_el) = @_;
+    ${ $future_cache{$old_el->unique_key} } = ${ create_future($new_el) };
+}
+
+=head2 C<att_futures>
+
+This returns a list of all of the FutureNodes that represent attributes
+(which are converted into attributes upon realization)
+
+=cut
+sub att_futures {
+    return values %att_elements;
+}
+
+=head2 C<non_att_futures>
+
+This returns a list of all of the FutureNodes that represent non-attribute
+nodes that are converted into elements.
+
+=cut
+sub non_att_futures {
+    return values %non_att_elements;
+}
 
 =head2 C<create_future>
 
@@ -171,7 +205,7 @@ sub elemental {
         #paste in current version of original parent
         $el->paste(${$self->{parent}}->elemental, 'first_child');
         $self->{element} = $el;
-        $atts{$el->unique_key} = $el;
+        $att_elements{$el->unique_key} = $self;
         _log_new_el('ATT');
     }
     # comments aren't deleted, so just place a new element next to them.
@@ -194,7 +228,7 @@ sub elemental {
         $el->paste(${$self->{parent}}->elemental);
         _log_new_el('PI');
         $self->{element} = $el;
-        $non_atts{$el->unique_key} = $el;
+        $non_att_elements{$el->unique_key} = $self;
     }
     elsif($self->{type} eq 'NS'){
         my $el = new_element(
@@ -208,7 +242,7 @@ sub elemental {
         $el->paste(${ $self->{parent} }->elemental, 'first_child');
         _log_new_el('NS');
         $self->{element} = $el;
-        $non_atts{$el->unique_key} = $el;
+        $non_att_elements{$el->unique_key} = $self;
     }
     # paste the text node into a new element in its place,
     # to guarantee that the deletion of other nodes won't
@@ -248,7 +282,7 @@ sub new_path {
     my $type = $node->type;
     if($type eq 'ELT'){
         return q{id('} .
-            _get_or_set_id($node). q{')}
+            get_or_set_id($node, $log). q{')}
     }else{
         return $node->path;
     }
@@ -279,26 +313,6 @@ sub _log_new_el {
         $log->debug('Creating new <span> element to represent node of type ' .
             $type);
     }
-}
-
-#returns the id attribute of the given element; creates one if none exists.
-sub _get_or_set_id {
-    my ($el) = @_;
-    my $id = $el->att('id');
-    if(!$id){
-        $id = _next_id();
-        if($log->is_debug){
-            $log->debug('Setting id of ' . node_log_id($el) . " to $id");
-        }
-        $el->set_att('id', $id);
-    }
-    return $id;
-}
-
-#returns a unique string "ITS_#", '#' being some number.
-sub _next_id {
-    $id_num++;
-    return "ITS_$id_num";
 }
 
 1;

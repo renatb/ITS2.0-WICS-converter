@@ -8,8 +8,8 @@ use Log::Any qw($log);
 use XML::ITS qw(its_ns);
 use XML::ITS::DOM;
 use XML::ITS::DOM::Element qw(new_element);
-use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future clear_indices get_all_atts get_all_non_atts replace_el_future);
-use XML::ITS::WICS::LogUtils qw(node_log_id);
+use XML::ITS::WICS::XML2HTML::FutureNode qw(create_future clear_indices att_futures non_att_futures replace_el_future);
+use XML::ITS::WICS::LogUtils qw(node_log_id get_or_set_id reset_id);
 
 use feature 'state';
 our $HTML_NS = 'http://www.w3.org/1999/xhtml';
@@ -63,6 +63,8 @@ sub convert {
 	my @matches;
 	# pointers to all existing future nodes; keys are represented nodes
 	clear_indices();
+	#new document, so we can create element IDs starting from ITS_1 again
+	reset_id();
 	# find all rule matches and save them in @matches
 	$ITS->iterate_matches(_create_indexer(\@matches, $ITS->get_doc));
 
@@ -500,24 +502,50 @@ sub _update_rules {
 
 	# create rules to undo incorrect inheritance in elementalized nodes
 	# as best we can;
-	# only possible for three categories
-	# my $att_ids_string = join '|', map {q{id('} . _get_or_set_id($self, $_) . q{')}} get_all_atts();
-	# my $non_att_ids_string = join '|', map {q{id('} . _get_or_set_id($self, $_) . q{')}} get_all_non_atts();
-	# my $all_ids_string = join '|', ($att_ids_string, $non_att_ids_string);
-	# if($all_ids_string){
-	# 	#no translate rule
+	# only possible for three categories:
+	# translate, direction, and localeFilter
+	my @att_ids =
+		map {$_->new_path} att_futures();
+	my @non_att_ids =
+		map {$_->new_path} non_att_futures();
+	if(@att_ids or @non_att_ids){
+		my $txt_node = $rules_el->append_text("\n" . $indent x 3, 'first_child');
+		my $selector = join '|', @att_ids, @non_att_ids;
+		# don't translate anything (including attributes by default)
+		my $new_rule = new_element('its:translateRule', {translate => 'no', selector => $selector});
+		$new_rule->paste($txt_node, 'after');
+		if($log->is_debug){
+			$log->debug('Creating new rule ' . node_log_id($new_rule) .
+				' to prevent false inheritance');
+		}
+	}
+	if(@non_att_ids){
+		#for non-attributes, reset direction and localeFilter
+		my $selector = join '|', @non_att_ids;
 
-	# 	$rules_el->append_text("\n" . $indent x 3);
-	# 	my $new_rule = new_element('its:translateRule', {translate => 'no', selector => $all_ids_string});
-	# 	$new_rule->paste($rules_el, 'first_child');
-	# 	if($log->is_debug){
-	# 		$log->debug('Creating new rule ' . node_log_id($new_rule) .
-	# 			' to prevent false inheritance');
-	# 	}
-	# }
-	# if($non_att_ids_string){
+		my $txt_node = $rules_el->append_text("\n" . $indent x 3, 'first_child');
+		my $new_rule = new_element(
+			'its:dirRule', {dir => 'ltr', selector => $selector});
+		$new_rule->paste($txt_node, 'after');
+		if($log->is_debug){
+			$log->debug('Creating new rule ' . node_log_id($new_rule) .
+				' to prevent false inheritance');
+		}
 
-	# }
+		$txt_node = $new_rule->append_text("\n" . $indent x 3, 'after');
+		$new_rule = new_element(
+			'its:localeFilterRule', {
+				localeFilterList => '*',
+				localeFilterType => 'include',
+				selector => $selector
+			}
+		);
+		$new_rule->paste($txt_node, 'after');
+		if($log->is_debug){
+			$log->debug('Creating new rule ' . node_log_id($new_rule) .
+				' to prevent false inheritance');
+		}
+	}
 	return;
 }
 

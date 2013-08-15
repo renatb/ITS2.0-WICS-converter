@@ -5,21 +5,16 @@ TODO:
 Engineering Tasks:
     * make general FutureNode methods more object oriented
         - FutureNode manager object
-    - proper attribute inheritance (Maybe not? [please please please])
-        - changes needed in _traversal_sub; also requires new indices and domain logic
-            - create attribute FutureNodes whenever the inherited value is different from default. Or not?
 
 To Do on current task:
 
 Later To Do:
-    -add global rules un-doing inheritance, when needed:
-        <its:translateRule translate="no" selector="every converted node ID here"/>
-        <its:dirRule dir="ltr" selector="converted nodes, except the atts"/>
-        <its:localFilterRule localeFilterList="*" localeFilterType="include" selector="converted nodes, except the atts"/>
-        <!-- Not for HTML docs, but for others--><its:preserveSpaceRule preserve="default" selector="converted nodes, except the atts">
-        - test this with multiple future nodes
+    - change handling of text FutureNodes to not wrap them in an element.
+    - change LogUtils to be an object
+        - give it the logger to log with
+        - have it store id_num on a per-instance basic
     - test multiple matches on one future node
-    - handle inheritance for attributes
+    - only allow element/attribute matches in selectors
     - move special log functions into separate class
     - test copying of stuff inside rules (locNote)
     - find possible code reuse in converter
