@@ -500,10 +500,19 @@ sub _update_rules {
 		}
 	}
 
-	# create rules to undo incorrect inheritance in elementalized nodes
-	# as best we can;
-	# only possible for three categories:
-	# translate, direction, and localeFilter
+	$self->_false_inheritance_rules($rules_el, $indent);
+
+	return;
+}
+
+# Nodes turned into elements (attributes, namespaces, PIs)
+# will incorrectly inherit much ITS info.
+# Create rules to undo incorrect inheritance for these types
+# of nodes, where possible. This is only possible for three
+# categories: translate, direction, and localeFilter
+sub _false_inheritance_rules {
+	my ($self, $rules_el, $indent) = @_;
+
 	my @att_ids =
 		map {$_->new_path} $self->{futureNodeManager}->att_futures();
 	my @non_att_ids =
@@ -546,7 +555,6 @@ sub _update_rules {
 				' to prevent false inheritance');
 		}
 	}
-	return;
 }
 
 #log the creation of a new rule (given the rule and its associated FutureNodes)
