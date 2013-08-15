@@ -8,13 +8,7 @@ use Log::Any qw($log);
 use XML::ITS qw(its_ns);
 use XML::ITS::DOM;
 use XML::ITS::DOM::Element qw(new_element);
-use XML::ITS::WICS::XML2HTML::FutureNodeManager qw(
-	create_future
-	clear_indices
-	att_futures
-	non_att_futures
-	replace_el_future
-);
+use XML::ITS::WICS::XML2HTML::FutureNodeManager;
 use XML::ITS::WICS::LogUtils qw(node_log_id get_or_set_id reset_id);
 
 use feature 'state';
@@ -44,7 +38,9 @@ sub new {
 	my ($class, %args) = @_;
 	%args = (
 		title => 'WICS',
-		%args
+		%args,
+		futureNodeManager =>
+			XML::ITS::WICS::XML2HTML::FutureNodeManager->new()
 	);
 	return bless \%args, $class;
 }
@@ -67,12 +63,10 @@ sub convert {
 
 	# [rule, {selector => futureNode, *pointer => futureNode...}]
 	my @matches;
-	# pointers to all existing future nodes; keys are represented nodes
-	clear_indices();
 	#new document, so we can create element IDs starting from ITS_1 again
 	reset_id();
 	# find all rule matches and save them in @matches
-	$ITS->iterate_matches(_create_indexer(\@matches, $ITS->get_doc));
+	$ITS->iterate_matches($self->_create_indexer(\@matches, $ITS->get_doc));
 
 	# convert $ITS into an HTML document; rename elements, process atts,
 	# and paste the root in an HTML body.
@@ -92,7 +86,7 @@ sub convert {
 # as provide access to the containing document.
 # This sub pushes matches and FutureNodes onto $index_array
 sub _create_indexer {
-	my ($index_array, $doc) = @_;
+	my ($self, $index_array, $doc) = @_;
 
 	#iterate_matches passes in a rule and it's matched nodes
 	return sub {
@@ -112,7 +106,7 @@ sub _create_indexer {
 			# store futureNode in place of match in new structure
 			else{
 				$futureNodes->{$name} =
-					 create_future($match, $doc);
+					 $self->{futureNodeManager}->create_future($match, $doc);
 			}
 		}
 		push @{ $index_array }, [$rule, $futureNodes];
@@ -142,7 +136,7 @@ sub _htmlize {
 	# traverse every document element, converting into HTML
 	# save standoff or rules elements in @its_els
 	my @its_els;
-	my $processor = _traversal_sub(\@its_els);
+	my $processor = $self->_traversal_sub(\@its_els);
 	# 0 means there is no inline ancestor
 	$processor->($doc->get_root, 0);
 
@@ -153,7 +147,7 @@ sub _htmlize {
 # return a sub which recursively processes an element and all of its children.
 # All its:* elements are stored in $its_els (for pasting in the HTML head later)
 sub _traversal_sub {
-	my ($its_els) = @_;
+	my ($self, $its_els) = @_;
 
 	# a recursive sub which transforms elements into HTML and returns
 	# true for a child renamed as a div, false otherwise.
@@ -202,7 +196,7 @@ sub _traversal_sub {
 			}
 			# if this element has an associated future (match), change the future
 			# to one for the new node
-			replace_el_future($el, $new_el);
+			$self->{futureNodeManager}->replace_el_future($el, $new_el);
 			$el = $new_el;
 		}
 
@@ -511,9 +505,9 @@ sub _update_rules {
 	# only possible for three categories:
 	# translate, direction, and localeFilter
 	my @att_ids =
-		map {$_->new_path} att_futures();
+		map {$_->new_path} $self->{futureNodeManager}->att_futures();
 	my @non_att_ids =
-		map {$_->new_path} non_att_futures();
+		map {$_->new_path} $self->{futureNodeManager}->non_att_futures();
 	if(@att_ids or @non_att_ids){
 		my $txt_node = $rules_el->append_text("\n" . $indent x 3, 'first_child');
 		my $selector = join '|', @att_ids, @non_att_ids;
@@ -565,7 +559,7 @@ sub _log_new_rule {
 		my $futureNode = ${ $futureNodes->{$key} };
 		if((ref $futureNode) =~ /FutureNode/){
 			push @match_strings, "$key=" .
-				 node_log_id($futureNode->elemental);
+				 node_log_id($futureNode->realize);
 		}else{
 			push @match_strings, "$key=" . $futureNode->as_xpath;
 		}

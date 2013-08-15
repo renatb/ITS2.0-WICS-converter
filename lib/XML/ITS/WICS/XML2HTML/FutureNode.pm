@@ -12,18 +12,25 @@ use Exporter::Easy (OK => [qw(new_pointer)]);
 
 =head1 SYNOPSIS
 
-
+    use XML::ITS::WICS::XML2HTML::FutureNodeManager;
+    use XML::ITS;
+    my $f_manager = XML::ITS::WICS::XML2HTML::FutureNodeManager->new();
+    my $ITS = XML::ITS->new('xml', doc => 'myITSfile.xml');
+    my ($ns) = $ITS->get_root->get_xpath('namespace::*');
+    my $f_ns = create_future($ns);
+    # change the document around, but don't delete any elements...
+    $f_ns->realize;
 
 =head1 DESCRIPTION
 
-This class provides a way to ensure the existence of a visible,
-selectable HTML element to represent a given node.
-If you pass in an attribute node, for example, it will remember
-it's spot and make sure that there is a visible element representing
-that attribute after you call the C<realize> method. This means
+This class saves nodes during DOM transformation so that they will
+still be in the document later.
+If you create a FutureNode for an attribute node, for example, it
+will remember it's spot and create an element representing that
+attribute after you call the C<realize> method. This means
 that you can delete the original attribute without losing information.
 The document is not changed at all until you call C<realize>,
-so that no XPath selectors are broken.
+so no XPath selectors are broken before then.
 
 This is only guaranteed to work if document elements are not deleted
 after this object's creation. This is because some FutureNodes remember
@@ -31,7 +38,7 @@ their location by their original parent.
 
 =head1 METHODS
 
-=head2 C<elemental>
+=head2 C<realize>
 
 Ensures that the information in the contained node is represented by an element
 in the HTML DOM. This may cause changes to the owning DOM.
@@ -39,9 +46,9 @@ in the HTML DOM. This may cause changes to the owning DOM.
 Returns the ITS::DOM::Element object representing the node.
 
 =cut
-sub elemental {
+sub realize {
     my ($self) = @_;
-    #only elementalize a node once!
+    #only realize a node once!
     if(exists $self->{element}){
         return $self->{element};
     }
@@ -58,7 +65,7 @@ sub elemental {
             $self->{value}
         );
         #paste in current version of original parent
-        $el->paste(${$self->{parent}}->elemental, 'first_child');
+        $el->paste(${$self->{parent}}->realize, 'first_child');
         $self->{element} = $el;
         _log_new_el('ATT');
     }
@@ -79,7 +86,7 @@ sub elemental {
             $self->{value}
         );
         #paste in current version of original parent
-        $el->paste(${$self->{parent}}->elemental);
+        $el->paste(${$self->{parent}}->realize);
         _log_new_el('PI');
         $self->{element} = $el;
     }
@@ -92,7 +99,7 @@ sub elemental {
             },
             $self->{value}
         );
-        $el->paste(${ $self->{parent} }->elemental, 'first_child');
+        $el->paste(${ $self->{parent} }->realize, 'first_child');
         _log_new_el('NS');
         $self->{element} = $el;
     }
@@ -115,7 +122,7 @@ sub elemental {
 #returns an XPath uniquely identifying this node
 sub new_path {
     my ($self) = @_;
-    my $node = $self->elemental;
+    my $node = $self->realize;
     my $type = $node->type;
     if($type eq 'ELT'){
         return q{id('} .
