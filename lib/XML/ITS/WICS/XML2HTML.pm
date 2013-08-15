@@ -234,17 +234,10 @@ sub _convert_atts {
 	#true if this element has been renamed (to 'bdo')
 	my $bdo_rename;
 	if(@atts){
-		my @save_atts;
 		for my $att (@atts){
-			my ($save, $renamed) =
+			my $renamed =
 				$self->_process_att($el, $att);
-			push @save_atts, $save
-				if $save;
 			$bdo_rename ||= $renamed;
-		}
-		#save previous attributes in new title attribute
-		if(@save_atts){
-			$title .= '[' . (join ',', @save_atts) . ']';
 		}
 	}
 	if($log->is_debug){
@@ -295,9 +288,7 @@ sub _rename_el {
 }
 
 # process given attribute on given element;
-# return 2 things: a string to save, representing the attribute, if
-# the attribute is deleted (empty for NS declarations), and the name
-# of the element used to wrap the children, if any.
+# return the name of the element used to wrap the children, if any.
 sub _process_att {
 	my ($self, $el, $att) = @_;
 
@@ -315,7 +306,7 @@ sub _process_att {
 		}elsif($att->local_name eq 'dir'){
 			if($att->value =~ /^(?:lro|rlo)$/){
 				_process_dir_override($el, $att);
-				return '', 'bdo';
+				return 'bdo';
 			}else{
 				#ltr and rtl are just 'dir' attributes
 				_att_rename($el, $att, 'dir');
@@ -333,10 +324,7 @@ sub _process_att {
 		$att->remove;
 	}
 
-	#don't bother saving NS declarations in new element title
-	return '' if $att->name =~ /xmlns(?::|$)/;
-	# a short string to represent the att name and value
-	return $att->name . q{='} . $att->value . q{'};
+	return;
 }
 
 #rename given att on given el to new_name.

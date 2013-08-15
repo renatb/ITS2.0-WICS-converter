@@ -97,6 +97,7 @@ sub create_future {
     if($self->{future_cache}->{$node->unique_key}){
         return $self->{future_cache}->{$node->unique_key};
     }
+    # warn $node->name . $node->unique_key . join '|', caller();
 
     my $future = $self->_new_future($node, $doc);
 
@@ -127,9 +128,10 @@ sub _new_future {
     if($type eq 'ELT'){
         $state->{node} = $node;
     }elsif($type eq 'ATT' or $type eq 'PI'){
+        # maintainer note: not storing attribute node causes unique_key to reset,
+        # which causes duplicates in the future_cache.
         $state->{parent} = $self->create_future($node->parent);
-        $state->{name} = $node->name;
-        $state->{value} = $node->value;
+        $state->{node} = $node;
     }elsif($type eq 'COM'){
         $state->{node} = $node;
     }elsif($type eq 'TXT'){

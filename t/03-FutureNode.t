@@ -104,7 +104,7 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
   <body>
     <div title="xml">
         <div title="head"></div>
-        <div title="para[content='foo']" id="ITS_1">
+        <div title="para" id="ITS_1">
           <span title="content" id="ITS_2" class="_ITS_ATT">
             foo
           </span>
@@ -123,13 +123,13 @@ setting @title of <head> to 'head'
 removing <its:rules>
 renaming <head> to <div>
 processing <para>
-setting @title of <para> to 'para[content='foo']'
+setting @title of <para> to 'para'
 renaming <para> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (content)
 Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
-Creating new <span> element to represent node of type ATT
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
 Creating new rule <its:translateRule> to prevent false inheritance
@@ -164,7 +164,7 @@ Creating new rule <its:translateRule> to prevent false inheritance
   <body>
     <div title="xml">
         <div title="head"></div>
-        <div title="foo:para[content='foo']">
+        <div title="foo:para">
           <span title="content" id="ITS_1" class="_ITS_ATT">
             foo
           </span>
@@ -183,13 +183,13 @@ setting @title of <head> to 'head'
 removing <its:rules>
 renaming <head> to <div>
 processing <foo:para>
-setting @title of <foo:para> to 'foo:para[content='foo']'
+setting @title of <foo:para> to 'foo:para'
 stripping namespaces from <foo:para>
 renaming <para> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (content)
 Creating new its:rules element to contain all rules
-Creating new <span> element to represent node of type ATT
 Setting id of <span> to ITS_1
 Creating new rule <its:translateRule> to match [selector=<span id="ITS_1">]
 Creating new rule <its:translateRule> to prevent false inheritance
@@ -315,9 +315,9 @@ setting @title of <para> to 'para'
 renaming <para> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
+Creating new <span> element to represent node of type PI (foo_pi)
 Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
-Creating new <span> element to represent node of type PI
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
 Creating new rule <its:translateRule> to prevent false inheritance
@@ -379,9 +379,9 @@ stripping namespaces from <foo:para>
 renaming <para> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
+Creating new <span> element to represent node of type PI (foo_pi)
 Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
-Creating new <span> element to represent node of type PI
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
 Creating new rule <its:translateRule> to prevent false inheritance
@@ -493,9 +493,9 @@ stripping namespaces from <foo:para>
 renaming <para> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
+Creating new <span> element to represent node of type NS (xmlns:foo)
 Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
-Creating new <span> element to represent node of type NS
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
 Creating new rule <its:translateRule> to prevent false inheritance
@@ -553,9 +553,9 @@ stripping namespaces from <foo:para>
 renaming <para> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
+Creating new <span> element to represent node of type NS (xmlns:foo)
 Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
-Creating new <span> element to represent node of type NS
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
 Creating new rule <its:translateRule> to prevent false inheritance
@@ -667,11 +667,11 @@ Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=[DOCUMENT]]
 
-=== non-ITS attributes are saved
+=== non-ITS, non-xmlns attributes are saved
 --- input
 <?xml version="1.0"?>
 <xml>
-  <para foo="bar">Some text</para>
+  <para foo="bar" xmlns="blah">Some text</para>
 </xml>
 --- output
 <!DOCTYPE html>
@@ -687,7 +687,7 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
   </head>
   <body>
     <div title="xml">
-        <div title="para[foo='bar']">
+        <div title="para">
           <span id="ITS_1" class="_ITS_ATT" title="foo">bar</span>
           Some text
         </div>
@@ -699,10 +699,12 @@ converting document elements into HTML
 processing <xml>
 setting @title of <xml> to 'xml'
 processing <para>
-setting @title of <para> to 'para[foo='bar']'
+setting @title of <para> to 'para'
+stripping namespaces from <para>
 renaming <para> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
-Creating new <span> element to represent node of type ATT
+Creating new <span> element to represent node of type ATT (foo)
 Creating new its:rules element to contain all rules
 Setting id of <span> to ITS_1
+Creating new rule <its:translateRule> to prevent false inheritance

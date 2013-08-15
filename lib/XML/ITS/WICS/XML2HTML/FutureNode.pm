@@ -62,15 +62,15 @@ sub new_node {
         my $el = new_element(
             'span',
             {
-                 title => $self->{name},
+                 title => $self->{node}->name,
                  class => "_ITS_ATT"
             },
-            $self->{value}
+            $self->{node}->value
         );
         #paste in current version of original parent
         $el->paste(${$self->{parent}}->new_node, 'first_child');
         $self->{element} = $el;
-        _log_new_el('ATT');
+        _log_new_el('ATT', $self->{node}->name) if $log->is_debug;
     }
     # comments aren't deleted, so just place a new element next to them.
     # TODO: might be better just to leave it as a comment and use nodePath
@@ -83,14 +83,14 @@ sub new_node {
         my $el = new_element(
             'span',
             {
-                 title => $self->{name},
+                 title => $self->{node}->name,
                  class => '_ITS_PI'
             },
-            $self->{value}
+            $self->{node}->value
         );
         #paste in current version of original parent
         $el->paste(${$self->{parent}}->new_node);
-        _log_new_el('PI');
+        _log_new_el('PI', $self->{node}->name) if $log->is_debug;
         $self->{element} = $el;
     }
     elsif($self->{type} eq 'NS'){
@@ -103,7 +103,7 @@ sub new_node {
             $self->{value}
         );
         $el->paste(${ $self->{parent} }->new_node, 'first_child');
-        _log_new_el('NS');
+        _log_new_el('NS', $self->{name});
         $self->{element} = $el;
     }
     # Return the original text node. Don't wrap with an
@@ -140,31 +140,13 @@ sub new_path {
     }
 }
 
-# pastes the given element in an appropriate location, given parent and possibly
-# siblings stored in $self
-sub _paste_el {
-    my ($self, $el) = @_;
-    # if there is no next sibling, then paste this
-    # element as last child of parent
-    if(my $sib = $self->{nextSib}){
-        $el->paste($sib, 'before');
-    }elsif(my $parent = $self->{parent}){
-        $el->paste($parent);
-    }elsif(my $node = $self->{node}){
-        $el->paste($node, 'after');
-    }else{
-        croak 'Don\'t know where to paste ' . $el->name;
-    }
-    _log_new_el($self->{type});
-}
-
 #log the creation of a new element to represent the input node type.
 sub _log_new_el {
-    my ($type) = @_;
-    if($log->is_debug){
-        $log->debug('Creating new <span> element to represent node of type ' .
-            $type);
-    }
+    my ($type, $name) = @_;
+    my $msg = 'Creating new <span> element to represent node of type ';
+    $msg .= $type;
+    $msg .= q< (> . $name . q<)>;
+    $log->debug($msg);
 }
 
 1;
