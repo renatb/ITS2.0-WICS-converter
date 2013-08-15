@@ -8,6 +8,7 @@ To Do on current task:
     - all non-its attributes should be saved/pasted
 
 Later To Do:
+    - correctly report error with default namespace and XPath
     - test multiple matches on one future node
     - only allow element/attribute matches in selectors
     - move special log functions into separate class

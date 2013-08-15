@@ -2,6 +2,7 @@ package XML::ITS::WICS::XML2HTML::FutureNodeManager;
 use strict;
 use warnings;
 use XML::ITS::WICS::XML2HTML::FutureNode;
+use Carp;
 
 # VERSION
 # ABSTRACT: Track and replace FutureNodes
@@ -125,25 +126,24 @@ sub _new_future {
     my $state = {type => $type};
     if($type eq 'ELT'){
         $state->{node} = $node;
-    }elsif($type eq 'ATT'){
+    }elsif($type eq 'ATT' or $type eq 'PI'){
         $state->{parent} = $self->create_future($node->parent);
         $state->{name} = $node->name;
         $state->{value} = $node->value;
     }elsif($type eq 'COM'){
         $state->{node} = $node;
-    }elsif($type eq 'PI'){
-        $state->{parent} = $self->create_future($node->parent);
-        $state->{value} = $node->value;
-        $state->{name} = $node->name;
     }elsif($type eq 'TXT'){
         $state->{node} = $node;
     }elsif($type eq 'NS'){
+        # save document root for pasting
         $state->{name} = $node->name;
         $state->{value} = $node->value;
         $state->{parent} = $self->create_future($doc->get_root);
     }elsif($type eq 'DOC'){
-        # just match the document root instead
-        $state->{node} = ($node->children)[0];
+        #nothing needed. Final XPath will always just be '/'.
+        $state->{node} = $self->create_future($node->children);
+    }else{
+        croak "Unknown node type $type";
     }
     return bless $state, 'XML::ITS::WICS::XML2HTML::FutureNode';
 }

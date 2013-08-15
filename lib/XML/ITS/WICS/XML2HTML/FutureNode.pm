@@ -113,7 +113,7 @@ sub realize {
     }
     elsif($self->{type} eq 'DOC'){
         # return the root document
-        $self->{element} = $self->{node}->doc_node('/');
+        $self->{element} = ${ $self->{node} }->realize->doc_node;
     }
 
     return $self->{element};

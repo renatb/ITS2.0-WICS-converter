@@ -613,3 +613,56 @@ wrapping document in HTML structure
 Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=[DOCUMENT]]
+
+=== namespaced document matches handled correctly
+--- input
+<?xml version="1.0"?>
+<foo:xml xmlns:foo="www.foo.com">
+  <head>
+    <its:rules version="2.0" xmlns:its="http://www.w3.org/2005/11/its">
+      <its:domainRule selector="//para"
+        domainPointer="/"/>
+    </its:rules>
+  </head>
+  <para xmlns:foo="www.foo.com">Some text</para>
+</foo:xml>
+--- output
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+      <its:domainRule selector="id('ITS_1')" domainPointer="/"></its:domainRule>
+    </its:rules>
+    </script>
+  </head>
+  <body>
+    <div title="foo:xml">
+        <div title="head"></div>
+        <div title="para" id="ITS_1">
+          Some text
+        </div>
+    </div>
+  </body>
+</html>
+--- log
+match: rule=<its:domainRule>; selector=<para>; domainPointer=[DOCUMENT]
+converting document elements into HTML
+processing <foo:xml>
+setting @title of <foo:xml> to 'foo:xml'
+stripping namespaces from <foo:xml>
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <para>
+setting @title of <para> to 'para'
+stripping namespaces from <para>
+renaming <para> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=[DOCUMENT]]
