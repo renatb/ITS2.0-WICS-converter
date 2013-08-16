@@ -87,7 +87,7 @@ wrapping document in HTML structure
 === namespaces stripped
 --- input
 <xml xmlns:bar="bar.io">
-  <bar:foo bar:baz="gunk">
+  <bar:foo>
     <qux/>
   </bar:foo>
 </xml>
@@ -100,7 +100,7 @@ wrapping document in HTML structure
   </head>
   <body>
     <div title="xml">
-      <div title="bar:foo[bar:baz='gunk']">
+      <div title="bar:foo">
         <div title="qux"></div>
       </div>
     </div>
@@ -112,7 +112,7 @@ processing <xml>
 setting @title of <xml> to 'xml'
 stripping namespaces from <xml>
 processing <bar:foo>
-setting @title of <bar:foo> to 'bar:foo[bar:baz='gunk']'
+setting @title of <bar:foo> to 'bar:foo'
 stripping namespaces from <bar:foo>
 processing <qux>
 setting @title of <qux> to 'qux'
@@ -136,7 +136,7 @@ should be converted into id
   </head>
   <body>
     <div title="xml">
-      <div title="foo[xml:id='bar']" id="bar"></div>
+      <div title="foo" id="bar"></div>
     </div>
   </body>
 </html>
@@ -146,7 +146,7 @@ processing <xml>
 setting @title of <xml> to 'xml'
 processing <foo xml:id="bar">
 renaming @xml:id of <foo xml:id="bar"> to @id
-setting @title of <foo id="bar"> to 'foo[xml:id='bar']'
+setting @title of <foo id="bar"> to 'foo'
 renaming <foo id="bar"> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
@@ -166,7 +166,7 @@ should be converted into lang
   </head>
   <body>
     <div title="xml">
-      <div title="foo[xml:lang='lut']" lang="lut"></div>
+      <div title="foo" lang="lut"></div>
     </div>
   </body>
 </html>
@@ -176,7 +176,7 @@ processing <xml>
 setting @title of <xml> to 'xml'
 processing <foo>
 renaming @xml:lang of <foo> to @lang
-setting @title of <foo> to 'foo[xml:lang='lut']'
+setting @title of <foo> to 'foo'
 renaming <foo> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
@@ -233,11 +233,11 @@ rlo/lro should create an inline bdo element
   </head>
   <body>
     <div title="xml">
-      <div id="i1" title="foo[xml:id='i1']" dir="rtl">foo</div>
-      <div id="i2" title="foo[xml:id='i2']" dir="ltr">foo</div>
-      <bdo id="i3" title="foo[xml:id='i3']" dir="ltr">foo<span title="bar"></span></bdo>
-      <bdo id="i4" title="foo[xml:id='i4']" dir="rtl">foo</bdo>
-      <bdo id="i5" title="foo[xml:id='i5']" dir="rtl"><span title="bar">bar</span></bdo>
+      <div id="i1" title="foo" dir="rtl">foo</div>
+      <div id="i2" title="foo" dir="ltr">foo</div>
+      <bdo id="i3" title="foo" dir="ltr">foo<span title="bar"></span></bdo>
+      <bdo id="i4" title="foo" dir="rtl">foo</bdo>
+      <bdo id="i5" title="foo" dir="rtl"><span title="bar">bar</span></bdo>
     </div>
   </body>
 </html>
@@ -249,19 +249,19 @@ stripping namespaces from <xml>
 processing <foo xml:id="i1">
 renaming @xml:id of <foo xml:id="i1"> to @id
 renaming @its:dir of <foo id="i1"> to @dir
-setting @title of <foo id="i1"> to 'foo[xml:id='i1']'
+setting @title of <foo id="i1"> to 'foo'
 stripping namespaces from <foo id="i1">
 renaming <foo id="i1"> to <div>
 processing <foo xml:id="i2">
 renaming @xml:id of <foo xml:id="i2"> to @id
 renaming @its:dir of <foo id="i2"> to @dir
-setting @title of <foo id="i2"> to 'foo[xml:id='i2']'
+setting @title of <foo id="i2"> to 'foo'
 stripping namespaces from <foo id="i2">
 renaming <foo id="i2"> to <div>
 processing <foo xml:id="i3">
 renaming @xml:id of <foo xml:id="i3"> to @id
 found its:dir=lro; renaming <foo id="i3"> to bdo and adding @dir=ltr
-setting @title of <bdo id="i3"> to 'foo[xml:id='i3']'
+setting @title of <bdo id="i3"> to 'foo'
 stripping namespaces from <bdo id="i3">
 processing <bar>
 setting @title of <bar> to 'bar'
@@ -269,12 +269,12 @@ renaming <bar> to <span>
 processing <foo xml:id="i4">
 renaming @xml:id of <foo xml:id="i4"> to @id
 found its:dir=rlo; renaming <foo id="i4"> to bdo and adding @dir=rtl
-setting @title of <bdo id="i4"> to 'foo[xml:id='i4']'
+setting @title of <bdo id="i4"> to 'foo'
 stripping namespaces from <bdo id="i4">
 processing <foo xml:id="i5">
 renaming @xml:id of <foo xml:id="i5"> to @id
 found its:dir=rlo; renaming <foo id="i5"> to bdo and adding @dir=rtl
-setting @title of <bdo id="i5"> to 'foo[xml:id='i5']'
+setting @title of <bdo id="i5"> to 'foo'
 stripping namespaces from <bdo id="i5">
 processing <bar>
 setting @title of <bar> to 'bar'
@@ -389,4 +389,3 @@ setting @title of <its:span> to 'its:span'
 stripping namespaces from <its:span>
 renaming <xml> to <div>
 wrapping document in HTML structure
-

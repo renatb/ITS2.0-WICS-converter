@@ -49,11 +49,18 @@ This method replaces the FutureNode pointer for the given element
 with a FutureNode pointer for the new element. This is useful
 for keeping track of matches while replacing nodes.
 
+This only supports replacement once; that is, you can't replace a node
+and then replace that new node later on.
+
 =cut
 sub replace_el_future {
     my ($self, $old_el, $new_el) = @_;
-    ${ $self->{future_cache}->{$old_el->unique_key} } =
-        ${ $self->create_future($new_el) };
+    my $key = $old_el->unique_key;
+    if($self->{future_cache}->{$key}){
+
+        ${ $self->{future_cache}->{$key} } =
+            ${ $self->create_future($new_el) };
+    }
 }
 
 =head2 C<att_futures>
@@ -97,7 +104,6 @@ sub create_future {
     if($self->{future_cache}->{$node->unique_key}){
         return $self->{future_cache}->{$node->unique_key};
     }
-    # warn $node->name . $node->unique_key . join '|', caller();
 
     my $future = $self->_new_future($node, $doc);
 
@@ -172,6 +178,9 @@ Returns the total number of FutureNodes maintained by this instance.
 =cut
 sub total_futures {
     my ($self) = @_;
+    # for (keys %{ $self->{future_cache} }){
+    #     warn ${$self->{future_cache}->{$_}}->new_node->name;
+    # }
     return scalar keys %{$self->{future_cache}};
 }
 

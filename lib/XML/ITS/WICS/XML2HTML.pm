@@ -134,93 +134,84 @@ sub _htmlize {
 	$log->debug('converting document elements into HTML')
 		if $log->is_debug;
 	# traverse every document element, converting into HTML
-	# save standoff or rules elements in @its_els
-	my @its_els;
-	my $processor = $self->_traversal_sub(\@its_els);
+	# save standoff or rules elements in its_els
+	$self->{its_els} = [];
 	# 0 means there is no inline ancestor
-	$processor->($doc->get_root, 0);
+	$self->_traverse_convert($doc->get_root, 0);
 
 	# return an HTML doc with the current doc as its body contents
-	return $self->_html_structure($doc, \@its_els);
+	return $self->_html_structure($doc);
 }
 
-# return a sub which recursively processes an element and all of its children.
-# All its:* elements are stored in $its_els (for pasting in the HTML head later)
-sub _traversal_sub {
-	my ($self, $its_els) = @_;
 
-	# a recursive sub which transforms elements into HTML and returns
-	# true for a child renamed as a div, false otherwise.
-	# Arguments are the element to transform and a boolean indicating
-	# the existence of an inline ancestor (so this element should not
-	# be made a <div>)
-	my $traverse_sub;
-	$traverse_sub = sub {
-		my ($el, $inline_ancestor) = @_;
+# transforms elements into HTML and returns
+# true for a child renamed as a div, false otherwise (span or bdo).
+# Arguments are the element to transform and a boolean indicating
+# the existence of an inline ancestor (so this element should not
+# be made a <div>)
+sub _traverse_convert{
+	my ($self, $el, $inline_ancestor) = @_;
 
-		#its:* elements are either rules, span, or standoff
-		#let its:span be renamed to span later
-		if($el->namespaceURI &&
-			$el->namespaceURI eq its_ns() &&
-			$el->local_name ne 'span'){
-			#its:rules; just remove these and paste new ones later
-			if($el->local_name eq 'rules'){
-				$el->remove;
-				if($log->is_debug){
-					$log->debug('removing ' . node_log_id($el));
-				}
-				return 0;
-			}
-			# save standoff markup for pasting in the head
-			push @$its_els, $el;
+	#its:* elements are either rules, span, or standoff
+	#let its:span be renamed to span later
+	if($el->namespaceURI &&
+		$el->namespaceURI eq its_ns() &&
+		$el->local_name ne 'span'){
+		#its:rules; just remove these and paste new ones later
+		if($el->local_name eq 'rules'){
+			$el->remove;
 			if($log->is_debug){
-				$log->debug('placing ' . node_log_id($el) . ' in script element');
+				$log->debug('removing ' . node_log_id($el));
 			}
 			return 0;
 		}
+		# save standoff markup for pasting in the head
+		push @{ $self->{its_els} }, $el;
 		if($log->is_debug){
-			# print "processing " . $el->name . $el->att('xml:id');
-			$log->debug('processing ' . node_log_id($el));
+			$log->debug('placing ' . node_log_id($el) . ' in script element');
 		}
+		return 0;
+	}
+	if($log->is_debug){
+		$log->debug('processing ' . node_log_id($el));
+	}
 
-		# true if the element has been renamed to bdo, an
-		# inline element (happens with its:dir=rlo)
-		my $bdo_rename = $self->_convert_atts($el);
+	# true if the element has been renamed to bdo, an
+	# inline element (happens with its:dir=rlo)
+	my $bdo_rename = $self->_convert_atts($el);
 
-		# strip namespacing; requires special care because it replaces
-		# an element, requiring reworking of FutureNode indices
-		my $new_el = $el->strip_ns;
-		if(!$el->is_same_node($new_el)){
-			if($log->is_debug){
-				$log->debug('stripping namespaces from ' . node_log_id($el));
-			}
-			# if this element has an associated future (match), change the future
-			# to one for the new node
-			$self->{futureNodeManager}->replace_el_future($el, $new_el);
-			$el = $new_el;
+	# strip namespacing; requires special care because it replaces
+	# an element, requiring reworking of FutureNode indices
+	my $new_el = $el->strip_ns;
+	if(!$el->is_same_node($new_el)){
+		if($log->is_debug){
+			$log->debug('stripping namespaces from ' . node_log_id($el));
 		}
+		# if this element has an associated future (match), change the future
+		# to one for the new node
+		$self->{futureNodeManager}->replace_el_future($el, $new_el);
+		$el = $new_el;
+	}
 
-		# grab children for recursive processing
-		my $children = $el->child_els;
+	# grab children for recursive processing
+	my $children = $el->child_els;
 
-		# true if any child is a div
-		my $div_child;
-		# recursively process children
-		for my $child(@$children){
-			my $div_result = $traverse_sub->(
-				$child, $bdo_rename);
-			$div_child ||= $div_result;
-		}
+	# true if any child is a div
+	my $div_child;
+	# recursively process children
+	for my $child(@$children){
+		my $div_result = $self->_traverse_convert(
+			$child, $bdo_rename);
+		$div_child ||= $div_result;
+	}
 
-		#if already renamed to bdo, return indication of inline element
-		if($bdo_rename){
-			return 0;
-		}
+	#if already renamed to bdo, return indication of inline element
+	if($bdo_rename){
+		return 0;
+	}
 
-		#otherwise rename it and return indication of div or span
-		return _rename_el($el, $div_child, $inline_ancestor);
-	};
-	return $traverse_sub;
+	#otherwise rename it and return indication of div or span
+	return _rename_el($el, $div_child, $inline_ancestor);
 }
 
 #handle all attribute converting for the given element. Return true
@@ -380,7 +371,7 @@ sub _htmlize_its_att {
 # inside of the body. Create script elements for each el in $its_els
 # and paste them in the head
 sub _html_structure {
-	my ($self, $doc, $its_els) = @_;
+	my ($self, $doc) = @_;
 
 	$log->debug('wrapping document in HTML structure')
 		if $log->is_debug;
@@ -400,7 +391,7 @@ sub _html_structure {
 	$title->paste($head);
 
 	#paste all standoff markup
-	for my $its(@$its_els){
+	for my $its(@{ $self->{its_els} }){
 		_get_script($its)->paste($head);
 	}
 

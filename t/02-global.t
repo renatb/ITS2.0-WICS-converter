@@ -43,7 +43,7 @@ __DATA__
   <body>
     <div title="xml">
         <div title="head"></div>
-        <div title="para[xml:id='i1']" id="i1">Some text</div>
+        <div title="para" id="i1">Some text</div>
     </div>
   </body>
 </html>
@@ -58,7 +58,7 @@ removing <its:rules>
 renaming <head> to <div>
 processing <para xml:id="i1">
 renaming @xml:id of <para xml:id="i1"> to @id
-setting @title of <para id="i1"> to 'para[xml:id='i1']'
+setting @title of <para id="i1"> to 'para'
 renaming <para id="i1"> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
