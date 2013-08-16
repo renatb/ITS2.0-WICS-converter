@@ -21,6 +21,7 @@ FutureNode management is used to remember matches and match locations,
 even when elements are replaced or nodes are deleted
 
 === namespaced element match handled properly
+Elements are all renamed, so XPaths change accordingly.
 --- input
 <?xml version="1.0"?>
 <xml>
@@ -77,6 +78,8 @@ Setting id of <div> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<div id="ITS_2">]
 
 === attribute match handled correctly
+All attributes, match or not, are turned into child elements (just testing
+match here). This also triggers anti-inheritance rules.
 --- input
 <?xml version="1.0"?>
 <xml>
@@ -259,6 +262,7 @@ Creating new rule <its:translateRule> to match [selector=<span id="ITS_1">]
 Creating new rule <its:translateRule> to prevent false inheritance
 
 === comment match handled correctly
+Nothing is done to comments. Just need a new XPath for the new document.
 --- input
 <?xml version="1.0"?>
 <xml>
@@ -324,8 +328,8 @@ Setting id of <div> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_2">; domainPointer=<!--foo-->]
 
 === PI match handled correctly
-PIs are illegal in HTML. They should all be removed; matched ones should have
-a representing node.
+PIs are illegal in HTML. They should all be removed. Matched PIs are turned
+into child elements, which also triggers anti-inheritance rules.
 --- input
 <?xml version="1.0"?>
 <xml>
@@ -522,6 +526,7 @@ Creating new rule <its:dirRule> to prevent false inheritance
 Creating new rule <its:localeFilterRule> to prevent false inheritance
 
 === text node match handled correctly
+Nothing is done to these. Just need a new XPath.
 --- input
 <?xml version="1.0"?>
 <xml>
@@ -573,6 +578,8 @@ Setting id of <div> to ITS_1
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=[text: Some text]]
 
 === namespace matches handled correctly
+Namespace matches are turned into elements in the document root, which also
+triggers anti-inheritance rules.
 --- input
 <?xml version="1.0"?>
 <xml>
@@ -767,6 +774,7 @@ Creating new rule <its:dirRule> to prevent false inheritance
 Creating new rule <its:localeFilterRule> to prevent false inheritance
 
 === document matches handled correctly
+Document match stays the same ("/").
 --- input
 <?xml version="1.0"?>
 <xml>
@@ -819,6 +827,7 @@ Setting id of <div> to ITS_1
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=[DOCUMENT]]
 
 === namespaced document matches handled correctly
+Namespacing probably doesn't make a difference here; just covering the bases.
 --- input
 <?xml version="1.0"?>
 <foo:xml xmlns:foo="www.foo.com">
@@ -872,6 +881,8 @@ Setting id of <div> to ITS_1
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=[DOCUMENT]]
 
 === non-ITS, non-xmlns attributes are saved
+All document attributes are saved as elements, which also
+triggers anti-inheritance rules.
 --- input
 <?xml version="1.0"?>
 <xml>
