@@ -7,9 +7,9 @@ Engineering Tasks:
 To Do on current task:
 
 Later To Do:
+    - only allow element/attribute matches in selectors
     - correctly report error with default namespace and XPath
         - actually, test all errors and their locations
-    - only allow element/attribute matches in selectors
     - move special log functions into separate class
     - test copying of stuff inside rules (locNote)
     - test APIs of FutureNode and FutureNodeManager

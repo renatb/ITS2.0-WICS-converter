@@ -21,8 +21,6 @@ $log->clear();
 my $wics = XML::ITS::WICS::XML2HTML->new();
 my $converted = ${ $wics->convert("$file") };
 
-# print $converted;
-
 eq_or_diff_html($converted, $all_data->{html}, 'HTML structure');
 # print $all_data->{log};
 is_deeply(
@@ -41,7 +39,8 @@ __DATA__
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-        <its:translateRule xml:id="ext3rule" selector="id('root')" translate="yes"></its:translateRule>
+      <its:translateRule selector="id('ITS_1')" translate="no"></its:translateRule>
+      <its:translateRule xml:id="ext3rule" selector="id('root')" translate="yes"></its:translateRule>
       <foo:translateRule xmlns:foo="http://www.w3.org/2005/11/its" xml:id="ext2rule" selector="id('trmark')" translate="yes"></foo:translateRule>
       <its:translateRule xml:id="ext1rule" selector="id('par')" translate="yes"></its:translateRule>
       <its:idValueRule xml:id="baseFileRule" selector="id('body')" idValue="'bodyId'"></its:idValueRule>
@@ -49,15 +48,22 @@ __DATA__
     </script>
   </head>
   <body>
-    <div id="root" title="myDoc[xml:id='root']">
-     <div title="head">
-
-     </div>
-     <div id="body" title="body[xml:id='body']">
-      <div id="par" title="par[xml:id='par',title='Text']">The <span id="trmark" title="trmark[xml:id='trmark']">World Wide Web Consortium</span> is making the World Wide Web worldwide!</div>
-     </div>
+    <div id="root" title="myDoc">
+    <div title="head"></div>
+    <div id="body" title="body">
+      <div id="par" title="par">
+        <span class="_ITS_ATT" title="title" id="ITS_1">
+          Text
+        </span>
+        The
+        <span id="trmark" title="trmark">
+          World Wide Web Consortium
+        </span>
+        is making the World Wide Web worldwide!
+      </div>
     </div>
-  </body>
+  </div>
+</body>
 </html>
 
 @@ log
@@ -68,27 +74,30 @@ match: rule=<its:idValueRule xml:id="baseFileRule">; selector=<body xml:id="body
 converting document elements into HTML
 processing <myDoc xml:id="root">
 renaming @xml:id of <myDoc xml:id="root"> to @id
-setting @title of <myDoc id="root"> to 'myDoc[xml:id='root']'
+setting @title of <myDoc id="root"> to 'myDoc'
 processing <head>
 setting @title of <head> to 'head'
 removing <its:rules xml:id="baseFileContainer">
 renaming <head> to <div>
 processing <body xml:id="body">
 renaming @xml:id of <body xml:id="body"> to @id
-setting @title of <body id="body"> to 'body[xml:id='body']'
+setting @title of <body id="body"> to 'body'
 processing <par xml:id="par">
 renaming @xml:id of <par xml:id="par"> to @id
-setting @title of <par id="par"> to 'par[xml:id='par',title='Text']'
+setting @title of <par id="par"> to 'par'
 processing <trmark xml:id="trmark">
 renaming @xml:id of <trmark xml:id="trmark"> to @id
-setting @title of <trmark id="trmark"> to 'trmark[xml:id='trmark']'
+setting @title of <trmark id="trmark"> to 'trmark'
 renaming <trmark id="trmark"> to <span>
 renaming <par id="par"> to <div>
 renaming <body id="body"> to <div>
 renaming <myDoc id="root"> to <div>
 wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (title)
 Creating new its:rules element to contain all rules
 Creating new rule <its:translateRule xml:id="ext3rule"> to match [selector=<div id="root">]
 Creating new rule <foo:translateRule xml:id="ext2rule"> to match [selector=<span id="trmark">]
 Creating new rule <its:translateRule xml:id="ext1rule"> to match [selector=<div id="par">]
 Creating new rule <its:idValueRule xml:id="baseFileRule"> to match [selector=<div id="body">; idValue='bodyId']
+Setting id of <span> to ITS_1
+Creating new rule <its:translateRule> to prevent false inheritance
