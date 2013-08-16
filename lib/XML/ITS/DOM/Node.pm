@@ -419,14 +419,21 @@ sub copy {
 
 =head2 C<unique_key>
 
-Returns a unique integer guaranteed to always be the same for this node.
+Returns a unique value guaranteed to always be the same for this node.
 In other words, if and only if the unique key for two node objects
 are the same, then is_same_node will return true.
+
+For namespace nodes, this returns a string "prefix:URI", which
+uniquely identifies a namespace.
 
 =cut
 sub unique_key {
     my ($self) = @_;
-    return ${$self->{node}};
+    if($self->type eq 'NS'){
+        return $self->{node}->getPrefix . ':' .
+            $self->{node}->getNamespaceURI;
+    }
+    return $self->{node}->unique_key;
 }
 
 1;

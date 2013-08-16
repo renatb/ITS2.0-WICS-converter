@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 55;
+plan tests => 57;
 use Test::NoWarnings;
 use Test::Exception;
 
@@ -174,7 +174,12 @@ sub test_unique_key {
     my $third = ($dom->get_root->get_xpath('//third'))[0];
     my $third_2 = ($dom->get_root->get_xpath('//third'))[0];
     ok($third != $third_2, 'two separate objects to represent the same node');
-    ok($third->unique_key == $third_2->unique_key, '...have the same unique key');
+    is($third->unique_key, $third_2->unique_key, '...have the same unique key');
+
+    my ($ns_1) = $dom->get_root->get_xpath('/*/namespace::*[name()="foo"]');
+    my ($ns_2) = $dom->get_root->get_xpath('/*/namespace::*[name()="foo"]');
+    ok($ns_1 != $ns_2, 'two separate objects to represent the same namespace');
+    is($ns_1->unique_key, $ns_2->unique_key, '...have the same unique key');
 }
 
 sub test_copy {
