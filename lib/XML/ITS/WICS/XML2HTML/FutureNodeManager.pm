@@ -128,10 +128,11 @@ sub _new_future {
     if($type eq 'ELT'){
         $state->{node} = $node;
     }elsif($type eq 'ATT' or $type eq 'PI'){
-        # maintainer note: not storing attribute node causes unique_key to reset,
-        # which causes duplicates in the future_cache.
+        # maintainer note: don't try to store the actual attribute node;
+        # It causes perl to crash!
         $state->{parent} = $self->create_future($node->parent);
-        $state->{node} = $node;
+        $state->{name} = $node->name;
+        $state->{value} = $node->value;
     }elsif($type eq 'COM'){
         $state->{node} = $node;
     }elsif($type eq 'TXT'){

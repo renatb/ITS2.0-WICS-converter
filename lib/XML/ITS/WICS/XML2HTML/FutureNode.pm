@@ -59,18 +59,19 @@ sub new_node {
     if($self->{type} eq 'ELT'){
         $self->{element} = $self->{node};
     }elsif($self->{type} eq 'ATT'){
+        # paste an element with the same content
+        # in current version of original parent
         my $el = new_element(
             'span',
             {
-                 title => $self->{node}->name,
+                 title => $self->{name},
                  class => "_ITS_ATT"
             },
-            $self->{node}->value
+            $self->{value}
         );
-        #paste in current version of original parent
         $el->paste(${$self->{parent}}->new_node, 'first_child');
         $self->{element} = $el;
-        _log_new_el('ATT', $self->{node}->name) if $log->is_debug;
+        _log_new_el('ATT', $self->{name}) if $log->is_debug;
     }
     # comments aren't deleted, so just place a new element next to them.
     # TODO: might be better just to leave it as a comment and use nodePath
@@ -83,14 +84,17 @@ sub new_node {
         my $el = new_element(
             'span',
             {
-                 title => $self->{node}->name,
+                 title => $self->{name},
+                 # title => $self->{node}->name,
                  class => '_ITS_PI'
             },
-            $self->{node}->value
+            $self->{value}
+            # $self->{node}->value
         );
         #paste in current version of original parent
         $el->paste(${$self->{parent}}->new_node);
-        _log_new_el('PI', $self->{node}->name) if $log->is_debug;
+        _log_new_el('PI', $self->{name}) if $log->is_debug;
+        # _log_new_el('PI', $self->{node}->name) if $log->is_debug;
         $self->{element} = $el;
     }
     elsif($self->{type} eq 'NS'){

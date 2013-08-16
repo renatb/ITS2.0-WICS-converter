@@ -5,13 +5,11 @@ TODO:
 Engineering Tasks:
 
 To Do on current task:
-    - all non-its attributes should be saved/pasted
-        - then we won't need to create titles anymore!
 
 Later To Do:
+    - use $self instead of messy closures
     - correctly report error with default namespace and XPath
         - actually, test all errors and their locations
-    - test multiple matches on one future node
     - only allow element/attribute matches in selectors
     - move special log functions into separate class
     - test copying of stuff inside rules (locNote)

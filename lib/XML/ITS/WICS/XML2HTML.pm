@@ -229,7 +229,7 @@ sub _convert_atts {
 	my ($self, $el) = @_;
 
 	my $title = $el->name;
-	my @atts = $el->get_xpath('@*');
+	my @atts = $el->get_xpath('@*'); #TODO: inline this
 
 	#true if this element has been renamed (to 'bdo')
 	my $bdo_rename;
