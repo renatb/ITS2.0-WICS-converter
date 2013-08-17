@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use XML::ITS;
 use Test::More 0.88;
-plan tests => 10;
+plan tests => 11;
 use Test::Warn;
 use Path::Tiny;
 use FindBin qw($Bin);
@@ -317,6 +317,21 @@ sub test_warnings {
         );
         is(scalar keys %$match, 2, 'only one pointer match used');
     };
+
+    subtest 'rule with a non-element, non-attribute selector' => sub {
+        plan tests => 3;
+        # match of a locNoteRule with selector comment()
+        my $msg = 'skipping match of illegal type COM ' .
+            '(only ELT or ATT are allowed) from selector: ' .
+            '/myDoc/comment()|/myDoc';
+        my $matches;
+        warning_is
+            { $matches = $ITS->get_matches($rules->[2]) }
+            {carped => $msg },
+            'warning for illegal node type';
+        is(scalar @$matches, 1, 'only one match retrieved');
+        is($matches->[0]->{selector}->name, 'myDoc', 'correct match');
+    };
     return;
 }
 
@@ -384,6 +399,7 @@ __DATA__
         Nothing interesting here, either!
     </par>
     </body>
+    <!-- Some comment... -->
 </myDoc>
 
 @@ basic_rule
@@ -482,4 +498,8 @@ __DATA__
         locNoteType="description"
         selector="id('par2Id')"
         locNotePointer="//par"/>
+      <its:locNoteRule
+        locNoteType="description"
+        selector="/myDoc/comment()|/myDoc"
+        locNote="no comment!"/>
 </its:rules>

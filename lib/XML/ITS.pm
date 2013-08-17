@@ -174,6 +174,13 @@ sub get_matches {
 
     for my $selector_match ( @{ $selector_matches } ){
         $context_pos++;
+        if($selector_match->type !~ /^(?:ELT|ATT)$/){
+            carp 'skipping match of illegal type ' .
+                $selector_match->type .
+                ' (only ELT or ATT are allowed) from selector: ' .
+                $rule->selector;
+             next;
+        }
         my $match;
         $match->{selector} = $selector_match;
         for my $pointer(@{ $rule->pointers }){
