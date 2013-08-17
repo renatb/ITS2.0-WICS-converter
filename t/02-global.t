@@ -113,6 +113,69 @@ Creating new its:rules element to contain all rules
 Setting id of <div> to ITS_1
 Creating new rule <its:translateRule> to match [selector=<div id="ITS_1">]
 
+=== Rule and contents are copied as needed
+--- input
+<?xml version="1.0"?>
+<xml>
+  <head>
+    <its:rules version="2.0" xmlns:its="http://www.w3.org/2005/11/its">
+      <its:locNoteRule selector="//para" translate="yes">
+        <its:locNote>Some note</its:locNote>
+      </its:locNoteRule>
+    </its:rules>
+  </head>
+  <para>Some text</para>
+  <para>Some text</para>
+</xml>
+--- output
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+      <its:locNoteRule selector="id('ITS_1')" translate="yes">
+        <its:locNote>Some note</its:locNote>
+      </its:locNoteRule>
+      <its:locNoteRule selector="id('ITS_2')" translate="yes">
+        <its:locNote>Some note</its:locNote>
+      </its:locNoteRule>
+    </its:rules>
+    </script>
+  </head>
+  <body>
+    <div title="xml">
+        <div title="head"></div>
+        <div title="para" id="ITS_1">Some text</div>
+        <div title="para" id="ITS_2">Some text</div>
+    </div>
+  </body>
+</html>
+--- log
+match: rule=<its:locNoteRule>; selector=<para>
+match: rule=<its:locNoteRule>; selector=<para>
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <para>
+setting @title of <para> to 'para'
+renaming <para> to <div>
+processing <para>
+setting @title of <para> to 'para'
+renaming <para> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Creating new rule <its:locNoteRule> to match [selector=<div id="ITS_1">]
+Setting id of <div> to ITS_2
+Creating new rule <its:locNoteRule> to match [selector=<div id="ITS_2">]
+
 === multiple selectors
 --- input
 <?xml version="1.0"?>

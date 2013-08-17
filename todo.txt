@@ -7,10 +7,9 @@ Engineering Tasks:
 To Do on current task:
 
 Later To Do:
-    - move special log functions into separate class
-    - test copying of stuff inside rules (locNote)
     - test APIs of FutureNode and FutureNodeManager
     - find possible code reuse in converter
+    - move special log functions into separate class
     - change LogUtils to be an object
         - give it the logger to log with
         - have it store id_num on a per-instance basic
