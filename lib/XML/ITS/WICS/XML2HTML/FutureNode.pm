@@ -38,6 +38,41 @@ their location by their original parent.
 
 =head1 METHODS
 
+Create a new FutureNode. The arguments are the FutureNodeManager
+which will manage this instance, the node to be represented, and
+the document containing it (only necessary for namespace FutureNodes).
+
+=cut
+sub new {
+    my ($class, $manager, $node, $doc) = @_;
+
+    #store the state required to paste a representative node later
+    my $type = $node->type;
+    my $state = {type => $type};
+    if($type eq 'ELT'){
+        $state->{node} = $node;
+    }elsif($type eq 'ATT' or $type eq 'PI'){
+        # maintainer note: don't try to store the actual attribute node;
+        # It causes perl to crash!
+        $state->{parent} = $manager->create_future($node->parent);
+        $state->{name} = $node->name;
+        $state->{value} = $node->value;
+    }elsif($type eq 'COM' or $type eq 'TXT'){
+        $state->{node} = $node;
+    }elsif($type eq 'NS'){
+        # save document root for pasting
+        $state->{name} = $node->name;
+        $state->{value} = $node->value;
+        $state->{parent} = $manager->create_future($doc->get_root);
+    }elsif($type eq 'DOC'){
+        #nothing needed. Final XPath will always just be '/'.
+        $state->{node} = $manager->create_future($node->children);
+    }else{
+        croak "Unknown node type $type";
+    }
+    return bless $state, $class;
+}
+
 =head2 C<new_node>
 
 Ensures that the information in the contained node is represented

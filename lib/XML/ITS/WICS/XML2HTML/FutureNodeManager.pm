@@ -87,9 +87,14 @@ sub non_att_futures {
 
 =head2 C<create_future>
 
+This method creates a FutureNode, saves a pointer to it, and then returns
+this pointer. If you use this pointer globally (instead of the FutureNode
+object itself), then you can use C<replace_el_future> to change
+the underlying nodes globally.
+
 If the input node is an XML::ITS::DOM::Node (or Element), this method creates
-a FutureNode object and returns it. If it is an XML::ITS::DOM::Value,
-it simply returns it.
+a FutureNode object and returns a pointer to it. If it is an
+XML::ITS::DOM::Value, it simply returns it.
 
 The owning document as a second argument is required for namespace nodes, which
 store no reference to any other nodes.
@@ -100,12 +105,14 @@ No changes are made to the owning DOM in this method.
 sub create_future {
     my ($self, $node, $doc) = @_;
 
-    #don't create separate FutureNodes out of the same Node
+    # if this node has been saved in a FutureNode before,
+    # return the pointer to that
     if($self->{future_cache}->{$node->unique_key}){
         return $self->{future_cache}->{$node->unique_key};
     }
 
-    my $future = $self->_new_future($node, $doc);
+    my $future = XML::ITS::WICS::XML2HTML::FutureNode->
+        new($self, $node, $doc);
 
     # Cache FutureNodes so that we don't create one for the
     # same node multiple times.
@@ -116,47 +123,12 @@ sub create_future {
     #remember FutureNodes that are elementalized
     my $type = $node->type;
     if($type eq 'ATT'){
-        push @{$self->{att_elements}}, $future;
+        push @{$self->{att_elements}}, \$future;
     }elsif($type eq 'PI' or $type eq 'NS'){
-        push @{$self->{non_att_elements}}, $future;
+        push @{$self->{non_att_elements}}, \$future;
     }
     return \$future;
 }
-
-# note that the logic contained in this method is highly coupled with
-# the new_node() method logic in FutureNode.pm
-sub _new_future {
-    my ($self, $node, $doc) = @_;
-
-    #store the state required to paste a representative node later
-    my $type = $node->type;
-    my $state = {type => $type};
-    if($type eq 'ELT'){
-        $state->{node} = $node;
-    }elsif($type eq 'ATT' or $type eq 'PI'){
-        # maintainer note: don't try to store the actual attribute node;
-        # It causes perl to crash!
-        $state->{parent} = $self->create_future($node->parent);
-        $state->{name} = $node->name;
-        $state->{value} = $node->value;
-    }elsif($type eq 'COM'){
-        $state->{node} = $node;
-    }elsif($type eq 'TXT'){
-        $state->{node} = $node;
-    }elsif($type eq 'NS'){
-        # save document root for pasting
-        $state->{name} = $node->name;
-        $state->{value} = $node->value;
-        $state->{parent} = $self->create_future($doc->get_root);
-    }elsif($type eq 'DOC'){
-        #nothing needed. Final XPath will always just be '/'.
-        $state->{node} = $self->create_future($node->children);
-    }else{
-        croak "Unknown node type $type";
-    }
-    return bless $state, 'XML::ITS::WICS::XML2HTML::FutureNode';
-}
-
 
 =head2 C<realize_all>
 

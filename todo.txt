@@ -7,8 +7,7 @@ Engineering Tasks:
 To Do on current task:
 
 Later To Do:
-    - move FutureNode constructor into FutureNode;
-        - dependency-inject the FutureNodeManager instance
+    - store boolean in FutureNode to indicate the creation of a new element
     - move special log functions into separate class
     - test copying of stuff inside rules (locNote)
     - test APIs of FutureNode and FutureNodeManager

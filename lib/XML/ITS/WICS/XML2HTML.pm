@@ -499,9 +499,9 @@ sub _false_inheritance_rules {
 	my ($self, $rules_el, $indent) = @_;
 
 	my @att_ids =
-		map {$_->new_path} $self->{futureNodeManager}->att_futures();
+		map {${$_}->new_path} $self->{futureNodeManager}->att_futures();
 	my @non_att_ids =
-		map {$_->new_path} $self->{futureNodeManager}->non_att_futures();
+		map {${$_}->new_path} $self->{futureNodeManager}->non_att_futures();
 	if(@att_ids or @non_att_ids){
 		my $txt_node = $rules_el->append_text("\n" . $indent x 3, 'first_child');
 		my $selector = join '|', @att_ids, @non_att_ids;
