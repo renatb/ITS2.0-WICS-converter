@@ -9,6 +9,6 @@ Engineering Tasks:
 To Do on current task:
 
 Later To Do:
+    - use Log::Any
     - check test coverage and fill it in!
-    - rename get_matches and iterate_matches to reflect what is being matched (single rule or all rules)
 
