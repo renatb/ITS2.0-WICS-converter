@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use XML::ITS;
 use Test::More 0.88;
-plan tests => 11;
+plan tests => 12;
 use Test::Warn;
 use Path::Tiny;
 use FindBin qw($Bin);
@@ -24,7 +24,9 @@ test_pointer_position_size(
 test_namespaces(
     \($all_data->{namespaced_document}), \($all_data->{namespace_rules}));
 test_warnings(
-    \($all_data->{document}), \($all_data->{warning_rules}));
+    \($all_data->{document}),
+    \($all_data->{warning_rules}),
+    \($all_data->{default_ns}));
 
 my $doc_path = path($Bin, 'corpus', 'test_external_internal.xml');
 test_iterator($doc_path);
@@ -266,7 +268,7 @@ sub test_namespaces {
 }
 
 sub test_warnings {
-    my ($doc_text, $rules_text) = @_;
+    my ($doc_text, $rules_text, $default_ns_doc) = @_;
     my $ITS = XML::ITS->new(
         'xml',
         doc => $doc_text,
@@ -331,6 +333,22 @@ sub test_warnings {
             'warning for illegal node type';
         is(scalar @$matches, 1, 'only one match retrieved');
         is($matches->[0]->{selector}->name, 'myDoc', 'correct match');
+    };
+    subtest 'document with a default namespace' => sub {
+        plan tests => 2;
+        $ITS = XML::ITS->new(
+            'xml',
+            doc => $default_ns_doc,
+        );
+        $rules = $ITS->get_rules;
+        my $msg = 'warning: selectors do not work with ' .
+            'default namespaces (found www.foo.com)';
+        my $matches;
+        warning_is
+            { $matches = $ITS->get_matches($rules->[0]) }
+            {carped => $msg },
+            'warning for use of default namespace';
+        is(@$matches, 0, 'no matches found');
     };
     return;
 }
@@ -503,3 +521,20 @@ __DATA__
         selector="/myDoc/comment()|/myDoc"
         locNote="no comment!"/>
 </its:rules>
+
+@@ default_ns
+<?xml version="1.0"?>
+<myDoc xmlns="www.foo.com">
+    <head>
+    <its:rules
+        xmlns:its="http://www.w3.org/2005/11/its"
+        version="2.0">
+      <its:translateRule
+        selector="par"
+        translate="yes"/>
+    </its:rules>
+    </head>
+    <par>
+        default namespaces are evil
+    </par>
+</myDoc>

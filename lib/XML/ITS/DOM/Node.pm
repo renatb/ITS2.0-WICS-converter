@@ -123,8 +123,15 @@ sub get_xpath {
         $xpc->registerVarLookupFunc(\&_var_lookup, $context{params});
     }
     if($context{namespaces}){
-        $xpc->registerNs($_, $context{namespaces}->{$_})
-            for keys %{ $context{namespaces} };
+        for (keys %{ $context{namespaces} }){
+            if($_){
+                $xpc->registerNs($_, $context{namespaces}->{$_});
+            }else{
+                carp 'warning: selectors do not work with ' .
+                    'default namespaces (found ' .
+                        "$context{namespaces}->{$_})";
+            }
+        }
     }
     if($context{size}){
         $xpc->setContextSize($context{size});
@@ -265,7 +272,7 @@ sub get_namespaces {
     my ($self) = @_;
     my @namespaces = $self->get_xpath('namespace::*');
     my %namespaces;
-    $namespaces{$_->{node}->getLocalName} = $_->{node}->getData
+    $namespaces{$_->{node}->getLocalName || ''} = $_->{node}->getData
         for @namespaces;
     return \%namespaces;
 }
