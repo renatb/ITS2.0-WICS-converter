@@ -101,7 +101,7 @@ sub _create_indexer {
 			my $match = $matches->{$name};
 			# nothing special for literal values
 			if((ref $match) =~ /Value$/){
-				$futureNodes->{$name} = \$match;
+				$futureNodes->{$name} = $match;
 			}
 			# store futureNode in place of match in new structure
 			else{
@@ -460,7 +460,7 @@ sub _update_rules {
 		# FutureNode's element or an XPath literal. value
 		my $new_rule = $rule->element->copy(1);
 		for my $key(keys %$futureNodes){
-			my $futureNode = ${ $futureNodes->{$key} };
+			my $futureNode = $futureNodes->{$key};
 			# FutureNode- make it visible in the dom and
 			# match the rule selector with its ID
 			if((ref $futureNode) =~ /FutureNode/){
@@ -499,12 +499,11 @@ sub _update_rules {
 sub _false_inheritance_rules {
 	my ($self, $rules_el, $indent) = @_;
 
-	# start by separating attribute and non-attribute representing
-	# elements
+	# start by separating elements representing attributes
+	# from those representing non-attributes
 	my @elementals = $self->{futureNodeManager}->elementals();
 	my (@att_paths, @non_att_paths);
-	for my $future_pointer(@elementals){
-		my $future = $$future_pointer;
+	for my $future (@elementals){
 		$future->type eq 'ATT' ?
 			push @att_paths, $future->new_path :
 			push @non_att_paths, $future->new_path;
@@ -560,7 +559,7 @@ sub _log_new_rule {
 		' to match [';
 	my @match_strings;
 	for my $key(keys %$futureNodes){
-		my $futureNode = ${ $futureNodes->{$key} };
+		my $futureNode = $futureNodes->{$key};
 		if((ref $futureNode) =~ /FutureNode/){
 			push @match_strings, "$key=" .
 				 node_log_id($futureNode->new_node);

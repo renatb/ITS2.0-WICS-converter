@@ -5,7 +5,6 @@ use XML::ITS::DOM::Element qw(new_element);
 use XML::ITS::WICS::LogUtils qw(node_log_id get_or_set_id);
 use Carp;
 use Log::Any qw($log);
-use Exporter::Easy (OK => [qw(new_pointer)]);
 
 #VERSION
 #ABSTRACT: Save a single node during DOM transformation.
@@ -34,7 +33,8 @@ so no XPath selectors are broken before then.
 
 This is only guaranteed to work if document elements are not deleted
 after this object's creation. This is because some FutureNodes remember
-their location by their original parent.
+their location by their original parent, and deleting these will cause
+dereference errors.
 
 =head1 METHODS
 
@@ -75,6 +75,23 @@ sub new {
     return bless $state, $class;
 }
 
+=head2 C<replace_el>
+
+If this FutureNode represents an element, this method trades out
+the element represented by this instance. Otherwise it croaks.
+
+=cut
+sub replace_el {
+    my ($self, $el) = @_;
+    my $type = $self->type;
+    if($type eq 'ELT'){
+        $self->{node} = $el;
+    }else{
+        croak "Attempt to replace element in FuturNode of type " . $type;
+    }
+    return;
+}
+
 =head2 C<creates_element>
 
 True if the new_node method of this instance will cause the creation of
@@ -100,11 +117,11 @@ sub type {
 =head2 C<new_node>
 
 Ensures that the information in the contained node is represented
-in the HTML DOM. This may cause changes to the owning DOM. Calling this
-method multiple times, however, only changes the DOM once and always
-returns the same node.
+in the HTML DOM. This may cause changes to the owning DOM (see
+C<creates_element>). Calling this method multiple times, however,
+only changes the DOM once and always returns the same node.
 
-Returns the ITS::DOM::Node object corresponding to the original Node
+Returns an ITS::DOM::Node object corresponding to the original Node
 (which might or might not be the same Node object).
 
 =cut
@@ -128,9 +145,9 @@ sub new_node {
             },
             $self->{value}
         );
-        $el->paste(${$self->{parent}}->new_node, 'first_child');
+        $el->paste($self->{parent}->new_node, 'first_child');
         $self->{element} = $el;
-        _log_new_el('ATT', $self->{name}) if $log->is_debug;
+        $self->_log_new_el if $log->is_debug;
     }
     # comments aren't deleted, so just place a new element next to them.
     # TODO: might be better just to leave it as a comment and use nodePath
@@ -144,16 +161,13 @@ sub new_node {
             'span',
             {
                  title => $self->{name},
-                 # title => $self->{node}->name,
                  class => '_ITS_PI'
             },
             $self->{value}
-            # $self->{node}->value
         );
         #paste in current version of original parent
-        $el->paste(${$self->{parent}}->new_node);
-        _log_new_el('PI', $self->{name}) if $log->is_debug;
-        # _log_new_el('PI', $self->{node}->name) if $log->is_debug;
+        $el->paste($self->{parent}->new_node);
+        $self->_log_new_el if $log->is_debug;
         $self->{element} = $el;
     }
     elsif($self->{type} eq 'NS'){
@@ -165,8 +179,8 @@ sub new_node {
             },
             $self->{value}
         );
-        $el->paste(${ $self->{parent} }->new_node, 'first_child');
-        _log_new_el('NS', $self->{name});
+        $el->paste($self->{parent}->new_node, 'first_child');
+        $self->_log_new_el;
         $self->{element} = $el;
     }
     # Return the original text node. Don't wrap with an
@@ -179,7 +193,7 @@ sub new_node {
     }
     elsif($self->{type} eq 'DOC'){
         # return the root document
-        $self->{element} = ${ $self->{node} }->new_node->doc_node;
+        $self->{element} = $self->{node}->new_node->doc_node;
     }
 
     return $self->{element};
@@ -205,10 +219,10 @@ sub new_path {
 
 #log the creation of a new element to represent the input node type.
 sub _log_new_el {
-    my ($type, $name) = @_;
+    my ($self) = @_;
     my $msg = 'Creating new <span> element to represent node of type ';
-    $msg .= $type;
-    $msg .= q< (> . $name . q<)>;
+    $msg .= $self->type;
+    $msg .= q< (> . $self->{name} . q<)>;
     $log->debug($msg);
 }
 
