@@ -57,6 +57,7 @@ sub new {
         $state->{parent} = $manager->create_future($node->parent);
         $state->{name} = $node->name;
         $state->{value} = $node->value;
+        $state->{creates_element} = 1;
     }elsif($type eq 'COM' or $type eq 'TXT'){
         $state->{node} = $node;
     }elsif($type eq 'NS'){
@@ -64,6 +65,7 @@ sub new {
         $state->{name} = $node->name;
         $state->{value} = $node->value;
         $state->{parent} = $manager->create_future($doc->get_root);
+        $state->{creates_element} = 1;
     }elsif($type eq 'DOC'){
         #nothing needed. Final XPath will always just be '/'.
         $state->{node} = $manager->create_future($node->children);
@@ -71,6 +73,28 @@ sub new {
         croak "Unknown node type $type";
     }
     return bless $state, $class;
+}
+
+=head2 C<creates_element>
+
+True if the new_node method of this instance will cause the creation of
+a new element in the DOM, false otherwise.
+
+=cut
+sub creates_element {
+    my ($self) = @_;
+    return exists $self->{creates_element};
+}
+
+=head2 C<type>
+
+Returns the type of node being represented (one of the strings returned
+by C<XML::ITS::DOM::Node::type>).
+
+=cut
+sub type {
+    my ($self) = @_;
+    return $self->{type};
 }
 
 =head2 C<new_node>

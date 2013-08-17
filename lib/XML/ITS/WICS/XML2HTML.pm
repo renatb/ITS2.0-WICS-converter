@@ -491,21 +491,29 @@ sub _update_rules {
 }
 
 # Nodes turned into elements (attributes, namespaces, PIs)
-# will incorrectly inherit much ITS info.
+# will incorrectly inherit ITS information.
 # Create rules to undo incorrect inheritance for these types
 # of nodes, where possible. This is only possible for three
-# categories: translate, direction, and localeFilter
+# categories: translate, direction, and localeFilter. The other
+# inheriting categories will just be incorrect :(
 sub _false_inheritance_rules {
 	my ($self, $rules_el, $indent) = @_;
 
-	my @att_ids =
-		map {${$_}->new_path} $self->{futureNodeManager}->att_futures();
-	my @non_att_ids =
-		map {${$_}->new_path} $self->{futureNodeManager}->non_att_futures();
-	if(@att_ids or @non_att_ids){
+	# start by separating attribute and non-attribute representing
+	# elements
+	my @elementals = $self->{futureNodeManager}->elementals();
+	my (@att_paths, @non_att_paths);
+	for my $future_pointer(@elementals){
+		my $future = $$future_pointer;
+		$future->type eq 'ATT' ?
+			push @att_paths, $future->new_path :
+			push @non_att_paths, $future->new_path;
+	}
+
+	# Then create a rule make each of these elements untranslatable
+	if(@elementals){
 		my $txt_node = $rules_el->append_text("\n" . $indent x 3, 'first_child');
-		my $selector = join '|', @att_ids, @non_att_ids;
-		# don't translate anything (including attributes by default)
+		my $selector = join '|', @att_paths, @non_att_paths;
 		my $new_rule = new_element('its:translateRule', {translate => 'no', selector => $selector});
 		$new_rule->paste($txt_node, 'after');
 		if($log->is_debug){
@@ -513,11 +521,13 @@ sub _false_inheritance_rules {
 				' to prevent false inheritance');
 		}
 	}
-	if(@non_att_ids){
-		#for non-attributes, reset direction and localeFilter
-		my $selector = join '|', @non_att_ids;
+	# Finally, if any do not represent attributes, create rules to set default
+	# values for direction and localeFilter
+	if(@non_att_paths){
+		my $selector = join '|', @non_att_paths;
 
-		my $txt_node = $rules_el->append_text("\n" . $indent x 3, 'first_child');
+		my $txt_node = $rules_el->append_text("\n" .
+			$indent x 3, 'first_child');
 		my $new_rule = new_element(
 			'its:dirRule', {dir => 'ltr', selector => $selector});
 		$new_rule->paste($txt_node, 'after');
@@ -540,6 +550,7 @@ sub _false_inheritance_rules {
 				' to prevent false inheritance');
 		}
 	}
+	return;
 }
 
 #log the creation of a new rule (given the rule and its associated FutureNodes)

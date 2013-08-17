@@ -33,11 +33,9 @@ sub new {
         # This allows changing out nodes which are contained in
         # other structures.
         future_cache => {},
-        # these contain futureNodes that create elements in the document;
-        # these must be saved so that special rules combatting inheritance
-        # can be created
-        att_elements => [], #elements for attributes
-        non_att_elements => [], #elements for PIs and namespaces
+        # pointers to all FutureNodes which create elements;
+        # these must be saved to create rules to combat false inheritance
+        elementals => [],
     }, $class;
 }
 
@@ -63,26 +61,15 @@ sub replace_el_future {
     }
 }
 
-=head2 C<att_futures>
+=head2 C<elementals>
 
-This returns a list of all of the FutureNodes that represent attributes
-(which are converted into attributes upon realization)
-
-=cut
-sub att_futures {
-    my ($self) = @_;
-    return @{$self->{att_elements}};
-}
-
-=head2 C<non_att_futures>
-
-This returns a list of all of the FutureNodes that represent non-attribute
-nodes that are converted into elements.
+Returns pointers to all of the FutureNodes which create(d) new elements in
+the DOM.
 
 =cut
-sub non_att_futures {
+sub elementals {
     my ($self) = @_;
-    return @{$self->{non_att_elements}};
+    return @{ $self->{elementals} };
 }
 
 =head2 C<create_future>
@@ -121,11 +108,14 @@ sub create_future {
     $self->{future_cache}->{$node->unique_key} = \$future;
 
     #remember FutureNodes that are elementalized
-    my $type = $node->type;
-    if($type eq 'ATT'){
-        push @{$self->{att_elements}}, \$future;
-    }elsif($type eq 'PI' or $type eq 'NS'){
-        push @{$self->{non_att_elements}}, \$future;
+    if($future->creates_element){
+        push @{$self->{elementals}}, \$future;
+        my $type = $node->type;
+        if($type eq 'ATT'){
+            push @{$self->{att_elements}}, \$future;
+        }else{
+            push @{$self->{non_att_elements}}, \$future;
+        }
     }
     return \$future;
 }
