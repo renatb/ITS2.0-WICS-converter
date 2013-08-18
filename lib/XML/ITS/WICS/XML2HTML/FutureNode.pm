@@ -87,7 +87,7 @@ sub replace_el {
     if($type eq 'ELT'){
         $self->{node} = $el;
     }else{
-        croak "Attempt to replace element in FuturNode of type " . $type;
+        croak "Attempt to replace element in FutureNode of type " . $type;
     }
     return;
 }
