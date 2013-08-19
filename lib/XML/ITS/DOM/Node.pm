@@ -409,7 +409,9 @@ Return true if this node is the same node as the input node.
 =cut
 sub is_same_node {
     my ($self, $other) = @_;
-    return $self->{node}->isSameNode($other->{node});
+    #use unique_key method because we made it work for
+    #Namespaces; isSameNode doesn't work with Namespaces.
+    return $self->unique_key eq $other->unique_key;
 }
 
 =head2 C<copy>
