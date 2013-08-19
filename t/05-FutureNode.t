@@ -1,27 +1,29 @@
 #test correct operation of the FutureNode class
 use strict;
 use warnings;
-use XML::ITS::DOM;
 use Test::More 0.88;
 use Test::Base;
+plan tests => 9;
+
+use XML::ITS::DOM;
 use XML::ITS::WICS::LogUtils qw(reset_id);
 use XML::ITS::WICS::XML2HTML::FutureNodeManager;
+use XML::ITS::DOM::Element qw(new_element);
 my $future_class = 'XML::ITS::WICS::XML2HTML::FutureNode';
 use_ok($future_class);
-plan tests => 1 + blocks();
 
+#test the storage and retrieval of all 7 types of nodes in a FutureNode.
+#use a new FutureNodeManager each time, and reset the number used to create
+#new element IDs.
 for my $block(blocks()){
     reset_id;
     subtest $block->name => sub {
-        my $num_tests = 6;
+        my $num_tests = 7;
         $num_tests++ if($block->title);
         $num_tests++ if($block->contents);
         plan tests => $num_tests;
 
-        my $manager = XML::ITS::WICS::XML2HTML::FutureNodeManager->new();
-        my $dom = XML::ITS::DOM->new( xml => \($block->doc) );
-        my ($node) = $dom->get_root->get_xpath($block->future);
-        my $future = $future_class->new($manager, $node, $dom);
+        my ($old_node, $future) = get_future($block);
         my $new_node = $future->new_node;
 
         my $dup_new_node = $future->new_node;
@@ -39,7 +41,36 @@ for my $block(blocks()){
         if($block->contents){
             is($new_node->text, $block->contents, 'correct element contents');
         }
+
+        $block->creates_element ?
+            ok(!$new_node->is_same_node($old_node),
+                'new created element is not same as old node')
+            :
+            ok($new_node->is_same_node($old_node),
+                'new node is same as old node');
     };
+
+    if($block->type eq 'ELT'){
+        subtest 'element replacement inside FutureNode' => sub {
+            plan tests => 1;
+            my ($old_node, $future) = get_future($block);
+            my $other_node = new_element('foo');
+            $future->replace_el($other_node);
+            my $new_node = $future->new_node;
+
+            ok($new_node->is_same_node($other_node),
+                'replace_el works properly');
+        }
+    }
+}
+
+sub get_future {
+    my ($block) = @_;
+    my $manager = XML::ITS::WICS::XML2HTML::FutureNodeManager->new();
+    my $dom = XML::ITS::DOM->new( xml => \($block->doc) );
+    my ($node) = $dom->get_root->get_xpath($block->future);
+    my $future = $future_class->new($manager, $node, $dom);
+    return ($node, $future);
 }
 
 __DATA__
