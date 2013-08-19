@@ -7,7 +7,7 @@ Engineering Tasks:
 To Do on current task:
 
 Later To Do:
-    - test APIs of FutureNode and FutureNodeManager
+    - test API of FutureNodeManager
     - find possible code reuse in converter
     - move special log functions into separate class
     - change LogUtils to be an object
