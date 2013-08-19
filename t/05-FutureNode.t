@@ -13,7 +13,7 @@ plan tests => 1 + blocks();
 for my $block(blocks()){
     reset_id;
     subtest $block->name => sub {
-        my $num_tests = 5;
+        my $num_tests = 6;
         $num_tests++ if($block->title);
         $num_tests++ if($block->contents);
         plan tests => $num_tests;
@@ -23,6 +23,9 @@ for my $block(blocks()){
         my ($node) = $dom->get_root->get_xpath($block->future);
         my $future = $future_class->new($manager, $node, $dom);
         my $new_node = $future->new_node;
+
+        my $dup_new_node = $future->new_node;
+        ok($new_node->is_same_node($dup_new_node), 'new_node always returns same node');
 
         is(!!($future->creates_element),
             !!$block->creates_element, 'correct creates_element value');
