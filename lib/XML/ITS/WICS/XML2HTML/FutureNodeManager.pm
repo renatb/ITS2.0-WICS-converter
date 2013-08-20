@@ -13,10 +13,15 @@ use Carp;
     use XML::ITS;
     my $f_manager = XML::ITS::WICS::XML2HTML::FutureNodeManager->new();
     my $ITS = XML::ITS->new('xml', doc => 'myITSfile.xml');
+
+    #create one or more FutureNodes through this manager instance
     my ($ns) = $ITS->get_root->get_xpath('namespace::*');
-    my $f_ns = create_future($ns);
+    my $f_ns = create_future($ns, $ITS->get_doc);
+
     # change the document around, but don't delete any elements...
-    $f_ns->new_node;
+
+    # call new_node on all of the managed FutureNode instances
+    $f_manager->realize_all;
 
 =head1 METHODS
 
