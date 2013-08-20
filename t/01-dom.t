@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 9;
+plan tests => 11;
 use XML::ITS::DOM;
 use Test::Exception;
 use Test::NoWarnings;
@@ -17,6 +17,7 @@ test_errors($dom_path);
 my $dom = XML::ITS::DOM->new( 'xml' => $dom_path );
 
 test_dom_props($dom, $dom_path);
+test_counter($dom);
 
 
 # make sure that errors are thrown for bad input
@@ -81,4 +82,10 @@ sub test_dom_props {
     is($dom->get_source, $dom_path, 'Source name');
     is(ref $dom->get_root, 'XML::ITS::DOM::Element', 'retrieve root element');
     return;
+}
+
+sub test_counter {
+    my ($dom) = @_;
+    is($dom->next_id, 1, 'first ID is 1');
+    is($dom->next_id, 2, 'second ID is 2');
 }

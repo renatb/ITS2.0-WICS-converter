@@ -57,7 +57,9 @@ sub new {
         dom => $dom,
         base => $base,
         source => $identifier,
-        type => $type
+        type => $type,
+        #a running counter for creating unique IDs
+        id => 0
     }, $class;
 }
 
@@ -139,7 +141,7 @@ sub _get_dom {
             };
         }else{
             $dom = $parser->parse_string( $$data );
-            carp_parse_errors($parser);
+            _carp_parse_errors($parser);
         }
     }
     else{
@@ -152,13 +154,13 @@ sub _get_dom {
             };
         }else{
             $dom = $parser->parse_html_file( $data );
-            carp_parse_errors($parser);
+            _carp_parse_errors($parser);
         }
     }
     return $dom;
 }
 
-sub carp_parse_errors {
+sub _carp_parse_errors {
     my ($parser) = @_;
     if(my @err = $parser->errors){
         @err = grep {
@@ -169,4 +171,15 @@ sub carp_parse_errors {
     return;
 }
 
+
+=head2 C<next_id>
+
+Returns a unique number each time it is called with a given
+DOM instance. This can be used to created unique id values.
+
+=cut
+sub next_id {
+    my ($self) = @_;
+    return ++$self->{id};
+}
 1;
