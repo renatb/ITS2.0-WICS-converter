@@ -8,11 +8,6 @@ use XML::ITS::WICS::XML2HTML::FutureNodeManager;
 use XML::ITS::WICS::XML2HTML::FutureNode;
 plan tests => 13;
 
-my $manager = XML::ITS::WICS::XML2HTML::FutureNodeManager->new();
-
-is_deeply([$manager->elementals], [], 'no elemental elements after construction');
-is($manager->total_futures, 0, 'no FutureNodes after construction');
-
 my $dom = XML::ITS::DOM->new( xml => \<<'END_XML' );
 <xml>
 Some text
@@ -23,14 +18,18 @@ Some text
 </xml>
 END_XML
 
+my $manager = XML::ITS::WICS::XML2HTML::FutureNodeManager->new($dom);
+is_deeply([$manager->elementals], [], 'no elemental elements after construction');
+is($manager->total_futures, 0, 'no FutureNodes after construction');
+
 my $root = $dom->get_root;
-my $doc_future = $manager->create_future($root->get_xpath('/'), $dom);
+my $doc_future = $manager->create_future($root->get_xpath('/'));
 my $elt_future = $manager->create_future($root->get_xpath('/*'));
 my $com_future = $manager->create_future($root->get_xpath('//comment()'));
 my $txt_future = $manager->create_future($root->get_xpath('/xml/text()[1]'));
 my $att_future = $manager->create_future($root->get_xpath('//@*'));
 my $pi_future = $manager->create_future($root->get_xpath('//processing-instruction()'));
-my $ns_future = $manager->create_future($root->get_xpath('//namespace::*'), $dom);
+my $ns_future = $manager->create_future($root->get_xpath('//namespace::*'));
 
 # we created 7, but some of them may have stored location information via
 # additional new FutureNodes

@@ -27,13 +27,17 @@ use Carp;
 
 =head2 C<new>
 
-Creates a new FutureNode manager. This class should be instantiated
-once for each document to be transformed.
+Creates a new FutureNode manager. Single required argument is
+an C<XML::ITS::DOM> object. Every node to be made into a FutureNode
+via this instance should be owned by the input DOM object.
 
 =cut
 sub new {
-    my ($class) = @_;
+    my ($class, $dom) = @_;
+    croak 'missing required argument XML::ITS::DOM'
+        unless $dom;
     return bless {
+        dom => $dom,
         # this contains every FutureNode ever created.
         # This allows changing out nodes which are contained in
         # other structures via replace_el_future.
@@ -61,7 +65,7 @@ No changes are made to the owning DOM in this method.
 
 =cut
 sub create_future {
-    my ($self, $node, $doc) = @_;
+    my ($self, $node) = @_;
 
     # if this node has been saved in a FutureNode before,
     # return the pointer to that
@@ -70,7 +74,7 @@ sub create_future {
     }
 
     my $future = XML::ITS::WICS::XML2HTML::FutureNode->
-        new($self, $node, $doc);
+        new($self, $node, $self->{dom});
 
     # Cache FutureNodes so that we don't create one for the
     # same node multiple times.

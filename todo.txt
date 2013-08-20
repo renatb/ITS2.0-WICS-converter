@@ -7,8 +7,7 @@ Engineering Tasks:
 To Do on current task:
 
 Later To Do:
-    * store owning DOM in FutureNodeManager object, instead of passing it as an arg to create_future()
-    - export constructors for FutureNode and FutureNodeManager
+    * export constructors for FutureNode and FutureNodeManager
     - change LogUtils to be an object
         - give it the logger to log with
         - have it store id_num on a per-instance basis

@@ -39,8 +39,6 @@ sub new {
 	%args = (
 		title => 'WICS',
 		%args,
-		futureNodeManager =>
-			XML::ITS::WICS::XML2HTML::FutureNodeManager->new()
 	);
 	return bless \%args, $class;
 }
@@ -58,19 +56,27 @@ Return value is a string pointer containing the output HTML string.
 =cut
 
 sub convert {
-	my ($self, $doc) = @_;
-	my $ITS = XML::ITS->new('xml', doc => $doc);
+	my ($self, $doc_data) = @_;
+
+	#create the document from the input data
+	my $ITS = XML::ITS->new('xml', doc => $doc_data);
+	my $dom = $ITS->get_doc;
+
+	#create a futureNodeManager associated with the input document
+	$self->{futureNodeManager} =
+		XML::ITS::WICS::XML2HTML::FutureNodeManager->new($dom);
+	#new document, so we can create element IDs starting from ITS_1 again
+	reset_id();
+
 
 	# [rule, {selector => futureNode, *pointer => futureNode...}]
 	my @matches;
-	#new document, so we can create element IDs starting from ITS_1 again
-	reset_id();
 	# find all rule matches and save them in @matches
-	$ITS->iterate_matches($self->_create_indexer(\@matches, $ITS->get_doc));
+	$ITS->iterate_matches($self->_create_indexer(\@matches));
 
 	# convert $ITS into an HTML document; rename elements, process atts,
 	# and paste the root in an HTML body.
-	my $html_doc = $self->_htmlize($ITS->get_doc);
+	my $html_doc = $self->_htmlize($dom);
 
 	#grab the head to put rules in it
 	my $head = ( $html_doc->get_root->children )[0];
@@ -82,11 +88,10 @@ sub convert {
 }
 
 # create an indexing sub for ITS::iterate_matches, and use a
-# closure to create some indices during processing, as well
-# as provide access to the containing document.
-# This sub pushes matches and FutureNodes onto $index_array
+# closure to create an index of rule matches during processing
+# This sub pushes matches and FutureNodes onto $matches_index
 sub _create_indexer {
-	my ($self, $index_array, $doc) = @_;
+	my ($self, $matches_index) = @_;
 
 	#iterate_matches passes in a rule and it's matched nodes
 	return sub {
@@ -106,10 +111,10 @@ sub _create_indexer {
 			# store futureNode in place of match in new structure
 			else{
 				$futureNodes->{$name} =
-					 $self->{futureNodeManager}->create_future($match, $doc);
+					 $self->{futureNodeManager}->create_future($match);
 			}
 		}
-		push @{ $index_array }, [$rule, $futureNodes];
+		push @{ $matches_index }, [$rule, $futureNodes];
 		return;
 	};
 }
