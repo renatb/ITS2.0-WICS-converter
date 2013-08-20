@@ -7,16 +7,14 @@ plan tests => 14;
 use Test::Exception;
 
 use XML::ITS::DOM;
-use XML::ITS::WICS::LogUtils qw(reset_id);
+use XML::ITS::WICS::LogUtils;
 use XML::ITS::WICS::XML2HTML::FutureNodeManager qw(new_manager);
 use XML::ITS::DOM::Element qw(new_element);
 use XML::ITS::WICS::XML2HTML::FutureNode qw(new_future);
 
 #test the storage and retrieval of all 7 types of nodes in a FutureNode.
-#use a new FutureNodeManager each time, and reset the number used to create
-#new element IDs.
+#use a new FutureNodeManager each time
 for my $block(blocks()){
-    reset_id;
     subtest $block->name => sub {
         my $num_tests = 7;
         $num_tests++ if($block->title);

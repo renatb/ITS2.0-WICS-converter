@@ -9,7 +9,7 @@ use XML::ITS qw(its_ns);
 use XML::ITS::DOM;
 use XML::ITS::DOM::Element qw(new_element);
 use XML::ITS::WICS::XML2HTML::FutureNodeManager qw(new_manager);
-use XML::ITS::WICS::LogUtils qw(node_log_id get_or_set_id reset_id);
+use XML::ITS::WICS::LogUtils qw(node_log_id);
 
 use feature 'state';
 our $HTML_NS = 'http://www.w3.org/1999/xhtml';
@@ -65,9 +65,6 @@ sub convert {
 	#create a futureNodeManager associated with the input document
 	$self->{futureNodeManager} =
 		new_manager($dom);
-	#new document, so we can create element IDs starting from ITS_1 again
-	reset_id();
-
 
 	# [rule, {selector => futureNode, *pointer => futureNode...}]
 	my @matches;

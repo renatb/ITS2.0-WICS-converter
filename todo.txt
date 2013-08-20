@@ -7,11 +7,7 @@ Engineering Tasks:
 To Do on current task:
 
 Later To Do:
-    * export constructors for FutureNode and FutureNodeManager
-    - change LogUtils to be an object
-        - give it the logger to log with
-        - have it store id_num on a per-instance basis
-        - add other special log functions
+    * move more methods into LogUtils
     - find possible code reuse in converter
     - Decide on organization of end-project
         - WICS.pm one file that can convert anything?

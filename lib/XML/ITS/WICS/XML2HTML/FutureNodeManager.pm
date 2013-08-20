@@ -1,7 +1,7 @@
 package XML::ITS::WICS::XML2HTML::FutureNodeManager;
 use strict;
 use warnings;
-use XML::ITS::WICS::XML2HTML::FutureNode;
+use XML::ITS::WICS::XML2HTML::FutureNode qw(new_future);
 use Exporter::Easy (OK => [qw(new_manager)]);
 use Carp;
 
@@ -94,8 +94,7 @@ sub create_future {
         return $self->{future_cache}->{$node->unique_key};
     }
 
-    my $future = XML::ITS::WICS::XML2HTML::FutureNode->
-        new($self, $node, $self->{dom});
+    my $future = new_future($self, $node, $self->{dom});
 
     # Cache FutureNodes so that we don't create one for the
     # same node multiple times.

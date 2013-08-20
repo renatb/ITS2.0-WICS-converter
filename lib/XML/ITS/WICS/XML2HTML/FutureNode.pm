@@ -57,7 +57,7 @@ sub new_future {
 
 Create a new FutureNode. The arguments are the FutureNodeManager
 which will manage this instance, the node to be represented, and
-the document containing it (only necessary for namespace FutureNodes).
+the XML::ITS::DOM instance containing it.
 
 =cut
 sub new {
@@ -65,7 +65,7 @@ sub new {
 
     #store the state required to paste a representative node later
     my $type = $node->type;
-    my $state = {type => $type};
+    my $state = {type => $type, dom => $doc};
     if($type eq 'ELT'){
         $state->{node} = $node;
     }elsif($type eq 'ATT' or $type eq 'PI'){
@@ -228,7 +228,7 @@ sub new_path {
     my $type = $node->type;
     if($type eq 'ELT'){
         return q{id('} .
-            get_or_set_id($node, $log). q{')}
+            get_or_set_id($node, $self->{dom}, $log). q{')}
     }else{
         return $node->path;
     }
