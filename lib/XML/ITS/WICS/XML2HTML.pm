@@ -9,7 +9,7 @@ use XML::ITS qw(its_ns);
 use XML::ITS::DOM;
 use XML::ITS::DOM::Element qw(new_element);
 use XML::ITS::WICS::XML2HTML::FutureNodeManager qw(new_manager);
-use XML::ITS::WICS::LogUtils qw(node_log_id);
+use XML::ITS::WICS::LogUtils qw(node_log_id log_match log_new_rule);
 
 use feature 'state';
 our $HTML_NS = 'http://www.w3.org/1999/xhtml';
@@ -93,7 +93,7 @@ sub _create_indexer {
 	#iterate_matches passes in a rule and it's matched nodes
 	return sub {
 		my ($rule, $matches) = @_;
-		_log_match($rule, $matches);
+		log_match($rule, $matches, $log);
 
 		# create FutureNodes to represent each matched node;
 		# $futureNodes is $match, but with FutureNodes instead of Nodes
@@ -114,17 +114,6 @@ sub _create_indexer {
 		push @{ $matches_index }, [$rule, $futureNodes];
 		return;
 	};
-}
-
-sub _log_match {
-	my ($rule, $match) = @_;
-	if ($log->is_debug()){
-		my $message = 'match: rule=' . node_log_id($rule->element);
-		$message .= "; $_=" . node_log_id($match->{$_})
-			for keys $match;
-		$log->debug($message);
-	}
-	return;
 }
 
 # Pass in document to be htmlized and a hash containing node->futureNode ref pairs
@@ -475,7 +464,7 @@ sub _update_rules {
 		}
 
 		if($log->is_debug){
-			_log_new_rule($new_rule, $futureNodes);
+			log_new_rule($new_rule, $futureNodes, $log);
 		}
 
 		$new_rule->paste($rules_el);
@@ -551,27 +540,6 @@ sub _false_inheritance_rules {
 				' to prevent false inheritance');
 		}
 	}
-	return;
-}
-
-#log the creation of a new rule (given the rule and its associated FutureNodes)
-sub _log_new_rule {
-	my ($new_rule, $futureNodes) = @_;
-	my $string = 'Creating new rule ' . node_log_id($new_rule) .
-		' to match [';
-	my @match_strings;
-	for my $key(keys %$futureNodes){
-		my $futureNode = $futureNodes->{$key};
-		if((ref $futureNode) =~ /FutureNode/){
-			push @match_strings, "$key=" .
-				 node_log_id($futureNode->new_node);
-		}else{
-			push @match_strings, "$key=" . $futureNode->as_xpath;
-		}
-	}
-	$string .= join '; ', @match_strings;
-	$string .= ']';
-	$log->debug($string);
 	return;
 }
 

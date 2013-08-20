@@ -7,7 +7,7 @@ Engineering Tasks:
 To Do on current task:
 
 Later To Do:
-    * move more methods into LogUtils
+    * see about moving some functionality out of XML2HTML
     - find possible code reuse in converter
     - Decide on organization of end-project
         - WICS.pm one file that can convert anything?

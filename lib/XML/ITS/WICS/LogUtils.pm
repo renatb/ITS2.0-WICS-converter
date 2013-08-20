@@ -2,7 +2,14 @@ package XML::ITS::WICS::LogUtils;
 use strict;
 use warnings;
 use XML::ITS::DOM::Node;
-use Exporter::Easy (OK => [qw(node_log_id get_or_set_id)]);
+use Exporter::Easy (
+    OK => [qw(
+        node_log_id
+        get_or_set_id
+        log_match
+        log_new_rule
+        )]
+);
 use Carp;
 
 # ABSTRACT: Log utility functions for WICS
@@ -58,16 +65,61 @@ sub node_log_id {
     }
 }
 
+=head2 C<log_match>
+
+Logs a global rule match.
+
+Arguments are an C<XML::ITS::Rule> and a match hash pointer
+(the arguments used in an C<XML::ITS::iterate_matches> handler),
+and a C<Log::Any> object to use to log the given rule match.
+
+=cut
+sub log_match {
+    my ($rule, $match, $log) = @_;
+    if ($log->is_debug()){
+        my $message = 'match: rule=' . node_log_id($rule->element);
+        $message .= "; $_=" . node_log_id($match->{$_})
+            for keys $match;
+        $log->debug($message);
+    }
+    return;
+}
+
+=head2 C<log_new_rule>
+
+Log the creation of a new rule.
+
+Arguments are the created rule, its matched FutureNodes
+in an array ref, and the C<Log::Any> object to use for logging.
+
+=cut
+sub log_new_rule {
+    my ($new_rule, $futureNodes, $log) = @_;
+    my $string = 'Creating new rule ' . node_log_id($new_rule) .
+        ' to match [';
+    my @match_strings;
+    for my $key(keys %$futureNodes){
+        my $futureNode = $futureNodes->{$key};
+        if((ref $futureNode) =~ /FutureNode/){
+            push @match_strings, "$key=" .
+                 node_log_id($futureNode->new_node);
+        }else{
+            push @match_strings, "$key=" . $futureNode->as_xpath;
+        }
+    }
+    $string .= join '; ', @match_strings;
+    $string .= ']';
+    $log->debug($string);
+    return;
+}
+
 =head2 C<get_or_set_id>
 
-First argument: element to get or set ID from/on.
-
-Second argument: Log::Any object to log ID setting with.
-
-Returns the id or xml:id attribute of the
-given element; if none exists, sets one
+Either returns an element's id value, or sets one, logs the change,
 and returns it.
 
+Arguments are: element to get or set ID from/on, C<XML::ITS::DOM> object
+containing the element, and the C<Log::Any> object to log ID setting with.
 
 =cut
 sub get_or_set_id {
