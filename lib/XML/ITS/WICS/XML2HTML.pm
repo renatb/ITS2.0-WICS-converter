@@ -8,7 +8,7 @@ use Log::Any qw($log);
 use XML::ITS qw(its_ns);
 use XML::ITS::DOM;
 use XML::ITS::DOM::Element qw(new_element);
-use XML::ITS::WICS::XML2HTML::FutureNodeManager;
+use XML::ITS::WICS::XML2HTML::FutureNodeManager qw(new_manager);
 use XML::ITS::WICS::LogUtils qw(node_log_id get_or_set_id reset_id);
 
 use feature 'state';
@@ -64,7 +64,7 @@ sub convert {
 
 	#create a futureNodeManager associated with the input document
 	$self->{futureNodeManager} =
-		XML::ITS::WICS::XML2HTML::FutureNodeManager->new($dom);
+		new_manager($dom);
 	#new document, so we can create element IDs starting from ITS_1 again
 	reset_id();
 

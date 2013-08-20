@@ -2,6 +2,7 @@ package XML::ITS::WICS::XML2HTML::FutureNodeManager;
 use strict;
 use warnings;
 use XML::ITS::WICS::XML2HTML::FutureNode;
+use Exporter::Easy (OK => [qw(new_manager)]);
 use Carp;
 
 # VERSION
@@ -11,17 +12,33 @@ use Carp;
 
     use XML::ITS::WICS::XML2HTML::FutureNodeManager;
     use XML::ITS;
-    my $f_manager = XML::ITS::WICS::XML2HTML::FutureNodeManager->new();
     my $ITS = XML::ITS->new('xml', doc => 'myITSfile.xml');
+    my $f_manager =
+        XML::ITS::WICS::XML2HTML::FutureNodeManager->new($ITS->get_doc);
 
     #create one or more FutureNodes through this manager instance
     my ($ns) = $ITS->get_root->get_xpath('namespace::*');
-    my $f_ns = create_future($ns, $ITS->get_doc);
+    my $f_ns = create_future($ns);
 
     # change the document around, but don't delete any elements...
 
     # call new_node on all of the managed FutureNode instances
     $f_manager->realize_all;
+
+=head1 EXPORTS
+
+The following function may optionally be exported to the caller's namespace:
+
+=head2 C<new_manager>
+
+This is a convenience function for constructing an instance of this class
+(saves some typing, since the class has such a long name).
+
+=cut
+sub new_manager {
+    my ($dom) = @_;
+    return __PACKAGE__->new($dom);
+}
 
 =head1 METHODS
 
@@ -29,7 +46,9 @@ use Carp;
 
 Creates a new FutureNode manager. Single required argument is
 an C<XML::ITS::DOM> object. Every node to be made into a FutureNode
-via this instance should be owned by the input DOM object.
+via this instance should be owned by the input DOM object. Though this
+requirement is not enforced in any way, not following it will cause
+incorrect behavior when processing document and namespace nodes.
 
 =cut
 sub new {

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use XML::ITS::DOM;
 use Test::More 0.88;
-use XML::ITS::WICS::XML2HTML::FutureNodeManager;
+use XML::ITS::WICS::XML2HTML::FutureNodeManager qw(new_manager);
 use XML::ITS::WICS::XML2HTML::FutureNode;
 plan tests => 13;
 
@@ -18,7 +18,7 @@ Some text
 </xml>
 END_XML
 
-my $manager = XML::ITS::WICS::XML2HTML::FutureNodeManager->new($dom);
+my $manager = new_manager($dom);
 is_deeply([$manager->elementals], [], 'no elemental elements after construction');
 is($manager->total_futures, 0, 'no FutureNodes after construction');
 
