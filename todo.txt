@@ -7,18 +7,17 @@ Engineering Tasks:
 To Do on current task:
 
 Later To Do:
-    - store owning DOM in FutureNodeManager object, instead of passing it as an arg to create_future()
+    * store owning DOM in FutureNodeManager object, instead of passing it as an arg to create_future()
     - export constructors for FutureNode and FutureNodeManager
     - change LogUtils to be an object
         - give it the logger to log with
         - have it store id_num on a per-instance basis
-    - test API of FutureNodeManager
+        - add other special log functions
     - find possible code reuse in converter
-    - move special log functions into separate class
     - Decide on organization of end-project
         - WICS.pm one file that can convert anything?
+            - Inject logger
             - GUI?
-    - Inject logger
 
 Testing:
     Besides testing each piece of functionality, we need a comprehensive end-to-end XML2HTML test suite for Renat and Serge

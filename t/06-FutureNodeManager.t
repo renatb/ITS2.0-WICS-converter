@@ -6,7 +6,7 @@ use XML::ITS::DOM;
 use Test::More 0.88;
 use XML::ITS::WICS::XML2HTML::FutureNodeManager;
 use XML::ITS::WICS::XML2HTML::FutureNode;
-plan tests => 14;
+plan tests => 13;
 
 my $manager = XML::ITS::WICS::XML2HTML::FutureNodeManager->new();
 
@@ -55,6 +55,12 @@ subtest 'correct FutureNodes are marked as elemental' => sub {
 
     }
 };
+
+# replace the future representing the root element with one representing the foo
+# element
+my ($foo_elt) = $root->get_xpath('//foo');
+$manager->replace_el_future($root->get_xpath('/*'), $foo_elt);
+ok($foo_elt->is_same_node($elt_future->new_node), 'replace_el_future works');
 
 subtest 'realize_all method' => sub {
     plan tests => 3;
