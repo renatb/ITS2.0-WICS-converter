@@ -21,13 +21,15 @@ for my $block(blocks()){
         my $num_tests = 7;
         $num_tests++ if($block->title);
         $num_tests++ if($block->contents);
+        $num_tests++ if($block->class);
         plan tests => $num_tests;
 
         my ($old_node, $future) = get_future($block);
         my $new_node = $future->new_node;
 
         my $dup_new_node = $future->new_node;
-        ok($new_node->is_same_node($dup_new_node), 'new_node always returns same node');
+        ok($new_node->is_same_node($dup_new_node),
+            'new_node always returns same node');
 
         is(!!($future->creates_element),
             !!$block->creates_element, 'correct creates_element value');
@@ -36,10 +38,15 @@ for my $block(blocks()){
         is($future->new_path, $block->new_path, 'provided path for new node');
         is($new_node->path, $block->long_path, 'full path of new node');
         if($block->title){
-            is($new_node->att('title'), $block->title, 'correct title attribute');
+            is($new_node->att('title'), $block->title,
+                'correct title attribute');
         }
         if($block->contents){
-            is($new_node->text, $block->contents, 'correct element contents');
+            is($new_node->text, $block->contents,
+                'correct element contents');
+        }
+        if($block->class){
+            is($new_node->att('class'), $block->class, 'correct class value');
         }
 
         $block->creates_element ?
@@ -93,6 +100,7 @@ __DATA__
 --- creates_element: 1
 --- title: foo
 --- contents: bar
+--- class: _ITS_ATT
 
 === NS node
 --- type: NS
@@ -109,6 +117,7 @@ __DATA__
 --- creates_element: 1
 --- title: xmlns:foo
 --- contents: www.bar.com
+--- class: _ITS_NS
 
 === PI node
 --- type: PI
@@ -125,6 +134,7 @@ __DATA__
 --- creates_element: 1
 --- title: foo_pi
 --- contents: some text
+--- class: _ITS_PI
 
 === COM node
 --- type: COM
