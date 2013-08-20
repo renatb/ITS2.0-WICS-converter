@@ -3,7 +3,8 @@ use strict;
 use warnings;
 use Test::More 0.88;
 use Test::Base;
-plan tests => 9;
+plan tests => 15;
+use Test::Exception;
 
 use XML::ITS::DOM;
 use XML::ITS::WICS::LogUtils qw(reset_id);
@@ -58,16 +59,22 @@ for my $block(blocks()){
     };
 
     if($block->type eq 'ELT'){
-        subtest 'element replacement inside FutureNode' => sub {
-            plan tests => 1;
-            my ($old_node, $future) = get_future($block);
+        my ($old_node, $future) = get_future($block);
+        my $other_node = new_element('foo');
+        $future->replace_el($other_node);
+        my $new_node = $future->new_node;
+
+        ok($new_node->is_same_node($other_node),
+            'replace_el works properly');
+    }else{
+        my ($old_node, $future) = get_future($block);
+        my $msg = 'Attempt to replace element in FutureNode of type ' .
+            $block->type;
+        throws_ok {
             my $other_node = new_element('foo');
             $future->replace_el($other_node);
-            my $new_node = $future->new_node;
-
-            ok($new_node->is_same_node($other_node),
-                'replace_el works properly');
-        }
+        } qr/$msg/s,
+            'replace_el dies when given ' . $block->type . ' node';
     }
 }
 
