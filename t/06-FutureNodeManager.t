@@ -6,7 +6,7 @@ use XML::ITS::DOM;
 use Test::More 0.88;
 use XML::ITS::WICS::XML2HTML::FutureNodeManager;
 use XML::ITS::WICS::XML2HTML::FutureNode;
-plan tests => 11;
+plan tests => 14;
 
 my $manager = XML::ITS::WICS::XML2HTML::FutureNodeManager->new();
 
@@ -26,13 +26,14 @@ END_XML
 my $root = $dom->get_root;
 my $doc_future = $manager->create_future($root->get_xpath('/'), $dom);
 my $elt_future = $manager->create_future($root->get_xpath('/*'));
-my $att_future = $manager->create_future($root->get_xpath('//@*'));
 my $com_future = $manager->create_future($root->get_xpath('//comment()'));
-my $pi_future = $manager->create_future($root->get_xpath('//processing-instruction()'));
 my $txt_future = $manager->create_future($root->get_xpath('/xml/text()[1]'));
+my $att_future = $manager->create_future($root->get_xpath('//@*'));
+my $pi_future = $manager->create_future($root->get_xpath('//processing-instruction()'));
 my $ns_future = $manager->create_future($root->get_xpath('//namespace::*'), $dom);
 
-#we created 7, and two of those store parents as FutureNodes
+# we created 7, but some of them may have stored location information via
+# additional new FutureNodes
 ok($manager->total_futures >= 9, 'at least futures tracked in manager');
 
 my @futures = (
@@ -53,4 +54,16 @@ subtest 'correct FutureNodes are marked as elemental' => sub {
         }
 
     }
+};
+
+subtest 'realize_all method' => sub {
+    plan tests => 3;
+    $manager->realize_all;
+    # make sure that the elemental FutureNodes really created elements in the DOM
+    ok($root->get_xpath('//*[@class="_ITS_ATT"]'),
+        'element representing attribute was pasted in DOM');
+    ok($root->get_xpath('//*[@class="_ITS_PI"]'),
+        'element representing processing instruction was pasted in DOM');
+    ok($root->get_xpath('//*[@class="_ITS_NS"]'),
+        'element representing namespace was pasted in DOM');
 }
