@@ -3,15 +3,14 @@ use strict;
 use warnings;
 use Test::More 0.88;
 use Test::Base;
-plan tests => 15;
+plan tests => 14;
 use Test::Exception;
 
 use XML::ITS::DOM;
 use XML::ITS::WICS::LogUtils qw(reset_id);
-use XML::ITS::WICS::XML2HTML::FutureNodeManager;
+use XML::ITS::WICS::XML2HTML::FutureNodeManager qw(new_manager);
 use XML::ITS::DOM::Element qw(new_element);
-my $future_class = 'XML::ITS::WICS::XML2HTML::FutureNode';
-use_ok($future_class);
+use XML::ITS::WICS::XML2HTML::FutureNode qw(new_future);
 
 #test the storage and retrieval of all 7 types of nodes in a FutureNode.
 #use a new FutureNodeManager each time, and reset the number used to create
@@ -80,10 +79,10 @@ for my $block(blocks()){
 
 sub get_future {
     my ($block) = @_;
-    my $manager = XML::ITS::WICS::XML2HTML::FutureNodeManager->new();
     my $dom = XML::ITS::DOM->new( xml => \($block->doc) );
+    my $manager = new_manager($dom);
     my ($node) = $dom->get_root->get_xpath($block->future);
-    my $future = $future_class->new($manager, $node, $dom);
+    my $future = new_future($manager, $node, $dom);
     return ($node, $future);
 }
 

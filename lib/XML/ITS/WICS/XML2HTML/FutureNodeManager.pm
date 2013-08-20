@@ -32,7 +32,9 @@ The following function may optionally be exported to the caller's namespace:
 =head2 C<new_manager>
 
 This is a convenience function for constructing an instance of this class
-(saves some typing, since the class has such a long name).
+(saves some typing, since the class has such a long name). The XML::ITS::DOM
+object from which future_nodes will be created is the only required argument
+(see C<new>).
 
 =cut
 sub new_manager {

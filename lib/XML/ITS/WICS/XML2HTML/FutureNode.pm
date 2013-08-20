@@ -1,6 +1,7 @@
 package XML::ITS::WICS::XML2HTML::FutureNode;
 use strict;
 use warnings;
+use Exporter::Easy (OK => [qw(new_future)]);
 use XML::ITS::DOM::Element qw(new_element);
 use XML::ITS::WICS::LogUtils qw(node_log_id get_or_set_id);
 use Carp;
@@ -35,6 +36,22 @@ This is only guaranteed to work if document elements are not deleted
 after this object's creation. This is because some FutureNodes remember
 their location by their original parent, and deleting these will cause
 dereference errors.
+
+=head1 EXPORTS
+
+The following function may optionally be exported to the caller's namespace:
+
+=head2 C<new_future>
+
+This is a convenience function for constructing an instance of this class
+(saves some typing, since the class has such a long name).
+The required arguments are the same as for C<new>.
+
+=cut
+sub new_future {
+    my ($manager, $node, $doc) = @_;
+    return __PACKAGE__->new($manager, $node, $doc);
+}
 
 =head1 METHODS
 
