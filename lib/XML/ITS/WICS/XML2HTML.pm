@@ -275,7 +275,8 @@ sub _process_att {
 	my ($self, $el, $att) = @_;
 
 	my $wrapped;
-	# xml:* attributes with ITS semantics
+	# xml:* attributes with vaild HTML ITS semantics
+	# (xml:space means nothing in HTML)
 	if($att->name eq 'xml:id'){
 		_att_rename($el, $att, 'id');
 	}elsif($att->name eq 'xml:lang'){
