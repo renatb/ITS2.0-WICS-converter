@@ -12,6 +12,7 @@ use Path::Tiny;
 use XML::LibXML;
 # returns an XML::LibXML document, unifying the APIs
 use HTML::HTML5::Parser;
+use Encode qw(decode);
 
 =head1 SYNOPSIS
 
@@ -83,12 +84,15 @@ sub get_root {
 Returns a stringified version of the entire document.
 HTML documents are given an HTML5 doctype.
 
+The returned string is always a UTF-8 character string.
+
 =cut
 sub string {
     my ($self) = @_;
     if($self->{type} eq 'xml'){
         # 1 is for adding whitespace to prettify
-        return $self->{dom}->toString(1);
+        my $string = $self->{dom}->toString(1);
+        return decode('utf-8', $string);
     }else{
         return "<!DOCTYPE html>\n" . $self->{dom}->toStringHTML;
     }
@@ -120,6 +124,7 @@ sub get_source {
 
 #type is 'xml' or 'html'
 #data is filename or pointer to string content
+#returns an XML::LibXML::Document object
 sub _get_dom {
     my ($type, $data) = @_;
 
@@ -157,6 +162,7 @@ sub _get_dom {
             _carp_parse_errors($parser);
         }
     }
+    $dom->setEncoding('utf-8');
     return $dom;
 }
 

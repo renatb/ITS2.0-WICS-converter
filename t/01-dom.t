@@ -2,10 +2,11 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 11;
+plan tests => 13;
 use XML::ITS::DOM;
 use Test::Exception;
 use Test::NoWarnings;
+use utf8;
 
 use Path::Tiny;
 use FindBin qw($Bin);
@@ -17,8 +18,8 @@ test_errors($dom_path);
 my $dom = XML::ITS::DOM->new( 'xml' => $dom_path );
 
 test_dom_props($dom, $dom_path);
-test_counter($dom);
-
+test_next_id($dom);
+test_string($dom);
 
 # make sure that errors are thrown for bad input
 # and that none are thrown for good input.
@@ -84,8 +85,35 @@ sub test_dom_props {
     return;
 }
 
-sub test_counter {
+#test that the next_id method returns unique values in order
+sub test_next_id {
     my ($dom) = @_;
     is($dom->next_id, 1, 'first ID is 1');
     is($dom->next_id, 2, 'second ID is 2');
+}
+
+#test to_string method output
+sub test_string {
+    my ($dom) = @_;
+    my $string = $dom->string;
+    ok($string =~ m/ encoding="utf-8"\?/,
+        'declared encoding is utf-8');
+    # use re 'debug';
+
+    ok($string =~ m/日本語 한국어 Tiếng Việt/,
+        'characters are not converted to NCRs')
+        or note $string;
+}
+
+sub hexdump {
+    use Encode;
+    my $str = shift;
+    my $flag = Encode::is_utf8($str) ? 1 : 0;
+    use bytes; # this tells unpack to deal with raw bytes
+    my @internal_rep_bytes = unpack('C*', $str);
+    return
+        $flag
+        . '('
+        . join(' ', map { sprintf("%02x", $_) } @internal_rep_bytes)
+        . ')';
 }

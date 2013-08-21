@@ -10,4 +10,5 @@
     <seventh xmlns:bar="www.foo.com">
         <bar:eighth/>
     </seventh>
+    日本語 한국어 Tiếng Việt
 </xml>
