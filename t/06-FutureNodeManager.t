@@ -12,6 +12,7 @@ my $dom = XML::ITS::DOM->new( xml => \<<'END_XML' );
 <xml>
 Some text
 <foo qux="baz"><!--comment--></foo>
+<fuz/>
 <bar xmlns:foo="www.foo.com">
     <?foo_pi some text?>
 </bar>
@@ -54,6 +55,10 @@ subtest 'correct FutureNodes are marked as elemental' => sub {
 
     }
 };
+
+#this should do nothing at all, since fuz was never made into a FutureNode
+my ($fuz_elt) = $root->get_xpath('//fuz');
+$manager->replace_el_future($fuz_elt, $root->get_xpath('//bar'));
 
 # replace the future representing the root element with one representing the foo
 # element

@@ -241,6 +241,7 @@ sub _log_new_el {
     $msg .= $self->type;
     $msg .= q< (> . $self->{name} . q<)>;
     $log->debug($msg);
+    return;
 }
 
 1;

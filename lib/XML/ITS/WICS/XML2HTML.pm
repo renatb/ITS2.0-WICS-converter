@@ -319,6 +319,7 @@ sub _att_rename {
 	#have to replace with new att because renaming doesn't work with namespaces
 	$el->set_att($new_name, $att->value);
 	$att->remove;
+	return;
 }
 
 # process an element with an att which is its:dir=lro or rlo;

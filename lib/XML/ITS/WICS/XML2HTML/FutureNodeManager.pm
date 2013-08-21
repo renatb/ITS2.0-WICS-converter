@@ -128,6 +128,7 @@ sub replace_el_future {
     if($self->{future_cache}->{$key}){
         $self->{future_cache}->{$key}->replace_el($new_el);
     }
+    return;
 }
 
 =head2 C<elementals>
@@ -152,6 +153,7 @@ sub realize_all {
     for my $future_pointer (values %{ $self->{future_cache} }){
         $future_pointer->new_node;
     }
+    return;
 }
 
 =head2 C<total_futures>
