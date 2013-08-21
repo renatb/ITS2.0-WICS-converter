@@ -348,7 +348,7 @@ sub _htmlize_its_att {
 	my ($el, $att) = @_;
 
 	my $name = $att->local_name;
-	$name =~ s/([A-Z])/-$1/g;
+	$name =~ s/([A-Z])/-\L$1/g;
 	$name = "its-$name";
 	$el->set_att($name, $att->value);
 	if($log->is_debug){

@@ -316,12 +316,12 @@ setting @title of <foo> to 'foo'
 stripping namespaces from <foo>
 renaming <foo> to <div>
 processing <bar>
-Replacing @its:locNote of <bar> with its-loc-Note
+Replacing @its:locNote of <bar> with its-loc-note
 setting @title of <bar> to 'bar'
 stripping namespaces from <bar>
 renaming <bar> to <div>
 processing <baz>
-Replacing @its:blahBlahFooBar of <baz> with its-blah-Blah-Foo-Bar
+Replacing @its:blahBlahFooBar of <baz> with its-blah-blah-foo-bar
 setting @title of <baz> to 'baz'
 stripping namespaces from <baz>
 renaming <baz> to <div>

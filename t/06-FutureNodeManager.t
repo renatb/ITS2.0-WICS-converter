@@ -52,7 +52,6 @@ subtest 'correct FutureNodes are marked as elemental' => sub {
             ok((grep {$_ == $node } @elementals),
                 $node->type . ' FutureNode saved as elemental');
         }
-
     }
 };
 

@@ -5,14 +5,15 @@ TODO:
 Engineering Tasks:
 
 To Do on current task:
+    - generate test suite from ITS 2.0 test suite
+        -submit another pull request for provenance problems
 
 Later To Do:
-    * see about moving some functionality out of XML2HTML
+    - GUI?
     - find possible code reuse in converter
     - Decide on organization of end-project
         - WICS.pm one file that can convert anything?
             - Inject logger
-            - GUI?
 
 Testing:
     Besides testing each piece of functionality, we need a comprehensive end-to-end XML2HTML test suite for Renat and Serge
