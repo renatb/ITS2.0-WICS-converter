@@ -145,8 +145,8 @@ sub _traverse_convert{
 
 	#its:* elements are either rules, span, or standoff
 	#let its:span be renamed to span later
-	if($el->namespaceURI &&
-		$el->namespaceURI eq its_ns() &&
+	if($el->namespace_URI &&
+		$el->namespace_URI eq its_ns() &&
 		$el->local_name ne 'span'){
 		#its:rules; just remove these and paste new ones later
 		if($el->local_name eq 'rules'){
@@ -282,7 +282,7 @@ sub _process_att {
 	}elsif($att->name eq 'xml:lang'){
 		_att_rename($el, $att, 'lang');
 	#its:* attributes with HTML semantics
-	}elsif($att->namespaceURI && $att->namespaceURI eq its_ns()){
+	}elsif($att->namespace_URI eq its_ns()){
 		if($att->local_name eq 'translate'){
 			_att_rename($el, $att, 'translate');
 			return;
@@ -300,7 +300,8 @@ sub _process_att {
 			_htmlize_its_att($el, $att);
 			return;
 		}
-	}else{
+	}
+	else{
 		# save other atts as FutureNodes, then delete
 		# (they are illegal in HTML)
 		$self->{futureNodeManager}->create_future($att);
