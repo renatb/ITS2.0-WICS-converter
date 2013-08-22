@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 13;
+plan tests => 16;
 use XML::ITS::DOM;
 use Test::Exception;
 use Test::NoWarnings;
@@ -20,6 +20,7 @@ my $dom = XML::ITS::DOM->new( 'xml' => $dom_path );
 test_dom_props($dom, $dom_path);
 test_next_id($dom);
 test_string($dom);
+test_html_options();
 
 # make sure that errors are thrown for bad input
 # and that none are thrown for good input.
@@ -105,15 +106,27 @@ sub test_string {
         or note $string;
 }
 
-sub hexdump {
-    use Encode;
-    my $str = shift;
-    my $flag = Encode::is_utf8($str) ? 1 : 0;
-    use bytes; # this tells unpack to deal with raw bytes
-    my @internal_rep_bytes = unpack('C*', $str);
-    return
-        $flag
-        . '('
-        . join(' ', map { sprintf("%02x", $_) } @internal_rep_bytes)
-        . ')';
+#there's only one option to test: namespace => 0
+sub test_html_options {
+    my $html = XML::ITS::DOM->new('html' => \"<!DOCTYPE html><html>");
+    is(
+        $html->get_root->namespace_URI,
+        'http://www.w3.org/1999/xhtml',
+        'HTML doc has namespace by default');
+
+    $html = XML::ITS::DOM->new(
+        'html' => \"<!DOCTYPE html><html>",
+        namespace => 1);
+    is(
+        $html->get_root->namespace_URI,
+        'http://www.w3.org/1999/xhtml',
+        'HTML doc has namespace when specified');
+
+    $html = XML::ITS::DOM->new(
+        'html' => \"<!DOCTYPE html><html>",
+        namespace => 0);
+    is(
+        $html->get_root->get_xpath('//namespace::*'),
+        0,
+        'HTML doc has no namespace when specified');
 }

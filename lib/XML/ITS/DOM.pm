@@ -29,22 +29,20 @@ It abstracts away XML/HTML processing to quarantine 3rd party code.
 
 =head2 C<new>
 
-Argument: a single named argument. The name should be either 'xml' or
-'html', and the value is either a string filepath or a string pointer
+The first argument should be named either 'xml' or
+'html', and the value should either be a string filepath or a string pointer
 containing the actual data to be parsed.
+
+For HTML documents, an optional 'namespace' argument can be set to false
+to prevent setting the default namespace to C<http://www.w3.org/1999/xhtml>.
 
 Parses the input document, creating a queryable DOM structure.
 
 =cut
 sub new {
-    my ($class, @args) = @_;
+    my ($class, $type, $source, %args) = @_;
 
-    my $dom = _get_dom(@args);
-
-    # either xml or html
-    my $type = $args[0];
-    # source of data
-    my $source = $args[1];
+    my $dom = _get_dom($type, $source, %args);
 
     my $base;
     if(ref $source eq 'SCALAR'){
@@ -54,7 +52,7 @@ sub new {
     }
     my $identifier = (ref $source eq 'SCALAR') ? 'STRING' : $source;
 
-    return bless {
+    my $self = bless {
         dom => $dom,
         base => $base,
         source => $identifier,
@@ -62,6 +60,15 @@ sub new {
         #a running counter for creating unique IDs
         id => 0
     }, $class;
+
+    # HTML::HTML5::Parser always sets namespace. If user doesn't want that,
+    # then strip it from all of the elements.
+    if($type eq 'html'
+        && exists $args{namespace}
+        && !$args{namespace}){
+        $_->strip_ns for $self->get_root->get_xpath('//*');
+    }
+    return $self;
 }
 
 =head2 C<get_root>
@@ -124,9 +131,10 @@ sub get_source {
 
 #type is 'xml' or 'html'
 #data is filename or pointer to string content
+#optional namespace => 0 to remove xhtml namespace declaration
 #returns an XML::LibXML::Document object
 sub _get_dom {
-    my ($type, $data) = @_;
+    my ($type, $data, %args) = @_;
 
     my $dom;
     if($type !~ /^(?:xml|html)$/){

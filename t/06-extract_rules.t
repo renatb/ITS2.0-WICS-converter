@@ -1,7 +1,8 @@
 # Make sure that rules are extracted correctly and are
 # stored in proper application order
 
-use strict; use warnings;
+use strict;
+use warnings;
 use XML::ITS;
 use Test::More 0.88;
 plan tests => 7;
