@@ -52,7 +52,10 @@ __DATA__
     <div title="head"></div>
     <div id="body" title="body">
       <div id="par" title="par">
-        <span class="_ITS_ATT" title="title" id="ITS_1">
+        <span class="_ITS_ATT"
+            title="title"
+            its-within-text="no"
+            id="ITS_1">
           Text
         </span>
         The

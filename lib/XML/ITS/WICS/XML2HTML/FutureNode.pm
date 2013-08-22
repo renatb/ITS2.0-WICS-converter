@@ -158,7 +158,8 @@ sub new_node {
             'span',
             {
                  title => $self->{name},
-                 class => "_ITS_ATT"
+                 class => "_ITS_ATT",
+                 'its-within-text' => 'no',
             },
             $self->{value}
         );
@@ -178,6 +179,7 @@ sub new_node {
             'span',
             {
                  title => $self->{name},
+                 'its-within-text' => 'no',
                  class => '_ITS_PI'
             },
             $self->{value}
@@ -192,6 +194,7 @@ sub new_node {
             'span',
             {
                  title => $self->{name},
+                 'its-within-text' => 'no',
                  class => '_ITS_NS'
             },
             $self->{value}

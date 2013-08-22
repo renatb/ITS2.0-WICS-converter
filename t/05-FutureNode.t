@@ -20,6 +20,7 @@ for my $block(blocks()){
         $num_tests++ if($block->title);
         $num_tests++ if($block->contents);
         $num_tests++ if($block->class);
+        $num_tests++ if($block->creates_element);
         plan tests => $num_tests;
 
         my ($old_node, $future) = get_future($block);
@@ -47,12 +48,15 @@ for my $block(blocks()){
             is($new_node->att('class'), $block->class, 'correct class value');
         }
 
-        $block->creates_element ?
+        if($block->creates_element){
             ok(!$new_node->is_same_node($old_node),
-                'new created element is not same as old node')
-            :
+                'new created element is not same as old node');
+            is($new_node->att('its-within-text'), 'no',
+                'its-within-text set to "no" for new elements');
+        }else{
             ok($new_node->is_same_node($old_node),
                 'new node is same as old node');
+        }
     };
 
     if($block->type eq 'ELT'){

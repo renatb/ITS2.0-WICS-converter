@@ -108,7 +108,11 @@ match here). This also triggers anti-inheritance rules.
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
-          <span title="content" id="ITS_2" class="_ITS_ATT">
+          <span
+              title="content"
+              id="ITS_2"
+              its-within-text="no"
+              class="_ITS_ATT">
             foo
           </span>
           Some text
@@ -170,7 +174,11 @@ Multiple matches of one attribute should only create one new element.
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
-          <span title="content" id="ITS_2" class="_ITS_ATT">
+          <span
+              title="content"
+              id="ITS_2"
+              its-within-text="no"
+              class="_ITS_ATT">
             foo
           </span>
           Some text
@@ -232,7 +240,11 @@ Creating new rule <its:translateRule> to prevent false inheritance
     <div title="xml">
         <div title="head"></div>
         <div title="foo:para">
-          <span title="content" id="ITS_1" class="_ITS_ATT">
+          <span
+              title="content"
+              id="ITS_1"
+              its-within-text="no"
+              class="_ITS_ATT">
             foo
           </span>
           Some text
@@ -362,7 +374,11 @@ into child elements, which also triggers anti-inheritance rules.
         <div title="head"></div>
         <div title="para" id="ITS_1">
           Some text
-          <span title="foo_pi" id="ITS_2" class="_ITS_PI">
+          <span
+              title="foo_pi"
+              id="ITS_2"
+              its-within-text="no"
+              class="_ITS_PI">
             some content
           </span>
         </div>
@@ -429,7 +445,11 @@ Multiple matches for one node should only create one new element.
         <div title="head"></div>
         <div title="para" id="ITS_1">
           Some text
-          <span title="foo_pi" id="ITS_2" class="_ITS_PI">
+          <span
+              title="foo_pi"
+              id="ITS_2"
+              its-within-text="no"
+              class="_ITS_PI">
             some content
           </span>
         </div>
@@ -494,7 +514,11 @@ Creating new rule <its:localeFilterRule> to prevent false inheritance
     <div title="xml">
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">
-          <span title="foo_pi" id="ITS_2" class="_ITS_PI">
+          <span
+              title="foo_pi"
+              id="ITS_2"
+              its-within-text="no"
+              class="_ITS_PI">
             some content
           </span>
         </div>
@@ -610,7 +634,11 @@ triggers anti-inheritance rules.
   </head>
   <body>
     <div title="xml">
-        <span title="xmlns:foo" class="_ITS_NS" id="ITS_2">www.foo.com</span>
+        <span
+          title="xmlns:foo"
+          class="_ITS_NS"
+          its-within-text="no"
+          id="ITS_2">www.foo.com</span>
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">
           Some text
@@ -677,7 +705,11 @@ Multiple matches of same namespace should only create one new element.
   </head>
   <body>
     <div title="xml">
-        <span title="xmlns:foo" class="_ITS_NS" id="ITS_2">www.foo.com</span>
+        <span
+          title="xmlns:foo"
+          class="_ITS_NS"
+          its-within-text="no"
+          id="ITS_2">www.foo.com</span>
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">
           Some text
@@ -742,7 +774,11 @@ test it.
   </head>
   <body>
     <div title="bar:xml">
-        <span title="xmlns:foo" class="_ITS_NS" id="ITS_2">www.foo.com</span>
+        <span
+          title="xmlns:foo"
+          class="_ITS_NS"
+          its-within-text="no"
+          id="ITS_2">www.foo.com</span>
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">Some text</div>
     </div>
@@ -903,7 +939,11 @@ triggers anti-inheritance rules.
   <body>
     <div title="xml">
         <div title="para">
-          <span id="ITS_1" class="_ITS_ATT" title="foo">bar</span>
+          <span
+            id="ITS_1"
+            class="_ITS_ATT"
+            its-within-text="no"
+            title="foo">bar</span>
           Some text
         </div>
     </div>
