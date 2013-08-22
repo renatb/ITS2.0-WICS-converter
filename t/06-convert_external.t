@@ -76,20 +76,20 @@ match: rule=<its:translateRule xml:id="ext1rule">; selector=<par xml:id="par">
 match: rule=<its:idValueRule xml:id="baseFileRule">; selector=<body xml:id="body">; idValue=bodyId
 converting document elements into HTML
 processing <myDoc xml:id="root">
-renaming @xml:id of <myDoc xml:id="root"> to @id
+renaming @xml:id[root] of <myDoc xml:id="root"> to @id
 setting @title of <myDoc id="root"> to 'myDoc'
 processing <head>
 setting @title of <head> to 'head'
 removing <its:rules xml:id="baseFileContainer">
 renaming <head> to <div>
 processing <body xml:id="body">
-renaming @xml:id of <body xml:id="body"> to @id
+renaming @xml:id[body] of <body xml:id="body"> to @id
 setting @title of <body id="body"> to 'body'
 processing <par xml:id="par">
-renaming @xml:id of <par xml:id="par"> to @id
+renaming @xml:id[par] of <par xml:id="par"> to @id
 setting @title of <par id="par"> to 'par'
 processing <trmark xml:id="trmark">
-renaming @xml:id of <trmark xml:id="trmark"> to @id
+renaming @xml:id[trmark] of <trmark xml:id="trmark"> to @id
 setting @title of <trmark id="trmark"> to 'trmark'
 renaming <trmark id="trmark"> to <span>
 renaming <par id="par"> to <div>

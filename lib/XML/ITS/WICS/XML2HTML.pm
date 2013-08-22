@@ -321,7 +321,7 @@ sub _process_att {
 sub _att_rename {
 	my ($el, $att, $new_name) = @_;
 	if($log->is_debug){
-		$log->debug('renaming @' . $att->name . ' of ' . node_log_id($el) .
+		$log->debug('renaming ' . node_log_id($att) . ' of ' . node_log_id($el) .
 			" to \@$new_name");
 	}
 	#have to replace with new att because renaming doesn't work with namespaces

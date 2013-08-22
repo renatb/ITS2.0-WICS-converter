@@ -145,7 +145,7 @@ converting document elements into HTML
 processing <xml>
 setting @title of <xml> to 'xml'
 processing <foo xml:id="bar">
-renaming @xml:id of <foo xml:id="bar"> to @id
+renaming @xml:id[bar] of <foo xml:id="bar"> to @id
 setting @title of <foo id="bar"> to 'foo'
 renaming <foo id="bar"> to <div>
 renaming <xml> to <div>
@@ -175,7 +175,7 @@ converting document elements into HTML
 processing <xml>
 setting @title of <xml> to 'xml'
 processing <foo>
-renaming @xml:lang of <foo> to @lang
+renaming @xml:lang[lut] of <foo> to @lang
 setting @title of <foo> to 'foo'
 renaming <foo> to <div>
 renaming <xml> to <div>
@@ -206,7 +206,7 @@ processing <xml>
 setting @title of <xml> to 'xml'
 stripping namespaces from <xml>
 processing <foo>
-renaming @its:translate of <foo> to @translate
+renaming @its:translate[no] of <foo> to @translate
 setting @title of <foo> to 'foo'
 stripping namespaces from <foo>
 renaming <foo> to <div>
@@ -247,19 +247,19 @@ processing <xml>
 setting @title of <xml> to 'xml'
 stripping namespaces from <xml>
 processing <foo xml:id="i1">
-renaming @xml:id of <foo xml:id="i1"> to @id
-renaming @its:dir of <foo id="i1"> to @dir
+renaming @xml:id[i1] of <foo xml:id="i1"> to @id
+renaming @its:dir[rtl] of <foo id="i1"> to @dir
 setting @title of <foo id="i1"> to 'foo'
 stripping namespaces from <foo id="i1">
 renaming <foo id="i1"> to <div>
 processing <foo xml:id="i2">
-renaming @xml:id of <foo xml:id="i2"> to @id
-renaming @its:dir of <foo id="i2"> to @dir
+renaming @xml:id[i2] of <foo xml:id="i2"> to @id
+renaming @its:dir[ltr] of <foo id="i2"> to @dir
 setting @title of <foo id="i2"> to 'foo'
 stripping namespaces from <foo id="i2">
 renaming <foo id="i2"> to <div>
 processing <foo xml:id="i3">
-renaming @xml:id of <foo xml:id="i3"> to @id
+renaming @xml:id[i3] of <foo xml:id="i3"> to @id
 found its:dir=lro; renaming <foo id="i3"> to bdo and adding @dir=ltr
 setting @title of <bdo id="i3"> to 'foo'
 stripping namespaces from <bdo id="i3">
@@ -267,12 +267,12 @@ processing <bar>
 setting @title of <bar> to 'bar'
 renaming <bar> to <span>
 processing <foo xml:id="i4">
-renaming @xml:id of <foo xml:id="i4"> to @id
+renaming @xml:id[i4] of <foo xml:id="i4"> to @id
 found its:dir=rlo; renaming <foo id="i4"> to bdo and adding @dir=rtl
 setting @title of <bdo id="i4"> to 'foo'
 stripping namespaces from <bdo id="i4">
 processing <foo xml:id="i5">
-renaming @xml:id of <foo xml:id="i5"> to @id
+renaming @xml:id[i5] of <foo xml:id="i5"> to @id
 found its:dir=rlo; renaming <foo id="i5"> to bdo and adding @dir=rtl
 setting @title of <bdo id="i5"> to 'foo'
 stripping namespaces from <bdo id="i5">
@@ -399,7 +399,6 @@ wrapping document in HTML structure
 
 === its:version
 its:version should be deleted (doesn't exist in its HTML)
---- ONLY
 --- input
 <xml xmlns:its="http://www.w3.org/2005/11/its" its:version="2.0">
   hello

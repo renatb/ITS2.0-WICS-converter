@@ -57,7 +57,7 @@ setting @title of <head> to 'head'
 removing <its:rules>
 renaming <head> to <div>
 processing <para xml:id="i1">
-renaming @xml:id of <para xml:id="i1"> to @id
+renaming @xml:id[i1] of <para xml:id="i1"> to @id
 setting @title of <para id="i1"> to 'para'
 renaming <para id="i1"> to <div>
 renaming <xml> to <div>
