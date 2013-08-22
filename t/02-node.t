@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 57;
+plan tests => 58;
 use Test::NoWarnings;
 use Test::Exception;
 
@@ -162,8 +162,11 @@ sub test_node_namespaces {
         'found namespaces in scope'
     ) or note explain $nodes[0]->get_namespaces;
 
+    is($dom->get_root->namespace_URI, '',
+        'empty namespace returned as empty string');
+
     @nodes = $dom->get_root->get_xpath('//foo:sixth');
-    is($nodes[0]->namespaceURI, 'www.bar.com', 'Correct namespace');
+    is($nodes[0]->namespace_URI, 'www.bar.com', 'Correct namespace');
     return;
 }
 

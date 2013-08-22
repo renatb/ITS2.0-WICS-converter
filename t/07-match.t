@@ -334,22 +334,12 @@ sub test_warnings {
         is(scalar @$matches, 1, 'only one match retrieved');
         is($matches->[0]->{selector}->name, 'myDoc', 'correct match');
     };
-    subtest 'document with a default namespace' => sub {
-        plan tests => 2;
-        $ITS = XML::ITS->new(
-            'xml',
-            doc => $default_ns_doc,
-        );
-        $rules = $ITS->get_rules;
-        my $msg = 'warning: selectors do not work with ' .
-            'default namespaces (found www.foo.com)';
-        my $matches;
-        warning_is
-            { $matches = $ITS->get_matches($rules->[0]) }
-            {carped => $msg },
-            'warning for use of default namespace';
-        is(@$matches, 0, 'no matches found');
-    };
+    $ITS = XML::ITS->new(
+        'xml',
+        doc => $default_ns_doc,
+    );
+    my $matches = $ITS->get_matches($rules->[0]);
+    is(@$matches, 0, 'no matches found because of default namespace');
     return;
 }
 

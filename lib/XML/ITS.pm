@@ -318,7 +318,7 @@ sub _resolve_container_rules {
 
     if(@$children){
         while($children->[0]->local_name eq 'param' and
-            $children->[0]->namespaceURI eq $ITS_NS){
+            $children->[0]->namespace_URI eq $ITS_NS){
             my $param = shift @$children;
             $params{$param->att('name')} = $param->text;
         }

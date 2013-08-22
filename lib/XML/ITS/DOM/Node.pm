@@ -126,11 +126,9 @@ sub get_xpath {
         for (keys %{ $context{namespaces} }){
             if($_){
                 $xpc->registerNs($_, $context{namespaces}->{$_});
-            }else{
-                carp 'warning: selectors do not work with ' .
-                    'default namespaces (found ' .
-                        "$context{namespaces}->{$_})";
             }
+            # otherwise it is the default namespace, and we can't/don't
+            # register that
         }
     }
     if($context{size}){
@@ -221,14 +219,15 @@ sub remove {
     return;
 }
 
-=head2 C<namespaceURI>
+=head2 C<namespace_URI>
 
-Returns the namespace URI of this node.
+Returns the namespace URI of this node. If there is no namespace
+associated with this node, returns an empty string.
 
 =cut
-sub namespaceURI {
+sub namespace_URI {
     my ($self) = @_;
-    return $self->{node}->namespaceURI;
+    return $self->{node}->namespaceURI || '';
 }
 
 =head2 C<local_name>
