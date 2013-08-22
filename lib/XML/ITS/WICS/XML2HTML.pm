@@ -293,13 +293,16 @@ sub _process_att {
 			}else{
 				#ltr and rtl are just 'dir' attributes
 				_att_rename($el, $att, 'dir');
-				return '';
 			}
 		}else{
 			# default transformation for all other its:* atts
 			_htmlize_its_att($el, $att);
-			return;
 		}
+	}
+	# this should only be applying to its:span; non-namespace attributes
+	# are interpreted as ITS attributes.
+	elsif($el->namespace_URI eq its_ns() && !$att->namespace_URI){
+		_htmlize_its_att($el, $att);
 	}
 	else{
 		# save other atts as FutureNodes, then delete
