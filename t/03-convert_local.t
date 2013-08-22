@@ -151,6 +151,36 @@ renaming <foo id="bar"> to <div>
 renaming <xml> to <div>
 wrapping document in HTML structure
 
+=== xml:space
+should be converted removed, having no HTML equivalent
+--- input
+<xml>
+  <foo xml:space="preserve"/>
+</xml>
+--- output
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+  </head>
+  <body>
+    <div title="xml">
+      <div title="foo"></div>
+    </div>
+  </body>
+</html>
+--- log
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+processing <foo>
+removing @xml:space[preserve] from <foo>
+setting @title of <foo> to 'foo'
+renaming <foo> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
+
 === xml:lang
 should be converted into lang
 --- input

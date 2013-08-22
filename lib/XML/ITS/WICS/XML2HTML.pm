@@ -281,6 +281,8 @@ sub _process_att {
 		_att_rename($el, $att, 'id');
 	}elsif($att->name eq 'xml:lang'){
 		_att_rename($el, $att, 'lang');
+	}elsif($att->name eq 'xml:space'){
+		_att_delete($el, $att);
 	#its:* attributes with HTML semantics
 	}elsif($att->namespace_URI eq its_ns()){
 		if($att->local_name eq 'translate'){
