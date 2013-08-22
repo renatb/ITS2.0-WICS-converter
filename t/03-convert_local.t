@@ -396,3 +396,32 @@ setting @title of <its:span> to 'its:span'
 stripping namespaces from <its:span>
 renaming <xml> to <div>
 wrapping document in HTML structure
+
+=== its:version
+its:version should be deleted (doesn't exist in its HTML)
+--- ONLY
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its" its:version="2.0">
+  hello
+</xml>
+--- output
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <title>WICS</title>
+  </head>
+  <body>
+    <div title="xml">
+     hello
+    </div>
+  </body>
+</html>
+--- log
+converting document elements into HTML
+processing <xml>
+removing @its:version[2.0] from <xml>
+setting @title of <xml> to 'xml'
+stripping namespaces from <xml>
+renaming <xml> to <div>
+wrapping document in HTML structure

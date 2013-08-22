@@ -294,6 +294,9 @@ sub _process_att {
 				#ltr and rtl are just 'dir' attributes
 				_att_rename($el, $att, 'dir');
 			}
+		#HTML ITS has no version, because HTML5 has no versioning
+		}elsif($att->local_name eq 'version'){
+			_att_delete($el, $att);
 		}else{
 			# default transformation for all other its:* atts
 			_htmlize_its_att($el, $att);
@@ -323,6 +326,16 @@ sub _att_rename {
 	}
 	#have to replace with new att because renaming doesn't work with namespaces
 	$el->set_att($new_name, $att->value);
+	$att->remove;
+	return;
+}
+
+sub _att_delete {
+	my ($el, $att) = @_;
+	if($log->is_debug){
+		$log->debug('removing ' . node_log_id($att) .
+			' from ' . node_log_id($el));
+	}
 	$att->remove;
 	return;
 }
