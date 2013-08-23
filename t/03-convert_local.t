@@ -21,7 +21,7 @@ __DATA__
 <xml/>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -46,7 +46,7 @@ wrapping document in HTML structure
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -93,7 +93,7 @@ wrapping document in HTML structure
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -129,7 +129,7 @@ should be converted into id
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -159,7 +159,7 @@ should be converted removed, having no HTML equivalent
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -189,7 +189,7 @@ should be converted into lang
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -219,7 +219,7 @@ should be converted into translate
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -256,7 +256,7 @@ rlo/lro should create an inline bdo element
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -322,7 +322,7 @@ prefix its- and use dashes instead of camelCasing
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -368,7 +368,7 @@ from standoff markup.
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -399,7 +399,7 @@ but don't have the namespace associated with them.
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -435,7 +435,7 @@ its:version should be deleted (doesn't exist in its HTML)
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>

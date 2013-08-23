@@ -383,20 +383,22 @@ sub _htmlize_its_att {
 # inside of the body. Create script elements for each el in $its_els
 # and paste them in the head
 sub _html_structure {
-	my ($self, $doc) = @_;
+	my ($self, $xml_doc) = @_;
 
 	$log->debug('wrapping document in HTML structure')
 		if $log->is_debug;
 
-	# the new HTML document
-	my $dom = XML::ITS::DOM->new('html', \'<!DOCTYPE html><html>');
+	my $html_doc = XML::ITS::DOM->new(
+		'html', \'<!DOCTYPE html><html>', namespace => 0);
+	# we remove the XHTML namespace because it is unused in HTML5, and
+	# we want it clear that all of our XPathing is in the default
+	# namespace.
+	my $root = $html_doc->get_root;
+	my ($head, $body) = @{ $root->child_els };
 
 	# grab the HTML head and paste in the
 	# encoding, title, and standoff markup
-	my ($head) = $dom->get_root->get_xpath(
-		'//html:head',
-		namespaces => {html => $HTML_NS}
-	);
+	# my ($head) = $root->get_xpath('head');
 	my $meta = new_element('meta', { charset => 'utf-8' });
 	$meta->paste($head);
 	my $title = new_element('title', {}, $self->{title});
@@ -408,14 +410,10 @@ sub _html_structure {
 	}
 
 	#paste the doc root into the HTML body
-	my ($body) = $dom->get_root->get_xpath(
-		'//html:body',
-		namespaces => {html => $HTML_NS}
-	);
-	my $html = $dom->get_root();
-	$doc->get_root->paste($body);
+	# my ($body) = $html_doc->get_root->get_xpath('body');
+	$xml_doc->get_root->paste($body);
 
-	return $dom;
+	return $html_doc;
 }
 
 # create and return an ITS script element with the input element
@@ -467,6 +465,12 @@ sub _update_rules {
 	for my $i (0 .. $#$matches){
 		my $match = $matches->[$i];
 		my ($rule, $futureNodes) = @$match;
+
+		# Remove the pointer atts for now; the ones that actually matched
+		# will be set again later. This prevents ones that didn't match
+		# from being left with their original, now meaningless, values.
+		$rule->element->remove_att($_)
+			for @{ $rule->pointers };
 
 		# create a new rule, and set its selectors/pointers to either a
 		# FutureNode's element or an XPath literal. value

@@ -5,8 +5,6 @@ TODO:
 Engineering Tasks:
 
 To Do on current task:
-    - generate test suite from ITS 2.0 test suite
-        -submit another pull request for provenance problems
 
 Later To Do:
     - GUI?

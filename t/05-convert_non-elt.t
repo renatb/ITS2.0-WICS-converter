@@ -36,7 +36,7 @@ Elements are all renamed, so XPaths change accordingly.
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -93,7 +93,7 @@ match here). This also triggers anti-inheritance rules.
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -158,7 +158,7 @@ Multiple matches of one attribute should only create one new element.
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -225,7 +225,7 @@ Creating new rule <its:translateRule> to prevent false inheritance
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -289,14 +289,14 @@ Nothing is done to comments. Just need a new XPath for the new document.
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:domainRule selector="id('ITS_1')" domainPointer="/*/*[2]/div/div[2]/comment()"></its:domainRule>
-      <its:domainRule selector="id('ITS_2')" domainPointer="/*/*[2]/div/div[3]/comment()"></its:domainRule>
+      <its:domainRule selector="id('ITS_1')" domainPointer="/html/body/div/div[2]/comment()"></its:domainRule>
+      <its:domainRule selector="id('ITS_2')" domainPointer="/html/body/div/div[3]/comment()"></its:domainRule>
     </its:rules>
     </script>
   </head>
@@ -356,7 +356,7 @@ into child elements, which also triggers anti-inheritance rules.
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -426,7 +426,7 @@ Multiple matches for one node should only create one new element.
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -497,7 +497,7 @@ Creating new rule <its:localeFilterRule> to prevent false inheritance
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -564,13 +564,13 @@ Nothing is done to these. Just need a new XPath.
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
     <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:domainRule selector="id('ITS_1')" domainPointer="/*/*[2]/div/div[2]/text()"></its:domainRule>
+      <its:domainRule selector="id('ITS_1')" domainPointer="/html/body/div/div[2]/text()"></its:domainRule>
     </its:rules>
     </script>
   </head>
@@ -619,7 +619,7 @@ triggers anti-inheritance rules.
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -689,7 +689,7 @@ Multiple matches of same namespace should only create one new element.
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -759,7 +759,7 @@ test it.
 </bar:xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -824,7 +824,7 @@ Document match stays the same ("/").
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -877,7 +877,7 @@ Namespacing probably doesn't make a difference here; just covering the bases.
 </foo:xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
@@ -926,7 +926,7 @@ triggers anti-inheritance rules.
 </xml>
 --- output
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8">
     <title>WICS</title>
