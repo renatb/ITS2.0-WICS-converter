@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 42;
+plan tests => 47;
 use Test::NoWarnings;
 
 use XML::ITS::DOM;
@@ -28,6 +28,12 @@ sub test_atts {
     is($nodes[1]->name, 'second', 'Working with "second" element');
     is($nodes[1]->att('foo'), 'bar', 'value of "foo" is bar');
 
+    $nodes[1]->remove_att('foo');
+    is($nodes[1]->att('foo'), undef, 'foo attribute removed');
+    $nodes[1]->set_att('foo', 'bar');
+    is($nodes[1]->att('foo'), 'bar', 'value of "foo" set to bar');
+
+
     is($nodes[4]->name, 'fifth', 'Working with "fifth" element');
     is_deeply(
         $nodes[4]->atts,
@@ -35,12 +41,24 @@ sub test_atts {
         'attributes of fifth element')
         or note explain $nodes[4]->atts;
 
+    my $bar_ns = 'www.bar.com';
     is($nodes[5]->name, 'foo:sixth', 'Working with "foo:sixth" element');
     is_deeply(
         $nodes[5]->atts,
         {'foo:stuff' => 'junk'},
         'attributes of sixth element')
         or note explain $nodes[5]->atts;
+
+    is($nodes[5]->att('stuff', $bar_ns),
+        'junk', 'attribute retrieved via name and namespace');
+
+    $nodes[5]->remove_att('stuff', $bar_ns);
+    is($nodes[5]->att('stuff', $bar_ns),
+        undef, 'attribute removed via name and namespace');
+
+    $nodes[5]->set_att('stuff', 'junk', $bar_ns);
+    is($nodes[5]->att('stuff', $bar_ns),
+        'junk', 'attribute set via name and namespace');
     return;
 }
 

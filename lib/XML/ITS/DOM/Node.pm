@@ -438,8 +438,8 @@ uniquely identifies a namespace.
 sub unique_key {
     my ($self) = @_;
     if($self->type eq 'NS'){
-        return $self->{node}->getPrefix . ':' .
-            $self->{node}->getNamespaceURI;
+        return $self->{node}->declaredPrefix . ':' .
+            $self->{node}->declaredURI;
     }
     return $self->{node}->unique_key;
 }

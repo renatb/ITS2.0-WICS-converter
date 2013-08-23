@@ -133,6 +133,24 @@ sub set_att {
     return $self->{node}->setAttribute($name, $value);
 }
 
+
+=head2 C<remove_att>
+
+Arguments: name, value, and optional namespace URI for the desired
+attribute.
+
+Removes the specified attribute from its containing element.
+
+=cut
+sub remove_att {
+    my ($self, $name, $ns) = @_;
+    if($ns){
+        return $self->{node}->removeAttributeNS($ns, $name);
+    }
+    return $self->{node}->removeAttribute($name);
+
+}
+
 =head2 C<atts>
 
 If this node is an element, returns a hash pointer containing all of its
