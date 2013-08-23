@@ -395,7 +395,13 @@ special handling, though, because all of them are ITS
 but don't have the namespace associated with them.
 --- input
 <xml xmlns:its="http://www.w3.org/2005/11/its">
-  <its:span person="Boss" locNote="foo">Pointy Hair</its:span>
+  <its:span
+      person="Boss"
+      locNote="foo"
+      xml:id="a"
+      translate="no"
+      dir="ltr"
+      >Pointy Hair</its:span>
 </xml>
 --- output
 <!DOCTYPE html>
@@ -409,7 +415,10 @@ but don't have the namespace associated with them.
       <span
           title="its:span"
           its-person="Boss"
-          its-loc-note="foo">
+          its-loc-note="foo"
+          translate="no"
+          id="a"
+          dir="ltr">
         Pointy Hair</span>
     </div>
   </body>
@@ -419,11 +428,12 @@ converting document elements into HTML
 processing <xml>
 setting @title of <xml> to 'xml'
 stripping namespaces from <xml>
-processing <its:span>
-Replacing @person of <its:span> with its-person
-Replacing @locNote of <its:span> with its-loc-note
-setting @title of <its:span> to 'its:span'
-stripping namespaces from <its:span>
+processing <its:span xml:id="a">
+Replacing @person of <its:span xml:id="a"> with its-person
+Replacing @locNote of <its:span xml:id="a"> with its-loc-note
+renaming @xml:id[a] of <its:span xml:id="a"> to @id
+setting @title of <its:span id="a"> to 'its:span'
+stripping namespaces from <its:span id="a">
 renaming <xml> to <div>
 wrapping document in HTML structure
 

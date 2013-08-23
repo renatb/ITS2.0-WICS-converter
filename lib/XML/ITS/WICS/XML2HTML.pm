@@ -276,18 +276,22 @@ sub _process_att {
 
 	my $wrapped;
 	# xml:* attributes with vaild HTML ITS semantics
-	# (xml:space means nothing in HTML)
 	if($att->name eq 'xml:id'){
 		_att_rename($el, $att, 'id');
 	}elsif($att->name eq 'xml:lang'){
 		_att_rename($el, $att, 'lang');
+	# (xml:space means nothing in HTML)
 	}elsif($att->name eq 'xml:space'){
 		_att_delete($el, $att);
-	#its:* attributes with HTML semantics
-	}elsif($att->namespace_URI eq its_ns()){
+	}elsif(
+		#its:* attributes with HTML semantics
+		$att->namespace_URI eq its_ns() ||
+		# this should only be applying to its:span; non-namespace attributes
+		# are interpreted as ITS attributes.
+		$el->namespace_URI eq its_ns() && !$att->namespace_URI
+	){
 		if($att->local_name eq 'translate'){
 			_att_rename($el, $att, 'translate');
-			return;
 		}elsif($att->local_name eq 'dir'){
 			if($att->value =~ /^(?:lro|rlo)$/){
 				_process_dir_override($el, $att);
@@ -303,32 +307,29 @@ sub _process_att {
 			# default transformation for all other its:* atts
 			_htmlize_its_att($el, $att);
 		}
-	}
-	# this should only be applying to its:span; non-namespace attributes
-	# are interpreted as ITS attributes.
-	elsif($el->namespace_URI eq its_ns() && !$att->namespace_URI){
-		_htmlize_its_att($el, $att);
-	}
-	else{
+	}else{
 		# save other atts as FutureNodes, then delete
 		# (they are illegal in HTML)
 		$self->{futureNodeManager}->create_future($att);
 		$att->remove;
 	}
-
 	return;
 }
 
 #rename given att on given el to new_name.
 sub _att_rename {
 	my ($el, $att, $new_name) = @_;
+	#return immediately if the att will not really be renamed
+	return if($new_name eq $att->name);
 	if($log->is_debug){
 		$log->debug('renaming ' . node_log_id($att) . ' of ' . node_log_id($el) .
 			" to \@$new_name");
 	}
-	#have to replace with new att because renaming doesn't work with namespaces
-	$el->set_att($new_name, $att->value);
+	#must save value and remove att for set_att to work properly with xml:id
+	my $value = $att->value;
 	$att->remove;
+	#put att into empty namespace
+	$el->set_att($new_name, $value, '');
 	return;
 }
 
