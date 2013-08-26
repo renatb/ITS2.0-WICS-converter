@@ -4,3 +4,4 @@ _Inline
 .build
 ITS-WICS-*/
 /*.tar.gz
+t/testsuite_html
