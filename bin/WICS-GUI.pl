@@ -65,6 +65,11 @@ sub OnInit {
         }
     );
     my $close_btn = Wx::Button->new($panel, wxID_CANCEL, 'Close');
+    EVT_BUTTON( $self, $close_btn, sub {
+            my ($self, $event) = @_;
+            $frame->Destroy;
+        }
+    );
     my $buttonsizer = Wx::BoxSizer->new(wxHORIZONTAL);
     $buttonsizer->Add(
         $convert_btn,
