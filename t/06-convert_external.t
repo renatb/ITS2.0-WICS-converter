@@ -22,13 +22,11 @@ my $wics = XML::ITS::WICS::XML2HTML->new();
 my $converted = ${ $wics->convert("$file") };
 
 eq_or_diff_html($converted, $all_data->{html}, 'HTML structure');
-# print $all_data->{log};
 is_deeply(
   [map { $_->{message} } @{$log->msgs()}],
   [split /[\n\r]+/, $all_data->{log}],
   'Logs'
 );
-  # or print join "\n", map { $_->{message} } @{$log->msgs()};
 
 __DATA__
 @@ html
