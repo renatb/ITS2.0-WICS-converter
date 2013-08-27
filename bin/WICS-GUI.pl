@@ -1,7 +1,18 @@
+#!/usr/bin/env perl
 use strict;
 use warnings;
+# PODNAME: WICS-GUI.pl
+# VERSION
+# ABSTRACT: GUI frontent for converting ITS-decorated data
+
+=head1 DESCRIPTION
+
+...
+
+=cut
 
 package MyApp;
+use Wx::Perl::Packager;
 use Wx qw(
     :frame
     :textctrl
