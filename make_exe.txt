@@ -1,0 +1,3 @@
+Executable created with the following:
+
+wxpar -o MyApp.exe -I lib -l C:/strawberry/c/bin/libxml2-2__.dll -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/libz__.dll MyApp.pl

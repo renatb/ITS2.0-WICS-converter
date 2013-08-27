@@ -5,5 +5,4 @@ _Inline
 ITS-WICS-*/
 /*.tar.gz
 t/testsuite_html
-bin/
-!bin/WICS-GUI.pl
+WICS.wxparargs
