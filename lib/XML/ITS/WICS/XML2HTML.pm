@@ -62,6 +62,12 @@ sub convert {
 	my $ITS = XML::ITS->new('xml', doc => $doc_data);
 	my $dom = $ITS->get_doc;
 
+	if(_is_rules_dom($dom)){
+		croak 'Cannot process a file containing only rules. ' .
+			'Convert the file which references this file ' .
+			'(via xlink:href) instead.';
+	}
+
 	#create a futureNodeManager associated with the input document
 	$self->{futureNodeManager} =
 		new_manager($dom);
@@ -82,6 +88,16 @@ sub convert {
 
 	# return string pointer
 	return \($html_doc->string);
+}
+
+sub _is_rules_dom {
+	my ($dom) = @_;
+	my $root = $dom->get_root;
+	if($root->namespace_URI eq its_ns() &&
+		$root->local_name eq 'rules'){
+		return 1;
+	}
+	return;
 }
 
 # create an indexing sub for ITS::iterate_matches, and use a
@@ -398,7 +414,6 @@ sub _html_structure {
 
 	# grab the HTML head and paste in the
 	# encoding, title, and standoff markup
-	# my ($head) = $root->get_xpath('head');
 	my $meta = new_element('meta', { charset => 'utf-8' });
 	$meta->paste($head);
 	my $title = new_element('title', {}, $self->{title});
@@ -410,7 +425,6 @@ sub _html_structure {
 	}
 
 	#paste the doc root into the HTML body
-	# my ($body) = $html_doc->get_root->get_xpath('body');
 	$xml_doc->get_root->paste($body);
 
 	return $html_doc;
