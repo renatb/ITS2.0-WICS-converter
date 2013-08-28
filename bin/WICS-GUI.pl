@@ -125,8 +125,12 @@ sub OnInit {
     # my $overwrite_checkbox = Wx::CheckBox->new(
     #     $frame, wxID_ANY, "overwrite existing files",
     #     wxDefaultPosition, wxDefaultSize, 0);
-    # $overwrite_checkbox->SetValue(0);
-    # $topsizer->Add($overwrite_checkbox, 0, wxALIGN_CENTER, 10);
+    # $topsizer->Add(
+    #     $overwrite_checkbox,
+    #     0,             # make vertically unstretchable
+    #     wxALIGN_CENTER, # no border and centre horizontally
+    #     10
+    # );
     $panel->SetSizer( $topsizer );
     my $mainsizer = Wx::BoxSizer->new(wxVERTICAL);
     $mainsizer->Add($panel, 1, wxEXPAND|wxALL, 0);
