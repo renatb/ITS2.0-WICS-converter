@@ -129,12 +129,11 @@ sub get_source {
     return $self->{source};
 }
 
-#type is 'xml' or 'html'
-#data is filename or pointer to string content
-#optional namespace => 0 to remove xhtml namespace declaration
-#returns an XML::LibXML::Document object
+# type is 'xml' or 'html'
+# data is filename or pointer to string content
+# returns an XML::LibXML::Document object
 sub _get_dom {
-    my ($type, $data, %args) = @_;
+    my ($type, $data) = @_;
 
     my $dom;
     if($type !~ /^(?:xml|html)$/){

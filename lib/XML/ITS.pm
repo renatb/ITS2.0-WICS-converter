@@ -18,9 +18,6 @@ use Exporter::Easy (
 );
 
 my $ITS_NS = 'http://www.w3.org/2005/11/its';
-sub its_ns{
-    return $ITS_NS;
-}
 
 my $XLINK_NS = 'http://www.w3.org/1999/xlink';
 
@@ -46,6 +43,19 @@ if(!caller){
 This module is for working with ITS decorated XML or HTML documents.
 It allows you to resolve all of the global and find matches for each
 of them.
+
+=head1 EXPORTS
+
+The following function may be exported:
+
+=head2 C<its_ns>
+
+Returns the ITS namespace URI.
+
+=cut
+sub its_ns{
+    return $ITS_NS;
+}
 
 =head1 METHODS
 

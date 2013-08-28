@@ -1,8 +1,8 @@
 package XML::ITS::DOM::Element;
 use strict;
 use warnings;
-#VERSION
-#ABSTRACT: Represents a DOM element
+# VERSION
+# ABSTRACT: Represents a DOM element
 use Exporter::Easy (
     OK => [qw(new_element)]
 );

@@ -30,12 +30,11 @@ test_html_options();
 sub test_errors {
     my ($dom_path) = @_;
 
-    throws_ok {
+    dies_ok {
         XML::ITS::DOM->new(
             'xml' => path($corpus_dir, 'nonexistent.xml')
         )
-    } qr/error parsing file.*No such file or directory.*01-dom.t/s,
-        'dies for nonexistent file';
+    },  'dies for nonexistent file';
     throws_ok {
         XML::ITS::DOM->new(
             'xml' => \'<xml>stuff</xlm>'
