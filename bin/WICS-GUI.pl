@@ -7,13 +7,29 @@ use warnings;
 
 =head1 DESCRIPTION
 
-...
+This is a graphical interface for converting ITS-decorated
+data into other formats. Currently it only supports XML->HTML
+conversion.
+
+Choose the file or files you would like to convert by clicking
+"Choose file...". Execute the conversion process by clicking
+"Convert". A frame with the log messages will pop up. Errors
+are shown in red.
+
+Converted files are written to the directory that the source
+files exist in. They keep the name of their source file, but
+with a different extension. If the "overwrite existing files"
+box is not checked and a file with the given name and extension
+already exists, then a number will be appended to the end of
+the file name to make it unique.
 
 =cut
 
 package MyApp;
 use Wx::Perl::Packager;
 use Wx qw(
+    :clipboard
+    :misc
     :frame
     :textctrl
     :sizer
@@ -23,6 +39,7 @@ use Wx qw(
     :filedialog
     :colour
 );
+use Wx::DND;
 use Wx::Event qw(EVT_BUTTON);
 use base 'Wx::App';
 use Path::Tiny;
@@ -105,6 +122,11 @@ sub OnInit {
         0,             # make vertically unstretchable
         wxALIGN_CENTER # no border and centre horizontally
     );
+    # my $overwrite_checkbox = Wx::CheckBox->new(
+    #     $frame, wxID_ANY, "overwrite existing files",
+    #     wxDefaultPosition, wxDefaultSize, 0);
+    # $overwrite_checkbox->SetValue(0);
+    # $topsizer->Add($overwrite_checkbox, 0, wxALIGN_CENTER, 10);
     $panel->SetSizer( $topsizer );
     my $mainsizer = Wx::BoxSizer->new(wxVERTICAL);
     $mainsizer->Add($panel, 1, wxEXPAND|wxALL, 0);
@@ -142,7 +164,8 @@ sub _convert_files {
         'Conversion Logs',   # title
         [-1, -1],           # default position
         [100, 100],         # size (overridden by textCtrl size)
-    );my $topsizer = Wx::BoxSizer->new(wxVERTICAL);
+    );
+    my $topsizer = Wx::BoxSizer->new(wxVERTICAL);
     # create Wx::Panel to use as a parent
     my $panel = Wx::Panel->new(
         $frame, -1, [-1,-1], [-1,-1],
@@ -151,9 +174,32 @@ sub _convert_files {
     # create a text control with minimal size 100x60
     my $text = Wx::TextCtrl->new(
         $panel, -1, '',
-        [-1,-1],[400,600],
+        [-1,-1],[400,500],
         #multiline, read-only, scrollable, allow styles
         wxTE_MULTILINE|wxTE_READONLY|wxHSCROLL|wxTE_RICH2
+    );
+    my $copy_btn = Wx::Button->new($panel, wxID_ANY, 'Copy');
+    EVT_BUTTON( $self, $copy_btn,
+        sub {
+            my ($self, $event) = @_;
+            if (wxTheClipboard->Open){
+                wxTheClipboard->SetData(
+                    Wx::TextDataObject->new($text->GetValue) );
+                wxTheClipboard->Close();
+            }
+        }
+    );
+    my $buttonsizer = Wx::BoxSizer->new(wxHORIZONTAL);
+    $buttonsizer->Add(
+        $copy_btn,
+        0,           # make horizontally unstretchable
+        wxALL,       # make border all around (implicit top alignment)
+        10           # set border width to 10
+    );
+    $topsizer->Add(
+        $buttonsizer,
+        0,             # make vertically unstretchable
+        wxALIGN_CENTER # no border and centre horizontally
     );
     $topsizer->Add(
         $text,
@@ -162,6 +208,7 @@ sub _convert_files {
         wxALL,       # and make border all around
         10           # set border width to 10
     );
+
     $panel->SetSizer( $topsizer );
     my $mainsizer = Wx::BoxSizer->new(wxVERTICAL);
     $mainsizer->Add($panel, 1, wxEXPAND|wxALL, 0);
@@ -180,12 +227,14 @@ sub _convert_files {
         $path = path($path);
         $log->clear;
         try{
+            $text->SetDefaultStyle($normal_style);
+            $text->AppendText(
+                "\n----------\n$path\n----------\n");
             my $html = xml2html($path);
             my $new_path = _get_new_path($path);
             my $fh = path($new_path)->
                 filehandle('>:utf8');
             print $fh ${ $html };
-            $text->SetDefaultStyle($normal_style);
             $text->AppendText(
                 join "\n", map {
                     $_->{message}
