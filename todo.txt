@@ -3,15 +3,13 @@ WICS XML to HTML converter
 TODO:
 
 Engineering Tasks:
-
+    - rewrite GUI in XRC
+    - capture logs with Log::Any::Adapter subclass and Wx::Log subclass, removing timestamps, and print text box
+        - right now we just grab all logs with Log::Any::Test and print them all when the document is done processing
 To Do on current task:
 
 Later To Do:
-    - GUI?
     - find possible code reuse in converter
     - Decide on organization of end-project
         - WICS.pm one file that can convert anything?
             - Inject logger
-
-Testing:
-    Besides testing each piece of functionality, we need a comprehensive end-to-end XML2HTML test suite for Renat and Serge
