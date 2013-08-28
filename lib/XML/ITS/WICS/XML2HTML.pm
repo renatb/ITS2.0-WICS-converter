@@ -274,7 +274,6 @@ sub _rename_el {
 sub _process_att {
 	my ($self, $el, $att) = @_;
 
-	my $wrapped;
 	# xml:* attributes with vaild HTML ITS semantics
 	if($att->name eq 'xml:id'){
 		_att_rename($el, $att, 'id');

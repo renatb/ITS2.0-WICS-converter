@@ -248,6 +248,7 @@ sub _convert_files {
             $text->AppendText($_);
         };
     }
+    return;
 }
 
 sub _get_new_path {
@@ -270,6 +271,6 @@ sub _get_new_path {
     return path($dir, $name);
 }
 
-package main;
+package main; ## no critic(ProhibitMultiplePackages)
 my $app = MyApp->new;
 $app->MainLoop;

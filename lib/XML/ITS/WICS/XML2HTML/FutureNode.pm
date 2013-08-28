@@ -7,8 +7,8 @@ use XML::ITS::WICS::LogUtils qw(node_log_id get_or_set_id);
 use Carp;
 use Log::Any qw($log);
 
-#VERSION
-#ABSTRACT: Save a single node during DOM transformation.
+# VERSION
+# ABSTRACT: Save a single node during DOM transformation.
 
 =head1 SYNOPSIS
 
