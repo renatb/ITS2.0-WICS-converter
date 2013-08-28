@@ -55,6 +55,8 @@ sub new_future {
 
 =head1 METHODS
 
+=head2 C<new>
+
 Create a new FutureNode. The arguments are the FutureNodeManager
 which will manage this instance, the node to be represented, and
 the XML::ITS::DOM instance containing it.
