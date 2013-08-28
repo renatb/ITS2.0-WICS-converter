@@ -79,17 +79,17 @@ sub OnInit {
         wxALL,       # and make border all around
         10           # set border width to 10
     );
+    my $convert_btn     = Wx::Button->new($panel, wxID_OK, 'Convert');
+    EVT_BUTTON( $self, $convert_btn, sub {
+            my ($self, $event) = @_;
+            $self->_convert_files;
+        }
+    );
     my $choose_file_btn     = Wx::Button->new($panel, wxID_ANY, 'Choose File...');
     EVT_BUTTON( $self, $choose_file_btn, sub {
             my ($self, $event) = @_;
             $self->{file_paths} = _open_files($frame);
             $text->SetValue(join "\n",@{ $self->{file_paths} } );
-        }
-    );
-    my $convert_btn     = Wx::Button->new($panel, wxID_OK, 'Convert');
-    EVT_BUTTON( $self, $convert_btn, sub {
-            my ($self, $event) = @_;
-            $self->_convert_files;
         }
     );
     my $close_btn = Wx::Button->new($panel, wxID_CANCEL, 'Close');
@@ -106,13 +106,13 @@ sub OnInit {
         10           # set border width to 10
     );
     $buttonsizer->Add(
-        $close_btn,
+        $choose_file_btn,
         0,           # make horizontally unstretchable
         wxALL,       # make border all around (implicit top alignment)
         10           # set border width to 10
     );
     $buttonsizer->Add(
-        $choose_file_btn,
+        $close_btn,
         0,           # make horizontally unstretchable
         wxALL,       # make border all around (implicit top alignment)
         10           # set border width to 10
