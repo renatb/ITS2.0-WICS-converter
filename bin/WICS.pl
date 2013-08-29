@@ -1,6 +1,16 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+
+#special handling of paths on Windows
+BEGIN {
+    if ($^O eq "MSWin32"){
+        require Win32::LongPath;
+        Win32::LongPath->import();
+    }
+}
+use Encode;
+use Encode::Locale;
 use Log::Any::Adapter;
 use Log::Any::Adapter qw(Stdout);
 binmode(STDOUT, ":encoding(UTF-8)");
@@ -60,17 +70,32 @@ my @files = $opt->get_input;
 my $overwrite = $opt->get_overwrite;
 
 for my $path (@files){
+    #decode weird characters in the path,
+    $path = decode(locale => $path, 1);
+    # then make it a Path::Tiny object
     $path = path($path);
     print STDOUT "\n----------\n$path\n----------\n";
     try{
-        my $html = xml2html($path);
+        my $html = xml2html(_get_fh($path, '<:encoding(UTF-8)'));
         my $new_path = _get_new_path($path);
-        my $fh = path($new_path)->
-            filehandle('>:utf8');
-        print $fh ${ $html };
+        my $out_fh = _get_fh($new_path, '>:encoding(UTF-8)');
+        print $out_fh ${ $html };
     }catch{
         print STDERR $_;
     };
+}
+
+# either return whatever Path::Tiny returns, or
+# use Win32::LongPath if on Windows
+sub _get_fh {
+    my ($path, $rw_string) = @_;
+    if ($^O eq "MSWin32"){
+        my $fh;
+        openL \$fh, $rw_string, $path
+            or die $!;
+        return $fh;
+    }
+    return path->filehandle($rw_string);
 }
 
 sub _get_new_path {
