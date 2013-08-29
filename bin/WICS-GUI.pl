@@ -48,6 +48,14 @@ use Log::Any::Test;
 use Log::Any qw($log);
 use XML::ITS::WICS qw(xml2html);
 
+#special handling of paths on Windows
+BEGIN {
+    if ($^O eq "MSWin32"){
+        require Win32::LongPath;
+        Win32::LongPath->import();
+    }
+}
+
 sub OnInit {
     my( $self ) = @_;
     # create a new frame (a frame is a top level window)
@@ -234,10 +242,9 @@ sub _convert_files {
             $text->SetDefaultStyle($normal_style);
             $text->AppendText(
                 "\n----------\n$path\n----------\n");
-            my $html = xml2html($path);
+            my $html = xml2html(_get_fh($path, '<'));
             my $new_path = _get_new_path($path);
-            my $fh = path($new_path)->
-                filehandle('>:utf8');
+            my $fh = _get_fh($new_path, '>:encoding(UTF-8)');
             print $fh ${ $html };
             $text->AppendText(
                 join "\n", map {
@@ -249,6 +256,19 @@ sub _convert_files {
         };
     }
     return;
+}
+
+# either return whatever Path::Tiny returns, or
+# use Win32::LongPath if on Windows
+sub _get_fh {
+    my ($path, $rw_string) = @_;
+    if ($^O eq "MSWin32"){
+        my $fh;
+        openL \$fh, $rw_string, $path
+            or die $!;
+        return $fh;
+    }
+    return path->filehandle($rw_string);
 }
 
 sub _get_new_path {
