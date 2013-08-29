@@ -1,6 +1,8 @@
 Revision history for XML-ITS
 
 {{$NEXT}}
+
+0.02      2013-08-29 14:05:44 America/Los_Angeles
     XML::ITS::DOM now accepts filehandles
 
 0.01      2013-08-28 00:13:17 America/Los_Angeles
