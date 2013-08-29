@@ -30,8 +30,9 @@ It abstracts away XML/HTML processing to quarantine 3rd party code.
 =head2 C<new>
 
 The first argument should be named either 'xml' or
-'html', and the value should either be a string filepath or a string pointer
-containing the actual data to be parsed.
+'html', and the value should either be a string filepath, a string pointer
+containing the actual data to be parsed, or a filehandle for
+a file containing the data.
 
 For HTML documents, an optional 'namespace' argument can be set to false
 to prevent setting the default namespace to C<http://www.w3.org/1999/xhtml>.
@@ -130,7 +131,7 @@ sub get_source {
 }
 
 # type is 'xml' or 'html'
-# data is filename or pointer to string content
+# data is filename, pointer to string content, or file glob
 # returns an XML::LibXML::Document object
 sub _get_dom {
     my ($type, $data) = @_;
@@ -156,7 +157,19 @@ sub _get_dom {
             _carp_parse_errors($parser);
         }
     }
-    else{
+    elsif(ref $data eq 'GLOB'){
+        #$data is a filehandle
+        if($type eq 'xml'){
+            try{
+                $dom = $parser->load_xml( IO => $data );
+            } catch {
+                croak "error parsing file '$data': $_";
+            };
+        }else{
+            $dom = $parser->parse_fh( $data );
+            _carp_parse_errors($parser);
+        }
+    }else{
         #strings are file names
         if($type eq 'xml'){
             try{

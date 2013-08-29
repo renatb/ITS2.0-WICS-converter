@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 16;
+plan tests => 19;
 use XML::ITS::DOM;
 use Test::Exception;
 use Test::NoWarnings;
@@ -13,7 +13,8 @@ use FindBin qw($Bin);
 my $corpus_dir = path($Bin, 'corpus');
 
 my $dom_path = path($corpus_dir, 'dom_test.xml');
-test_errors($dom_path);
+my $html_dom_path = path($corpus_dir, 'basic_html5.html');
+test_errors($dom_path, $html_dom_path);
 
 my $dom = XML::ITS::DOM->new( 'xml' => $dom_path );
 
@@ -28,7 +29,7 @@ test_html_options();
 # the error location reported is for this file
 # (not the library file)
 sub test_errors {
-    my ($dom_path) = @_;
+    my ($dom_path, $html_dom_path) = @_;
 
     dies_ok {
         XML::ITS::DOM->new(
@@ -48,30 +49,52 @@ sub test_errors {
         )
     } 'valid XML parses without error';
 
-    # use a script with XML in it to make sure
-    # HTML5 is ok. See http://mathiasbynens.be/notes/etago
     lives_ok{
-        XML::ITS::DOM->new(
-            'html' => \"
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>WICS</title>
-                    <script type='application/xml'>
-                        <xml>some stuff</xml>
-                    </script>
-                </head>
-            <body></body>
-            </html>")
-    } 'valid HTML5 parses without error';
+        open my $fh, '<:encoding(UTF-8)', $dom_path
+            or die $_;
+        $dom = XML::ITS::DOM->new(
+            'xml' => $fh
+        )
+    } 'valid XML file handle parses without error';
 
     lives_ok{
         $dom = XML::ITS::DOM->new(
             'xml' => $dom_path,
-            'rules' => $dom_path
         )
     } 'valid XML file parses without error' or
         BAIL_OUT "can't test with basic XML file";
+
+    # use a script with XML in it to make sure
+    # HTML5 is ok. See http://mathiasbynens.be/notes/etago
+    my $test_html = <<END_HTML;
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WICS</title>
+        <script type='application/xml'>
+            <xml>some stuff</xml>
+        </script>
+    </head>
+<body></body>
+</html>
+END_HTML
+
+    lives_ok{
+        XML::ITS::DOM->new(
+            'html' => \$test_html)
+    } 'valid HTML5 parses without error';
+
+    lives_ok{
+        open my $fh, '<:encoding(UTF-8)', $html_dom_path
+            or die $_;
+        XML::ITS::DOM->new(
+            'html' => $fh)
+    } 'valid HTML5 file parses without error';
+
+    lives_ok{
+        XML::ITS::DOM->new(
+            'html' => $html_dom_path)
+    } 'valid HTML5 file parses without error';
     return;
 }
 
