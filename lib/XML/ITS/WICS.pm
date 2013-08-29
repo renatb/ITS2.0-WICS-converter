@@ -30,8 +30,8 @@ This module allows one to convert various forms of ITS-decorated XML into HTML w
 Converts input XML data into HTML5 while keeping the ITS information
 intact. See C<XML::ITS::WICS::XML2HTML> for more details.
 
-Argument is either a string containing an XML file name, or a string pointer
-containing actual XML data.
+Argument is either a string containing an XML file name, a string pointer
+containing actual XML data, or a filehandle for a file containing the data.
 
 =cut
 

@@ -48,8 +48,8 @@ sub new {
 Converts the input XML document into an HTML document equivalent, and
 displayable, HTML.
 
-Argument is either a string containing an XML file name, or a string pointer
-containing actual XML data.
+Argument is either a string containing an XML file name, a string pointer
+containing actual XML data, or a filehandle for a file containing the data.
 
 Return value is a string pointer containing the output HTML string.
 
