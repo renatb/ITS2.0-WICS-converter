@@ -74,11 +74,12 @@ directory contains the XML::ITS and XML::ITS::WICS distributions, and we
 use -I to include their C<lib> folders. We use C<-o> to specify the
 name of the created executable. We pass the path to this script as the
 final argument. Run in a Windows CMD, this should all be one line; I have
-broken it into three lines for display purposes.
+broken it into four lines for display purposes.
 
   wxpar -o WICS-GUI.exe -l C:/strawberry/c/bin/libxml2-2__.dll
   -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/libz__.dll
-  -I XML-ITS-0.02/lib -I XML-ITS-WICS-0.02/lib XML-ITS-WICS/bin/WICS-GUI.pl
+  -I XML-ITS-0.02/lib -I XML-ITS-WICS-0.02/lib
+  XML-ITS-WICS-0.02/bin/WICS-GUI.pl
 
 
 =head1 TODO
