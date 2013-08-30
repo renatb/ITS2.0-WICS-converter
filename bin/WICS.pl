@@ -84,6 +84,8 @@ modules directory. However, this poses problems because at best the
 executable could only decode whatever it could decode on the computer
 with which it was made. This problem needs further investigation.
 
+Fixing the Archive.pm error for the standalone would also be nice.
+
 =cut
 
 my @specs = (
@@ -134,6 +136,7 @@ sub _get_fh {
     return path->filehandle($rw_string);
 }
 
+#input: Path::Tiny object for input file path
 sub _get_new_path {
     my ($old_path) = @_;
     my $name = $old_path->basename;
@@ -143,13 +146,24 @@ sub _get_new_path {
     $name =~ s/(\.[^.]+)?$/.html/;
     # if we shouldn't overwrite a file, and another file with same name
     # exists, just iterate numbers to get a new, unused file name
-    if(!$overwrite && path($dir, $name)->exists){
+    my $new_path = path($dir, $name);
+    if(!$overwrite && _file_exists( path($dir, $name) )){
         my $counter = 1;
         $name =~ s/\.html$//;
-        while(path($dir, $name . "-$counter.html")->exists){
-            $counter++;
-        }
-        return path($dir, $name . "-$counter.html");
+        $counter++ while(
+            _file_exists(
+                $new_path = path($dir, $name . "-$counter.html")
+            ));
+        return $new_path;
     }
-    return path($dir, $name);
+    return $new_path;
+}
+
+#input: Path::Tiny object for file to test for existence
+sub _file_exists {
+    my ($path) = @_;
+    if ($^O eq "MSWin32"){
+        return testL('e', "$path");
+    }
+    return path->exists;
 }

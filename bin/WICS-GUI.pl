@@ -89,6 +89,11 @@ broken it into four lines for display purposes.
 NOTE: running the exe may fail the first time with an error message with
 "Archive.pm line 192". Just run it again and it should be fine.
 
+=head1 TODO
+
+Fixing the Archive.pm error for the standalone would be nice. A checkbox for
+indicating whether files should be overwritten or not would also be nice.
+
 =cut
 
 package MyApp;
@@ -338,6 +343,7 @@ sub _get_fh {
     return path->filehandle($rw_string);
 }
 
+#input: Path::Tiny object for input file path
 sub _get_new_path {
     my ($old_path) = @_;
     my $name = $old_path->basename;
@@ -347,15 +353,26 @@ sub _get_new_path {
     $name =~ s/(\.[^.]+)?$/.html/;
     # if other file with same name exists, just iterate numbers to get a new,
     # unused file name
-    if(path($dir, $name)->exists){
+    my $new_path = path($dir, $name);
+    if(_file_exists( path($dir, $name) )){
         my $counter = 1;
         $name =~ s/\.html$//;
-        while(path($dir, $name . "-$counter.html")->exists){
-            $counter++;
-        }
-        return path($dir, $name . "-$counter.html");
+        $counter++ while(
+            _file_exists(
+                $new_path = path($dir, $name . "-$counter.html")
+            ));
+        return $new_path;
     }
-    return path($dir, $name);
+    return $new_path;
+}
+
+#input: Path::Tiny object for file to test for existence
+sub _file_exists {
+    my ($path) = @_;
+    if ($^O eq "MSWin32"){
+        return testL('e', "$path");
+    }
+    return path->exists;
 }
 
 package main; ## no critic(ProhibitMultiplePackages)
