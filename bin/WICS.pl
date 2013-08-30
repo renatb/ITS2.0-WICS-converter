@@ -59,7 +59,7 @@ insure uniqueness.
 =head1 STANDALONE EXECUTABLE
 
 To create a standalone executable of this script, you will follow the same
-procedure as described in L<WICS-GUI.pl>, but since this is not a GUI
+procedure as described in WICS-GUI.pl, but since this is not a GUI
 application you will not have to install C<Wx::Perl::Packager> or use C<wxpar>.
 
 Here is an example command used to create a standalone executable. Run in a
