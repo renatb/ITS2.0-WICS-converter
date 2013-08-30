@@ -287,6 +287,8 @@ sub _convert_files {
 
     my $warning_style = Wx::TextAttr->new();
     $warning_style->SetTextColour(wxRED);
+    my $done_style = Wx::TextAttr->new();
+    $done_style->SetTextColour(wxBLUE);
     my $normal_style = Wx::TextAttr->new();
     $normal_style->SetTextColour(wxBLACK);
 
@@ -311,6 +313,7 @@ sub _convert_files {
                 join "\n", map {
                     $_->{message}
                 } @{$log->msgs});
+            $text->SetDefaultStyle($done_style);
             $text->AppendText("\nwrote $new_path\n");
         }catch{
             $text->SetDefaultStyle($warning_style);
