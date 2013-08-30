@@ -2,13 +2,6 @@
 use strict;
 use warnings;
 
-#special handling of paths on Windows
-BEGIN {
-    if ($^O eq "MSWin32"){
-        require Win32::LongPath;
-        Win32::LongPath->import();
-    }
-}
 use Log::Any::Adapter;
 use Log::Any::Adapter qw(Stdout);
 binmode(STDOUT, ":encoding(UTF-8)");
@@ -63,11 +56,10 @@ procedure as described in WICS-GUI.pl, but since this is not a GUI
 application you will not have to install C<Wx::Perl::Packager> or use C<wxpar>.
 
 Here is an example command used to create a standalone executable. Run in a
-Windows CMD, this should all be one line; I have broken it into four
+Windows CMD, this should all be one line; I have broken it into three
 lines for display purposes.
 
   pp -o WICS.exe -l C:/strawberry/c/bin/libxml2-2__.dll
-  -M C:/strawberry/perl/lib/Encode/Unicode.pm
   -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/libz__.dll
   -I XML-ITS-0.02/lib -I XML-ITS-WICS-0.02/lib XML-ITS-WICS/bin/WICS.pl
 
@@ -113,9 +105,9 @@ for my $path (@files){
     $path = path($path);
     print "\n----------\n$path\n----------\n";
     try{
-        my $html = xml2html(_get_fh($path, '<:encoding(UTF-8)'));
-        my $new_path = _get_new_path($path);
-        my $out_fh = _get_fh($new_path, '>:encoding(UTF-8)');
+        my $html = xml2html( $path );
+        my $new_path = _get_new_path($path, $overwrite);
+        my $out_fh = $new_path->filehandle('>:encoding(UTF-8)');
         print $out_fh ${ $html };
         print "wrote $new_path\n";
     }catch{
@@ -123,47 +115,25 @@ for my $path (@files){
     };
 }
 
-# either return whatever Path::Tiny returns, or
-# use Win32::LongPath if on Windows
-sub _get_fh {
-    my ($path, $rw_string) = @_;
-    if ($^O eq "MSWin32"){
-        my $fh;
-        openL \$fh, $rw_string, $path
-            or die $!;
-        return $fh;
-    }
-    return path->filehandle($rw_string);
-}
-
 #input: Path::Tiny object for input file path
 sub _get_new_path {
-    my ($old_path) = @_;
+    my ($old_path, $overwrite) = @_;
     my $name = $old_path->basename;
     my $dir = $old_path->dirname;
 
     #new file will have html extension instead of whatever there was before
     $name =~ s/(\.[^.]+)?$/.html/;
-    # if we shouldn't overwrite a file, and another file with same name
-    # exists, just iterate numbers to get a new, unused file name
+    # if other file with same name exists, just iterate numbers to get a new,
+    # unused file name
     my $new_path = path($dir, $name);
-    if(!$overwrite && _file_exists( path($dir, $name) )){
-        my $counter = 1;
+    if(!$overwrite && $new_path->exists){
         $name =~ s/\.html$//;
-        $counter++ while(
-            _file_exists(
-                $new_path = path($dir, $name . "-$counter.html")
-            ));
-        return $new_path;
+        $new_path = path($dir, $name . '-1.html');
+        my $counter = 1;
+        while($new_path->exists){
+            $counter++;
+            $new_path = path($dir, $name . "-$counter.html");
+        }
     }
     return $new_path;
-}
-
-#input: Path::Tiny object for file to test for existence
-sub _file_exists {
-    my ($path) = @_;
-    if ($^O eq "MSWin32"){
-        return testL('e', "$path");
-    }
-    return path->exists;
 }
