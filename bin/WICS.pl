@@ -9,8 +9,6 @@ BEGIN {
         Win32::LongPath->import();
     }
 }
-use Encode;
-use Encode::Locale;
 use Log::Any::Adapter;
 use Log::Any::Adapter qw(Stdout);
 binmode(STDOUT, ":encoding(UTF-8)");
@@ -58,28 +56,66 @@ insure uniqueness.
 
 =back
 
+=head1 STANDALONE EXECUTABLE
+
+To create a standalone executable of this script, you will follow the same
+procedure as described in L<WICS-GUI.pl>, but since this is not a GUI
+application you will not have to install C<Wx::Perl::Packager> or use C<wxpar>.
+
+Here is an example command used to create a standalone executable. Run in a
+Windows CMD, this should all be one line; I have broken it into four
+lines for display purposes.
+
+  pp -o WICS.exe -l C:/strawberry/c/bin/libxml2-2__.dll
+  -M C:/strawberry/perl/lib/Encode/Unicode.pm
+  -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/libz__.dll
+  -I XML-ITS-0.02/lib -I XML-ITS-WICS-0.02/lib XML-ITS-WICS/bin/WICS.pl
+
+NOTE: running the exe may fail the first time with an error message with
+"Archive.pm line 192". Just run it again and it should be fine.
+
+=head1 TODO
+
+This script should support unicode filenames; however, it doesn't
+decode CMD input, so unicode input gets garbled. One way to do this
+is to use the Encode::Locale module to decode input. Creating the
+standalone executable would then require the inclusion of the Unicode
+modules directory. However, this poses problems because at best the
+executable could only decode whatever it could decode on the computer
+with which it was made. This problem needs further investigation.
+
 =cut
 
 my @specs = (
     Switch("overwrite|w"),
     List("input|i"),
 );
-my $opt = Getopt::Lucid->getopt( \@specs )->validate;
+my $opt;
+try {
+    $opt = Getopt::Lucid->getopt( \@specs )->
+        validate({requires => ['input']});
+}catch{
+    my $msg = "\nWICS XML2HTML converter\n";
+    $msg .= "$_\n";
+    $msg .= "Usage: WICS.pl [-w] -i <file> [-i <file>...]\n";
+    $msg .= "  -w or --overwrite: overwrite existing files during conversion\n";
+    $msg .= "  -i or --input: convert given XML file\n";
+    die $msg;
+};
 
 my @files = $opt->get_input;
 my $overwrite = $opt->get_overwrite;
 
 for my $path (@files){
-    #decode weird characters in the path,
-    $path = decode(locale => $path, 1);
-    # then make it a Path::Tiny object
+    # make the path a Path::Tiny object
     $path = path($path);
-    print STDOUT "\n----------\n$path\n----------\n";
+    print "\n----------\n$path\n----------\n";
     try{
         my $html = xml2html(_get_fh($path, '<:encoding(UTF-8)'));
         my $new_path = _get_new_path($path);
         my $out_fh = _get_fh($new_path, '>:encoding(UTF-8)');
         print $out_fh ${ $html };
+        print "wrote $new_path\n";
     }catch{
         print STDERR $_;
     };
