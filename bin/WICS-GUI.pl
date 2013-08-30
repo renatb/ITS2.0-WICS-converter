@@ -306,6 +306,12 @@ sub _convert_files {
     my $normal_style = Wx::TextAttr->new();
     $normal_style->SetTextColour(wxBLACK);
 
+    #catch warnings, as well
+    local $SIG{__WARN__} = sub {
+        $text->SetDefaultStyle($warning_style);
+        $text->AppendText($_[0]);
+        $text->SetDefaultStyle($normal_style);
+    };
     for my $path (@{ $self->{file_paths} }){
         $path = path($path);
         $log->clear;
