@@ -63,11 +63,6 @@ Strawberry Perl, they are all located in C<C:/strawberry/c/bin>. Notice that
 I have replaced all backslashes with forward slashes in the path. This is
 essential, as C<pp> will fail if paths have backslashes in them.
 
-Next, you'll need to add the Encode::Unicode module file using the C<-M> option.
-In my Strawberry Perl installation, this is located in
-C<C:/strawberry/perl/lib/Encode/Unicode.pm>, but it might be different on your
-computer. Notice again the use of forward slashes.
-
 Finally, you'll need to make the XML::ITS and XML::ITS::WICS distributions
 available to these tools, either by installing them on your computer,
 or by adding the C<lib> folders of these distributions to the include path
@@ -79,20 +74,17 @@ directory contains the XML::ITS and XML::ITS::WICS distributions, and we
 use -I to include their C<lib> folders. We use C<-o> to specify the
 name of the created executable. We pass the path to this script as the
 final argument. Run in a Windows CMD, this should all be one line; I have
-broken it into four lines for display purposes.
+broken it into three lines for display purposes.
 
   wxpar -o WICS-GUI.exe -l C:/strawberry/c/bin/libxml2-2__.dll
-  -M C:/strawberry/perl/lib/Encode/Unicode.pm
   -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/libz__.dll
   -I XML-ITS-0.02/lib -I XML-ITS-WICS-0.02/lib XML-ITS-WICS/bin/WICS-GUI.pl
 
-NOTE: running the exe may fail the first time with an error message with
-"Archive.pm line 192". Just run it again and it should be fine.
 
 =head1 TODO
 
-Fixing the Archive.pm error for the standalone would be nice. A checkbox for
-indicating whether files should be overwritten or not would also be nice.
+A checkbox for indicating whether files should be overwritten or not
+would be nice.
 
 =cut
 
@@ -311,7 +303,7 @@ sub _convert_files {
             $text->SetDefaultStyle($normal_style);
             $text->AppendText(
                 "\n----------\n$path\n----------\n");
-            my $html = xml2html($path->filehandle('<'));
+            my $html = xml2html($path);
             my $new_path = _get_new_path($path);
             my $fh = $new_path->filehandle('>:encoding(UTF-8)');
             print $fh ${ $html };
