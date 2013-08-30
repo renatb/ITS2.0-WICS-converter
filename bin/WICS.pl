@@ -61,7 +61,7 @@ lines for display purposes.
 
   pp -o WICS.exe -l C:/strawberry/c/bin/libxml2-2__.dll
   -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/libz__.dll
-  -I XML-ITS-0.02/lib -I XML-ITS-WICS-0.02/lib XML-ITS-WICS/bin/WICS.pl
+  -I XML-ITS-0.02/lib -I XML-ITS-WICS-0.02/lib XML-ITS-WICS-0.02/bin/WICS.pl
 
 NOTE: running the exe may fail the first time with an error message with
 "Archive.pm line 192". Just run it again and it should be fine.
