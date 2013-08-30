@@ -23,6 +23,72 @@ box is not checked and a file with the given name and extension
 already exists, then a number will be appended to the end of
 the file name to make it unique.
 
+=head1 STANDALONE EXECUTABLE
+
+To create a standalone executable of this script, you will need
+to install the following modules:
+
+=over
+
+=item PAR::Packer
+
+This provides the C<pp> command, which creates standalone executables out of
+Perl scripts, packaging the Perl interpreter and most required scripts
+and DLLs automatically.
+
+=item Wx::Perl::Packager
+
+This provides C<wxpar>, a wrapper around the pp command which adds all of the
+required DLLs for running a Wx program.
+
+=back
+
+Next, you'll need to locate the following libraries (DLLs on Windows)
+required by XML::LibXML:
+
+=over
+
+=item libxml2-2
+
+=item libiconv-2
+
+=item libz
+
+=back
+
+It's possible that if you're running a different version of XML::LibXML
+that the names of these libraries could be different. On my Windows 7 machine,
+they are all DLL files, and they all have a __ suffix. Since I'm using
+Strawberry Perl, they are all located in C<C:/strawberry/c/bin>. Notice that
+I have replaced all backslashes with forward slashes in the path. This is
+essential, as C<pp> will fail if paths have backslashes in them.
+
+Next, you'll need to add the Encode::Unicode module file using the C<-M> option.
+In my Strawberry Perl installation, this is located in
+C<C:/strawberry/perl/lib/Encode/Unicode.pm>, but it might be different on your
+computer. Notice again the use of forward slashes.
+
+Finally, you'll need to make the XML::ITS and XML::ITS::WICS distributions
+available to these tools, either by installing them on your computer,
+or by adding the C<lib> folders of these distributions to the include path
+via the C<-I> option.
+
+Here's a sample command to make the standalone executable. We use C<-l>
+to make C<pp> include the DLL files in the executable file. The working
+directory contains the XML::ITS and XML::ITS::WICS distributions, and we
+use -I to include their C<lib> folders. We use C<-o> to specify the
+name of the created executable. We pass the path to this script as the
+final argument. Run in a Windows CMD, this should all be one line; I have
+broken it into four lines for display purposes.
+
+  wxpar -o WICS-GUI.exe -l C:/strawberry/c/bin/libxml2-2__.dll
+  -M C:/strawberry/perl/lib/Encode/Unicode.pm
+  -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/libz__.dll
+  -I XML-ITS-0.02/lib -I XML-ITS-WICS-0.02/lib XML-ITS-WICS/bin/WICS-GUI.pl
+
+NOTE: running the exe may fail the first time with an error message with
+"Archive.pm line 192". Just run it again and it should be fine.
+
 =cut
 
 package MyApp;
@@ -250,6 +316,7 @@ sub _convert_files {
                 join "\n", map {
                     $_->{message}
                 } @{$log->msgs});
+            $text->AppendText("\nwrote $new_path\n");
         }catch{
             $text->SetDefaultStyle($warning_style);
             $text->AppendText($_);

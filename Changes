@@ -1,6 +1,7 @@
 Revision history for XML-ITS-WICS
 
 {{$NEXT}}
-
+    WICS.pl and WICS-GUI.pl support unicode and long filenames on Windows
+    Added documentation on how to create a standalone executable to WICS-GUI.pl
 0.01      2013-08-28 00:30:58 America/Los_Angeles
 	initial release
