@@ -91,7 +91,7 @@ try {
 }catch{
     my $msg = "\nWICS XML2HTML converter\n";
     $msg .= "$_\n";
-    $msg .= "Usage: WICS.pl [-w] -i <file> [-i <file>...]\n";
+    $msg .= "Usage: WICS [-w] -i <file> [-i <file>...]\n";
     $msg .= "  -w or --overwrite: overwrite existing files during conversion\n";
     $msg .= "  -i or --input: convert given XML file\n";
     die $msg;

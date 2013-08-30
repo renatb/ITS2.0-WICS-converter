@@ -87,6 +87,9 @@ broken it into four lines for display purposes.
 A checkbox for indicating whether files should be overwritten or not
 would be nice.
 
+Sometimes fonts change in the display box. Figure out the whole RTF thing
+and maybe do some escaping so that everything stays consistent.
+
 =cut
 
 package MyApp;
