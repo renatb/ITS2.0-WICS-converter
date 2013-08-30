@@ -119,14 +119,6 @@ use Log::Any::Test;
 use Log::Any qw($log);
 use XML::ITS::WICS qw(xml2html);
 
-#special handling of paths on Windows
-BEGIN {
-    if ($^O eq "MSWin32"){
-        require Win32::LongPath;
-        Win32::LongPath->import();
-    }
-}
-
 sub OnInit {
     my( $self ) = @_;
     # create a new frame (a frame is a top level window)
@@ -319,9 +311,9 @@ sub _convert_files {
             $text->SetDefaultStyle($normal_style);
             $text->AppendText(
                 "\n----------\n$path\n----------\n");
-            my $html = xml2html(_get_fh($path, '<'));
+            my $html = xml2html($path->filehandle('<'));
             my $new_path = _get_new_path($path);
-            my $fh = _get_fh($new_path, '>:encoding(UTF-8)');
+            my $fh = $new_path->filehandle('>:encoding(UTF-8)');
             print $fh ${ $html };
             $text->AppendText(
                 join "\n", map {
@@ -336,19 +328,6 @@ sub _convert_files {
     return;
 }
 
-# either return whatever Path::Tiny returns, or
-# use Win32::LongPath if on Windows
-sub _get_fh {
-    my ($path, $rw_string) = @_;
-    if ($^O eq "MSWin32"){
-        my $fh;
-        openL \$fh, $rw_string, $path
-            or die $!;
-        return $fh;
-    }
-    return path->filehandle($rw_string);
-}
-
 #input: Path::Tiny object for input file path
 sub _get_new_path {
     my ($old_path) = @_;
@@ -360,25 +339,16 @@ sub _get_new_path {
     # if other file with same name exists, just iterate numbers to get a new,
     # unused file name
     my $new_path = path($dir, $name);
-    if(_file_exists( path($dir, $name) )){
-        my $counter = 1;
+    if($new_path->exists){
         $name =~ s/\.html$//;
-        $counter++ while(
-            _file_exists(
-                $new_path = path($dir, $name . "-$counter.html")
-            ));
-        return $new_path;
+        $new_path = path($dir, $name . '-1.html');
+        my $counter = 1;
+        while($new_path->exists){
+            $counter++;
+            $new_path = path($dir, $name . "-$counter.html");
+        }
     }
     return $new_path;
-}
-
-#input: Path::Tiny object for file to test for existence
-sub _file_exists {
-    my ($path) = @_;
-    if ($^O eq "MSWin32"){
-        return testL('e', "$path");
-    }
-    return path->exists;
 }
 
 package main; ## no critic(ProhibitMultiplePackages)
