@@ -1,6 +1,8 @@
 Revision history for XML-ITS-WICS
 
 {{$NEXT}}
+
+0.04      2013-09-03 13:25:12 America/Los_Angeles
     Remove preserveSpaceRule from output HTML
 0.03      2013-08-30 09:19:35 America/Los_Angeles
     Usage statement of WICS.pl calls itself "WICS" (final exe won't be a pl)
