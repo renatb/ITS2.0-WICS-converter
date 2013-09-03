@@ -56,6 +56,7 @@ push @{ $ua->requests_redirectable }, 'POST';
 my $can_accept = HTTP::Message::decodable;
 my $parser = HTML::HTML5::Parser->new;
 # check all of the files with the validator service
+note "Validating all produced HTML with $validator_url";
 find(\&validate, $html_dir);
 
 # convert the XML file and store it in $html_dir, along with the
