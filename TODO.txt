@@ -1,6 +1,6 @@
 WICS XML to HTML converter
 
-TODO:
+Next: Remove all preserveSpace rules.
 
 Engineering Tasks:
     - rewrite GUI in XRC
@@ -9,6 +9,7 @@ Engineering Tasks:
 To Do on current task:
 
 Later To Do:
+    - get rid of WICS.pm; remove that package, and place functionality into WICS.pl
     - allow specifying log level from command line for WICS.pl
     - find possible code reuse in converter
     - Decide on organization of end-project

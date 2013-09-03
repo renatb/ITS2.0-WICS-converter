@@ -72,6 +72,14 @@ sub convert {
 	$self->{futureNodeManager} =
 		new_manager($dom);
 
+	#first remove rules not compatible with HTML
+	my $rules = $ITS->get_rules;
+	my @new_rules = grep {$_->type ne 'preserveSpace'} @$rules;
+	if(my $diff = @$rules - @new_rules){
+		$log->debug("removed $diff preserveSpace rule(s) from input");
+	}
+	@$rules = @new_rules;
+
 	# [rule, {selector => futureNode, *pointer => futureNode...}]
 	my @matches;
 	# find all rule matches and save them in @matches
