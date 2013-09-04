@@ -111,7 +111,9 @@ sub get_doc {
 Returns an arrayref containing the ITS rule elements
 (in the form of XML::ITS::Rule objects) which are to be
 applied to the document, in the order in which they will
-be applied.
+be applied. The returned arrayref is the one used to store
+rules internally, making it possible to add, remove, or
+rearrange them.
 
 Keep in mind that, while it is useful to be able to edit these
 rules, there isn't much in the way of validity checking
@@ -211,6 +213,26 @@ sub get_matches {
         push @matches, $match;
     }
     return \@matches;
+}
+
+=head2 C<filter_rules>
+
+This method takes one argument: a subroutine which should return a boolean value.
+This method loops through all of the ITS rules associated with this document,
+calls the input subroutine with the rule as an argument, and removes the rule
+from the document if the subroutine does not return a true value. For example,
+the following can be used to remove all C<preserveSpace> rules from the document:
+
+  $ITS->filter_rules(sub {
+    return $_[0]->type ne 'preserveSpace';
+  });
+
+=cut
+sub filter_rules {
+    my ($self, $filter) = @_;
+    my $rules = $self->get_rules;
+    @$rules = grep {$filter->($_)} @$rules;
+    return;
 }
 
 # return an array ref of XML::ITS::DOM::Nodes matching selector of given rule
@@ -369,3 +391,12 @@ sub _get_external_rules {
 }
 
 1;
+
+=head1 TODO
+
+ITS allows for other types of selectors. This module, however,
+only allows XPath selectors. CSS selectors could be implemented,
+for example, with C<HTML::Selector::XPath>.
+
+Currently this module does not check ITS version. All rules
+are assumed to be ITS version 2.0.
