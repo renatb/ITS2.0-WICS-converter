@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 19;
+plan tests => 24;
 use XML::ITS::DOM;
 use Test::Exception;
 use Test::NoWarnings;
@@ -12,15 +12,17 @@ use Path::Tiny;
 use FindBin qw($Bin);
 my $corpus_dir = path($Bin, 'corpus');
 
-my $dom_path = path($corpus_dir, 'dom_test.xml');
+my $xml_dom_path = path($corpus_dir, 'dom_test.xml');
 my $html_dom_path = path($corpus_dir, 'basic_html5.html');
-test_errors($dom_path, $html_dom_path);
+test_errors($xml_dom_path, $html_dom_path);
 
-my $dom = XML::ITS::DOM->new( 'xml' => $dom_path );
+my $xml_dom = XML::ITS::DOM->new( 'xml' => $xml_dom_path );
+my $html_dom = XML::ITS::DOM->new( 'html' => $html_dom_path );
 
-test_dom_props($dom, $dom_path);
-test_next_id($dom);
-test_string($dom);
+test_xml_dom_props($xml_dom, $xml_dom_path);
+test_html_dom_props($html_dom, $html_dom_path);
+test_next_id($xml_dom);
+test_string($xml_dom);
 test_html_options();
 
 # make sure that errors are thrown for bad input
@@ -52,13 +54,13 @@ sub test_errors {
     lives_ok{
         open my $fh, '<:encoding(UTF-8)', $dom_path
             or die $_;
-        $dom = XML::ITS::DOM->new(
+        my $dom = XML::ITS::DOM->new(
             'xml' => $fh
         )
     } 'valid XML file handle parses without error';
 
     lives_ok{
-        $dom = XML::ITS::DOM->new(
+        my $dom = XML::ITS::DOM->new(
             'xml' => $dom_path,
         )
     } 'valid XML file parses without error' or
@@ -99,12 +101,23 @@ END_HTML
 }
 
 #test properties of entire document
-sub test_dom_props {
+sub test_xml_dom_props {
     my ($dom, $dom_path) = @_;
 
-    is($dom->get_base_uri, $dom_path->parent, 'Base URI');
-    is($dom->get_source, $dom_path, 'Source name');
-    is(ref $dom->get_root, 'XML::ITS::DOM::Element', 'retrieve root element');
+    is($dom->get_base_uri, $dom_path->parent, 'XML Base URI');
+    is($dom->get_source, $dom_path, 'XML Source name');
+    is($dom->get_type, 'xml', 'document type is xml');
+    is(ref $dom->get_root, 'XML::ITS::DOM::Element', 'retrieve XML root element');
+    return;
+}
+#test properties of entire document
+sub test_html_dom_props {
+    my ($dom, $dom_path) = @_;
+
+    is($dom->get_base_uri, $dom_path->parent, 'HTML Base URI');
+    is($dom->get_source, $dom_path, 'HTML Source name');
+    is($dom->get_type, 'html', 'document type is html');
+    is(ref $dom->get_root, 'XML::ITS::DOM::Element', 'retrieve HTML root element');
     return;
 }
 

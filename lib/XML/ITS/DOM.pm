@@ -130,6 +130,17 @@ sub get_source {
     return $self->{source};
 }
 
+=head2 C<get_type>
+
+Returns either 'xml' or 'html', depending on the type of this
+document.
+
+=cut
+sub get_type {
+    my ($self) = @_;
+    return $self->{type};
+}
+
 # type is 'xml' or 'html'
 # data is filename, pointer to string content, or file glob
 # returns an XML::LibXML::Document object

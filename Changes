@@ -1,7 +1,7 @@
 Revision history for XML-ITS
 
 {{$NEXT}}
-
+    get_type method for XML::ITS::DOM
 0.02      2013-08-29 14:05:44 America/Los_Angeles
     XML::ITS::DOM now accepts filehandles
 
