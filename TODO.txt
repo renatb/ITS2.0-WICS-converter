@@ -9,7 +9,16 @@ Engineering Tasks:
 To Do on current task:
 
 Later To Do:
+    - pass ITS object to converters, instead of data
+        - better dependency injection will make it more flexible
     - get rid of WICS.pm; remove that package, and place functionality into WICS.pl
+    - maybe separate distros:
+        - XML::ITS::XML2HTML
+        - XML::ITS::XLIFF2HTML
+        - XML::ITS::XML2XLIFF
+        - XML::ITS::HTMLConsolidate
+        - XML::ITS::WICS
+            - this last one would depend on all the others, and include scripts/GUI stuff
     - allow specifying log level from command line for WICS.pl
     - find possible code reuse in converter
     - Decide on organization of end-project
