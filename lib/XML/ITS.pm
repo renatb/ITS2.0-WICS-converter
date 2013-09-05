@@ -100,10 +100,12 @@ sub new {
 
     my $rules_doc = $doc;
     if($args{rules}){
-        $rules_doc = XML::ITS::DOM->new($file_type => $args{rules});
+        #rules docs are only allowed to be XML
+        $rules_doc = XML::ITS::DOM->new('xml' => $args{rules});
     }
 
-    if($file_type eq 'xml'){
+    # rules docs are only allowed to be XML
+    if($file_type eq 'xml' or $args{rules}){
         $self->{rule_containers} =
             XML::ITS::XMLRuleExtractor::_resolve_doc_containers($rules_doc);
     }else{

@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use XML::ITS;
 use Test::More 0.88;
-plan tests => 6;
+plan tests => 7;
 use Test::NoWarnings;
 use Path::Tiny;
 use FindBin qw($Bin);
@@ -128,26 +128,26 @@ HTML
     is_deeply($rule->params, {qux => 'muck'}, '1 param in first rule');
 };
 
-# subtest 'rules and document from separate strings' => sub {
-#     plan tests => 3;
-#     my $ITS = XML::ITS->new('xml', doc => \<<'XML', rules => \<<'RULES');
-# <myDoc>
-#  <body>
-#   <par id="100" title="Text">The
-#     <trmark id="notran">World Wide Web Consortium</trmark>
-#      is making the World Wide Web worldwide!
-#   </par>
-#  </body>
-# </myDoc>
-# XML
-# <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-#     <its:idValueRule xml:id="idValRule" selector="id('Text')" idValue="bodyId"/>
-#     <its:locNoteRule xml:id="locNoteRule" selector="id('Text')" locNotePointer="id('notran')"/>
-# </its:rules>
-# RULES
+subtest 'rules and document from separate strings' => sub {
+    plan tests => 3;
+    my $ITS = XML::ITS->new('html', doc => \<<'HTML', rules => \<<'RULES');
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WICS</title>
+<body>
+    <p>Hello!</p>
+</body>
+</html>
+HTML
+<its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+    <its:idValueRule xml:id="idValRule" selector="id('Text')" idValue="bodyId"/>
+    <its:locNoteRule xml:id="locNoteRule" selector="id('Text')" locNotePointer="id('notran')"/>
+</its:rules>
+RULES
 
-#     my $rules = $ITS->get_rules();
-#     is(scalar @$rules, 2, '2 rules in string');
-#     is($rules->[0]->element->att('xml:id'), 'idValRule', 'correct first rule');
-#     is($rules->[1]->element->att('xml:id'), 'locNoteRule', 'correct second rule');;
-# };
+    my $rules = $ITS->get_rules();
+    is(scalar @$rules, 2, '2 rules in string');
+    is($rules->[0]->element->att('xml:id'), 'idValRule', 'correct first rule');
+    is($rules->[1]->element->att('xml:id'), 'locNoteRule', 'correct second rule');;
+};
