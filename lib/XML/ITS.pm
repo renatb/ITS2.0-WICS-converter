@@ -3,19 +3,20 @@ use strict;
 use warnings;
 # ABSTRACT: Work with ITS-decorated XML
 # VERSION
+use XML::ITS::XML;
 use XML::ITS::DOM;
 use XML::ITS::RuleContainer;
 use XML::ITS::Rule;
 
 use Carp;
-our @CARP_NOT = qw(ITS);
+our @CARP_NOT = qw(XML::ITS::XML);
 
 use Path::Tiny;
 use Try::Tiny;
 use feature 'say';
 use Data::Dumper; #debug
 use Exporter::Easy (
-    OK => [qw(its_ns)],
+    OK => [qw(its_ns xlink_ns)],
 );
 
 my $ITS_NS = 'http://www.w3.org/2005/11/its';
@@ -58,6 +59,15 @@ sub its_ns{
     return $ITS_NS;
 }
 
+=head2 C<xlink_ns>
+
+Returns the xlink namespace URI.
+
+=cut
+sub xlink_ns{
+    return $XLINK_NS;
+}
+
 =head1 METHODS
 
 =head2 C<new>
@@ -78,22 +88,21 @@ sub new {
     # (not sure about precedence for them yet)
     my ($class, $file_type, %args) = @_;
 
-    if($file_type !~ /^xml|html$/ || !$args{doc}){
+    if($file_type !~ /^(?:xml|html)$/ || !$args{doc}){
         croak 'usage: ITS->new("(xml|html)", doc => "file", [rules => "file"]';
     }
     my $doc = XML::ITS::DOM->new($file_type => $args{doc});
 
     my $self = bless {
         doc => $doc,
-    }, $class;
+    }, $class . '::' . uc $file_type;
 
     my $rules_doc = $doc;
     if($args{rules}){
         $rules_doc = XML::ITS::DOM->new($file_type => $args{rules});
     }
 
-    # $self->{rules} = _resolve_doc_rules($rules_doc);
-    $self->{rule_containers} = _resolve_doc_containers($rules_doc);
+    $self->{rule_containers} = $self->_resolve_doc_containers($rules_doc);
     # print Dumper $self->{rule_containers};
     return $self;
 }
@@ -312,163 +321,13 @@ sub _pointer_match {
     return;
 }
 
-# find and save all its:*Rule's elements to be applied in
-# the given document, in order of application, including external ones
-# %params are all of the parameters already defined for this document
-sub _resolve_doc_rules {
-    # note that we don't pass around hash pointers for the params so that
-    # all parameters are correctly scoped for each document or its:rules element.
-    my ($doc, %params) = @_;
-
-    # first, grab internal its:rules elements
-    my @internal_rules_containers = _get_its_rules_els($doc);
-    if(@internal_rules_containers == 0){
-        return [];
-    }
-
-    # then store individual rules in application order (external first)
-    my @rules;
-    for my $container(@internal_rules_containers){
-        my $container_rules =
-        _resolve_container_rules(
-            $doc,
-            $container,
-            %params
-        );
-        push @rules, @{$container_rules};
-    }
-
-    if(@rules == 0){
-        carp 'no rules found in ' . $doc->get_source;
-    }
-    return \@rules;
-}
-
-# input: document, its:rules element, and list of param names/values.
-# return an array ref containing application-order rules retreived from
-# given container (and referenced external rules).
-sub _resolve_container_rules {
-    my ($doc, $container, %params) = @_;
-
-    my $children = $container->child_els();
-
-    if(@$children){
-        while($children->[0]->local_name eq 'param' and
-            $children->[0]->namespace_URI eq $ITS_NS){
-            my $param = shift @$children;
-            $params{$param->att('name')} = $param->text;
-        }
-    }
-    my @rules;
-    if($container->att('href', $XLINK_NS)){
-        #path to file is relative to current file
-        my $path = path( $container->att('href', $XLINK_NS) )->
-            absolute($doc->get_base_uri);
-        push @rules, @{ _get_external_rules($path, \%params) };
-    }
-    push @rules, map {ITS::Rule->new($_, %params)} @$children;
-    return \@rules;
-}
-
-#returns the set of its:rules nodes from the input document
-sub _get_its_rules_els {
+sub _get_its_scripts_links {
     my ($doc) = @_;
     return $doc->get_root->get_xpath(
-        "//*[namespace-uri()='$ITS_NS'" .
-            q{and local-name()='rules']},
+        q<//script[@type="application/xml+its"] | > .
+        q<//link[@rel="its-rules"]>
     );
 }
-
-# return list of its:*Rule's, in application order, given the name of a file
-# containing an its:rules element, and parameters so far
-sub _get_external_rules {
-    my ($path, $params) = @_;
-    my $doc;
-    try{
-        #TODO: will it always be 'xml'?
-        $doc = XML::ITS::DOM->new('xml' => $path );
-    } catch {
-        carp "Skipping rules in file '$path': $_";
-        return [];
-    };
-    return _resolve_doc_rules($doc, %$params);
-}
-
-# Find and save all its:rules elements containing rules to be applied in
-# the given document, in order of application, including external ones.
-# %params are all of the parameters already defined for this document.
-sub _resolve_doc_containers {
-    # note that we don't pass around hash pointers for the params so that
-    # all parameters are correctly scoped for each document or its:rules element.
-    my ($doc, %params) = @_;
-
-    # first, grab internal its:rules elements
-    my @internal_rules_containers = _get_its_rules_els($doc);
-    if(@internal_rules_containers == 0){
-        return [];
-    }
-
-    # then store individual rules in application order (external first)
-    my @containers;
-    for my $container (@internal_rules_containers){
-
-        my $containers =
-            _resolve_containers(
-                $doc,
-                $container,
-                %params
-            );
-        push @containers, @{$containers};
-    }
-
-    if(@containers == 0){
-        carp 'no rules found in ' . $doc->get_source;
-    }
-    return \@containers;
-}
-
-sub _resolve_containers {
-    my ($doc, $container, %params) = @_;
-
-    my $children = $container->child_els();
-
-    if(@$children){
-        while($children->[0]->local_name eq 'param' and
-            $children->[0]->namespace_URI eq $ITS_NS){
-            my $param = shift @$children;
-            $params{$param->att('name')} = $param->text;
-        }
-    }
-    my @containers;
-    if($container->att('href', $XLINK_NS)){
-        #path to file is relative to current file
-        my $path = path( $container->att('href', $XLINK_NS) )->
-            absolute($doc->get_base_uri);
-        push @containers, @{ _get_external_containers($path, \%params) };
-    }
-    push @containers, XML::ITS::RuleContainer->new(
-            version => $container->att('version'),
-            query_language =>
-                $container->att('queryLanguage') || 'xpath',
-            params => \%params,
-            rules => $children,
-        );
-    return \@containers;
-}
-
-sub _get_external_containers {
-    my ($path, $params) = @_;
-    my $doc;
-    try{
-        #TODO: will it always be 'xml'?
-        $doc = XML::ITS::DOM->new('xml' => $path );
-    } catch {
-        carp "Skipping rules in file '$path': $_";
-        return [];
-    };
-    return _resolve_doc_containers($doc, %$params);
-}
-
 
 1;
 
