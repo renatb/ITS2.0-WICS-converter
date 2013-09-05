@@ -3,14 +3,13 @@ use strict;
 use warnings;
 # ABSTRACT: Work with ITS-decorated XML
 # VERSION
-use XML::ITS::XML;
-use XML::ITS::HTML;
+use XML::ITS::XMLRuleExtractor;
+use XML::ITS::HTMLRuleExtractor;
 use XML::ITS::DOM;
 use XML::ITS::RuleContainer;
 use XML::ITS::Rule;
 
 use Carp;
-our @CARP_NOT = qw(XML::ITS::XML);
 
 use Path::Tiny;
 use Try::Tiny;
@@ -74,7 +73,7 @@ sub xlink_ns{
 
 =head2 C<new>
 
-Returns an XML::ITS::[XML|HTML] object instance.
+Returns an XML::ITS object instance.
 Arguments: The first is either 'xml' or 'html' to indicate the type of
 document being parsed. After that, you must specify 'doc' and
 may also specify 'rules' parameters. The value of these parameters
@@ -97,14 +96,20 @@ sub new {
 
     my $self = bless {
         doc => $doc,
-    }, $class . '::' . uc $file_type;
+    }, $class;
 
     my $rules_doc = $doc;
     if($args{rules}){
         $rules_doc = XML::ITS::DOM->new($file_type => $args{rules});
     }
 
-    $self->{rule_containers} = $self->_resolve_doc_containers($rules_doc);
+    if($file_type eq 'xml'){
+        $self->{rule_containers} =
+            XML::ITS::XMLRuleExtractor::_resolve_doc_containers($rules_doc);
+    }else{
+        $self->{rule_containers} =
+        XML::ITS::HTMLRuleExtractor::_resolve_doc_containers($rules_doc);
+    }
     # print Dumper $self->{rule_containers};
     return $self;
 }

@@ -1,4 +1,4 @@
-package XML::ITS::XML;
+package XML::ITS::XMLRuleExtractor;
 use strict;
 use warnings;
 # VERSION
@@ -17,7 +17,7 @@ use parent -norequire, qw(XML::ITS);
 sub _resolve_doc_containers {
     # note that we don't pass around hash pointers for the params so that
     # all parameters are correctly scoped for each document or its:rules element.
-    my ($self, $doc, %params) = @_;
+    my ($doc, %params) = @_;
 
     # first, grab internal its:rules elements
     my @internal_rules_containers = _get_its_rules_els($doc);
@@ -30,7 +30,7 @@ sub _resolve_doc_containers {
     for my $container (@internal_rules_containers){
 
         my $containers =
-            $self->_resolve_containers(
+            _resolve_containers(
                 $doc,
                 $container,
                 %params
@@ -53,7 +53,7 @@ sub _get_its_rules_els {
 }
 
 sub _resolve_containers {
-    my ($self, $doc, $container, %params) = @_;
+    my ($doc, $container, %params) = @_;
 
     my $children = $container->child_els();
 
@@ -69,7 +69,7 @@ sub _resolve_containers {
         #path to file is relative to current file
         my $path = path( $container->att( 'href', XML::ITS::xlink_ns() ) )->
             absolute($doc->get_base_uri);
-        push @containers, @{ $self->_get_external_containers($path, \%params) };
+        push @containers, @{ _get_external_containers($path, \%params) };
     }
     push @containers, XML::ITS::RuleContainer->new(
             version => $container->att('version'),
@@ -82,7 +82,7 @@ sub _resolve_containers {
 }
 
 sub _get_external_containers {
-    my ($self, $path, $params) = @_;
+    my ($path, $params) = @_;
     my $doc;
 
     try {
@@ -91,7 +91,7 @@ sub _get_external_containers {
         carp "Skipping rules in file '$path': $_";
         return [];
     };
-    return $self->_resolve_doc_containers($doc, %$params);
+    return _resolve_doc_containers($doc, %$params);
 }
 
 1;

@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use XML::ITS;
 use Test::More 0.88;
-plan tests => 2;
+plan tests => 4;
 use Test::NoWarnings;
 use Path::Tiny;
 use FindBin qw($Bin);
@@ -25,30 +25,30 @@ subtest 'internal rules' => sub {
     is($rules->[2]->element->att('xml:id'), 'third', 'correct third rule');
 };
 
-# subtest 'external rules' => sub {
-#     plan tests => 4;
-#     my $external_test = path($xml_dir, 'test_external.xml');
-#     my $ITS = XML::ITS->new('xml', doc => $external_test);
-#     my $rules = $ITS->get_rules();
+subtest 'external rules' => sub {
+    plan tests => 4;
+    my $external_test = path($xml_dir, 'test_external.html');
+    my $ITS = XML::ITS->new('html', doc => $external_test);
+    my $rules = $ITS->get_rules();
 
-#     is(@$rules, 3, 'four rules in file');
-#     is($rules->[0]->element->att('xml:id'), 'ext3rule', 'correct first rule');
-#     is($rules->[1]->element->att('xml:id'), 'ext2rule', 'correct second rule');
-#     is($rules->[2]->element->att('xml:id'), 'ext1rule', 'correct third rule');
-# };
+    is(@$rules, 3, 'four rules in file');
+    is($rules->[0]->element->att('xml:id'), 'ext3rule', 'correct first rule');
+    is($rules->[1]->element->att('xml:id'), 'ext2rule', 'correct second rule');
+    is($rules->[2]->element->att('xml:id'), 'ext1rule', 'correct third rule');
+};
 
-# subtest 'external and internal rules' => sub {
-#     plan tests => 5;
-#     my $external_test = path($xml_dir, 'test_external_internal.xml');
-#     my $ITS = XML::ITS->new('xml', doc => $external_test);
-#     my $rules = $ITS->get_rules();
+subtest 'external and internal rules' => sub {
+    plan tests => 5;
+    my $external_test = path($xml_dir, 'test_external_internal.html');
+    my $ITS = XML::ITS->new('html', doc => $external_test);
+    my $rules = $ITS->get_rules();
 
-#     is(@$rules, 4, 'four rules in file');
-#     is($rules->[0]->element->att('xml:id'), 'ext3rule', 'correct first rule');
-#     is($rules->[1]->element->att('xml:id'), 'ext2rule', 'correct second rule');
-#     is($rules->[2]->element->att('xml:id'), 'ext1rule', 'correct third rule');
-#     is($rules->[3]->element->att('xml:id'), 'baseFileRule', 'correct fourth rule');
-# };
+    is(@$rules, 4, 'four rules in file');
+    is($rules->[0]->element->att('xml:id'), 'ext3rule', 'correct first rule');
+    is($rules->[1]->element->att('xml:id'), 'ext2rule', 'correct second rule');
+    is($rules->[2]->element->att('xml:id'), 'ext1rule', 'correct third rule');
+    is($rules->[3]->element->att('xml:id'), 'baseFileRule', 'correct fourth rule');
+};
 
 # subtest 'parameters resolved' => sub {
 #     plan tests => 7;

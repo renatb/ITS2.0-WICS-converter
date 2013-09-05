@@ -1,4 +1,4 @@
-package XML::ITS::HTML;
+package XML::ITS::HTMLRuleExtractor;
 use strict;
 use warnings;
 # VERSION
@@ -9,7 +9,7 @@ use Path::Tiny;
 use Try::Tiny;
 use XML::ITS::RuleContainer;
 use XML::ITS::Rule;
-use XML::ITS::XML;
+use XML::ITS::XMLRuleExtractor;
 use parent -norequire, qw(XML::ITS);
 
 # Find and save all its:rules elements containing rules to be applied in
@@ -18,7 +18,7 @@ use parent -norequire, qw(XML::ITS);
 sub _resolve_doc_containers {
     # note that we don't pass around hash pointers for the params so that
     # all parameters are correctly scoped for each document or its:rules element.
-    my ($self, $doc, %params) = @_;
+    my ($doc, %params) = @_;
 
     # first, grab internal rules links to more rules
     my @scripts_links = _get_its_scripts_links($doc);
@@ -31,16 +31,16 @@ sub _resolve_doc_containers {
     my @containers;
     for my $script_link (@scripts_links){
         if($script_link->name eq 'script'){
-            push @containers, $self->_parse_container(
+            push @containers, _parse_container(
                     $script_link,
                     %params
                 );
         }else{
-            my $path = path( $script_link->att(
-                'href', XML::ITS::xlink_ns() ) )->
+            my $path = path($script_link->att('href'))->
                 absolute($doc->get_base_uri);
-            my $containers = $self->
-                XML::ITS::XML::_get_external_containers($path, {});
+            my $containers =
+                XML::ITS::XMLRuleExtractor::_get_external_containers(
+                    $path, {});
             push @containers, @{$containers};
         }
     }
@@ -55,7 +55,7 @@ sub _get_its_scripts_links {
     my ($doc) = @_;
     return $doc->get_root->get_xpath(
         q<//h:script[@type="application/xml+its"] | > .
-        q<//h:link[@rel="its-rules"]>,
+        q</h:html/h:head/h:link[@rel="its-rules"]>,
         namespaces => {
             h => 'http://www.w3.org/1999/xhtml'
         }
@@ -63,7 +63,7 @@ sub _get_its_scripts_links {
 }
 
 sub _parse_container {
-    my ($self, $script, %params) = @_;
+    my ($script, %params) = @_;
 
     # the script contains an its:rules element as text
     my $container = XML::ITS::DOM->new('xml' => \($script->text))->
@@ -86,18 +86,5 @@ sub _parse_container {
             rules => $children,
         );
 }
-
-# sub _get_external_containers {
-#     my ($self, $path, $params) = @_;
-#     my $doc;
-
-#     try {
-#         $doc = XML::ITS::DOM->new('xml' => $path );
-#     } catch {
-#         carp "Skipping rules in file '$path': $_";
-#         return [];
-#     };
-#     return $self->_resolve_doc_containers($doc, %$params);
-# }
 
 1;
