@@ -4,6 +4,7 @@ use warnings;
 # ABSTRACT: Work with ITS-decorated XML
 # VERSION
 use XML::ITS::XML;
+use XML::ITS::HTML;
 use XML::ITS::DOM;
 use XML::ITS::RuleContainer;
 use XML::ITS::Rule;
@@ -61,7 +62,8 @@ sub its_ns{
 
 =head2 C<xlink_ns>
 
-Returns the xlink namespace URI.
+Returns the xlink namespace URI (C<xlink:href> is used by the C<its:rules>
+element to import external rules).
 
 =cut
 sub xlink_ns{
@@ -72,7 +74,7 @@ sub xlink_ns{
 
 =head2 C<new>
 
-Returns an ITS object instance.
+Returns an XML::ITS::[XML|HTML] object instance.
 Arguments: The first is either 'xml' or 'html' to indicate the type of
 document being parsed. After that, you must specify 'doc' and
 may also specify 'rules' parameters. The value of these parameters
@@ -321,21 +323,13 @@ sub _pointer_match {
     return;
 }
 
-sub _get_its_scripts_links {
-    my ($doc) = @_;
-    return $doc->get_root->get_xpath(
-        q<//script[@type="application/xml+its"] | > .
-        q<//link[@rel="its-rules"]>
-    );
-}
-
 1;
 
 =head1 TODO
 
 This module does not support querying individual elements for ITS information.
 This would be very useful, but it would require the implementation of
-inheritance. Reference
+inheritance and per-category knowledge (currently there is none!). Reference
 L<http://www.w3.org/International/its/wiki/ITS_Processor_Interface> for an
 idea of what is wanted.
 

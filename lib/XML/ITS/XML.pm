@@ -1,6 +1,8 @@
 package XML::ITS::XML;
 use strict;
 use warnings;
+# VERSION
+# ABSTRACT: Extract ITS rules from an XML document
 use Carp;
 our @CARP_NOT = qw(XML::ITS);
 use Path::Tiny;
