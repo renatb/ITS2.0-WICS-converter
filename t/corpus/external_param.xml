@@ -1,5 +1,4 @@
 <its:rules xml:id='ext1container' xmlns:its="http://www.w3.org/2005/11/its"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
     version="2.0">
       <its:param name="baz">qux</its:param>
       <!-- param 'foo' will override one from calling file -->

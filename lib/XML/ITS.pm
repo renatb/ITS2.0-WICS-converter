@@ -4,6 +4,7 @@ use warnings;
 # ABSTRACT: Work with ITS-decorated XML
 # VERSION
 use XML::ITS::DOM;
+use XML::ITS::RuleContainer;
 use XML::ITS::Rule;
 
 use Carp;
@@ -12,7 +13,7 @@ our @CARP_NOT = qw(ITS);
 use Path::Tiny;
 use Try::Tiny;
 use feature 'say';
-# use Data::Dumper; #debug
+use Data::Dumper; #debug
 use Exporter::Easy (
     OK => [qw(its_ns)],
 );
@@ -91,7 +92,9 @@ sub new {
         $rules_doc = XML::ITS::DOM->new($file_type => $args{rules});
     }
 
-    $self->{rules} = _resolve_doc_rules($rules_doc);
+    # $self->{rules} = _resolve_doc_rules($rules_doc);
+    $self->{rule_containers} = _resolve_doc_containers($rules_doc);
+    # print Dumper $self->{rule_containers};
     return $self;
 }
 
@@ -111,19 +114,18 @@ sub get_doc {
 Returns an arrayref containing the ITS rule elements
 (in the form of XML::ITS::Rule objects) which are to be
 applied to the document, in the order in which they will
-be applied. The returned arrayref is the one used to store
-rules internally, making it possible to add, remove, or
-rearrange them.
-
-Keep in mind that, while it is useful to be able to edit these
-rules, there isn't much in the way of validity checking
-for them, so you must be careful in what you do to them.
+be applied.
 
 =cut
-
 sub get_rules {
     my ($self) = @_;
-    return $self->{rules};
+    my @rules;
+    # return a list of rules taken from all of the
+    # rule containers
+    for my $container (@{ $self->{rule_containers} }){
+        push @rules, @{$container->rules};
+    }
+    return \@rules;
 }
 
 =head2 C<iterate_matches>
@@ -145,9 +147,7 @@ sub iterate_matches {
     my ($self, $sub, $rules) = @_;
     croak 'subroutine required!'
         unless $sub and (ref $sub eq 'CODE');
-    if(!$rules){
-        $rules = $self->get_rules;
-    }
+    $rules ||= $self->get_rules;
     for my $rule(@$rules){
         my $matches = $self->get_matches($rule);
         for my $match (@$matches){
@@ -217,11 +217,12 @@ sub get_matches {
 
 =head2 C<filter_rules>
 
-This method takes one argument: a subroutine which should return a boolean value.
-This method loops through all of the ITS rules associated with this document,
-calls the input subroutine with the rule as an argument, and removes the rule
-from the document if the subroutine does not return a true value. For example,
-the following can be used to remove all C<preserveSpace> rules from the document:
+This method takes one argument: a subroutine which should return a boolean
+value. This method loops through all of the ITS rules associated with this
+document, calls the input subroutine with the rule as an argument, and removes
+the rule from the document if the subroutine does not return a true value. For
+example, the following can be used to remove all C<preserveSpace> rules from
+the document:
 
   $ITS->filter_rules(sub {
     return $_[0]->type ne 'preserveSpace';
@@ -230,8 +231,11 @@ the following can be used to remove all C<preserveSpace> rules from the document
 =cut
 sub filter_rules {
     my ($self, $filter) = @_;
-    my $rules = $self->get_rules;
-    @$rules = grep {$filter->($_)} @$rules;
+    for my $container (@{ $self->{rule_containers} }){
+        my $rules = $container->rules;
+        @$rules = grep {$filter->($_)} @$rules;
+        $container->rules($rules);
+    }
     return;
 }
 
@@ -390,9 +394,91 @@ sub _get_external_rules {
     return _resolve_doc_rules($doc, %$params);
 }
 
+# Find and save all its:rules elements containing rules to be applied in
+# the given document, in order of application, including external ones.
+# %params are all of the parameters already defined for this document.
+sub _resolve_doc_containers {
+    # note that we don't pass around hash pointers for the params so that
+    # all parameters are correctly scoped for each document or its:rules element.
+    my ($doc, %params) = @_;
+
+    # first, grab internal its:rules elements
+    my @internal_rules_containers = _get_its_rules_els($doc);
+    if(@internal_rules_containers == 0){
+        return [];
+    }
+
+    # then store individual rules in application order (external first)
+    my @containers;
+    for my $container (@internal_rules_containers){
+
+        my $containers =
+            _resolve_containers(
+                $doc,
+                $container,
+                %params
+            );
+        push @containers, @{$containers};
+    }
+
+    if(@containers == 0){
+        carp 'no rules found in ' . $doc->get_source;
+    }
+    return \@containers;
+}
+
+sub _resolve_containers {
+    my ($doc, $container, %params) = @_;
+
+    my $children = $container->child_els();
+
+    if(@$children){
+        while($children->[0]->local_name eq 'param' and
+            $children->[0]->namespace_URI eq $ITS_NS){
+            my $param = shift @$children;
+            $params{$param->att('name')} = $param->text;
+        }
+    }
+    my @containers;
+    if($container->att('href', $XLINK_NS)){
+        #path to file is relative to current file
+        my $path = path( $container->att('href', $XLINK_NS) )->
+            absolute($doc->get_base_uri);
+        push @containers, @{ _get_external_containers($path, \%params) };
+    }
+    push @containers, XML::ITS::RuleContainer->new(
+            version => $container->att('version'),
+            query_language =>
+                $container->att('queryLanguage') || 'xpath',
+            params => \%params,
+            rules => $children,
+        );
+    return \@containers;
+}
+
+sub _get_external_containers {
+    my ($path, $params) = @_;
+    my $doc;
+    try{
+        #TODO: will it always be 'xml'?
+        $doc = XML::ITS::DOM->new('xml' => $path );
+    } catch {
+        carp "Skipping rules in file '$path': $_";
+        return [];
+    };
+    return _resolve_doc_containers($doc, %$params);
+}
+
+
 1;
 
 =head1 TODO
+
+This module does not support querying individual elements for ITS information.
+This would be very useful, but it would require the implementation of
+inheritance. Reference
+L<http://www.w3.org/International/its/wiki/ITS_Processor_Interface> for an
+idea of what is wanted.
 
 ITS allows for other types of selectors. This module, however,
 only allows XPath selectors. CSS selectors could be implemented,
@@ -400,3 +486,10 @@ for example, with C<HTML::Selector::XPath>.
 
 Currently this module does not check ITS version. All rules
 are assumed to be ITS version 2.0.
+
+Section 5.3.5 of the ITS spec mentions that implementors should provide
+a way to set default values for parameters. This would be useful, but what
+is the menaing of i<default> value here? Are there documents without param
+declarations but with XPaths that contain variables? Or should this just be
+a mechanism to allow the user to set the value of a param, no matter what
+values are present in the document?

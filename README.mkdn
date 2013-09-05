@@ -4,7 +4,7 @@ XML::ITS - Work with ITS-decorated XML
 
 # VERSION
 
-version 0.02
+version 0.03
 
 # SYNOPSIS
 
@@ -53,7 +53,9 @@ document.
 Returns an arrayref containing the ITS rule elements
 (in the form of XML::ITS::Rule objects) which are to be
 applied to the document, in the order in which they will
-be applied.
+be applied. The returned arrayref is the one used to store
+rules internally, making it possible to add, remove, or
+rearrange them.
 
 Keep in mind that, while it is useful to be able to edit these
 rules, there isn't much in the way of validity checking
@@ -82,6 +84,28 @@ key, `selector`, whose value is the document node which the rule
 selector matched.
 Any other keys are names of pointer attributes, and their values are
 their matched document nodes.
+
+## `filter_rules`
+
+This method takes one argument: a subroutine which should return a boolean
+value. This method loops through all of the ITS rules associated with this
+document, calls the input subroutine with the rule as an argument, and removes
+the rule from the document if the subroutine does not return a true value. For
+example, the following can be used to remove all `preserveSpace` rules from
+the document:
+
+    $ITS->filter_rules(sub {
+      return $_[0]->type ne 'preserveSpace';
+    });
+
+# TODO
+
+ITS allows for other types of selectors. This module, however,
+only allows XPath selectors. CSS selectors could be implemented,
+for example, with `HTML::Selector::XPath`.
+
+Currently this module does not check ITS version. All rules
+are assumed to be ITS version 2.0.
 
 # AUTHOR
 

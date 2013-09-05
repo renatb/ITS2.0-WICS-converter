@@ -1,4 +1,4 @@
-package ITS::Rule;
+package XML::ITS::Rule;
 use strict;
 use warnings;
 use Carp;
@@ -35,7 +35,7 @@ be reflected in the methods of this class.
 
 =cut
 sub new {
-    my ($class, $el, %params) = @_;
+    my ($class, $el, $container) = @_;
     my $type = $el->local_name;
     $type =~ s/Rule$//
         or croak "Element $type is not an ITS rule element.";
@@ -47,7 +47,7 @@ sub new {
     my $self = bless {
         type => $type,
         node => $el,
-        params => \%params || {},
+        container => $container,
     }, $class;
     return $self;
 }
@@ -71,8 +71,8 @@ their values.
 =cut
 
 sub params {
-    my ($self, $name) = @_;
-    return $self->{params};
+    my ($self) = @_;
+    return $self->{container}->params;
 }
 
 =head2 C<pointers>

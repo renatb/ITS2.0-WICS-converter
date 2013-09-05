@@ -9,6 +9,8 @@ Engineering Tasks:
 To Do on current task:
 
 Later To Do:
+    - rules arg for XML::ITS is confusing
+        - will this work if it is an XML rules doc for an HTML doc?
     - use Log::Any
     - check test coverage and fill it in!
 

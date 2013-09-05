@@ -2,13 +2,16 @@
 
 use strict;
 use warnings;
-use XML::ITS;
+use XML::ITS::Rule;
 use Test::More 0.88;
 plan tests => 5;
 use Test::Warn;
 use Test::NoWarnings;
 use XML::ITS::DOM;
 use XML::ITS::DOM::Element qw(new_element);
+use XML::ITS::RuleContainer;
+
+my $plain_container = XML::ITS::RuleContainer->new();
 
 subtest 'basic rule' => sub {
     plan tests => 5;
@@ -18,7 +21,8 @@ subtest 'basic rule' => sub {
         'storageSize' => '8',
         'storageEncoding' => 'UTF-8',
     };
-    my $rule = ITS::Rule->new(new_element('its:storageSizeRule' => $attributes));
+    my $rule = XML::ITS::Rule->new(
+        new_element('its:storageSizeRule' => $attributes), $plain_container);
     is($rule->type, 'storageSize', 'rule name');
     is_deeply($rule->element->atts, $attributes, 'rule attributes');
     is($rule->element->att('storageSize'), '8', 'attribute accessor');
@@ -32,6 +36,9 @@ subtest 'parameters' => sub {
         x => 'x value',
         y => 'y value',
     };
+    my $container = XML::ITS::RuleContainer->new(
+            params => $params,
+        );
     my $el = new_element(
         'its:storageSizeRule' => {
             'xmlns:its' => 'http://www.w3.org/2005/11/its',
@@ -40,7 +47,7 @@ subtest 'parameters' => sub {
             'storageEncoding' => 'UTF-8',
         }
     );
-    my $rule = ITS::Rule->new($el, %{ $params });
+    my $rule = XML::ITS::Rule->new($el, $container);
     is_deeply($rule->params, $params, 'parameter values')
 };
 
@@ -56,7 +63,7 @@ subtest 'pointer attributes' => sub {
             'storageEncodingPointer' => '@encoding',
         }
     );
-    my $rule = ITS::Rule->new($el);
+    my $rule = XML::ITS::Rule->new($el, $plain_container);
     is_deeply($rule->pointers,
         [qw(storageEncodingPointer storageSizePointer)],
         '2 pointer attributes found'
@@ -70,7 +77,7 @@ subtest 'pointer attributes' => sub {
             'idValue' => '@name',
         }
     );
-    $rule = ITS::Rule->new($el);
+    $rule = XML::ITS::Rule->new($el, $plain_container);
     is_deeply($rule->pointers,
         [qw(idValue)],
         'idValue is a pointer attribute'
@@ -92,6 +99,6 @@ $el = new_element(
         'storageEncodingPointer' => '@encoding',
     }
 );
-warning_is {my $rule = ITS::Rule->new($el)}
+warning_is {my $rule = XML::ITS::Rule->new($el, $plain_container)}
     'storageSize rule is missing a selector! No nodes will match.',
     'warn on missing selector';
