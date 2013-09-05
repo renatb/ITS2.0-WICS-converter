@@ -10,6 +10,7 @@ use Try::Tiny;
 use XML::ITS::RuleContainer;
 use XML::ITS::Rule;
 use parent -norequire, qw(XML::ITS);
+use Data::Dumper;
 
 # Find and save all its:rules elements containing rules to be applied in
 # the given document, in order of application, including external ones.
@@ -57,12 +58,13 @@ sub _resolve_containers {
 
     my $children = $container->child_els();
 
-    if(@$children){
-        while( $children->[0]->local_name eq 'param' and
-            $children->[0]->namespace_URI eq XML::ITS::its_ns() ){
-            my $param = shift @$children;
-            $params{$param->att('name')} = $param->text;
-        }
+    # print Dumper $children;
+    while(  @$children and
+            $children->[0]->local_name eq 'param' and
+            $children->[0]->namespace_URI eq XML::ITS::its_ns()
+    ){
+        my $param = shift @$children;
+        $params{$param->att('name')} = $param->text;
     }
     my @containers;
     if($container->att( 'href', XML::ITS::xlink_ns() )){

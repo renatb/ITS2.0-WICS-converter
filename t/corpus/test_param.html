@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WICS</title>
+        <link rel="its-rules" href="external_param_2.xml">
+        <script type='application/xml+its'>
+          <its:rules xml:id="baseFileContainer" xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+           <its:param name="title">Text</its:param>
+           <its:param name="trmarkId">notran</its:param>
+           <its:param name="foo">bar1</its:param>
+           <its:idValueRule xml:id="idValRule" selector="id($title)" idValue="bodyId"/>
+           <its:locNoteRule xml:id="locNoteRule" selector="id($title)" locNotePointer="id($trmarkId)"/>
+          </its:rules>
+        </script>
+    </head>
+<body>
+    <p id="InvalidParameter">
+      Invalid parameter</p>
+</body>
+</html>
