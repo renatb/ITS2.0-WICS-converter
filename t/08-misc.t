@@ -2,8 +2,9 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 2;
-use XML::ITS qw(its_ns);
+plan tests => 3;
+use XML::ITS qw(its_ns xlink_ns);
 use Test::NoWarnings;
 
 is(its_ns(), 'http://www.w3.org/2005/11/its', 'correct namespace for ITS');
+is(xlink_ns(), 'http://www.w3.org/1999/xlink', 'correct namespace for XLink');
