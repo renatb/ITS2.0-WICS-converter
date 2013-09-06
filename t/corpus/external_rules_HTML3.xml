@@ -1,0 +1,6 @@
+<its:rules xml:id="ext3container"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    version="2.0">
+      <its:translateRule xml:id="ext3rule" selector="/h:html" translate="yes"/>
+</its:rules>

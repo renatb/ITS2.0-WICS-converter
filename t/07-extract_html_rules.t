@@ -38,16 +38,17 @@ subtest 'external rules' => sub {
 };
 
 subtest 'external and internal rules' => sub {
-    plan tests => 5;
+    plan tests => 6;
     my $external_test = path($xml_dir, 'test_external_internal.html');
     my $ITS = XML::ITS->new('html', doc => $external_test);
     my $rules = $ITS->get_rules();
 
-    is(@$rules, 4, 'four rules in file');
+    is(@$rules, 5, 'five rules in file');
     is($rules->[0]->element->att('xml:id'), 'ext3rule', 'correct first rule');
     is($rules->[1]->element->att('xml:id'), 'ext2rule', 'correct second rule');
     is($rules->[2]->element->att('xml:id'), 'ext1rule', 'correct third rule');
-    is($rules->[3]->element->att('xml:id'), 'baseFileRule', 'correct fourth rule');
+    is($rules->[3]->element->att('xml:id'), 'baseFileRule1', 'correct fourth rule');
+    is($rules->[4]->element->att('xml:id'), 'baseFileRule2', 'correct fifth rule');
 };
 
 subtest 'parameters resolved' => sub {
