@@ -53,6 +53,8 @@ sub _get_its_rules_els {
     );
 }
 
+# given a single rule container, return it and all other
+# rule containers included via external files
 sub _resolve_containers {
     my ($doc, $container, %params) = @_;
 
@@ -83,6 +85,9 @@ sub _resolve_containers {
     return \@containers;
 }
 
+# return an arrayref containing all of the rule containers
+# taken from a given file (each file has one container, but
+# may reference other rules files).
 sub _get_external_containers {
     my ($path, $params) = @_;
     my $doc;

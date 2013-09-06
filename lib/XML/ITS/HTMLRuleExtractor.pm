@@ -62,6 +62,7 @@ sub _get_its_scripts_links {
     );
 }
 
+# parse a single <script> element containing ITS rules
 sub _parse_container {
     my ($script, %params) = @_;
 
