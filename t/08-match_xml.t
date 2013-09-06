@@ -357,33 +357,80 @@ sub test_iterator {
         $ITS->iterate_matches(
             sub {
                 my ($rule, $match) = @_;
+                my %match_ids = map {
+                    $_, ((ref $match->{$_}) =~ /Element$/) ?
+                        $match->{$_}->att('xml:id') :
+                        $match->{$_}->value
+                } keys %$match;
                 push @rule_match_pairs,
                     [
                         $rule->element->att('xml:id'),
-                        $match->{selector}->att('xml:id')
+                        \%match_ids,
                     ];
             }
         );
-        is(scalar @rule_match_pairs, 4, 'Four matches');
+        is(scalar @rule_match_pairs, 9, 'Nine matches');
         is_deeply(
             \@rule_match_pairs,
             [
-                  [
-                    'ext3rule',
-                    'root'
-                  ],
-                  [
-                    'ext2rule',
-                    'trmark'
-                  ],
-                  [
-                    'ext1rule',
-                    'par'
-                  ],
-                  [
-                    'baseFileRule',
-                    'body'
-                  ]
+              [
+                'ext3rule',
+                {
+                  'selector' => 'root'
+                }
+              ],
+              [
+                'ext2rule',
+                {
+                  'selector' => 'trmark'
+                }
+              ],
+              [
+                'ext1rule',
+                {
+                  'selector' => 'par1'
+                }
+              ],
+              [
+                'ext1rule',
+                {
+                  'selector' => 'par2'
+                }
+              ],
+              [
+                'ext1rule',
+                {
+                  'selector' => 'par3'
+                }
+              ],
+              [
+                'baseFileRule1',
+                {
+                  'idValue' => 'bodyId',
+                  'selector' => 'body'
+                }
+              ],
+              [
+                'baseFileRule2',
+                {
+                  'selector' => 'par1',
+                  locNotePointer => 'some',
+                }
+              ],
+              [
+                'baseFileRule2',
+                {
+                  'selector' => 'par2',
+                  locNotePointer => 'loc',
+                }
+              ],
+              [
+                'baseFileRule2',
+                {
+                  'selector' => 'par3',
+                  locNotePointer => 'note',
+                }
+              ],
             ],
             'Correct rule-pair matches'
         ) or note explain \@rule_match_pairs;
