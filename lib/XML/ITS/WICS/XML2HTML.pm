@@ -72,19 +72,22 @@ sub convert {
 	$self->{futureNodeManager} =
 		new_manager($dom);
 
-	#first remove rules not compatible with HTML and log changes
-	my $rule_count = scalar @{$ITS->get_rules};
-	$ITS->filter_rules(sub {
-    	return $_[0]->type ne 'preserveSpace';
-  	});
-	if(my $diff = $rule_count - @{$ITS->get_rules}){
-		$log->debug("removed $diff preserveSpace rule(s) from input");
-	}
-
 	# [rule, {selector => futureNode, *pointer => futureNode...}]
 	my @matches;
-	# find all rule matches and save them in @matches
-	$ITS->iterate_matches($self->_create_indexer(\@matches));
+	# create closure to save all rule matches in @matches
+	my $match_processor = $self->_create_indexer(\@matches);
+
+	#iterate all document rules and their matches, indexing each one
+	for my $rule (@{ $ITS->get_rules }){
+		# process if compatible with HTML
+		if($rule->type ne 'preserveSpace'){
+			my $matches = $ITS->get_matches($rule);
+			$match_processor->($rule, $_) for @$matches;
+		# otherwise, log the removal
+		}else{
+			$log->debug('removed ' . node_log_id($rule->element));
+		}
+	}
 
 	# convert $ITS into an HTML document; rename elements, process atts,
 	# and paste the root in an HTML body.
@@ -99,6 +102,7 @@ sub convert {
 	return \($html_doc->string);
 }
 
+# returns true if the root of the given document is an its:rules element
 sub _is_rules_dom {
 	my ($dom) = @_;
 	my $root = $dom->get_root;
@@ -236,7 +240,7 @@ sub _convert_atts {
 	my ($self, $el) = @_;
 
 	my $title = $el->name;
-	my @atts = $el->get_xpath('@*'); #TODO: inline this
+	my @atts = $el->get_xpath('@*');
 
 	#true if this element has been renamed (to 'bdo')
 	my $bdo_rename;
@@ -592,3 +596,8 @@ sub _false_inheritance_rules {
 }
 
 1;
+
+=head1 C<TODO>
+
+It would be nice if the ITS rules placed in script elements were printed XML style
+instead of HTML (using self-ending tags).

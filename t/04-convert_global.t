@@ -309,7 +309,7 @@ preserveSpaceRule has no meaning in HTML, and thus it is not output.
   </body>
 </html>
 --- log
-removed 1 preserveSpace rule(s) from input
+removed <its:preserveSpaceRule>
 converting document elements into HTML
 processing <xml>
 setting @title of <xml> to 'xml'
