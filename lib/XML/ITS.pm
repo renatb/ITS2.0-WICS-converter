@@ -33,12 +33,15 @@ if(!caller){
 =head1 SYNOPSIS
 
     use XML::ITS;
+    use feature 'say';
     my $ITS = XML::ITS->new(file => 'myITSfile.xml');
     my $rules = $ITS->get_rules;
-    $ITS->iterate_matches(sub{
-        my ($rule, $matches) = @_;
-        # do something with matches here
-    });
+    for my $rule (@$rules){
+        say $rule->type;
+        for my $match(@{ $ITS->get_matches($rule) }){
+            say "$_ => $match{$_}" for keyes %$match;
+        }
+    }
 
 =head1 DESCRIPTION
 
@@ -146,35 +149,6 @@ sub get_rules {
     return \@rules;
 }
 
-=head2 C<iterate_matches>
-
-Iterates over each match of each document rule, in order of
-application.
-
-The first argument is a subroutine reference to be called for each
-match. The arguments to the subroutine are first the matching rule and
-then a hash reference representing the hash object (see C<get_matches>
-below).
-
-The second argument is optionally an array ref of rules to find matches
-for (no argument uses internal rules).
-
-=cut
-
-sub iterate_matches {
-    my ($self, $sub, $rules) = @_;
-    croak 'subroutine required!'
-        unless $sub and (ref $sub eq 'CODE');
-    $rules ||= $self->get_rules;
-    for my $rule(@$rules){
-        my $matches = $self->get_matches($rule);
-        for my $match (@$matches){
-            $sub->($rule, $match);
-        }
-    }
-    return;
-}
-
 =head2 C<get_matches>
 
 Argument: C<ITS::Rule> object.
@@ -231,30 +205,6 @@ sub get_matches {
         push @matches, $match;
     }
     return \@matches;
-}
-
-=head2 C<filter_rules>
-
-This method takes one argument: a subroutine which should return a boolean
-value. This method loops through all of the ITS rules associated with this
-document, calls the input subroutine with the rule as an argument, and removes
-the rule from the document if the subroutine does not return a true value. For
-example, the following can be used to remove all C<preserveSpace> rules from
-the document:
-
-  $ITS->filter_rules(sub {
-    return $_[0]->type ne 'preserveSpace';
-  });
-
-=cut
-sub filter_rules {
-    my ($self, $filter) = @_;
-    for my $container (@{ $self->{rule_containers} }){
-        my $rules = $container->rules;
-        @$rules = grep {$filter->($_)} @$rules;
-        $container->rules($rules);
-    }
-    return;
 }
 
 # return an array ref of XML::ITS::DOM::Nodes matching selector of given rule
@@ -331,6 +281,22 @@ sub _pointer_match {
 }
 
 1;
+
+=head1 CAVEATS
+
+In browsers, all HTML is considered to be in the C<http://www.w3.org/1999/xhtml>
+namespace, XPath but XPath expressions use this as a default namespace. This is
+not currently possible with this module, so the XHTML namespace must be used
+explicitly in rules for HTML documents, like so:
+
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its"
+        xmlns:h="http://www.w3.org/1999/xhtml"
+        version="2.0">
+          <its:translateRule selector="//h:p" translate="yes"/>
+    </its:rules>
+
+Currently rule selection will not work for the C<id()> XPath expression
+in HTML documents.
 
 =head1 TODO
 

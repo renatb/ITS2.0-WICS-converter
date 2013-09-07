@@ -37,6 +37,7 @@ subtest 'parameters' => sub {
         y => 'y value',
     };
     my $container = XML::ITS::RuleContainer->new(
+            undef,
             params => $params,
         );
     my $el = new_element(

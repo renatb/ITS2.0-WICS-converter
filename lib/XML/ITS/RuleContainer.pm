@@ -7,12 +7,13 @@ use XML::ITS::Rule;
 
 #not much in the way of input checking here...
 sub new {
-    my ($class, %args) = @_;
+    my ($class, $el, %args) = @_;
 
     my $self = bless {
+        element => $el,
         version => $args{version},
         query_language => $args{query_language},
-        params => $args{params} || {}
+        params => \%{$args{params}} || {}
     }, $class;
     $self->{rules} = [map {XML::ITS::Rule->new($_, $self)} @{$args{rules}}];
     return $self;
@@ -39,8 +40,7 @@ sub rules {
 }
 
 sub params {
-    my ($self, $params) = @_;
-
+    my ($self) = @_;
     return $self->{params};
 }
 

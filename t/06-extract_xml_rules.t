@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use XML::ITS;
 use Test::More 0.88;
-plan tests => 8;
+plan tests => 7;
 use Test::NoWarnings;
 use Path::Tiny;
 use FindBin qw($Bin);
@@ -144,17 +144,4 @@ RULES
     is(scalar @$rules, 2, '2 rules in string');
     is($rules->[0]->element->att('xml:id'), 'idValRule', 'correct first rule');
     is($rules->[1]->element->att('xml:id'), 'locNoteRule', 'correct second rule');;
-};
-
-subtest 'rule filtering' => sub {
-    plan tests => 2;
-    my $internal_test = path($xml_dir, 'basic_rules.xml');
-
-    my $ITS = XML::ITS->new('xml', doc => $internal_test);
-    $ITS->filter_rules(sub {
-        $_[0]->element->att('xml:id') !~ /first|second/
-    });
-    my $rules = $ITS->get_rules();
-    is(@$rules, 1, 'three rules in basic_rules.xml');
-    is($rules->[0]->element->att('xml:id'), 'third', 'correct third rule');
 };

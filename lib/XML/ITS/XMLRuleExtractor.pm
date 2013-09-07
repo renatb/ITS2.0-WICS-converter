@@ -76,12 +76,13 @@ sub _resolve_containers {
         push @containers, @{ _get_external_containers($path, \%params) };
     }
     push @containers, XML::ITS::RuleContainer->new(
-            version => $container->att('version'),
-            query_language =>
-                $container->att('queryLanguage') || 'xpath',
-            params => \%params,
-            rules => $children,
-        );
+        $container,
+        version => $container->att('version'),
+        query_language =>
+            $container->att('queryLanguage') || 'xpath',
+        params => \%params,
+        rules => $children,
+    );
     return \@containers;
 }
 

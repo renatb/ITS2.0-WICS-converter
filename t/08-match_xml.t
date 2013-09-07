@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use XML::ITS;
 use Test::More 0.88;
-plan tests => 12;
+plan tests => 11;
 use Test::Warn;
 use Path::Tiny;
 use FindBin qw($Bin);
@@ -27,9 +27,6 @@ test_warnings(
     \($all_data->{document}),
     \($all_data->{warning_rules}),
     \($all_data->{default_ns}));
-
-my $doc_path = path($Bin, 'corpus', 'test_external_internal.xml');
-test_iterator($doc_path);
 
 #test out a basic rule match, no pointers or parameters
 sub test_basic {
@@ -340,101 +337,6 @@ sub test_warnings {
     );
     my $matches = $ITS->get_matches($rules->[0]);
     is(@$matches, 0, 'no matches found because of default namespace');
-    return;
-}
-
-# test that match iterator returns matches in application order
-sub test_iterator {
-    my ($doc_path) = @_;
-
-    subtest 'Iterate all rule matches in order' => sub {
-        plan tests => 2;
-        my $ITS = XML::ITS->new(
-            'xml',
-            doc => $doc_path,
-        );
-        my @rule_match_pairs;
-        $ITS->iterate_matches(
-            sub {
-                my ($rule, $match) = @_;
-                my %match_ids = map {
-                    $_, ((ref $match->{$_}) =~ /Element$/) ?
-                        $match->{$_}->att('xml:id') :
-                        $match->{$_}->value
-                } keys %$match;
-                push @rule_match_pairs,
-                    [
-                        $rule->element->att('xml:id'),
-                        \%match_ids,
-                    ];
-            }
-        );
-        is(scalar @rule_match_pairs, 9, 'Nine matches');
-        is_deeply(
-            \@rule_match_pairs,
-            [
-              [
-                'ext3rule',
-                {
-                  'selector' => 'root'
-                }
-              ],
-              [
-                'ext2rule',
-                {
-                  'selector' => 'trmark'
-                }
-              ],
-              [
-                'ext1rule',
-                {
-                  'selector' => 'par1'
-                }
-              ],
-              [
-                'ext1rule',
-                {
-                  'selector' => 'par2'
-                }
-              ],
-              [
-                'ext1rule',
-                {
-                  'selector' => 'par3'
-                }
-              ],
-              [
-                'baseFileRule1',
-                {
-                  'idValue' => 'bodyId',
-                  'selector' => 'body'
-                }
-              ],
-              [
-                'baseFileRule2',
-                {
-                  'selector' => 'par1',
-                  locNotePointer => 'some',
-                }
-              ],
-              [
-                'baseFileRule2',
-                {
-                  'selector' => 'par2',
-                  locNotePointer => 'loc',
-                }
-              ],
-              [
-                'baseFileRule2',
-                {
-                  'selector' => 'par3',
-                  locNotePointer => 'note',
-                }
-              ],
-            ],
-            'Correct rule-pair matches'
-        ) or note explain \@rule_match_pairs;
-    };
     return;
 }
 

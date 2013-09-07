@@ -80,12 +80,13 @@ sub _parse_container {
     }
     #external containers are not allowed here, so just parse this one
     return XML::ITS::RuleContainer->new(
-            version => $script->att('version'),
-            query_language =>
-                $script->att('queryLanguage') || 'xpath',
-            params => \%params,
-            rules => $children,
-        );
+        $script,
+        version => $script->att('version'),
+        query_language =>
+            $script->att('queryLanguage') || 'xpath',
+        params => \%params,
+        rules => $children,
+    );
 }
 
 1;
