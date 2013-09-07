@@ -1,4 +1,4 @@
-# Make sure that rules are extracted correctly from XML
+# Make sure that RuleContainers and rules are extracted correctly from XML
 # and that they are stored in proper application order
 
 use strict;
@@ -14,10 +14,13 @@ use File::Slurp;
 my $xml_dir = path($Bin, 'corpus');
 
 subtest 'internal rules' => sub {
-    plan tests => 4;
+    plan tests => 5;
     my $internal_test = path($xml_dir, 'basic_rules.xml');
-
     my $ITS = XML::ITS->new('xml', doc => $internal_test);
+
+    my $containers = $ITS->get_containers;
+    is(@$containers, 1, 'one rule container found');
+
     my $rules = $ITS->get_rules();
     is(@$rules, 3, 'three rules in basic_rules.xml');
     is($rules->[0]->element->att('xml:id'), 'first', 'correct first rule');
@@ -26,11 +29,22 @@ subtest 'internal rules' => sub {
 };
 
 subtest 'external rules' => sub {
-    plan tests => 4;
+    plan tests => 9;
     my $external_test = path($xml_dir, 'test_external.xml');
     my $ITS = XML::ITS->new('xml', doc => $external_test);
-    my $rules = $ITS->get_rules();
 
+    my $containers = $ITS->get_containers;
+    is(@$containers, 4, 'four rule containers found');
+    is($containers->[0]->element->att('xml:id'), 'ext3container',
+        'correct second container');
+    is($containers->[1]->element->att('xml:id'), 'ext2container',
+        'correct third container');
+    is($containers->[2]->element->att('xml:id'), 'ext1container',
+        'correct fourth container');
+    is($containers->[3]->element->att('xml:id'), 'baseFileContainer',
+        'correct first container');
+
+    my $rules = $ITS->get_rules();
     is(@$rules, 3, 'four rules in file');
     is($rules->[0]->element->att('xml:id'), 'ext3rule', 'correct first rule');
     is($rules->[1]->element->att('xml:id'), 'ext2rule', 'correct second rule');
@@ -52,43 +66,47 @@ subtest 'external and internal rules' => sub {
 };
 
 subtest 'parameters resolved' => sub {
-    plan tests => 7;
+    plan tests => 10;
     my $param_test = path($xml_dir, 'test_param.xml');
     my $ITS = XML::ITS->new('xml', doc => $param_test);
-    my $rules = $ITS->get_rules();
 
-    is(@$rules, 3, 'three rules in file');
-
-    my $ext_rule = $rules->[0];
-    is($ext_rule->element->att('xml:id'), 'ext_rule', 'external rule first');
-    is_deeply(
-        $ext_rule->params,
-        {
-            title   => 'Text',
-            trmarkId=> 'notran',
-            baz     => 'qux',
-            foo     => 'bar2',
-        },
-        'external rule params');
-
-    my $params = {
+    my $internal_params = {
         title   => 'Text',
         trmarkId=> 'notran',
         foo     => 'bar1',
     };
+    my $external_params = {
+        title   => 'Text',
+        trmarkId=> 'notran',
+        baz     => 'qux',
+        foo     => 'bar2',
+    };
+
+    my $containers = $ITS->get_containers;
+    is(@$containers, 2, 'two rule containers found');
+    is_deeply(
+        $containers->[0]->params, $external_params,
+        'correct parameters in first container');
+    is_deeply($containers->[1]->params, $internal_params,
+        'correct parameters in second container');
+
+    my $rules = $ITS->get_rules();
+    is(@$rules, 3, 'three rules in file');
+    my $ext_rule = $rules->[0];
+    is($ext_rule->element->att('xml:id'), 'ext_rule', 'external rule first');
+    is_deeply($ext_rule->params, $external_params, 'external rule params');
+
     my $idValRule = $rules->[1];
     is($idValRule->element->att('xml:id'), 'idValRule', 'internal rule next');
-    is_deeply(
-        $idValRule->params, $params, 'internal rule params');
+    is_deeply($idValRule->params, $internal_params, 'internal rule params');
 
     my $locNoteRule = $rules->[2];
     is($locNoteRule->element->att('xml:id'), 'locNoteRule', 'last internal rule last');
-    is_deeply(
-        $locNoteRule->params, $params, 'last rule params');
+    is_deeply($locNoteRule->params, $internal_params, 'last rule params');
 };
 
 subtest 'params contained to one its:rules element' => sub {
-    plan tests => 5;
+    plan tests => 7;
     my $ITS = XML::ITS->new('xml', doc => \<<'XML');
     <myDoc>
      <head>
@@ -110,20 +128,29 @@ subtest 'params contained to one its:rules element' => sub {
     </myDoc>
 XML
 
+    my $first_param = {bar => 'baz'};
+    my $second_param = {qux => 'muck'};
+
+    my $containers = $ITS->get_containers;
+    is_deeply( $containers->[0]->params, $first_param,
+        'correct parameters in first container');
+    is_deeply( $containers->[1]->params, $second_param,
+        'correct parameters in second container');
+
     my $rules = $ITS->get_rules();
     is(@$rules, 2, '2 rules in string');
 
     my $rule = $rules->[0];
     is($rule->element->att('xml:id'), 'rule1', 'correct first rule');
-    is_deeply($rule->params, {bar => 'baz'}, '1 param in first rule');
+    is_deeply($rule->params, $first_param, '1 param in first rule');
 
     $rule = $rules->[1];
     is($rule->element->att('xml:id'), 'rule2', 'correct second rule');
-    is_deeply($rule->params, {qux => 'muck'}, '1 param in first rule');
+    is_deeply($rule->params, $second_param, '1 param in first rule');
 };
 
 subtest 'rules and document from separate strings' => sub {
-    plan tests => 3;
+    plan tests => 4;
     my $ITS = XML::ITS->new('xml', doc => \<<'XML', rules => \<<'RULES');
 <myDoc>
  <body>
@@ -139,6 +166,9 @@ XML
     <its:locNoteRule xml:id="locNoteRule" selector="id('Text')" locNotePointer="id('notran')"/>
 </its:rules>
 RULES
+
+    my $containers = $ITS->get_containers;
+    is(@$containers, 1, 'one rule container found');
 
     my $rules = $ITS->get_rules();
     is(scalar @$rules, 2, '2 rules in string');

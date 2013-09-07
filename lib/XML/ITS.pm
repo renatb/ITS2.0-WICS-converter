@@ -149,6 +149,20 @@ sub get_rules {
     return \@rules;
 }
 
+=head2 C<get_containers>
+
+Returns an arrayref containing ITS::RuleContainer objects, one for each C<its:rules>
+or C<script type="application/its+xml"> element found in the document or externally.
+The containers are returned in application order (the order that their rules should
+be applied in).
+
+=cut
+sub get_containers {
+    my ($self) = @_;
+    # shallow copy
+    return [@{ $self->{rule_containers} }];
+}
+
 =head2 C<get_matches>
 
 Argument: C<ITS::Rule> object.
