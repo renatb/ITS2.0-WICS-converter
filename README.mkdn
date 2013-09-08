@@ -60,6 +60,10 @@ the separate rules document), setting the values that can be obtained via
 but if the document (retrievable via `get_dom`) is edited, the ITS rules contents
 may have changed, making it necessary to call this method.
 
+## `get_doc_type`
+
+Returns either 'html' or 'xml' indicating the type of file being represented.
+
 ## `get_doc`
 
 Returns the XML::ITS::DOM object created from the input
