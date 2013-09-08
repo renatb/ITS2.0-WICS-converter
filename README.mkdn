@@ -9,12 +9,15 @@ version 0.03
 # SYNOPSIS
 
     use XML::ITS;
+    use feature 'say';
     my $ITS = XML::ITS->new(file => 'myITSfile.xml');
     my $rules = $ITS->get_rules;
-    $ITS->iterate_matches(sub{
-        my ($rule, $matches) = @_;
-        # do something with matches here
-    });
+    for my $rule (@$rules){
+        say $rule->type;
+        for my $match(@{ $ITS->get_matches($rule) }){
+            say "$_ => $match{$_}" for keyes %$match;
+        }
+    }
 
 # DESCRIPTION
 
@@ -30,18 +33,32 @@ The following function may be exported:
 
 Returns the ITS namespace URI.
 
+## `xlink_ns`
+
+Returns the xlink namespace URI (`xlink:href` is used by the `its:rules`
+element to import external rules).
+
 # METHODS
 
 ## `new`
 
-Returns an ITS object instance.
+Returns an XML::ITS object instance.
 Arguments: The first is either 'xml' or 'html' to indicate the type of
 document being parsed. After that, you must specify 'doc' and
-may also specify 'rules' parameters. The value of these parameters
+may also optionally specify 'rules' parameters. The value of these parameters
 should be either a string containing a file path or a string reference
-containing actual ITS data. The 'document' argument should point to the
+containing actual ITS data. The 'doc' argument should point to the
 document to which ITS data is being applied, and the 'rules' argument
-should point to the document containing the ITS rules to apply.
+should point to a document containing the ITS rules to apply (this may only
+be an XML document, not an HTML document).
+
+## `eval_rules`
+
+This method detects any ITS rules contained or referenced by the document (or
+the separate rules document), setting the values that can be obtained via
+`get_containers` and `get_rules`. This is always run by the `new` method,
+but if the document (retrievable via `get_dom`) is edited, the ITS rules contents
+may have changed, making it necessary to call this method.
 
 ## `get_doc`
 
@@ -53,26 +70,14 @@ document.
 Returns an arrayref containing the ITS rule elements
 (in the form of XML::ITS::Rule objects) which are to be
 applied to the document, in the order in which they will
-be applied. The returned arrayref is the one used to store
-rules internally, making it possible to add, remove, or
-rearrange them.
+be applied.
 
-Keep in mind that, while it is useful to be able to edit these
-rules, there isn't much in the way of validity checking
-for them, so you must be careful in what you do to them.
+## `get_containers`
 
-## `iterate_matches`
-
-Iterates over each match of each document rule, in order of
-application.
-
-The first argument is a subroutine reference to be called for each
-match. The arguments to the subroutine are first the matching rule and
-then a hash reference representing the hash object (see `get_matches`
-below).
-
-The second argument is optionally an array ref of rules to find matches
-for (no argument uses internal rules).
+Returns an arrayref containing ITS::RuleContainer objects, one for each `its:rules`
+or `script type="application/its+xml"` element found in the document or externally.
+The containers are returned in application order (the order that their rules should
+be applied in).
 
 ## `get_matches`
 
@@ -85,20 +90,29 @@ selector matched.
 Any other keys are names of pointer attributes, and their values are
 their matched document nodes.
 
-## `filter_rules`
+# CAVEATS
 
-This method takes one argument: a subroutine which should return a boolean
-value. This method loops through all of the ITS rules associated with this
-document, calls the input subroutine with the rule as an argument, and removes
-the rule from the document if the subroutine does not return a true value. For
-example, the following can be used to remove all `preserveSpace` rules from
-the document:
+In browsers, all HTML is considered to be in the `http://www.w3.org/1999/xhtml`
+namespace, XPath but XPath expressions use this as a default namespace. This is
+not currently possible with this module, so the XHTML namespace must be used
+explicitly in rules for HTML documents, like so:
 
-    $ITS->filter_rules(sub {
-      return $_[0]->type ne 'preserveSpace';
-    });
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its"
+        xmlns:h="http://www.w3.org/1999/xhtml"
+        version="2.0">
+          <its:translateRule selector="//h:p" translate="yes"/>
+    </its:rules>
+
+Currently rule selection will not work for the `id()` XPath expression
+in HTML documents.
 
 # TODO
+
+This module does not support querying individual elements for ITS information.
+This would be very useful, but it would require the implementation of
+inheritance and per-category knowledge (currently there is none!). Reference
+[http://www.w3.org/International/its/wiki/ITS\_Processor\_Interface](http://www.w3.org/International/its/wiki/ITS\_Processor\_Interface) for an
+idea of what is wanted.
 
 ITS allows for other types of selectors. This module, however,
 only allows XPath selectors. CSS selectors could be implemented,
@@ -106,6 +120,13 @@ for example, with `HTML::Selector::XPath`.
 
 Currently this module does not check ITS version. All rules
 are assumed to be ITS version 2.0.
+
+Section 5.3.5 of the ITS spec mentions that implementors should provide
+a way to set default values for parameters. This would be useful, but what
+is the menaing of i<default> value here? Are there documents without param
+declarations but with XPaths that contain variables? Or should this just be
+a mechanism to allow the user to set the value of a param, no matter what
+values are present in the document?
 
 # AUTHOR
 

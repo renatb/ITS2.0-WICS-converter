@@ -137,6 +137,16 @@ sub eval_rules {
     return;
 }
 
+=head2 C<get_doc_type>
+
+Returns either 'html' or 'xml' indicating the type of file being represented.
+
+=cut
+sub get_doc_type {
+    my ($self) = @_;
+    return $self->{file_type};
+}
+
 
 =head2 C<get_doc>
 

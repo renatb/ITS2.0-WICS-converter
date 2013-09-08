@@ -23,7 +23,6 @@ sub _resolve_doc_containers {
     # first, grab internal rules links to more rules
     my @scripts_links = _get_its_scripts_links($doc);
     if(@scripts_links == 0){
-        warn "returning nothing!";
         return [];
     }
 
