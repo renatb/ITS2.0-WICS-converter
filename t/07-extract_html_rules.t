@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use XML::ITS;
 use Test::More 0.88;
-plan tests => 7;
+plan tests => 8;
 use Test::NoWarnings;
 use Path::Tiny;
 use FindBin qw($Bin);
@@ -189,4 +189,29 @@ RULES
     is(scalar @$rules, 2, '2 rules in string');
     is($rules->[0]->element->att('xml:id'), 'idValRule', 'correct first rule');
     is($rules->[1]->element->att('xml:id'), 'locNoteRule', 'correct second rule');;
+};
+
+subtest 'eval_rules after editing DOM' => sub {
+    plan tests => 8;
+    my $external_test = path($xml_dir, 'basic_rules.html');
+    my $ITS = XML::ITS->new('xml', doc => $external_test);
+
+    my $containers = $ITS->get_containers;
+    my $c1 = $containers->[0]->element;
+    my $c2 = $c1->copy(1);
+    $c2->paste($c1, 'after');
+    $ITS->eval_rules;
+
+    $containers = $ITS->get_containers;
+    is(@$containers, 2, 'two containers found');
+    my $rules = $ITS->get_rules();
+
+    is(@$rules, 6, 'ten rules in DOM');
+    is($rules->[0]->element->att('xml:id'), 'first', 'correct first rule');
+    is($rules->[1]->element->att('xml:id'), 'second', 'correct second rule');
+    is($rules->[2]->element->att('xml:id'), 'third', 'correct third rule');
+    #new rules are copies of the others
+    is($rules->[3]->element->att('xml:id'), 'first', 'correct fourth rule');
+    is($rules->[4]->element->att('xml:id'), 'second', 'correct fifth rule');
+    is($rules->[5]->element->att('xml:id'), 'third', 'correct sixth rule');
 };

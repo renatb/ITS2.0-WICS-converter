@@ -14,7 +14,7 @@ use Carp;
 use Path::Tiny;
 use Try::Tiny;
 use feature 'say';
-use Data::Dumper; #debug
+# use Data::Dumper; #debug
 use Exporter::Easy (
     OK => [qw(its_ns xlink_ns)],
 );
@@ -79,11 +79,12 @@ sub xlink_ns{
 Returns an XML::ITS object instance.
 Arguments: The first is either 'xml' or 'html' to indicate the type of
 document being parsed. After that, you must specify 'doc' and
-may also specify 'rules' parameters. The value of these parameters
+may also optionally specify 'rules' parameters. The value of these parameters
 should be either a string containing a file path or a string reference
-containing actual ITS data. The 'document' argument should point to the
+containing actual ITS data. The 'doc' argument should point to the
 document to which ITS data is being applied, and the 'rules' argument
-should point to the document containing the ITS rules to apply.
+should point to a document containing the ITS rules to apply (this may only
+be an XML document, not an HTML document).
 
 =cut
 
@@ -99,25 +100,43 @@ sub new {
 
     my $self = bless {
         doc => $doc,
+        file_type => $file_type
     }, $class;
 
-    my $rules_doc = $doc;
+    $self->{rules_doc} = $doc;
     if($args{rules}){
         #rules docs are only allowed to be XML
-        $rules_doc = XML::ITS::DOM->new('xml' => $args{rules});
+        $self->{rules_doc} = XML::ITS::DOM->new('xml' => $args{rules});
     }
 
-    # rules docs are only allowed to be XML
-    if($file_type eq 'xml' or $args{rules}){
-        $self->{rule_containers} =
-            XML::ITS::XMLRuleExtractor::_resolve_doc_containers($rules_doc);
-    }else{
-        $self->{rule_containers} =
-        XML::ITS::HTMLRuleExtractor::_resolve_doc_containers($rules_doc);
-    }
-    # print Dumper $self->{rule_containers};
+    $self->eval_rules;
     return $self;
 }
+
+=head2 C<eval_rules>
+
+This method detects any ITS rules contained or referenced by the document (or
+the separate rules document), setting the values that can be obtained via
+C<get_containers> and C<get_rules>. This is always run by the C<new> method,
+but if the document (retrievable via C<get_dom>) is edited, the ITS rules contents
+may have changed, making it necessary to call this method.
+
+=cut
+sub eval_rules {
+    my ($self) = @_;
+    # rules docs are only allowed to be XML
+    if($self->{file_type} eq 'xml' or $self->{doc} != $self->{rules_doc}){
+        $self->{rule_containers} =
+            XML::ITS::XMLRuleExtractor::_resolve_doc_containers(
+                $self->{rules_doc});
+    }else{
+        $self->{rule_containers} =
+            XML::ITS::HTMLRuleExtractor::_resolve_doc_containers(
+                $self->{rules_doc});
+    }
+    return;
+}
+
 
 =head2 C<get_doc>
 

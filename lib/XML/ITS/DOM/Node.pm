@@ -415,8 +415,8 @@ sub is_same_node {
 =head2 C<copy>
 
 Returns a copy of this node. A single boolean argument indicates
-whether a deep copy should be performed; that is, whether children
-should also be copied.
+whether a deep copy should be performed (true for yes); that is,
+whether children should also be copied.
 
 =cut
 sub copy {
