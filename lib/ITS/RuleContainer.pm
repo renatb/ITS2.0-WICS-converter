@@ -1,13 +1,23 @@
-package XML::ITS::RuleContainer;
+package ITS::RuleContainer;
 use strict;
 use warnings;
-use XML::ITS::Rule;
+use ITS::Rule;
 # VERSION
 # ABSTRACT: Store one its:rules element worth of information
 
 =head1 SYNOPSIS
 
-
+    use ITS;
+    use ITS::RuleContainer;
+    my $ITS = ITS->new('xml', doc =>'/path/to/doc.xml');
+    my ($container) = $ITS->get_containers();
+    my $params = $container->params;
+    for my $param (my ($name, $val) = each %{$params}){
+        print "$name = $val\n";
+    }
+    for my $rule (@{ $container->rules }){
+        print $rule->type . "\n";
+    }
 
 =head1 DESCRIPTION
 
@@ -38,9 +48,9 @@ which indicates the use of XPath 2.0 in ITS.
 
 =item params
 
-All params available to the rules in the container (both those declared
-in the container and those declared in the container that included this
-one via C<xlink:href>).
+A hashref containing all params available to the rules in the container
+(both those declared in the container and those declared in the container
+that included this one via C<xlink:href>).
 
 =item rules
 
@@ -60,7 +70,7 @@ sub new {
         query_language => $args{query_language} || 'xpath',
         params => \%{$args{params} || {}}
     }, $class;
-    $self->{rules} = [map {XML::ITS::Rule->new($_, $self)} @{$args{rules}}];
+    $self->{rules} = [map {ITS::Rule->new($_, $self)} @{$args{rules}}];
     return $self;
 }
 
@@ -96,7 +106,7 @@ sub query_language {
 
 =head2 C<rules>
 
-Returns an arrayref containing C<XML::ITS::Rule> objects for the ITS rules
+Returns an arrayref containing C<ITS::Rule> objects for the ITS rules
 declared in this container.
 
 =cut
@@ -106,11 +116,10 @@ sub rules {
     return [@{ $self->{rules} }];
 }
 
-
 =head2 C<params>
 
-Returns a hash containing names and values of the parameters available to this
-container.
+Returns a hashref containing names and values of the parameters available to
+this container.
 
 =cut
 sub params {

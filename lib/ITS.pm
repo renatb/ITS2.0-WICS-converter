@@ -1,13 +1,13 @@
-package XML::ITS;
+package ITS;
 use strict;
 use warnings;
 # ABSTRACT: Work with ITS-decorated XML
 # VERSION
-use XML::ITS::XMLRuleExtractor;
-use XML::ITS::HTMLRuleExtractor;
-use XML::ITS::DOM;
-use XML::ITS::RuleContainer;
-use XML::ITS::Rule;
+use ITS::XMLRuleExtractor;
+use ITS::HTMLRuleExtractor;
+use ITS::DOM;
+use ITS::RuleContainer;
+use ITS::Rule;
 
 use Carp;
 
@@ -25,16 +25,16 @@ my $XLINK_NS = 'http://www.w3.org/1999/xlink';
 
 # as script: extract ITS rules from input doc and list IDs
 if(!caller){
-    my $ITS =  XML::ITS->new('xml', doc => $ARGV[0]);
+    my $ITS =  ITS->new('xml', doc => $ARGV[0]);
     say 'Extracted rules:';
     say $_->element->att('xml:id') for @{ $ITS->get_rules() };
 }
 
 =head1 SYNOPSIS
 
-    use XML::ITS;
+    use ITS;
     use feature 'say';
-    my $ITS = XML::ITS->new(file => 'myITSfile.xml');
+    my $ITS = ITS->new(file => 'myITSfile.xml');
     my $rules = $ITS->get_rules;
     for my $rule (@$rules){
         say $rule->type;
@@ -76,7 +76,7 @@ sub xlink_ns{
 
 =head2 C<new>
 
-Returns an XML::ITS object instance.
+Returns an ITS object instance.
 Arguments: The first is either 'xml' or 'html' to indicate the type of
 document being parsed. After that, you must specify 'doc' and
 may also optionally specify 'rules' parameters. The value of these parameters
@@ -96,7 +96,7 @@ sub new {
     if($file_type !~ /^(?:xml|html)$/ || !$args{doc}){
         croak 'usage: ITS->new("(xml|html)", doc => "file", [rules => "file"]';
     }
-    my $doc = XML::ITS::DOM->new($file_type => $args{doc});
+    my $doc = ITS::DOM->new($file_type => $args{doc});
 
     my $self = bless {
         doc => $doc,
@@ -106,7 +106,7 @@ sub new {
     $self->{rules_doc} = $doc;
     if($args{rules}){
         #rules docs are only allowed to be XML
-        $self->{rules_doc} = XML::ITS::DOM->new('xml' => $args{rules});
+        $self->{rules_doc} = ITS::DOM->new('xml' => $args{rules});
     }
 
     $self->eval_rules;
@@ -127,11 +127,11 @@ sub eval_rules {
     # rules docs are only allowed to be XML
     if($self->{file_type} eq 'xml' or $self->{doc} != $self->{rules_doc}){
         $self->{rule_containers} =
-            XML::ITS::XMLRuleExtractor::_resolve_doc_containers(
+            ITS::XMLRuleExtractor::_resolve_doc_containers(
                 $self->{rules_doc});
     }else{
         $self->{rule_containers} =
-            XML::ITS::HTMLRuleExtractor::_resolve_doc_containers(
+            ITS::HTMLRuleExtractor::_resolve_doc_containers(
                 $self->{rules_doc});
     }
     return;
@@ -150,7 +150,7 @@ sub get_doc_type {
 
 =head2 C<get_doc>
 
-Returns the XML::ITS::DOM object created from the input
+Returns the ITS::DOM object created from the input
 document.
 
 =cut
@@ -162,7 +162,7 @@ sub get_doc {
 =head2 C<get_rules>
 
 Returns an arrayref containing the ITS rule elements
-(in the form of XML::ITS::Rule objects) which are to be
+(in the form of ITS::Rule objects) which are to be
 applied to the document, in the order in which they will
 be applied.
 
@@ -250,7 +250,7 @@ sub get_matches {
     return \@matches;
 }
 
-# return an array ref of XML::ITS::DOM::Nodes matching selector of given rule
+# return an array ref of ITS::DOM::Nodes matching selector of given rule
 # From the spec, the selector is an "absolute selector":
 # Context for evaluation of the XPath expression is as follows:
 # Context node is set to Root Node.
@@ -283,7 +283,7 @@ sub _selector_matches {
     return \@nodes;
 }
 
-# return XML::ITS::DOM::Node or XML::ITS::DOM::Value object, or, if nothing matched, undef.
+# return ITS::DOM::Node or ITS::DOM::Value object, or, if nothing matched, undef.
 # Context for evaluation of the XPath expression is same as for absolute selector
 # with the following changes:
 # Nodes selected by the expression in the selector attribute form the current node list.

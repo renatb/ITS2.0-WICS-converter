@@ -1,4 +1,4 @@
-package XML::ITS::DOM::Value;
+package ITS::DOM::Value;
 
 use strict;
 use warnings;
@@ -9,9 +9,9 @@ use feature 'switch';
 
 =head1 SYNOPSIS
 
-    use XML::ITS::DOM;
+    use ITS::DOM;
     use feature 'say';
-    my $dom = XML::ITS::DOM->new(xml => 'path/to/file');
+    my $dom = ITS::DOM->new(xml => 'path/to/file');
     my @nodes = $dom->get_xpath('"some string"');
     for my $node (@nodes){
         say $node->value;

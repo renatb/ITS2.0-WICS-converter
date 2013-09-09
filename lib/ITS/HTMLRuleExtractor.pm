@@ -1,16 +1,16 @@
-package XML::ITS::HTMLRuleExtractor;
+package ITS::HTMLRuleExtractor;
 use strict;
 use warnings;
 # VERSION
 # ABSTRACT: Extract ITS rules from an HTML document
 use Carp;
-our @CARP_NOT = qw(XML::ITS);
+our @CARP_NOT = qw(ITS);
 use Path::Tiny;
 use Try::Tiny;
-use XML::ITS::RuleContainer;
-use XML::ITS::Rule;
-use XML::ITS::XMLRuleExtractor;
-use parent -norequire, qw(XML::ITS);
+use ITS::RuleContainer;
+use ITS::Rule;
+use ITS::XMLRuleExtractor;
+use parent -norequire, qw(ITS);
 
 # Find and save all its:rules elements containing rules to be applied in
 # the given document, in order of application, including external ones.
@@ -38,7 +38,7 @@ sub _resolve_doc_containers {
             my $path = path($script_link->att('href'))->
                 absolute($doc->get_base_uri);
             my $containers =
-                XML::ITS::XMLRuleExtractor::_get_external_containers(
+                ITS::XMLRuleExtractor::_get_external_containers(
                     $path, {});
             push @containers, @{$containers};
         }
@@ -66,19 +66,19 @@ sub _parse_container {
     my ($script, %params) = @_;
 
     # the script contains an its:rules element as text
-    my $container = XML::ITS::DOM->new('xml' => \($script->text))->
+    my $container = ITS::DOM->new('xml' => \($script->text))->
         get_root;
 
     my $children = $container->child_els();
     if(@$children){
         while( $children->[0]->local_name eq 'param' and
-            $children->[0]->namespace_URI eq XML::ITS::its_ns() ){
+            $children->[0]->namespace_URI eq ITS::its_ns() ){
             my $param = shift @$children;
             $params{$param->att('name')} = $param->text;
         }
     }
     #external containers are not allowed here, so just parse this one
-    return XML::ITS::RuleContainer->new(
+    return ITS::RuleContainer->new(
         $script,
         version => $script->att('version'),
         query_language =>

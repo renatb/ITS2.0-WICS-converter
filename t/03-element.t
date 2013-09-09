@@ -5,14 +5,14 @@ use Test::More 0.88;
 plan tests => 47;
 use Test::NoWarnings;
 
-use XML::ITS::DOM;
-use XML::ITS::DOM::Element qw(new_element);
+use ITS::DOM;
+use ITS::DOM::Element qw(new_element);
 
 use Path::Tiny;
 use FindBin qw($Bin);
 
 my $dom_path = path($Bin, 'corpus', 'dom_test.xml');
-my $dom = XML::ITS::DOM->new( 'xml' => $dom_path );
+my $dom = ITS::DOM->new( 'xml' => $dom_path );
 
 test_atts($dom);
 test_equality($dom);
@@ -102,7 +102,7 @@ sub test_namespaces {
         'Correct att retrieved via name and ns'
     );
 
-    $dom = XML::ITS::DOM->new( 'xml' =>
+    $dom = ITS::DOM->new( 'xml' =>
         \'<foo:xml foo:bar="qux" xmlns:foo="foo.io">
             <foo:baz/>
             stuff
@@ -151,7 +151,7 @@ sub test_element_editing {
     my $atts = {foo => 'bar', baz => 'qux'};
     my $text = 'some text';
     my $el = new_element('a', $atts, $text);
-    is(ref $el, 'XML::ITS::DOM::Element', 'Created Element object');
+    is(ref $el, 'ITS::DOM::Element', 'Created Element object');
     is($el->name, 'a', 'Correct element name');
     is_deeply($el->atts, $atts, 'Correct element attributes');
     is($el->text, $text, 'Correct element text');

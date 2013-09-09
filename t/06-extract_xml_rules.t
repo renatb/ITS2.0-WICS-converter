@@ -3,7 +3,7 @@
 
 use strict;
 use warnings;
-use XML::ITS;
+use ITS;
 use Test::More 0.88;
 plan tests => 8;
 use Test::NoWarnings;
@@ -16,7 +16,7 @@ my $xml_dir = path($Bin, 'corpus');
 subtest 'internal rules' => sub {
     plan tests => 5;
     my $internal_test = path($xml_dir, 'basic_rules.xml');
-    my $ITS = XML::ITS->new('xml', doc => $internal_test);
+    my $ITS = ITS->new('xml', doc => $internal_test);
 
     my $containers = $ITS->get_containers;
     is(@$containers, 1, 'one rule container found');
@@ -31,7 +31,7 @@ subtest 'internal rules' => sub {
 subtest 'external rules' => sub {
     plan tests => 9;
     my $external_test = path($xml_dir, 'test_external.xml');
-    my $ITS = XML::ITS->new('xml', doc => $external_test);
+    my $ITS = ITS->new('xml', doc => $external_test);
 
     my $containers = $ITS->get_containers;
     is(@$containers, 4, 'four rule containers found');
@@ -54,7 +54,7 @@ subtest 'external rules' => sub {
 subtest 'external and internal rules' => sub {
     plan tests => 6;
     my $external_test = path($xml_dir, 'test_external_internal.xml');
-    my $ITS = XML::ITS->new('xml', doc => $external_test);
+    my $ITS = ITS->new('xml', doc => $external_test);
     my $rules = $ITS->get_rules();
 
     is(@$rules, 5, 'five rules in file');
@@ -68,7 +68,7 @@ subtest 'external and internal rules' => sub {
 subtest 'parameters resolved' => sub {
     plan tests => 10;
     my $param_test = path($xml_dir, 'test_param.xml');
-    my $ITS = XML::ITS->new('xml', doc => $param_test);
+    my $ITS = ITS->new('xml', doc => $param_test);
 
     my $internal_params = {
         title   => 'Text',
@@ -107,7 +107,7 @@ subtest 'parameters resolved' => sub {
 
 subtest 'params contained to one its:rules element' => sub {
     plan tests => 7;
-    my $ITS = XML::ITS->new('xml', doc => \<<'XML');
+    my $ITS = ITS->new('xml', doc => \<<'XML');
     <myDoc>
      <head>
         <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
@@ -151,7 +151,7 @@ XML
 
 subtest 'rules and document from separate strings' => sub {
     plan tests => 4;
-    my $ITS = XML::ITS->new('xml', doc => \<<'XML', rules => \<<'RULES');
+    my $ITS = ITS->new('xml', doc => \<<'XML', rules => \<<'RULES');
 <myDoc>
  <body>
   <par id="100" title="Text">The
@@ -179,7 +179,7 @@ RULES
 subtest 'eval_rules after editing DOM' => sub {
     plan tests => 8;
     my $external_test = path($xml_dir, 'basic_rules.xml');
-    my $ITS = XML::ITS->new('xml', doc => $external_test);
+    my $ITS = ITS->new('xml', doc => $external_test);
 
     my $containers = $ITS->get_containers;
     my $c1 = $containers->[0]->element;

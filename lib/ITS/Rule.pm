@@ -1,4 +1,4 @@
-package XML::ITS::Rule;
+package ITS::Rule;
 use strict;
 use warnings;
 use Carp;
@@ -7,10 +7,10 @@ use Carp;
 
 =head1 SYNOPSIS
 
-    use XML::ITS;
-    use XML::ITS::Rule;
+    use ITS;
+    use ITS::Rule;
     use feature 'say';
-    my $ITS = XML::ITS->new(file => 'myITSfile.xml');
+    my $ITS = ITS->new(file => 'myITSfile.xml');
     my $rules = $ITS->get_rules;
     say $_->type for @$rules;
 

@@ -1,15 +1,15 @@
-package XML::ITS::XMLRuleExtractor;
+package ITS::XMLRuleExtractor;
 use strict;
 use warnings;
 # VERSION
 # ABSTRACT: Extract ITS rules from an XML document
 use Carp;
-our @CARP_NOT = qw(XML::ITS);
+our @CARP_NOT = qw(ITS);
 use Path::Tiny;
 use Try::Tiny;
-use XML::ITS::RuleContainer;
-use XML::ITS::Rule;
-use parent -norequire, qw(XML::ITS);
+use ITS::RuleContainer;
+use ITS::Rule;
+use parent -norequire, qw(ITS);
 use Data::Dumper;
 
 # Find and save all its:rules elements containing rules to be applied in
@@ -48,7 +48,7 @@ sub _resolve_doc_containers {
 sub _get_its_rules_els {
     my ($doc) = @_;
     return $doc->get_root->get_xpath(
-        q<//*[namespace-uri()='> . XML::ITS::its_ns() . q<'> .
+        q<//*[namespace-uri()='> . ITS::its_ns() . q<'> .
             q{and local-name()='rules']},
     );
 }
@@ -63,19 +63,19 @@ sub _resolve_containers {
     # print Dumper $children;
     while(  @$children and
             $children->[0]->local_name eq 'param' and
-            $children->[0]->namespace_URI eq XML::ITS::its_ns()
+            $children->[0]->namespace_URI eq ITS::its_ns()
     ){
         my $param = shift @$children;
         $params{$param->att('name')} = $param->text;
     }
     my @containers;
-    if($container->att( 'href', XML::ITS::xlink_ns() )){
+    if($container->att( 'href', ITS::xlink_ns() )){
         #path to file is relative to current file
-        my $path = path( $container->att( 'href', XML::ITS::xlink_ns() ) )->
+        my $path = path( $container->att( 'href', ITS::xlink_ns() ) )->
             absolute($doc->get_base_uri);
         push @containers, @{ _get_external_containers($path, \%params) };
     }
-    push @containers, XML::ITS::RuleContainer->new(
+    push @containers, ITS::RuleContainer->new(
         $container,
         version => $container->att('version'),
         query_language =>
@@ -94,7 +94,7 @@ sub _get_external_containers {
     my $doc;
 
     try {
-        $doc = XML::ITS::DOM->new('xml' => $path );
+        $doc = ITS::DOM->new('xml' => $path );
     } catch {
         carp "Skipping rules in file '$path': $_";
         return [];

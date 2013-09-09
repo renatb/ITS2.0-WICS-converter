@@ -1,4 +1,4 @@
-package XML::ITS::DOM::Element;
+package ITS::DOM::Element;
 use strict;
 use warnings;
 # VERSION
@@ -7,11 +7,11 @@ use Exporter::Easy (
     OK => [qw(new_element)]
 );
 use XML::LibXML;
-use parent 'XML::ITS::DOM::Node';
+use parent 'ITS::DOM::Node';
 
 =head1 SYNOPSIS
 
-    use XML::ITS::DOM::Element qw(new_element);
+    use ITS::DOM::Element qw(new_element);
     my $element = new_element('name', {att => 'value'}, 'some text');
     print $element->att('att');# 'value'
 
@@ -19,18 +19,18 @@ use parent 'XML::ITS::DOM::Node';
 
 This module is meant for internal use by the ITS::* modules only.
 It is a thin wrapper around an XML::LibXML::Element. It inherits all methods
-from XML::ITS::DOM::Node.
+from ITS::DOM::Node.
 
 =head1 EXPORTS
 
-The following function may be exported from XML::ITS::DOM::Element.
+The following function may be exported from ITS::DOM::Element.
 
 =head2 C<new_element>
 
 Arguments: a tag name and optionally a hash of attribute name-value pairs
 and text to store in the element
 
-Creates and returns a new XML::ITS::DOM::Node object representing an element with
+Creates and returns a new ITS::DOM::Node object representing an element with
 the given name and attributes.
 
 =cut
@@ -228,7 +228,7 @@ sub strip_ns {
         $el->parentNode->insertAfter($new, $el);
         $el->unbindNode;
     }
-    return XML::ITS::DOM::Node->new($new);
+    return ITS::DOM::Node->new($new);
 }
 
 =head2 C<child_els>
@@ -240,7 +240,7 @@ this element.
 sub child_els {
     my ($self) = @_;
     my @children =
-        map {XML::ITS::DOM::Node->new($_)}
+        map {ITS::DOM::Node->new($_)}
         $self->{node}->getChildrenByTagName('*');
     return \@children;
 }

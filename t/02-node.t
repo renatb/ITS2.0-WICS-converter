@@ -6,13 +6,13 @@ plan tests => 58;
 use Test::NoWarnings;
 use Test::Exception;
 
-use XML::ITS::DOM;
+use ITS::DOM;
 
 use Path::Tiny;
 use FindBin qw($Bin);
 
 my $dom_path = path($Bin, 'corpus', 'dom_test.xml');
-my $dom = XML::ITS::DOM->new( 'xml' => $dom_path );
+my $dom = ITS::DOM->new( 'xml' => $dom_path );
 
 test_type_name_value($dom);
 test_path($dom);

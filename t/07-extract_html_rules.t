@@ -3,7 +3,7 @@
 
 use strict;
 use warnings;
-use XML::ITS;
+use ITS;
 use Test::More 0.88;
 plan tests => 8;
 use Test::NoWarnings;
@@ -17,7 +17,7 @@ subtest 'internal rules' => sub {
     plan tests => 5;
     my $internal_test = path($xml_dir, 'basic_rules.html');
 
-    my $ITS = XML::ITS->new('html', doc => $internal_test);
+    my $ITS = ITS->new('html', doc => $internal_test);
 
     my $containers = $ITS->get_containers;
     is(@$containers, 1, 'one rule container found');
@@ -32,7 +32,7 @@ subtest 'internal rules' => sub {
 subtest 'external rules' => sub {
     plan tests => 8;
     my $external_test = path($xml_dir, 'test_external.html');
-    my $ITS = XML::ITS->new('html', doc => $external_test);
+    my $ITS = ITS->new('html', doc => $external_test);
 
     my $containers = $ITS->get_containers;
     is(@$containers, 3, 'three rule containers found');
@@ -53,7 +53,7 @@ subtest 'external rules' => sub {
 subtest 'external and internal rules' => sub {
     plan tests => 11;
     my $external_test = path($xml_dir, 'test_external_internal.html');
-    my $ITS = XML::ITS->new('html', doc => $external_test);
+    my $ITS = ITS->new('html', doc => $external_test);
 
     my $containers = $ITS->get_containers;
     is(@$containers, 4, 'three rule containers found');
@@ -78,7 +78,7 @@ subtest 'external and internal rules' => sub {
 subtest 'parameters resolved' => sub {
     plan tests => 11;
     my $param_test = path($xml_dir, 'test_param.html');
-    my $ITS = XML::ITS->new('html', doc => $param_test);
+    my $ITS = ITS->new('html', doc => $param_test);
     my $internal_params = {
         title   => 'Text',
         trmarkId=> 'notran',
@@ -121,7 +121,7 @@ subtest 'parameters resolved' => sub {
 
 subtest 'params contained to one ITS script element' => sub {
     plan tests => 7;
-    my $ITS = XML::ITS->new('html', doc => \<<'HTML');
+    my $ITS = ITS->new('html', doc => \<<'HTML');
 <!DOCTYPE html>
 <html>
     <head>
@@ -169,7 +169,7 @@ HTML
 
 subtest 'rules and document from separate strings' => sub {
     plan tests => 3;
-    my $ITS = XML::ITS->new('html', doc => \<<'HTML', rules => \<<'RULES');
+    my $ITS = ITS->new('html', doc => \<<'HTML', rules => \<<'RULES');
 <!DOCTYPE html>
 <html>
     <head>
@@ -194,7 +194,7 @@ RULES
 subtest 'eval_rules after editing DOM' => sub {
     plan tests => 8;
     my $external_test = path($xml_dir, 'basic_rules.html');
-    my $ITS = XML::ITS->new('xml', doc => $external_test);
+    my $ITS = ITS->new('xml', doc => $external_test);
 
     my $containers = $ITS->get_containers;
     my $c1 = $containers->[0]->element;

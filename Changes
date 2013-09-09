@@ -1,8 +1,9 @@
 Revision history for XML-ITS
 
 {{$NEXT}}
+    renamed from XML-ITS to just ITS
     filter_rules method
-    get_type method for XML::ITS::DOM
+    get_type method for ITS::DOM
 0.02      2013-08-29 14:05:44 America/Los_Angeles
     XML::ITS::DOM now accepts filehandles
 

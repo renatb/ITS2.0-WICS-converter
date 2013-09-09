@@ -1,11 +1,11 @@
-package XML::ITS::DOM;
+package ITS::DOM;
 use strict;
 use warnings;
 # VERSION
 # ABSTRACT: Work with XML and HTML documents
-use XML::ITS::DOM::Element;
+use ITS::DOM::Element;
 use Carp;
-our @CARP_NOT = qw(XML::ITS Try::Tiny);
+our @CARP_NOT = qw(ITS Try::Tiny);
 use Try::Tiny;
 use Path::Tiny;
 # the XML and HTML engines currently used
@@ -16,13 +16,13 @@ use Encode qw(decode);
 
 =head1 SYNOPSIS
 
-    use XML::ITS::DOM;
-    my $dom = XML::ITS::DOM->new(xml => 'path/to/file');
+    use ITS::DOM;
+    my $dom = ITS::DOM->new(xml => 'path/to/file');
     my @nodes = $dom->get_xpath('//@foo');
 
 =head1 DESCRIPTION
 
-This module is meant for internal use by the XML::ITS::* modules only.
+This module is meant for internal use by the ITS::* modules only.
 It abstracts away XML/HTML processing to quarantine 3rd party code.
 
 =head1 METHODS
@@ -82,7 +82,7 @@ sub get_root {
     my ($self) = @_;
     my $root = $self->{dom}->documentElement;
     if($root){
-        return XML::ITS::DOM::Element->new($root);
+        return ITS::DOM::Element->new($root);
     }
     return;
 }

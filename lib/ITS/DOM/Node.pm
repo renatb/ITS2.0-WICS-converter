@@ -1,19 +1,19 @@
-package XML::ITS::DOM::Node;
+package ITS::DOM::Node;
 use strict;
 use warnings;
 # VERSION
 # ABSTRACT: thin wrapper around underlying XML engine node objects
-use XML::ITS::DOM::Value;
-our @CARP_NOT = qw(XML::ITS::DOM);
+use ITS::DOM::Value;
+our @CARP_NOT = qw(ITS::DOM);
 use Try::Tiny;
 use Carp;
 use feature 'switch';
 
 =head1 SYNOPSIS
 
-    use XML::ITS::DOM;
+    use ITS::DOM;
     use feature 'say';
-    my $dom = XML::ITS::DOM->new(xml => 'path/to/file');
+    my $dom = ITS::DOM->new(xml => 'path/to/file');
     my @nodes = $dom->get_xpath('//@foo');
     for my $node(@nodes){
         say $node->text;
@@ -41,9 +41,9 @@ sub new {
 
     # why subclassing isn't supported; class names are hard-coded
     if($type eq 'ELT'){
-        $class = 'XML::ITS::DOM::Element';
+        $class = 'ITS::DOM::Element';
     }else{
-        $class = 'XML::ITS::DOM::Node';
+        $class = 'ITS::DOM::Node';
     }
     return bless {
         node => $node,
@@ -150,10 +150,10 @@ sub get_xpath {
     my @nodes;
     if(ref $object eq 'XML::LibXML::NodeList'){
         @nodes =
-            map {XML::ITS::DOM::Node->new($_)}
+            map {ITS::DOM::Node->new($_)}
             $object->get_nodelist();
     }else{
-        push @nodes, XML::ITS::DOM::Value->new($object);
+        push @nodes, ITS::DOM::Value->new($object);
     }
     return @nodes;
 }
@@ -283,7 +283,7 @@ child nodes of this node.
 =cut
 sub children {
     my ($self) = @_;
-    return map {XML::ITS::DOM::Node->new($_)}
+    return map {ITS::DOM::Node->new($_)}
         $self->{node}->childNodes;
 }
 
@@ -395,7 +395,7 @@ and the default is C<last_child>.
 sub append_text {
     my ($self, $text, $position) = @_;
     my $txt_node = XML::LibXML::Text->new($text);
-    $txt_node = XML::ITS::DOM::Node->new($txt_node);
+    $txt_node = ITS::DOM::Node->new($txt_node);
     $txt_node->paste($self, $position);
     return $txt_node;
 }
