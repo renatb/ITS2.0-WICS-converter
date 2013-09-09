@@ -1,6 +1,6 @@
 # NAME
 
-XML::ITS - Work with ITS-decorated XML
+ITS - Work with ITS-decorated XML
 
 # VERSION
 
@@ -8,9 +8,9 @@ version 0.03
 
 # SYNOPSIS
 
-    use XML::ITS;
+    use ITS;
     use feature 'say';
-    my $ITS = XML::ITS->new(file => 'myITSfile.xml');
+    my $ITS = ITS->new(file => 'myITSfile.xml');
     my $rules = $ITS->get_rules;
     for my $rule (@$rules){
         say $rule->type;
@@ -42,7 +42,7 @@ element to import external rules).
 
 ## `new`
 
-Returns an XML::ITS object instance.
+Returns an ITS object instance.
 Arguments: The first is either 'xml' or 'html' to indicate the type of
 document being parsed. After that, you must specify 'doc' and
 may also optionally specify 'rules' parameters. The value of these parameters
@@ -66,13 +66,13 @@ Returns either 'html' or 'xml' indicating the type of file being represented.
 
 ## `get_doc`
 
-Returns the XML::ITS::DOM object created from the input
+Returns the ITS::DOM object created from the input
 document.
 
 ## `get_rules`
 
 Returns an arrayref containing the ITS rule elements
-(in the form of XML::ITS::Rule objects) which are to be
+(in the form of ITS::Rule objects) which are to be
 applied to the document, in the order in which they will
 be applied.
 
