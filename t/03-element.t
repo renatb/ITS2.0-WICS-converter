@@ -11,7 +11,7 @@ use ITS::DOM::Element qw(new_element);
 use Path::Tiny;
 use FindBin qw($Bin);
 
-my $dom_path = path($Bin, 'corpus', 'dom_test.xml');
+my $dom_path = path($Bin, 'corpus', 'XML', 'dom_test.xml');
 my $dom = ITS::DOM->new( 'xml' => $dom_path );
 
 test_atts($dom);

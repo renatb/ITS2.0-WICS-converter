@@ -1,0 +1,7 @@
+<its:rules xml:id='ext1container' xmlns:its="http://www.w3.org/2005/11/its"
+    version="2.0">
+      <its:param name="baz">qux</its:param>
+      <!-- param 'foo' will override one from calling file -->
+      <its:param name="foo">bar2</its:param>
+      <its:translateRule xml:id="ext_rule" selector="//*[@baz=$baz]" translate="yes"/>
+</its:rules>

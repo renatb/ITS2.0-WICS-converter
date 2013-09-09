@@ -10,10 +10,11 @@ use utf8;
 
 use Path::Tiny;
 use FindBin qw($Bin);
-my $corpus_dir = path($Bin, 'corpus');
+my $xml_corpus_dir = path($Bin, 'corpus', 'XML');
+my $html_corpus_dir = path($Bin, 'corpus', 'HTML');
 
-my $xml_dom_path = path($corpus_dir, 'dom_test.xml');
-my $html_dom_path = path($corpus_dir, 'basic_html5.html');
+my $xml_dom_path = path($xml_corpus_dir, 'dom_test.xml');
+my $html_dom_path = path($html_corpus_dir, 'basic_html5.html');
 test_errors($xml_dom_path, $html_dom_path);
 
 my $xml_dom = ITS::DOM->new( 'xml' => $xml_dom_path );
@@ -35,7 +36,7 @@ sub test_errors {
 
     dies_ok {
         ITS::DOM->new(
-            'xml' => path($corpus_dir, 'nonexistent.xml')
+            'xml' => path($xml_corpus_dir, 'nonexistent.xml')
         )
     },  'dies for nonexistent file';
     throws_ok {

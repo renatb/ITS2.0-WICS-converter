@@ -11,7 +11,7 @@ use ITS::DOM;
 use Path::Tiny;
 use FindBin qw($Bin);
 
-my $dom_path = path($Bin, 'corpus', 'dom_test.xml');
+my $dom_path = path($Bin, 'corpus', 'XML', 'dom_test.xml');
 my $dom = ITS::DOM->new( 'xml' => $dom_path );
 
 test_type_name_value($dom);
