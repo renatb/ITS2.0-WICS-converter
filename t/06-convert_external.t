@@ -7,7 +7,7 @@ plan tests => 2;
 use Path::Tiny;
 use FindBin qw($Bin);
 use Test::HTML::Differences;
-use XML::ITS::WICS::XML2HTML;
+use ITS::XML2HTML;
 
 use Log::Any::Test;
 use Log::Any qw($log);
@@ -18,7 +18,7 @@ my $all_data = get_data_section();
 my $file = path($Bin, 'corpus', 'test_external_internal.xml');
 
 $log->clear();
-my $wics = XML::ITS::WICS::XML2HTML->new();
+my $wics = ITS::XML2HTML->new();
 my $converted = ${ $wics->convert("$file") };
 
 eq_or_diff_html($converted, $all_data->{html}, 'HTML structure');

@@ -10,14 +10,14 @@ use strict;
 use warnings;
 use Log::Any::Test;
 use Log::Any qw($log);
-use XML::ITS::DOM;
-use XML::ITS::WICS::XML2HTML;
+use ITS::DOM;
+use ITS::XML2HTML;
 
 #convert the input XML into html and return the html string
 sub htmlize {
     my ($self, $xml) = @_;
     $log->clear();
-    my $wics = XML::ITS::WICS::XML2HTML->new();
+    my $wics = ITS::XML2HTML->new();
     my $converted = ${ $wics->convert(\$xml) };
     # print $converted;
     return ($converted, _get_messages($log->msgs()) );

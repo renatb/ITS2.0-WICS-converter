@@ -21,7 +21,7 @@ use IO::Compress::Gzip qw(gzip $GzipError) ;
 use HTML::HTML5::Parser;
 use Log::Any::Test;
 use Log::Any qw($log);
-use XML::ITS::WICS qw(xml2html);
+use ITS::WICS qw(xml2html);
 
 if ( not $ENV{ITS_20_TESTSUITE_PATH}) {
     plan skip_all => 'Requires ITS 2.0 test suite. ' .

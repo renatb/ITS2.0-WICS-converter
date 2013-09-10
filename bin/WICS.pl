@@ -8,7 +8,7 @@ binmode(STDOUT, ":encoding(UTF-8)");
 binmode(STDERR, ":encoding(UTF-8)");
 use Path::Tiny;
 use Try::Tiny;
-use XML::ITS::WICS qw(xml2html);
+use ITS::WICS qw(xml2html);
 use Getopt::Lucid qw( :all );
 # PODNAME: WICS.pl
 # VERSION

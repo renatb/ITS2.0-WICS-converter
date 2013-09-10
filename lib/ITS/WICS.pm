@@ -1,9 +1,9 @@
-package XML::ITS::WICS;
+package ITS::WICS;
 use strict;
 use warnings;
 use autodie;
 use Carp;
-use XML::ITS::WICS::XML2HTML;
+use ITS::XML2HTML;
 use Exporter::Easy (
 	OK => ['xml2html']
 );
@@ -28,7 +28,7 @@ This module allows one to convert various forms of ITS-decorated XML into HTML w
 =head2 C<xml2html>
 
 Converts input XML data into HTML5 while keeping the ITS information
-intact. See C<XML::ITS::WICS::XML2HTML> for more details.
+intact. See C<ITS::XML2HTML> for more details.
 
 Argument is either a string containing an XML file name, a string pointer
 containing actual XML data, or a filehandle for a file containing the data.
@@ -37,7 +37,7 @@ containing actual XML data, or a filehandle for a file containing the data.
 
 sub xml2html {
     my ($doc) = @_;
-    my $converter = XML::ITS::WICS::XML2HTML->new();
+    my $converter = ITS::XML2HTML->new();
     return $converter->convert($doc);
 }
 

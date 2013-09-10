@@ -1,7 +1,7 @@
-package XML::ITS::WICS::LogUtils;
+package ITS::XML2HTML::LogUtils;
 use strict;
 use warnings;
-use XML::ITS::DOM::Node;
+use ITS::DOM::Node;
 use Exporter::Easy (
     OK => [qw(
         node_log_id
@@ -69,8 +69,8 @@ sub node_log_id {
 
 Logs a global rule match.
 
-Arguments are an C<XML::ITS::Rule> and a match hash pointer
-(the arguments used in an C<XML::ITS::iterate_matches> handler),
+Arguments are an C<ITS::Rule> and a match hash pointer
+(the arguments used in an C<ITS::iterate_matches> handler),
 and a C<Log::Any> object to use to log the given rule match.
 
 =cut
@@ -118,7 +118,7 @@ sub log_new_rule {
 Either returns an element's id value, or sets one, logs the change,
 and returns it.
 
-Arguments are: element to get or set ID from/on, C<XML::ITS::DOM> object
+Arguments are: element to get or set ID from/on, C<ITS::DOM> object
 containing the element, and the C<Log::Any> object to log ID setting with.
 
 =cut

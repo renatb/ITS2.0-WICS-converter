@@ -2,13 +2,13 @@
 #test correct operation of the FutureNode class
 use strict;
 use warnings;
-use XML::ITS::DOM;
+use ITS::DOM;
 use Test::More 0.88;
-use XML::ITS::WICS::XML2HTML::FutureNodeManager qw(new_manager);
-use XML::ITS::WICS::XML2HTML::FutureNode;
+use ITS::XML2HTML::FutureNodeManager qw(new_manager);
+use ITS::XML2HTML::FutureNode;
 plan tests => 13;
 
-my $dom = XML::ITS::DOM->new( xml => \<<'END_XML' );
+my $dom = ITS::DOM->new( xml => \<<'END_XML' );
 <xml>
 Some text
 <foo qux="baz"><!--comment--></foo>
@@ -40,7 +40,7 @@ my @futures = (
     $doc_future, $elt_future, $att_future, $com_future,
     $pi_future, $txt_future, $ns_future);
 
-isa_ok($_, 'XML::ITS::WICS::XML2HTML::FutureNode', 'create_future returns a FutureNode')
+isa_ok($_, 'ITS::XML2HTML::FutureNode', 'create_future returns a FutureNode')
     for @futures;
 
 my @elementals = $manager->elementals;

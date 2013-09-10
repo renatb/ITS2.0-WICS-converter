@@ -1,9 +1,9 @@
-package XML::ITS::WICS::XML2HTML::FutureNode;
+package ITS::XML2HTML::FutureNode;
 use strict;
 use warnings;
 use Exporter::Easy (OK => [qw(new_future)]);
-use XML::ITS::DOM::Element qw(new_element);
-use XML::ITS::WICS::LogUtils qw(node_log_id get_or_set_id);
+use ITS::DOM::Element qw(new_element);
+use ITS::XML2HTML::LogUtils qw(node_log_id get_or_set_id);
 use Carp;
 use Log::Any qw($log);
 
@@ -12,10 +12,10 @@ use Log::Any qw($log);
 
 =head1 SYNOPSIS
 
-    use XML::ITS::WICS::XML2HTML::FutureNodeManager;
-    use XML::ITS;
-    my $f_manager = XML::ITS::WICS::XML2HTML::FutureNodeManager->new();
-    my $ITS = XML::ITS->new('xml', doc => 'myITSfile.xml');
+    use ITS::XML2HTML::FutureNodeManager;
+    use ITS;
+    my $f_manager = ITS::XML2HTML::FutureNodeManager->new();
+    my $ITS = ITS->new('xml', doc => 'myITSfile.xml');
     my ($ns) = $ITS->get_root->get_xpath('namespace::*');
     my $f_ns = create_future($ns);
     # change the document around, but don't delete any elements...
@@ -59,7 +59,7 @@ sub new_future {
 
 Create a new FutureNode. The arguments are the FutureNodeManager
 which will manage this instance, the node to be represented, and
-the XML::ITS::DOM instance containing it.
+the ITS::DOM instance containing it.
 
 =cut
 sub new {
@@ -125,7 +125,7 @@ sub creates_element {
 =head2 C<type>
 
 Returns the type of node being represented (one of the strings returned
-by C<XML::ITS::DOM::Node::type>).
+by C<ITS::DOM::Node::type>).
 
 =cut
 sub type {

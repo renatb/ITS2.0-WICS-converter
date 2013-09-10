@@ -1,7 +1,7 @@
-package XML::ITS::WICS::XML2HTML::FutureNodeManager;
+package ITS::XML2HTML::FutureNodeManager;
 use strict;
 use warnings;
-use XML::ITS::WICS::XML2HTML::FutureNode qw(new_future);
+use ITS::XML2HTML::FutureNode qw(new_future);
 use Exporter::Easy (OK => [qw(new_manager)]);
 use Carp;
 
@@ -10,11 +10,11 @@ use Carp;
 
 =head1 SYNOPSIS
 
-    use XML::ITS::WICS::XML2HTML::FutureNodeManager;
-    use XML::ITS;
-    my $ITS = XML::ITS->new('xml', doc => 'myITSfile.xml');
+    use ITS::XML2HTML::FutureNodeManager;
+    use ITS;
+    my $ITS = ITS->new('xml', doc => 'myITSfile.xml');
     my $f_manager =
-        XML::ITS::WICS::XML2HTML::FutureNodeManager->new($ITS->get_doc);
+        ITS::XML2HTML::FutureNodeManager->new($ITS->get_doc);
 
     #create one or more FutureNodes through this manager instance
     my ($ns) = $ITS->get_root->get_xpath('namespace::*');
@@ -32,7 +32,7 @@ The following function may optionally be exported to the caller's namespace:
 =head2 C<new_manager>
 
 This is a convenience function for constructing an instance of this class
-(saves some typing, since the class has such a long name). The XML::ITS::DOM
+(saves some typing, since the class has such a long name). The ITS::DOM
 object from which future_nodes will be created is the only required argument
 (see C<new>).
 
@@ -47,7 +47,7 @@ sub new_manager {
 =head2 C<new>
 
 Creates a new FutureNode manager. Single required argument is
-an C<XML::ITS::DOM> object. Every node to be made into a FutureNode
+an C<ITS::DOM> object. Every node to be made into a FutureNode
 via this instance should be owned by the input DOM object. Though this
 requirement is not enforced in any way, not following it will cause
 incorrect behavior when processing document and namespace nodes.
@@ -55,7 +55,7 @@ incorrect behavior when processing document and namespace nodes.
 =cut
 sub new {
     my ($class, $dom) = @_;
-    croak 'missing required argument XML::ITS::DOM'
+    croak 'missing required argument ITS::DOM'
         unless $dom;
     return bless {
         dom => $dom,
@@ -72,9 +72,9 @@ sub new {
 
 =head2 C<create_future>
 
-If the input node is an XML::ITS::DOM::Node (or Element), this method creates
+If the input node is an ITS::DOM::Node (or Element), this method creates
 a FutureNode object, caches it, and returns it.
-If it is an XML::ITS::DOM::Value, it simply returns it.
+If it is an ITS::DOM::Value, it simply returns it.
 
 If the input is a node and the node has already had a FutureNode created for it,
 the same FutureNode object is returned.

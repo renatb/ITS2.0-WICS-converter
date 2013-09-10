@@ -1,15 +1,15 @@
-package XML::ITS::WICS::XML2HTML;
+package ITS::XML2HTML;
 use strict;
 use warnings;
 use Carp;
-our @CARP_NOT = qw(XML::ITS::WICS::XML2HTML XML::ITS::WICS);
+our @CARP_NOT = qw(ITS);
 use Log::Any qw($log);
 
-use XML::ITS qw(its_ns);
-use XML::ITS::DOM;
-use XML::ITS::DOM::Element qw(new_element);
-use XML::ITS::WICS::XML2HTML::FutureNodeManager qw(new_manager);
-use XML::ITS::WICS::LogUtils qw(node_log_id log_match log_new_rule);
+use ITS qw(its_ns);
+use ITS::DOM;
+use ITS::DOM::Element qw(new_element);
+use ITS::XML2HTML::FutureNodeManager qw(new_manager);
+use ITS::XML2HTML::LogUtils qw(node_log_id log_match log_new_rule);
 
 use feature 'state';
 our $HTML_NS = 'http://www.w3.org/1999/xhtml';
@@ -59,7 +59,7 @@ sub convert {
 	my ($self, $doc_data) = @_;
 
 	#create the document from the input data
-	my $ITS = XML::ITS->new('xml', doc => $doc_data);
+	my $ITS = ITS->new('xml', doc => $doc_data);
 	my $dom = $ITS->get_doc;
 
 	if(_is_rules_dom($dom)){
@@ -417,7 +417,7 @@ sub _html_structure {
 	$log->debug('wrapping document in HTML structure')
 		if $log->is_debug;
 
-	my $html_doc = XML::ITS::DOM->new(
+	my $html_doc = ITS::DOM->new(
 		'html', \'<!DOCTYPE html><html>', namespace => 0);
 	# we remove the XHTML namespace because it is unused in HTML5, and
 	# we want it clear that all of our XPathing is in the default

@@ -6,11 +6,10 @@ use Test::Base;
 plan tests => 14;
 use Test::Exception;
 
-use XML::ITS::DOM;
-use XML::ITS::WICS::LogUtils;
-use XML::ITS::WICS::XML2HTML::FutureNodeManager qw(new_manager);
-use XML::ITS::DOM::Element qw(new_element);
-use XML::ITS::WICS::XML2HTML::FutureNode qw(new_future);
+use ITS::DOM;
+use ITS::XML2HTML::FutureNodeManager qw(new_manager);
+use ITS::DOM::Element qw(new_element);
+use ITS::XML2HTML::FutureNode qw(new_future);
 
 #test the storage and retrieval of all 7 types of nodes in a FutureNode.
 #use a new FutureNodeManager each time
@@ -81,7 +80,7 @@ for my $block(blocks()){
 
 sub get_future {
     my ($block) = @_;
-    my $dom = XML::ITS::DOM->new( xml => \($block->doc) );
+    my $dom = ITS::DOM->new( xml => \($block->doc) );
     my $manager = new_manager($dom);
     my ($node) = $dom->get_root->get_xpath($block->future);
     my $future = new_future($manager, $node, $dom);
