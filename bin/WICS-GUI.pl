@@ -63,14 +63,14 @@ Strawberry Perl, they are all located in C<C:/strawberry/c/bin>. Notice that
 I have replaced all backslashes with forward slashes in the path. This is
 essential, as C<pp> will fail if paths have backslashes in them.
 
-Finally, you'll need to make the XML::ITS and XML::ITS::WICS distributions
+Finally, you'll need to make the ITS and ITS::WICS distributions
 available to these tools, either by installing them on your computer,
 or by adding the C<lib> folders of these distributions to the include path
 via the C<-I> option.
 
 Here's a sample command to make the standalone executable. We use C<-l>
 to make C<pp> include the DLL files in the executable file. The working
-directory contains the XML::ITS and XML::ITS::WICS distributions, and we
+directory contains the ITS and ITS::WICS distributions, and we
 use -I to include their C<lib> folders. We use C<-o> to specify the
 name of the created executable. We pass the path to this script as the
 final argument. Run in a Windows CMD, this should all be one line; I have
@@ -113,7 +113,7 @@ use Path::Tiny;
 use Try::Tiny;
 use Log::Any::Test;
 use Log::Any qw($log);
-use XML::ITS::WICS qw(xml2html);
+use ITS::WICS qw(xml2html);
 
 sub OnInit {
     my( $self ) = @_;
