@@ -21,12 +21,15 @@ use IO::Compress::Gzip qw(gzip $GzipError) ;
 use HTML::HTML5::Parser;
 use Log::Any::Test;
 use Log::Any qw($log);
-use ITS::WICS qw(xml2html);
+use ITS::XML2HTML;
 
 if ( not $ENV{ITS_20_TESTSUITE_PATH}) {
     plan skip_all => 'Requires ITS 2.0 test suite. ' .
     'Set $ENV{ITS_20_TESTSUITE_PATH} to run.';
 }
+
+my $converter = ITS::XML2HTML->new();
+
 my $xml_dir = path($ENV{ITS_20_TESTSUITE_PATH},
     'its2.0', 'inputdata');
 
@@ -81,7 +84,7 @@ sub convert {
 
     # convert the XML and print it into the new directory
     my $html_fh = path($html_dir, $sub_dir, $html_file)->filehandle('>:utf8');
-    print $html_fh ${xml2html($File::Find::name)};
+    print $html_fh ${$converter->convert($File::Find::name)};
 
     my $log_fh = path($html_dir, $sub_dir, $log_file)->filehandle('>:utf8');
     print $log_fh "$_->{message}\n"

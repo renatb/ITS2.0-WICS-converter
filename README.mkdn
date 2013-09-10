@@ -1,29 +1,35 @@
 # NAME
 
-XML::ITS::WICS - Convert a document while preserving the ITS information
+ITS::XML2HTML - Convert ITS-decorated XML into HTML with equivalent markup
 
 # VERSION
 
-version 0.04
-
-# SYNOPSIS
-
-	my $obj = ITS::WICS->new();
-	$obj->message();
-
-# DESCRIPTION
-
-This module allows one to convert various forms of ITS-decorated XML into HTML with equivalent ITS markup.
+version 0.05
 
 # METHODS
 
-## `xml2html`
+## `new`
 
-Converts input XML data into HTML5 while keeping the ITS information
-intact. See `XML::ITS::WICS::XML2HTML` for more details.
+Creates a new converter instance. Optional arguments are:
+
+- title
+
+    Title to give output HTML document (default is "WICS").
+
+## `convert`
+
+Converts the input XML document into an HTML document equivalent, and
+displayable, HTML.
 
 Argument is either a string containing an XML file name, a string pointer
 containing actual XML data, or a filehandle for a file containing the data.
+
+Return value is a string pointer containing the output HTML string.
+
+# `TODO`
+
+It would be nice if the ITS rules placed in script elements were printed XML style
+instead of HTML (using self-ending tags).
 
 # AUTHOR
 

@@ -1,7 +1,8 @@
-Revision history for XML-ITS-WICS
+Revision history for ITS-XML2HTML
 
 {{$NEXT}}
-
+    Distribution renamed
+    WICS applications moved to separate distribution
 0.04      2013-09-03 13:25:12 America/Los_Angeles
     Remove preserveSpaceRule from output HTML
 0.03      2013-08-30 09:19:35 America/Los_Angeles
