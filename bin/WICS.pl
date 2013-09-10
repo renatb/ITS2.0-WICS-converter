@@ -8,7 +8,7 @@ binmode(STDOUT, ":encoding(UTF-8)");
 binmode(STDERR, ":encoding(UTF-8)");
 use Path::Tiny;
 use Try::Tiny;
-use ITS::WICS qw(xml2html);
+use ITS::WICS qw(xml2html reduceHtml);
 use Getopt::Lucid qw( :all );
 # PODNAME: WICS.pl
 # VERSION
@@ -16,8 +16,9 @@ use Getopt::Lucid qw( :all );
 
 =head1 DESCRIPTION
 
-This is a script for converting ITS-decorated
-data into other formats. Currently it only supports XML->HTML
+This is a command-line application for altering ITS-decorated
+data. The currently supported operations are XML->HTML5 conversion
+and HTML5 file consolidation.
 conversion.
 
 =head1 USAGE
@@ -46,6 +47,8 @@ the input file and replacing it with the extension for the target format
 (html, xliff, etc.). If overwriting existing files is not permitted,
 additional numbers (-1, -2, etc.) will be appended to the filename to
 insure uniqueness.
+
+This script will never write over the input file.
 
 =back
 
@@ -81,21 +84,32 @@ Fixing the Archive.pm error for the standalone would also be nice.
 =cut
 
 my @specs = (
-    Switch("overwrite|w"),
-    List("input|i"),
+    Switch("xml2html")->anycase,
+    Switch("reduceHtml")->anycase,
+    Switch("overwrite|w")->anycase,
+    List("input|i")->anycase,
 );
 my $opt;
 try {
     $opt = Getopt::Lucid->getopt( \@specs )->
         validate({requires => ['input']});
+    if(!$opt->get_reduceHtml && !$opt->get_xml2html){
+        die 'must provide either --xml2html or --reducehHtml';
+    }
 }catch{
-    my $msg = "\nWICS XML2HTML converter\n";
+    my $msg = "\nWICS ITS document processor\n";
     $msg .= "$_\n";
     $msg .= "Usage: WICS [-w] -i <file> [-i <file>...]\n";
+    $msg .= "  --xml2html: convert ITS-decorated XML to HTML5\n";
+    $msg .= "  --reduceHtml: reduce ITS-decorated HTML5 to single file\n";
     $msg .= "  -w or --overwrite: overwrite existing files during conversion\n";
     $msg .= "  -i or --input: convert given XML file\n";
     die $msg;
 };
+
+my $processor = $opt->get_xml2html ?
+    sub { xml2html($_[0]) } :
+    sub { reduceHtml($_[0]) };
 
 my @files = $opt->get_input;
 my $overwrite = $opt->get_overwrite;
@@ -105,7 +119,7 @@ for my $path (@files){
     $path = path($path);
     print "\n----------\n$path\n----------\n";
     try{
-        my $html = xml2html( $path );
+        my $html = $processor->( $path );
         my $new_path = _get_new_path($path, $overwrite);
         my $out_fh = $new_path->filehandle('>:encoding(UTF-8)');
         print $out_fh ${ $html };
@@ -126,7 +140,8 @@ sub _get_new_path {
     # if other file with same name exists, just iterate numbers to get a new,
     # unused file name
     my $new_path = path($dir, $name);
-    if(!$overwrite && $new_path->exists){
+    if($new_path eq $old_path ||
+        (!$overwrite && $new_path->exists)){
         $name =~ s/\.html$//;
         $new_path = path($dir, $name . '-1.html');
         my $counter = 1;
