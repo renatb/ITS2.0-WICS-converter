@@ -90,6 +90,16 @@ would be nice.
 Sometimes fonts change in the display box. Figure out the whole RTF thing
 and maybe do some escaping so that everything stays consistent.
 
+Real icons instead of colored boxes would be less cheesy.
+
+Real-time logging instead of just saving the log strings and displaying them after
+all file processing.
+
+Use XRC to clean up the bulk of the code.
+
+It would be useful to be able to add and remove files from a list for conversion,
+instead of just selecting all of the files for processing at once.
+
 =cut
 
 package MyApp;
@@ -105,27 +115,58 @@ use Wx qw(
     :id
     :filedialog
     :colour
+    :listbox
 );
 use Wx::DND;
-use Wx::Event qw(EVT_BUTTON);
+use Wx::Event qw(EVT_BUTTON EVT_LISTBOX EVT_LISTBOX_DCLICK);
 use base 'Wx::App';
 use Path::Tiny;
 use Try::Tiny;
 use Log::Any::Test;
 use Log::Any qw($log);
-use ITS::WICS qw(xml2html);
+use ITS::WICS;
 
 sub OnInit {
     my( $self ) = @_;
-    # create a new frame (a frame is a top level window)
+    # create a new top-level window
     my $frame = Wx::Frame->new(
         undef,           # parent window
         -1,              # ID -1 means any
         'Convert ITS-Decorated Files',   # title
         [-1, -1],        # default position
-        [350, 250],      # size
+        [500, 250],      # size
     );
-    $self->{main_frame} = $frame;
+
+    my $sizer = Wx::BoxSizer->new( wxHORIZONTAL );
+    # create Wx::Panel to use as a parent
+    my $panel = Wx::Panel->new( $frame );
+    # the control (for Mac, the box must be created before the control)
+    my $box = Wx::StaticBox->new( $panel, -1, 'Tasks' );
+    my $ctrlsz = Wx::StaticBoxSizer->new( $box, wxVERTICAL );
+    my $listbox = Wx::wxVListBox::Tasks->new( $panel, -1, [-1, -1]);
+    EVT_LISTBOX_DCLICK( $panel, $listbox, \&OnListBoxDoubleClick );
+    $ctrlsz->Add( $listbox, 1, wxALL|wxEXPAND, 5 );
+    $sizer->Add( $ctrlsz, 1, wxGROW|wxALL, 5 );
+
+    $panel->SetSizerAndFit( $sizer );
+    $frame->Show(1);
+    return 1;
+}
+
+sub OnListBoxDoubleClick {
+    my( $parent, $event ) = @_;
+    my $vlist = $event->GetEventObject;
+
+    my $title = $vlist->{lbdata}->[$vlist->GetSelection]->{name};
+    my $transformer = $vlist->{lbdata}->[$vlist->GetSelection]->{transformer};
+
+    my $frame = Wx::Frame->new(
+        $parent,            # parent window
+        -1,                 # ID -1 means any
+        $title,             # title
+        [-1, -1],           # default position
+        [350, 250],         # size
+    );
 
     my $topsizer = Wx::BoxSizer->new(wxVERTICAL);
     # create Wx::Panel to use as a parent
@@ -146,22 +187,24 @@ sub OnInit {
         wxALL,       # and make border all around
         10           # set border width to 10
     );
+
+    my $files = [];
     my $convert_btn     = Wx::Button->new($panel, wxID_OK, 'Convert');
-    EVT_BUTTON( $self, $convert_btn, sub {
-            my ($self, $event) = @_;
-            $self->_convert_files;
+    EVT_BUTTON( $panel, $convert_btn, sub {
+            my ($panel, $event) = @_;
+            _convert_files($panel, $transformer, $files);
         }
     );
     my $choose_file_btn     = Wx::Button->new($panel, wxID_ANY, 'Choose File...');
-    EVT_BUTTON( $self, $choose_file_btn, sub {
-            my ($self, $event) = @_;
-            $self->{file_paths} = _open_files($frame);
-            $text->SetValue(join "\n",@{ $self->{file_paths} } );
+    EVT_BUTTON( $panel, $choose_file_btn, sub {
+            my ($panel, $event) = @_;
+            $files = _open_files($frame);
+            $text->SetValue(join "\n", @$files );
         }
     );
     my $close_btn = Wx::Button->new($panel, wxID_CANCEL, 'Close');
-    EVT_BUTTON( $self, $close_btn, sub {
-            my ($self, $event) = @_;
+    EVT_BUTTON( $panel, $close_btn, sub {
+            my ($panel, $event) = @_;
             $frame->Destroy;
         }
     );
@@ -189,6 +232,7 @@ sub OnInit {
         0,             # make vertically unstretchable
         wxALIGN_CENTER # no border and centre horizontally
     );
+
     # my $overwrite_checkbox = Wx::CheckBox->new(
     #     $frame, wxID_ANY, "overwrite existing files",
     #     wxDefaultPosition, wxDefaultSize, 0);
@@ -206,15 +250,15 @@ sub OnInit {
     # smaller size;
     $frame->SetSizerAndFit($mainsizer);
     $frame->Show( 1 );
-    return 1;
+    return;
 }
 
 #returns an array pointer of paths to user-specified files to open
 sub _open_files {
-    my ($frame) = @_;
+    my ($parent) = @_;
 
     my $fileDialog = Wx::FileDialog->new(
-        $frame, 'Choose ITS-decorated XML file', '',
+        $parent, 'Choose ITS-decorated XML file', '',
              '.', '*.*',
              wxFD_OPEN|wxFD_MULTIPLE|wxFD_FILE_MUST_EXIST);
 
@@ -228,9 +272,9 @@ sub _open_files {
 }
 
 sub _convert_files {
-    my ($self) = @_;
+    my ($parent, $transformer, $files_array) = @_;
     my $frame = Wx::Frame->new(
-        $self->{main_frame},# parent window
+        $parent,# parent window
         -1,                 # ID -1 means any
         'Conversion Logs',   # title
         [-1, -1],           # default position
@@ -250,9 +294,9 @@ sub _convert_files {
         wxTE_MULTILINE|wxTE_READONLY|wxHSCROLL|wxTE_RICH2
     );
     my $copy_btn = Wx::Button->new($panel, wxID_ANY, 'Copy');
-    EVT_BUTTON( $self, $copy_btn,
+    EVT_BUTTON( $parent, $copy_btn,
         sub {
-            my ($self, $event) = @_;
+            my ($parent, $event) = @_;
             if (wxTheClipboard->Open){
                 wxTheClipboard->SetData(
                     Wx::TextDataObject->new($text->GetValue) );
@@ -302,14 +346,14 @@ sub _convert_files {
         $text->AppendText($_[0]);
         $text->SetDefaultStyle($normal_style);
     };
-    for my $path (@{ $self->{file_paths} }){
+    for my $path (@$files_array){
         $path = path($path);
         $log->clear;
         try{
             $text->SetDefaultStyle($normal_style);
             $text->AppendText(
                 "\n----------\n$path\n----------\n");
-            my $html = xml2html($path);
+            my $html = $transformer->($path);
             my $new_path = _get_new_path($path);
             my $fh = $new_path->filehandle('>:encoding(UTF-8)');
             print $fh ${ $html };
@@ -349,6 +393,110 @@ sub _get_new_path {
     }
     return $new_path;
 }
+
+package Wx::wxVListBox::Tasks;
+
+use strict;
+use base qw(Wx::PlVListBox);
+
+use Wx qw( :brush :font :pen :colour );
+
+sub new {
+    my( $class, @args ) = @_;
+    my $self = $class->SUPER::new( @args );
+
+    $self->{lbdata} = [
+
+        { name => 'XML2HTML',
+          description => 'Convert XML into HTML, preserving ITS information',
+          colour => [ 255, 0, 0 ],
+          transformer => \&ITS::WICS::xml2html,
+        },
+        { name => 'HTML5 Reduce',
+          description => 'Recude HTML5 and external ITS resources to a single file',
+          colour => [ 0, 255, 0 ],
+          transformer => \&ITS::WICS::reduceHtml,
+        },
+        { name => 'XLIFF2HTML',
+          description => 'Write HTML to display ITS data in XLIFF source and target elements',
+          colour => [ 0, 0, 255 ],
+        },
+        { name => 'XML2XLIFF',
+          description => 'Create an XLIFF file with translation units extracted from XML',
+          colour => [ 255, 255, 0 ],
+        },
+    ];
+
+
+    # metrics
+    $self->{margin} = 5;
+    $self->{graphicsize} = 32;
+    # For Wx < 0.99, you must call static Wx::Font->New like a method.
+    # For Wx >= 0.99, expected function type calls work also
+    $self->{largefontsize} = Wx::Size->new(7,16);
+    $self->{largefont} = Wx::Font::New($self->{largefontsize}, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, 0 );
+    $self->{smallfont} = Wx::Font::New(Wx::Size->new(6,14), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, 0 );
+    $self->{itemheight} = ($self->{margin} * 2) + $self->{graphicsize};
+
+
+    $self->SetItemCount( scalar @{$self->{lbdata}} );
+
+    return $self;
+}
+
+sub OnMeasureItem {
+    my( $self, $item ) = @_;
+    return $self->{itemheight}; # all our items are same height
+}
+
+
+sub OnDrawItem {
+    my( $self, $dc, $r, $item ) = @_;
+
+    my $itemdata = $self->{lbdata}->[$item];
+
+    # draw the graphic
+    $dc->SetPen( Wx::Pen->new(wxLIGHT_GREY, 1, wxSOLID) );
+    $dc->SetBrush( Wx::Brush->new( Wx::Colour->new(@{ $itemdata->{colour} }), wxSOLID ) );
+
+    $dc->DrawRectangle( $r->x + $self->{margin},
+                        $r->y + $self->{margin},
+                        $self->{graphicsize},
+                        $self->{graphicsize} );
+
+    # Draw name
+    $dc->SetFont($self->{largefont});
+    my $woffset = ( 2* $self->{margin} ) + $self->{graphicsize};
+    $dc->DrawText($itemdata->{name}, $r->x + $woffset, $r->y + $self->{margin});
+
+    # draw description
+    $dc->SetFont($self->{smallfont});
+    $dc->DrawText(
+        $itemdata->{description},
+        $r->x + $woffset,
+        $r->y + $self->{largefontsize}->y + $self->{margin});
+
+}
+
+sub OnDrawSeparator {
+    my( $self, $dc, $rect, $item ) = @_;
+    $dc->SetPen(wxLIGHT_GREY_PEN);
+    my $bl = $rect->GetBottomLeft;
+    my $br = $rect->GetBottomRight;
+    $dc->DrawLine($bl->x, $bl->y, $br->x, $br->y);
+    # shave off the line width of one pixel
+    $rect->SetHeight( $rect->GetHeight - 1);
+}
+
+sub OnDrawBackground {
+    my( $self, $dc, $rect, $item ) = @_;
+    my $bgcolour = ( $self->IsSelected( $item ) ) ?  Wx::Colour->new(255,255,200) : wxWHITE;
+    $dc->SetBrush(Wx::Brush->new($bgcolour, wxSOLID ));
+    $dc->SetPen(Wx::Pen->new($bgcolour, 1, wxSOLID ));
+    $dc->DrawRectangle($rect->x, $rect->y, $rect->width, $rect->height);
+}
+
+1;
 
 package main; ## no critic(ProhibitMultiplePackages)
 my $app = MyApp->new;
