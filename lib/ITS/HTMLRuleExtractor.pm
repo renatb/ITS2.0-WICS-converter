@@ -11,7 +11,7 @@ use ITS::RuleContainer;
 use ITS::Rule;
 use ITS::XMLRuleExtractor;
 use parent -norequire, qw(ITS);
-
+my $ITS_NS = 'http://www.w3.org/2005/11/its';
 # Find and save all its:rules elements containing rules to be applied in
 # the given document, in order of application, including both those contained
 # in script elements and external ones.
@@ -31,10 +31,14 @@ sub _resolve_doc_containers {
     my @containers;
     for my $script_link (@scripts_links){
         if($script_link->name eq 'script'){
-            push @containers, _parse_container(
+            my $container = _parse_container(
                     $script_link,
                     %params
                 );
+            #script_link might have been a standoff markup, in which
+            #case container will be null
+            push @containers, $container
+                if($container);
         }else{
             my $path = path($script_link->att('href'))->
                 absolute($doc->get_base_uri);
@@ -62,13 +66,22 @@ sub _get_its_scripts_links {
     );
 }
 
-# parse a single <script> element containing ITS rules
+# parse a single <script> element marked as ITS
+# if the script contains an <its:rules> element, create a
+# RuleContainer object. Otherwise, return undef.
 sub _parse_container {
     my ($script, %params) = @_;
 
     # the script contains an its:rules element as text
     my $container = ITS::DOM->new('xml' => \($script->text))->
         get_root;
+
+    # return undef if the contained text is not an <its:rules>
+    # element (perhaps it is standoff markup)
+    if($container->namespace_URI ne $ITS_NS ||
+        $container->local_name ne 'rules'){
+        return;
+    }
 
     #TODO: children may be its-foreign-elements
     my $children = $container->child_els();

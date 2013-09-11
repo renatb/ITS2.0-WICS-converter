@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use ITS;
 use Test::More 0.88;
-plan tests => 8;
+plan tests => 9;
 use Test::NoWarnings;
 use Path::Tiny;
 use FindBin qw($Bin);
@@ -214,4 +214,14 @@ subtest 'eval_rules after editing DOM' => sub {
     is($rules->[3]->element->att('xml:id'), 'first', 'correct fourth rule');
     is($rules->[4]->element->att('xml:id'), 'second', 'correct fifth rule');
     is($rules->[5]->element->att('xml:id'), 'third', 'correct sixth rule');
+};
+
+subtest 'standoff markup not interpreted as rule container' => sub {
+    plan tests => 1;
+    my $external_test = path($html_dir, 'standoff.html');
+    my $ITS = ITS->new('html', doc => $external_test);
+
+    my $containers = $ITS->get_containers;
+    my $rules = $ITS->get_rules;
+    is(@$containers, 0, 'found no containers');
 };
