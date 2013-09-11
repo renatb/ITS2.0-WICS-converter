@@ -54,7 +54,7 @@ sub _resolve_doc_containers {
 sub _get_its_scripts_links {
     my ($doc) = @_;
     return $doc->get_root->get_xpath(
-        q<//h:script[@type="application/xml+its"] | > .
+        q<//h:script[@type="application/its+xml"] | > .
         q</h:html/h:head/h:link[@rel="its-rules"]>,
         namespaces => {
             h => 'http://www.w3.org/1999/xhtml'

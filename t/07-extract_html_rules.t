@@ -126,13 +126,13 @@ subtest 'params contained to one ITS script element' => sub {
 <html>
     <head>
         <title>WICS</title>
-        <script type='application/xml+its'>
+        <script type='application/its+xml'>
         <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
             <its:param name="bar">baz</its:param>
             <its:locNoteRule xml:id="rule1" selector="id('Text')" locNote="foo"/>
         </its:rules>
         </script>
-        <script type='application/xml+its'>
+        <script type='application/its+xml'>
         <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
             <its:param name="qux">muck</its:param>
             <its:locNoteRule xml:id="rule2" selector="id('Text')" locNote="bar"/>
