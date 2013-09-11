@@ -14,13 +14,15 @@ use File::Slurp;
 my $html_dir = path($Bin, 'corpus', 'HTML');
 
 subtest 'internal rules' => sub {
-    plan tests => 5;
+    plan tests => 6;
     my $internal_test = path($html_dir, 'basic_rules.html');
 
     my $ITS = ITS->new('html', doc => $internal_test);
 
     my $containers = $ITS->get_containers;
     is(@$containers, 1, 'one rule container found');
+    is($containers->[0]->script->att('id'), 'basicContainer',
+        'correct script element');
 
     my $rules = $ITS->get_rules();
     is(@$rules, 3, 'three rules in basic_rules.html');
@@ -51,7 +53,7 @@ subtest 'external rules' => sub {
 };
 
 subtest 'external and internal rules' => sub {
-    plan tests => 11;
+    plan tests => 12;
     my $external_test = path($html_dir, 'test_external_internal.html');
     my $ITS = ITS->new('html', doc => $external_test);
 
@@ -65,6 +67,8 @@ subtest 'external and internal rules' => sub {
         'correct third container');
     is($containers->[3]->element->att('xml:id'), 'baseFileContainer',
         'correct fourth container');
+    is($containers->[3]->script->att('id'), 'baseFileContainer',
+        'fourth container has a script');
 
     my $rules = $ITS->get_rules();
     is(@$rules, 5, 'five rules in file');

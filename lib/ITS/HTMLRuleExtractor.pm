@@ -100,6 +100,7 @@ sub _parse_container {
             $script->att('queryLanguage') || 'xpath',
         params => \%params,
         rules => $children,
+        script => $script,
     );
 }
 

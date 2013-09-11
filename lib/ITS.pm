@@ -347,7 +347,8 @@ This module does not support querying individual elements for ITS information.
 This would be very useful, but it would require the implementation of
 inheritance and per-category knowledge (currently there is none!). Reference
 L<http://www.w3.org/International/its/wiki/ITS_Processor_Interface> for an
-idea of what is wanted.
+idea of what is wanted. Note that if this functionality is added,
+we should stop producing a warning for absence of rules from a file.
 
 ITS allows for other types of selectors. This module, however,
 only allows XPath selectors. CSS selectors could be implemented,

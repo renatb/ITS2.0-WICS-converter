@@ -32,8 +32,7 @@ this information and make it available to the ITS C<*Rule>s contained.
 
 Creates a new RuleContainer object. The first argument should
 be the original element which this container is representing
-(C<its:rules> in XML and C<sript type="application/its+xml"> in HTML).
-The others are named arguments:
+(C<its:rules>). The others are named arguments:
 
 =over
 
@@ -52,6 +51,11 @@ A hashref containing all params available to the rules in the container
 (both those declared in the container and those declared in the container
 that included this one via C<xlink:href>).
 
+=item script
+
+The script element containing this RuleContainer as text. This is applicable only
+to HTML documents.
+
 =item rules
 
 An arrayref of C<ITS::DOM::Element>s representing the rules inside this
@@ -68,7 +72,8 @@ sub new {
         element => $el,
         version => $args{version},
         query_language => $args{query_language} || 'xpath',
-        params => \%{$args{params} || {}}
+        params => \%{$args{params} || {}},
+        script => $args{script}
     }, $class;
     $self->{rules} = [map {ITS::Rule->new($_, $self)} @{$args{rules}}];
     return $self;
@@ -126,6 +131,18 @@ sub params {
     my ($self) = @_;
     # safe copy
     return \%{$self->{params}};
+}
+
+=head2 C<script>
+
+Returns the  C<script> element which holds the return value of C<element>,
+but as text. Applicable only to HTML documents
+
+=cut
+sub script {
+    my ($self) = @_;
+    return $self->{script} if($self->{script});
+    return;
 }
 
 1;
