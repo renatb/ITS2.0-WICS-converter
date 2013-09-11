@@ -11,11 +11,11 @@ use Path::Tiny;
 use FindBin qw($Bin);
 use File::Slurp;
 
-my $xml_dir = path($Bin, 'corpus', 'HTML');
+my $html_dir = path($Bin, 'corpus', 'HTML');
 
 subtest 'internal rules' => sub {
     plan tests => 5;
-    my $internal_test = path($xml_dir, 'basic_rules.html');
+    my $internal_test = path($html_dir, 'basic_rules.html');
 
     my $ITS = ITS->new('html', doc => $internal_test);
 
@@ -31,7 +31,7 @@ subtest 'internal rules' => sub {
 
 subtest 'external rules' => sub {
     plan tests => 8;
-    my $external_test = path($xml_dir, 'test_external.html');
+    my $external_test = path($html_dir, 'test_external.html');
     my $ITS = ITS->new('html', doc => $external_test);
 
     my $containers = $ITS->get_containers;
@@ -52,7 +52,7 @@ subtest 'external rules' => sub {
 
 subtest 'external and internal rules' => sub {
     plan tests => 11;
-    my $external_test = path($xml_dir, 'test_external_internal.html');
+    my $external_test = path($html_dir, 'test_external_internal.html');
     my $ITS = ITS->new('html', doc => $external_test);
 
     my $containers = $ITS->get_containers;
@@ -77,7 +77,7 @@ subtest 'external and internal rules' => sub {
 
 subtest 'parameters resolved' => sub {
     plan tests => 11;
-    my $param_test = path($xml_dir, 'test_param.html');
+    my $param_test = path($html_dir, 'test_param.html');
     my $ITS = ITS->new('html', doc => $param_test);
     my $internal_params = {
         title   => 'Text',
@@ -193,16 +193,16 @@ RULES
 
 subtest 'eval_rules after editing DOM' => sub {
     plan tests => 8;
-    my $external_test = path($xml_dir, 'basic_rules.html');
-    my $ITS = ITS->new('xml', doc => $external_test);
+    my $external_test = path($html_dir, 'basic_rules.html');
+    my $ITS = ITS->new('html', doc => $external_test);
 
-    my $containers = $ITS->get_containers;
-    my $c1 = $containers->[0]->element;
+    my ($c1) = $ITS->get_doc->get_root->get_xpath(
+        '//*[@type="application/its+xml"]');
     my $c2 = $c1->copy(1);
     $c2->paste($c1, 'after');
     $ITS->eval_rules;
 
-    $containers = $ITS->get_containers;
+    my $containers = $ITS->get_containers;
     is(@$containers, 2, 'two containers found');
     my $rules = $ITS->get_rules();
 
