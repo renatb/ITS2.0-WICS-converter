@@ -60,7 +60,7 @@ sub _resolve_containers {
 
     my $children = $container->child_els();
 
-    # print Dumper $children;
+    #TODO: children may be its-foreign-elements
     while(  @$children and
             $children->[0]->local_name eq 'param' and
             $children->[0]->namespace_URI eq ITS::its_ns()

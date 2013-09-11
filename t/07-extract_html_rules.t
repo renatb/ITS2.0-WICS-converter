@@ -58,13 +58,13 @@ subtest 'external and internal rules' => sub {
     my $containers = $ITS->get_containers;
     is(@$containers, 4, 'three rule containers found');
     is($containers->[0]->element->att('xml:id'), 'ext3container',
-        'correct second container');
-    is($containers->[1]->element->att('xml:id'), 'ext2container',
-        'correct third container');
-    is($containers->[2]->element->att('xml:id'), 'ext1container',
-        'correct fourth container');
-    is($containers->[3]->element->att('id'), 'baseFileContainer',
         'correct first container');
+    is($containers->[1]->element->att('xml:id'), 'ext2container',
+        'correct second container');
+    is($containers->[2]->element->att('xml:id'), 'ext1container',
+        'correct third container');
+    is($containers->[3]->element->att('xml:id'), 'baseFileContainer',
+        'correct fourth container');
 
     my $rules = $ITS->get_rules();
     is(@$rules, 5, 'five rules in file');

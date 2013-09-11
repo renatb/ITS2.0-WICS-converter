@@ -180,10 +180,10 @@ sub get_rules {
 
 =head2 C<get_containers>
 
-Returns an arrayref containing ITS::RuleContainer objects, one for each C<its:rules>
-or C<script type="application/its+xml"> element found in the document or externally.
-The containers are returned in application order (the order that their rules should
-be applied in).
+Returns an arrayref containing ITS::RuleContainer objects, one for
+each C<its:rules> element found in the document or externally. The
+containers are returned in application order (the order that their
+rules should be applied in).
 
 =cut
 sub get_containers {

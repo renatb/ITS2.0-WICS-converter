@@ -13,7 +13,8 @@ use ITS::XMLRuleExtractor;
 use parent -norequire, qw(ITS);
 
 # Find and save all its:rules elements containing rules to be applied in
-# the given document, in order of application, including external ones.
+# the given document, in order of application, including both those contained
+# in script elements and external ones.
 # %params are all of the parameters already defined for this document.
 sub _resolve_doc_containers {
     # note that we don't pass around hash pointers for the params so that
@@ -69,17 +70,18 @@ sub _parse_container {
     my $container = ITS::DOM->new('xml' => \($script->text))->
         get_root;
 
+    #TODO: children may be its-foreign-elements
     my $children = $container->child_els();
-    if(@$children){
-        while( $children->[0]->local_name eq 'param' and
-            $children->[0]->namespace_URI eq ITS::its_ns() ){
-            my $param = shift @$children;
-            $params{$param->att('name')} = $param->text;
-        }
+    while(  @$children and
+            $children->[0]->local_name eq 'param' and
+            $children->[0]->namespace_URI eq ITS::its_ns()
+    ){
+        my $param = shift @$children;
+        $params{$param->att('name')} = $param->text;
     }
     #external containers are not allowed here, so just parse this one
     return ITS::RuleContainer->new(
-        $script,
+        $container,
         version => $script->att('version'),
         query_language =>
             $script->att('queryLanguage') || 'xpath',
