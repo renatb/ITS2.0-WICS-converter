@@ -128,4 +128,9 @@ sub params {
     return \%{$self->{params}};
 }
 
+=head1 TODO
+
+This package does not yet support foreign (non-ITS) elements placed
+in the its:rules element.
+
 1;
