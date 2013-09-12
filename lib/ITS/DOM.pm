@@ -12,6 +12,8 @@ use Path::Tiny;
 use XML::LibXML;
 # returns an XML::LibXML document, unifying the APIs
 use HTML::HTML5::Parser;
+use HTML::HTML5::Writer;
+my $writer = HTML::HTML5::Writer->new();
 use Encode qw(decode);
 
 =head1 SYNOPSIS
@@ -102,7 +104,7 @@ sub string {
         my $string = $self->{dom}->toString(1);
         return decode('utf-8', $string);
     }else{
-        return "<!DOCTYPE html>\n" . $self->{dom}->toStringHTML;
+        return $writer->document($self->{dom})
     }
 }
 
