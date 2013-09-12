@@ -1,6 +1,8 @@
 Revision history for ITS-XML2HTML
 
 {{$NEXT}}
+
+0.05      2013-09-12 13:00:31 America/Los_Angeles
     Distribution renamed
     WICS applications moved to separate distribution
     New rules added to prevent added attributes from inheriting ITS
