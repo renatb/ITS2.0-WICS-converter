@@ -1,26 +1,19 @@
-WICS XML to HTML converter
+XML to HTML converter
 
-Next: Remove all preserveSpace rules.
+Next:
 
 Engineering Tasks:
-    - rewrite GUI in XRC
-    - capture logs with Log::Any::Adapter subclass and Wx::Log subclass, removing timestamps, and print text box
-        - right now we just grab all logs with Log::Any::Test and print them all when the document is done processing
+    - do some HTML post-processing to fine-tune tests:
+        - convert_local.t shouldn't have to also check that default global rules to prevent inheritance have been added
+        - should be able to check XML equality of script elements instead of text equality
+    - do we really need to test logs?
+        - it seemed to be a project stipulation at first, but it seems a little out of hand. One tiny log change and everything's broken.
+    - Test::HTML::Differences is not very good. Would like a module that handles HTML5, properly normalizes all of it and then takes a diff. Even better would be a structural test instead of line-by-line comparison. Also, need to be able to tell it how to compare contents of <script> elements, which tend to vary in non-semantic whitespace, causing test failures.
+
 To Do on current task:
 
 Later To Do:
-    - pass ITS object to converters, instead of data
+    - change the way xpaths are generated for comments, text, etc.; XML::LibXML sometimes gives a path with asterisks, sometimes gives one with element names. This makes testing fragile.
+    - pass ITS object to converter, instead of data
         - better dependency injection will make it more flexible
-    - get rid of WICS.pm; remove that package, and place functionality into WICS.pl
-    - maybe separate distros:
-        - XML::ITS::XML2HTML
-        - XML::ITS::XLIFF2HTML
-        - XML::ITS::XML2XLIFF
-        - XML::ITS::HTMLConsolidate
-        - XML::ITS::WICS
-            - this last one would depend on all the others, and include scripts/GUI stuff
-    - allow specifying log level from command line for WICS.pl
     - find possible code reuse in converter
-    - Decide on organization of end-project
-        - WICS.pm one file that can convert anything?
-            - Inject logger

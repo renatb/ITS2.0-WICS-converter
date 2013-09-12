@@ -225,6 +225,9 @@ sub _traverse_convert{
 		$div_child ||= $div_result;
 	}
 
+	#set the element in the HTML namespace
+    $el->set_namespace('http://www.w3.org/1999/xhtml');
+
 	#if already renamed to bdo, return indication of inline element
 	if($bdo_rename){
 		return 0;
@@ -418,7 +421,7 @@ sub _html_structure {
 		if $log->is_debug;
 
 	my $html_doc = ITS::DOM->new(
-		'html', \'<!DOCTYPE html><html>', namespace => 0);
+		'html', \'<!DOCTYPE html><html>');
 	# we remove the XHTML namespace because it is unused in HTML5, and
 	# we want it clear that all of our XPathing is in the default
 	# namespace.
@@ -428,8 +431,10 @@ sub _html_structure {
 	# grab the HTML head and paste in the
 	# encoding, title, and standoff markup
 	my $meta = new_element('meta', { charset => 'utf-8' });
+	$meta->set_namespace('http://www.w3.org/1999/xhtml');
 	$meta->paste($head);
 	my $title = new_element('title', {}, $self->{title});
+	$title->set_namespace('http://www.w3.org/1999/xhtml');
 	$title->paste($head);
 
 	#paste all standoff markup
@@ -449,6 +454,7 @@ sub _html_structure {
 sub _get_script {
 	my ($element) = @_;
 	my $script = new_element('script', {type => 'application/its+xml'});
+	$script->set_namespace('http://www.w3.org/1999/xhtml');
 	if(my $id = $element->att('xml:id')){
 		$script->set_att('id', $id);
 	}
@@ -469,15 +475,13 @@ sub _update_rules {
 	#cause all DOM changes to occur
 	$self->{futureNodeManager}->realize_all;
 
-	# nothing else to do if there were no FutureNodes
-	return unless $self->{futureNodeManager}->total_futures;
-
 	if($log->is_debug){
 		$log->debug('Creating new its:rules element to contain all rules');
 	}
 	my $rules_el = new_element('its:rules',
 		{
 			'xmlns:its'	=> its_ns(),
+			'xmlns:h' => 'http://www.w3.org/1999/xhtml',
 			version 	=> '2.0',
 		 }
 	);
@@ -528,8 +532,27 @@ sub _update_rules {
 		}
 	}
 
-	$self->_false_inheritance_rules($rules_el, $indent);
+	$self->_false_elt_inheritance_rules($rules_el, $indent);
+	$self->_span_withinText_rule($rules_el, $indent);
+	$self->_false_att_inheritance_rules($rules_el, $indent);
 
+	return;
+}
+
+sub _span_withinText_rule {
+	my ($self, $rules_el, $indent) = @_;
+
+	# in HTML, <span> elements have withinText="yes", the opposite
+	# of the default in XML. This doesn't inherit, so it's safe to
+	# set it globally here
+	my $txt_node = $rules_el->append_text("\n" . $indent x 3, 'first_child');
+	my $span_rule = new_element('its:withinTextRule',
+		{withinText => 'no', selector => '//h:span'});
+	$span_rule->paste($txt_node, 'after');
+	if($log->is_debug){
+		$log->debug('Creating new rule ' . node_log_id($span_rule) .
+			' to set correct withinText default on <span> elements');
+	}
 	return;
 }
 
@@ -538,11 +561,15 @@ sub _update_rules {
 # Create rules to undo incorrect inheritance for these types
 # of nodes, where possible. This is only possible for three
 # categories: translate, direction, and localeFilter. The other
-# inheriting categories will just be incorrect :(
-sub _false_inheritance_rules {
+# inheriting categories will just be incorrect :(. These
+# are langInfo, domain and provenance.
+# The resetting can be done via explicit global selection; this is safe
+# because none of the selected nodes have child nodes to receive ITS
+# inheritance.
+sub _false_elt_inheritance_rules {
 	my ($self, $rules_el, $indent) = @_;
 
-	# start by separating elements representing attributes
+	# separate elements representing attributes
 	# from those representing non-attributes
 	my @elementals = $self->{futureNodeManager}->elementals();
 	my (@att_paths, @non_att_paths);
@@ -551,8 +578,7 @@ sub _false_inheritance_rules {
 			push @att_paths, $future->new_path :
 			push @non_att_paths, $future->new_path;
 	}
-
-	# Then create a rule make each of these elements untranslatable
+	# Then create a rule to make each of these elements untranslatable
 	if(@elementals){
 		my $txt_node = $rules_el->append_text("\n" . $indent x 3, 'first_child');
 		my $selector = join '|', @att_paths, @non_att_paths;
@@ -590,6 +616,40 @@ sub _false_inheritance_rules {
 		if($log->is_debug){
 			$log->debug('Creating new rule ' . node_log_id($new_rule) .
 				' to prevent false inheritance');
+		}
+	}
+	return;
+}
+
+# same as the method above, but for attributes added to the document
+# (id, title). The resetting can be done via explicit global selection;
+# this is safe because none of the selected nodes have child nodes to
+# receive ITS inheritance, and any ITS information is applied via a later
+# global rule, which would overwrite these.
+sub _false_att_inheritance_rules {
+	my ($self, $rules_el, $indent) = @_;
+
+	#first set defaults for attributes
+	my $selector = '//@*';
+	my $rules = [
+		#inherits in HTML, but not in XML
+		['its:translateRule' => {translate => 'no', selector => $selector}],
+		['its:dirRule' => {dir => 'ltr', selector => $selector}],
+		['its:localeFilterRule' =>
+			{
+				localeFilterList => '*',
+				localeFilterType => 'include',
+				selector => $selector
+			}
+		]
+	];
+	for my $rule (@$rules){
+		my $txt_node = $rules_el->append_text("\n" . $indent x 3, 'first_child');
+		my $new_rule = new_element($rule->[0], $rule->[1]);
+		$new_rule->paste($txt_node, 'after');
+		if($log->is_debug){
+			$log->debug('Creating new rule ' . node_log_id($new_rule) .
+				" to reset $rule->[0] on new attributes");
 		}
 	}
 	return;

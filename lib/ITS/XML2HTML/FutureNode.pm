@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Exporter::Easy (OK => [qw(new_future)]);
 use ITS::DOM::Element qw(new_element);
-use ITS::XML2HTML::LogUtils qw(node_log_id get_or_set_id);
+use ITS::XML2HTML::LogUtils qw(get_or_set_id);
 use Carp;
 use Log::Any qw($log);
 
@@ -165,6 +165,7 @@ sub new_node {
             },
             $self->{value}
         );
+        $el->set_namespace('http://www.w3.org/1999/xhtml');
         $el->paste($self->{parent}->new_node, 'first_child');
         $self->{element} = $el;
         $self->_log_new_el if $log->is_debug;
@@ -186,6 +187,7 @@ sub new_node {
             },
             $self->{value}
         );
+        $el->set_namespace('http://www.w3.org/1999/xhtml');
         #paste in current version of original parent
         $el->paste($self->{parent}->new_node);
         $self->_log_new_el if $log->is_debug;
@@ -202,6 +204,7 @@ sub new_node {
             $self->{value}
         );
         $el->paste($self->{parent}->new_node, 'first_child');
+        $el->set_namespace('http://www.w3.org/1999/xhtml');
         $self->_log_new_el;
         $self->{element} = $el;
     }

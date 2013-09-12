@@ -103,7 +103,7 @@ __DATA__
 --- doc: <xml foo="bar"/>
 --- future: /xml/@foo
 --- new_path: id('ITS_1')
---- long_path: /xml/span
+--- long_path: /xml/*
 --- creates_element: 1
 --- title: foo
 --- contents: bar
@@ -120,7 +120,7 @@ __DATA__
 </xml>
 --- future: //namespace::*
 --- new_path: id('ITS_1')
---- long_path: /xml/span
+--- long_path: /xml/*[1]
 --- creates_element: 1
 --- title: xmlns:foo
 --- contents: www.bar.com
@@ -137,7 +137,7 @@ __DATA__
 </xml>
 --- future: //processing-instruction()
 --- new_path: id('ITS_1')
---- long_path: /xml/foo/span
+--- long_path: /xml/foo/*
 --- creates_element: 1
 --- title: foo_pi
 --- contents: some text

@@ -3,39 +3,40 @@ use strict;
 use warnings;
 use t::TestXML2HTML;
 use Test::More 0.88;
-plan tests => 2*blocks();
+plan tests => 1*blocks();
 use Test::HTML::Differences;
 
-filters {input => 'htmlize', log => [qw(lines chomp array)]};
+filters {
+  input => 'htmlize',
+  log => [qw(lines chomp array)],
+  output => [qw(normalize_html)]
+};
 
 for my $block(blocks()){
-    my ($html, $log) = $block->input;
+    my $html = $block->input;
+    # print $html;
     eq_or_diff_html($html, $block->output, $block->name . ' (HTML output)');
-    is_deeply($log, $block->log, $block->name . ' (logs)')
-      or note join "\n", @$log;
 }
 
 __DATA__
 === html skeleton
+Tests basic conversion of root element into <div>, placing contents into an
+HTML skeleton, and creating default rules.
 --- input
 <xml/>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
-  </head>
-  <body>
-    <div title="xml"></div>
-  </body>
-</html>
---- log
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-renaming <xml> to <div>
-wrapping document in HTML structure
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:withinTextRule selector="//h:span" withinText="no"/>
+      </its:rules>
+    </script>
+  <div title="xml"></div>
 
 === correct div and span
 --- input
@@ -46,43 +47,21 @@ wrapping document in HTML structure
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
-  </head>
-  <body>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:withinTextRule selector="//h:span" withinText="no"/>
+      </its:rules>
+    </script>
     <div title="xml">
       <div title="stuff"></div>
       <div title="foo">Some <span title="i">stuff</span></div>
       <div title="bar">Some <span title="b"><span title="i">real</span></span> stuff</div>
     </div>
-  </body>
-</html>
---- log
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <stuff>
-setting @title of <stuff> to 'stuff'
-renaming <stuff> to <div>
-processing <foo>
-setting @title of <foo> to 'foo'
-processing <i>
-setting @title of <i> to 'i'
-renaming <i> to <span>
-renaming <foo> to <div>
-processing <bar>
-setting @title of <bar> to 'bar'
-processing <b>
-setting @title of <b> to 'b'
-processing <i>
-setting @title of <i> to 'i'
-renaming <i> to <span>
-renaming <b> to <span>
-renaming <bar> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
 
 === namespaces stripped
 --- input
@@ -93,33 +72,21 @@ wrapping document in HTML structure
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
-  </head>
-  <body>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:withinTextRule selector="//h:span" withinText="no"/>
+      </its:rules>
+    </script>
     <div title="xml">
       <div title="bar:foo">
         <div title="qux"></div>
       </div>
     </div>
-  </body>
-</html>
---- log
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-stripping namespaces from <xml>
-processing <bar:foo>
-setting @title of <bar:foo> to 'bar:foo'
-stripping namespaces from <bar:foo>
-processing <qux>
-setting @title of <qux> to 'qux'
-renaming <qux> to <div>
-renaming <foo> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
 
 === xml:id
 should be converted into id
@@ -129,27 +96,19 @@ should be converted into id
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
-  </head>
-  <body>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:withinTextRule selector="//h:span" withinText="no"/>
+      </its:rules>
+    </script>
     <div title="xml">
       <div title="foo" id="bar"></div>
     </div>
-  </body>
-</html>
---- log
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <foo xml:id="bar">
-renaming @xml:id[bar] of <foo xml:id="bar"> to @id
-setting @title of <foo id="bar"> to 'foo'
-renaming <foo id="bar"> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
 
 === xml:space
 should be converted removed, having no HTML equivalent
@@ -159,27 +118,19 @@ should be converted removed, having no HTML equivalent
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
-  </head>
-  <body>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:withinTextRule selector="//h:span" withinText="no"/>
+      </its:rules>
+    </script>
     <div title="xml">
       <div title="foo"></div>
     </div>
-  </body>
-</html>
---- log
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <foo>
-removing @xml:space[preserve] from <foo>
-setting @title of <foo> to 'foo'
-renaming <foo> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
 
 === xml:lang
 should be converted into lang
@@ -189,27 +140,19 @@ should be converted into lang
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
-  </head>
-  <body>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:withinTextRule selector="//h:span" withinText="no"/>
+      </its:rules>
+    </script>
     <div title="xml">
       <div title="foo" lang="lut"></div>
     </div>
-  </body>
-</html>
---- log
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <foo>
-renaming @xml:lang[lut] of <foo> to @lang
-setting @title of <foo> to 'foo'
-renaming <foo> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
 
 === its:translate
 should be converted into translate
@@ -219,29 +162,19 @@ should be converted into translate
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
-  </head>
-  <body>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:withinTextRule selector="//h:span" withinText="no"/>
+      </its:rules>
+    </script>
     <div title="xml">
       <div title="foo" translate="no"></div>
     </div>
-  </body>
-</html>
---- log
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-stripping namespaces from <xml>
-processing <foo>
-renaming @its:translate[no] of <foo> to @translate
-setting @title of <foo> to 'foo'
-stripping namespaces from <foo>
-renaming <foo> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
 
 === its:dir
 ltr/rtl should be converted into a dir att, and
@@ -256,12 +189,16 @@ rlo/lro should create an inline bdo element
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
-  </head>
-  <body>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:withinTextRule selector="//h:span" withinText="no"/>
+      </its:rules>
+    </script>
     <div title="xml">
       <div id="i1" title="foo" dir="rtl">foo</div>
       <div id="i2" title="foo" dir="ltr">foo</div>
@@ -269,48 +206,6 @@ rlo/lro should create an inline bdo element
       <bdo id="i4" title="foo" dir="rtl">foo</bdo>
       <bdo id="i5" title="foo" dir="rtl"><span title="bar">bar</span></bdo>
     </div>
-  </body>
-</html>
---- log
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-stripping namespaces from <xml>
-processing <foo xml:id="i1">
-renaming @xml:id[i1] of <foo xml:id="i1"> to @id
-renaming @its:dir[rtl] of <foo id="i1"> to @dir
-setting @title of <foo id="i1"> to 'foo'
-stripping namespaces from <foo id="i1">
-renaming <foo id="i1"> to <div>
-processing <foo xml:id="i2">
-renaming @xml:id[i2] of <foo xml:id="i2"> to @id
-renaming @its:dir[ltr] of <foo id="i2"> to @dir
-setting @title of <foo id="i2"> to 'foo'
-stripping namespaces from <foo id="i2">
-renaming <foo id="i2"> to <div>
-processing <foo xml:id="i3">
-renaming @xml:id[i3] of <foo xml:id="i3"> to @id
-found its:dir=lro; renaming <foo id="i3"> to bdo and adding @dir=ltr
-setting @title of <bdo id="i3"> to 'foo'
-stripping namespaces from <bdo id="i3">
-processing <bar>
-setting @title of <bar> to 'bar'
-renaming <bar> to <span>
-processing <foo xml:id="i4">
-renaming @xml:id[i4] of <foo xml:id="i4"> to @id
-found its:dir=rlo; renaming <foo id="i4"> to bdo and adding @dir=rtl
-setting @title of <bdo id="i4"> to 'foo'
-stripping namespaces from <bdo id="i4">
-processing <foo xml:id="i5">
-renaming @xml:id[i5] of <foo xml:id="i5"> to @id
-found its:dir=rlo; renaming <foo id="i5"> to bdo and adding @dir=rtl
-setting @title of <bdo id="i5"> to 'foo'
-stripping namespaces from <bdo id="i5">
-processing <bar>
-setting @title of <bar> to 'bar'
-renaming <bar> to <span>
-renaming <xml> to <div>
-wrapping document in HTML structure
 
 === other its:* atts
 prefix its- and use dashes instead of camelCasing
@@ -322,41 +217,21 @@ prefix its- and use dashes instead of camelCasing
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
-  </head>
-  <body>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:withinTextRule selector="//h:span" withinText="no"/>
+      </its:rules>
+    </script>
     <div title="xml">
       <div title="foo" its-person="Boss">Pointy Hair</div>
       <div title="bar" its-loc-note="foo">Elbonian</div>
       <div title="baz" its-blah-blah-foo-bar="qux">that's not a thing...</div>
     </div>
-  </body>
-</html>
---- log
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-stripping namespaces from <xml>
-processing <foo>
-Replacing @its:person of <foo> with its-person
-setting @title of <foo> to 'foo'
-stripping namespaces from <foo>
-renaming <foo> to <div>
-processing <bar>
-Replacing @its:locNote of <bar> with its-loc-note
-setting @title of <bar> to 'bar'
-stripping namespaces from <bar>
-renaming <bar> to <div>
-processing <baz>
-Replacing @its:blahBlahFooBar of <baz> with its-blah-blah-foo-bar
-setting @title of <baz> to 'baz'
-stripping namespaces from <baz>
-renaming <baz> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
 
 === standoff markup
 <script> tags are treated as text, so to ease testing we remove all whitespace
@@ -368,26 +243,19 @@ from standoff markup.
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
-    <script id="lq1" type="application/its+xml"><its:locQualityIssues xmlns:its="http://www.w3.org/2005/11/its" xml:id="lq1"><its:locQualityIssue locQualityIssueType="misspelling"></its:locQualityIssue></its:locQualityIssues></script>
-    <script id="pr1" type="application/its+xml"><its:provenanceRecords xmlns:its="http://www.w3.org/2005/11/its" xml:id="pr1"><its:provenanceRecord org="acme-CAT-v2.3"></its:provenanceRecord></its:provenanceRecords></script>
-  </head>
-  <body>
+    <script id="lq1" type="application/its+xml"><its:locQualityIssues xmlns:its="http://www.w3.org/2005/11/its" xml:id="lq1"><its:locQualityIssue locQualityIssueType="misspelling"/></its:locQualityIssues></script>
+    <script id="pr1" type="application/its+xml"><its:provenanceRecords xmlns:its="http://www.w3.org/2005/11/its" xml:id="pr1"><its:provenanceRecord org="acme-CAT-v2.3"/></its:provenanceRecords></script>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:withinTextRule selector="//h:span" withinText="no"/>
+      </its:rules>
+    </script>
     <div title="xml"></div>
-  </body>
-</html>
---- log
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-stripping namespaces from <xml>
-placing <its:locQualityIssues xml:id="lq1"> in script element
-placing <its:provenanceRecords xml:id="pr1"> in script element
-renaming <xml> to <div>
-wrapping document in HTML structure
 
 === its:span
 <its:span> are just converted to <span>; attributes need
@@ -405,12 +273,16 @@ but don't have the namespace associated with them.
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
-  </head>
-  <body>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:withinTextRule selector="//h:span" withinText="no"/>
+      </its:rules>
+    </script>
     <div title="xml">
       <span
           title="its:span"
@@ -421,21 +293,6 @@ but don't have the namespace associated with them.
           dir="ltr">
         Pointy Hair</span>
     </div>
-  </body>
-</html>
---- log
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-stripping namespaces from <xml>
-processing <its:span xml:id="a">
-Replacing @person of <its:span xml:id="a"> with its-person
-Replacing @locNote of <its:span xml:id="a"> with its-loc-note
-renaming @xml:id[a] of <its:span xml:id="a"> to @id
-setting @title of <its:span id="a"> to 'its:span'
-stripping namespaces from <its:span id="a">
-renaming <xml> to <div>
-wrapping document in HTML structure
 
 === its:version
 its:version should be deleted (doesn't exist in its HTML)
@@ -445,22 +302,16 @@ its:version should be deleted (doesn't exist in its HTML)
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
-  </head>
-  <body>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:withinTextRule selector="//h:span" withinText="no"/>
+      </its:rules>
+    </script>
     <div title="xml">
      hello
     </div>
-  </body>
-</html>
---- log
-converting document elements into HTML
-processing <xml>
-removing @its:version[2.0] from <xml>
-setting @title of <xml> to 'xml'
-stripping namespaces from <xml>
-renaming <xml> to <div>
-wrapping document in HTML structure

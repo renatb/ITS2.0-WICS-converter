@@ -3,17 +3,19 @@ use strict;
 use warnings;
 use t::TestXML2HTML;
 use Test::More 0.88;
-plan tests => 2*blocks();
+plan tests => 1*blocks();
 use Test::HTML::Differences;
 
-filters {input => 'htmlize', log => [qw(lines chomp array)]};
+filters {
+  input => 'htmlize',
+  log => [qw(lines chomp array)],
+  output => [qw(normalize_html)]
+};
 
 for my $block(blocks()){
-    my ($html, $log) = $block->input;
+    my $html = $block->input;
     # print $html;
     eq_or_diff_html($html, $block->output, $block->name . ' (HTML output)');
-    is_deeply($log, $block->log, $block->name . ' (logs)')
-      or note join "\n", @$log;
 }
 
 __DATA__
@@ -36,46 +38,22 @@ Elements are all renamed, so XPaths change accordingly.
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:domainRule xmlns:foo="www.foo.com" selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:domainRule xmlns:foo="www.foo.com" selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="xml">
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">Some text</div>
         <div title="content" id="ITS_2">foo</div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:domainRule>; selector=<foo:para>; domainPointer=<content>
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <foo:para>
-setting @title of <foo:para> to 'foo:para'
-stripping namespaces from <foo:para>
-renaming <para> to <div>
-processing <content>
-setting @title of <content> to 'content'
-renaming <content> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new its:rules element to contain all rules
-Setting id of <div> to ITS_1
-Setting id of <div> to ITS_2
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<div id="ITS_2">]
 
 === attribute match handled correctly
 All attributes, match or not, are turned into child elements (just testing
@@ -93,18 +71,18 @@ match here). This also triggers anti-inheritance rules.
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:translateRule selector="id('ITS_2')" translate="no"></its:translateRule>
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -118,28 +96,6 @@ match here). This also triggers anti-inheritance rules.
           Some text
         </div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:domainRule>; selector=<para>; domainPointer=@content[foo]
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <para>
-setting @title of <para> to 'para'
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new <span> element to represent node of type ATT (content)
-Creating new its:rules element to contain all rules
-Setting id of <div> to ITS_1
-Setting id of <span> to ITS_2
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
-Creating new rule <its:translateRule> to prevent false inheritance
 
 === multiple matches on one attribute handled correctly
 Multiple matches of one attribute should only create one new element.
@@ -158,19 +114,19 @@ Multiple matches of one attribute should only create one new element.
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:translateRule selector="id('ITS_2')" translate="no"></its:translateRule>
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -184,30 +140,6 @@ Multiple matches of one attribute should only create one new element.
           Some text
         </div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:domainRule>; selector=<para>; domainPointer=@content[foo]
-match: rule=<its:domainRule>; selector=<para>; domainPointer=@content[foo]
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <para>
-setting @title of <para> to 'para'
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new <span> element to represent node of type ATT (content)
-Creating new its:rules element to contain all rules
-Setting id of <div> to ITS_1
-Setting id of <span> to ITS_2
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
-Creating new rule <its:translateRule> to prevent false inheritance
 
 === attribute match on namespaced element handled correctly
 --- input
@@ -225,18 +157,18 @@ Creating new rule <its:translateRule> to prevent false inheritance
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:translateRule selector="id('ITS_1')" translate="no"></its:translateRule>
-      <its:translateRule selector="id('ITS_1')" translate="yes"></its:translateRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:translateRule selector="id('ITS_1')" translate="no"/>
+      <its:translateRule selector="id('ITS_1')" translate="yes"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="xml">
         <div title="head"></div>
         <div title="foo:para">
@@ -250,28 +182,6 @@ Creating new rule <its:translateRule> to prevent false inheritance
           Some text
         </div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:translateRule>; selector=@content[foo]
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <foo:para>
-setting @title of <foo:para> to 'foo:para'
-stripping namespaces from <foo:para>
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new <span> element to represent node of type ATT (content)
-Creating new its:rules element to contain all rules
-Setting id of <span> to ITS_1
-Creating new rule <its:translateRule> to match [selector=<span id="ITS_1">]
-Creating new rule <its:translateRule> to prevent false inheritance
 
 === comment match handled correctly
 Nothing is done to comments. Just need a new XPath for the new document.
@@ -289,18 +199,18 @@ Nothing is done to comments. Just need a new XPath for the new document.
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:domainRule selector="id('ITS_1')" domainPointer="/html/body/div/div[2]/comment()"></its:domainRule>
-      <its:domainRule selector="id('ITS_2')" domainPointer="/html/body/div/div[3]/comment()"></its:domainRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="/*/*[2]/*/*[2]/comment()"/>
+      <its:domainRule selector="id('ITS_2')" domainPointer="/*/*[2]/*/*[3]/comment()"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -313,31 +223,6 @@ Nothing is done to comments. Just need a new XPath for the new document.
           more text
         </div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:domainRule>; selector=<para>; domainPointer=<!--foo-->
-match: rule=<its:domainRule>; selector=<para>; domainPointer=<!--foo-->
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <para>
-setting @title of <para> to 'para'
-renaming <para> to <div>
-processing <para>
-setting @title of <para> to 'para'
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new its:rules element to contain all rules
-Setting id of <div> to ITS_1
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<!--foo-->]
-Setting id of <div> to ITS_2
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_2">; domainPointer=<!--foo-->]
 
 === PI match handled correctly
 PIs are illegal in HTML. They should all be removed. Matched PIs are turned
@@ -356,20 +241,20 @@ into child elements, which also triggers anti-inheritance rules.
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:dirRule selector="id('ITS_2')" dir="ltr"></its:dirRule>
-      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"></its:localeFilterRule>
-      <its:translateRule selector="id('ITS_2')" translate="no"></its:translateRule>
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:dirRule selector="id('ITS_2')" dir="ltr"/>
+      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
+      <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -383,30 +268,6 @@ into child elements, which also triggers anti-inheritance rules.
           </span>
         </div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:domainRule>; selector=<para>; domainPointer=<?foo_pi?>
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <para>
-setting @title of <para> to 'para'
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new <span> element to represent node of type PI (foo_pi)
-Creating new its:rules element to contain all rules
-Setting id of <div> to ITS_1
-Setting id of <span> to ITS_2
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
-Creating new rule <its:translateRule> to prevent false inheritance
-Creating new rule <its:dirRule> to prevent false inheritance
-Creating new rule <its:localeFilterRule> to prevent false inheritance
 
 === multiple matches on one PI handled correctly
 Multiple matches for one node should only create one new element.
@@ -426,21 +287,21 @@ Multiple matches for one node should only create one new element.
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:dirRule selector="id('ITS_2')" dir="ltr"></its:dirRule>
-      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"></its:localeFilterRule>
-      <its:translateRule selector="id('ITS_2')" translate="no"></its:translateRule>
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:dirRule selector="id('ITS_2')" dir="ltr"/>
+      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
+      <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -454,32 +315,6 @@ Multiple matches for one node should only create one new element.
           </span>
         </div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:domainRule>; selector=<para>; domainPointer=<?foo_pi?>
-match: rule=<its:domainRule>; selector=<para>; domainPointer=<?foo_pi?>
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <para>
-setting @title of <para> to 'para'
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new <span> element to represent node of type PI (foo_pi)
-Creating new its:rules element to contain all rules
-Setting id of <div> to ITS_1
-Setting id of <span> to ITS_2
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
-Creating new rule <its:translateRule> to prevent false inheritance
-Creating new rule <its:dirRule> to prevent false inheritance
-Creating new rule <its:localeFilterRule> to prevent false inheritance
 
 === PI match handled correctly inside namespaced node
 --- input
@@ -497,20 +332,20 @@ Creating new rule <its:localeFilterRule> to prevent false inheritance
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:dirRule selector="id('ITS_2')" dir="ltr"></its:dirRule>
-      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"></its:localeFilterRule>
-      <its:translateRule selector="id('ITS_2')" translate="no"></its:translateRule>
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:dirRule selector="id('ITS_2')" dir="ltr"/>
+      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
+      <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="xml">
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">
@@ -523,31 +358,6 @@ Creating new rule <its:localeFilterRule> to prevent false inheritance
           </span>
         </div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:domainRule>; selector=<foo:para>; domainPointer=<?foo_pi?>
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <foo:para>
-setting @title of <foo:para> to 'foo:para'
-stripping namespaces from <foo:para>
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new <span> element to represent node of type PI (foo_pi)
-Creating new its:rules element to contain all rules
-Setting id of <div> to ITS_1
-Setting id of <span> to ITS_2
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
-Creating new rule <its:translateRule> to prevent false inheritance
-Creating new rule <its:dirRule> to prevent false inheritance
-Creating new rule <its:localeFilterRule> to prevent false inheritance
 
 === text node match handled correctly
 Nothing is done to these. Just need a new XPath.
@@ -564,42 +374,23 @@ Nothing is done to these. Just need a new XPath.
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:domainRule selector="id('ITS_1')" domainPointer="/html/body/div/div[2]/text()"></its:domainRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="/*/*[2]/*/*[2]/text()"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
           Some text
         </div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:domainRule>; selector=<para>; domainPointer=[text: Some text]
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <para>
-setting @title of <para> to 'para'
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new its:rules element to contain all rules
-Setting id of <div> to ITS_1
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=[text: Some text]]
 
 === namespace matches handled correctly
 Namespace matches are turned into elements in the document root, which also
@@ -619,20 +410,20 @@ triggers anti-inheritance rules.
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:dirRule selector="id('ITS_2')" dir="ltr"></its:dirRule>
-      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"></its:localeFilterRule>
-      <its:translateRule selector="id('ITS_2')" translate="no"></its:translateRule>
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:dirRule selector="id('ITS_2')" dir="ltr"/>
+      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
+      <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="xml">
         <span
           title="xmlns:foo"
@@ -644,31 +435,6 @@ triggers anti-inheritance rules.
           Some text
         </div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:domainRule>; selector=<foo:para>; domainPointer=[namespace: xmlns:foo]
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <foo:para>
-setting @title of <foo:para> to 'foo:para'
-stripping namespaces from <foo:para>
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new <span> element to represent node of type NS (xmlns:foo)
-Creating new its:rules element to contain all rules
-Setting id of <div> to ITS_1
-Setting id of <span> to ITS_2
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
-Creating new rule <its:translateRule> to prevent false inheritance
-Creating new rule <its:dirRule> to prevent false inheritance
-Creating new rule <its:localeFilterRule> to prevent false inheritance
 
 === multiple matches on same namespace handled correctly
 Multiple matches of same namespace should only create one new element.
@@ -689,21 +455,21 @@ Multiple matches of same namespace should only create one new element.
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:dirRule selector="id('ITS_2')" dir="ltr"></its:dirRule>
-      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"></its:localeFilterRule>
-      <its:translateRule selector="id('ITS_2')" translate="no"></its:translateRule>
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:dirRule selector="id('ITS_2')" dir="ltr"/>
+      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
+      <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="xml">
         <span
           title="xmlns:foo"
@@ -715,33 +481,6 @@ Multiple matches of same namespace should only create one new element.
           Some text
         </div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:domainRule>; selector=<foo:para>; domainPointer=[namespace: xmlns:foo]
-match: rule=<its:domainRule>; selector=<foo:para>; domainPointer=[namespace: xmlns:foo]
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <foo:para>
-setting @title of <foo:para> to 'foo:para'
-stripping namespaces from <foo:para>
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new <span> element to represent node of type NS (xmlns:foo)
-Creating new its:rules element to contain all rules
-Setting id of <div> to ITS_1
-Setting id of <span> to ITS_2
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
-Creating new rule <its:translateRule> to prevent false inheritance
-Creating new rule <its:dirRule> to prevent false inheritance
-Creating new rule <its:localeFilterRule> to prevent false inheritance
 
 === namespace match inside namespaced node is handled correctly
 Not really sure that namespaced parent makes a difference, but just to be safe,
@@ -759,20 +498,20 @@ test it.
 </bar:xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:dirRule selector="id('ITS_2')" dir="ltr"></its:dirRule>
-      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"></its:localeFilterRule>
-      <its:translateRule selector="id('ITS_2')" translate="no"></its:translateRule>
-      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"></its:domainRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:dirRule selector="id('ITS_2')" dir="ltr"/>
+      <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
+      <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="bar:xml">
         <span
           title="xmlns:foo"
@@ -782,32 +521,6 @@ test it.
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">Some text</div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:domainRule>; selector=<foo:para>; domainPointer=[namespace: xmlns:foo]
-converting document elements into HTML
-processing <bar:xml>
-setting @title of <bar:xml> to 'bar:xml'
-stripping namespaces from <bar:xml>
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <foo:para>
-setting @title of <foo:para> to 'foo:para'
-stripping namespaces from <foo:para>
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new <span> element to represent node of type NS (xmlns:foo)
-Creating new its:rules element to contain all rules
-Setting id of <div> to ITS_1
-Setting id of <span> to ITS_2
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
-Creating new rule <its:translateRule> to prevent false inheritance
-Creating new rule <its:dirRule> to prevent false inheritance
-Creating new rule <its:localeFilterRule> to prevent false inheritance
 
 === document matches handled correctly
 Document match stays the same ("/").
@@ -824,43 +537,23 @@ Document match stays the same ("/").
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:domainRule selector="id('ITS_1')" domainPointer="/"></its:domainRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="/"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="xml">
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">
           Some text
         </div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:domainRule>; selector=<foo:para>; domainPointer=[DOCUMENT]
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <foo:para>
-setting @title of <foo:para> to 'foo:para'
-stripping namespaces from <foo:para>
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new its:rules element to contain all rules
-Setting id of <div> to ITS_1
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=[DOCUMENT]]
 
 === namespaced document matches handled correctly
 Namespacing probably doesn't make a difference here; just covering the bases.
@@ -877,44 +570,23 @@ Namespacing probably doesn't make a difference here; just covering the bases.
 </foo:xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:domainRule selector="id('ITS_1')" domainPointer="/"></its:domainRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:domainRule selector="id('ITS_1')" domainPointer="/"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="foo:xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
           Some text
         </div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:domainRule>; selector=<para>; domainPointer=[DOCUMENT]
-converting document elements into HTML
-processing <foo:xml>
-setting @title of <foo:xml> to 'foo:xml'
-stripping namespaces from <foo:xml>
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <para>
-setting @title of <para> to 'para'
-stripping namespaces from <para>
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new its:rules element to contain all rules
-Setting id of <div> to ITS_1
-Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=[DOCUMENT]]
 
 === non-ITS, non-xmlns attributes are saved
 All document attributes are saved as elements, which also
@@ -926,17 +598,17 @@ triggers anti-inheritance rules.
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:translateRule selector="id('ITS_1')" translate="no"></its:translateRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:translateRule selector="id('ITS_1')" translate="no"/>
       </its:rules>
     </script>
-  </head>
-  <body>
     <div title="xml">
         <div title="para">
           <span
@@ -947,22 +619,6 @@ triggers anti-inheritance rules.
           Some text
         </div>
     </div>
-  </body>
-</html>
---- log
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <para>
-setting @title of <para> to 'para'
-stripping namespaces from <para>
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new <span> element to represent node of type ATT (foo)
-Creating new its:rules element to contain all rules
-Setting id of <span> to ITS_1
-Creating new rule <its:translateRule> to prevent false inheritance
 
 === DOM value match handled correctly
 Below idValue is a literal string;
@@ -980,37 +636,18 @@ it should just be copied to the final rule.
 </xml>
 --- output
 <!DOCTYPE html>
-<html>
-  <head>
     <meta charset="utf-8">
     <title>WICS</title>
     <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
-      <its:idValueRule selector="id('ITS_1')" idValue="'p1'"></its:idValueRule>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:idValueRule selector="id('ITS_1')" idValue="'p1'"/>
     </its:rules>
     </script>
-  </head>
-  <body>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">Some text</div>
     </div>
-  </body>
-</html>
---- log
-match: rule=<its:idValueRule>; selector=<para>; idValue=p1
-converting document elements into HTML
-processing <xml>
-setting @title of <xml> to 'xml'
-processing <head>
-setting @title of <head> to 'head'
-removing <its:rules>
-renaming <head> to <div>
-processing <para>
-setting @title of <para> to 'para'
-renaming <para> to <div>
-renaming <xml> to <div>
-wrapping document in HTML structure
-Creating new its:rules element to contain all rules
-Setting id of <div> to ITS_1
-Creating new rule <its:idValueRule> to match [selector=<div id="ITS_1">; idValue='p1']

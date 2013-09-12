@@ -12,13 +12,26 @@ use Log::Any::Test;
 use Log::Any qw($log);
 use ITS::DOM;
 use ITS::XML2HTML;
+use parent 'Exporter';
+our @EXPORT = qw(normalize_html);
 
 #convert the input XML into html and return the html string
 sub htmlize {
     my ($self, $xml) = @_;
+    my $converter = ITS::XML2HTML->new();
+    my $converted = ${ $converter->convert(\$xml) };
+    $converted = $self->normalize_html($converted);
+    # print $converted;
+    return $converted;
+}
+
+#convert the input XML into html and return the html string and the log
+sub html_log {
+    my ($self, $xml) = @_;
     $log->clear();
-    my $wics = ITS::XML2HTML->new();
-    my $converted = ${ $wics->convert(\$xml) };
+    my $converter = ITS::XML2HTML->new();
+    my $converted = ${ $converter->convert(\$xml) };
+    $converted = $self->normalize_html($converted);
     # print $converted;
     return ($converted, _get_messages($log->msgs()) );
 }
@@ -30,4 +43,14 @@ sub _get_messages {
         push @$messages, $_->{message};
     }
     return $messages;
+}
+
+# given HTML string, remove spacing
+# this makes comparing script elements easier
+sub normalize_html {
+     my ($self, $html) = @_;
+     $html =~ s/\n\s*\n/\n/g;
+     $html =~ s/  +/ /g;
+     $html =~ s/^ //gm;
+     return $html;
 }
