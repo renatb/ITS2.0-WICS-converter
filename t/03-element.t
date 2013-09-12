@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 47;
+plan tests => 51;
 use Test::NoWarnings;
 
 use ITS::DOM;
@@ -210,5 +210,14 @@ sub test_element_editing {
 
     $el->set_name('x');
     is($el->name, 'x', 'element name changed to "x"');
+
+    $el = new_element('x');
+    $el->set_namespace('foo.com');
+    is($el->namespace_URI, 'foo.com', 'set element namespace');
+    is($el->name, 'x', 'no namespace prefix added');
+
+    $el->set_namespace('bar.com', 'bar');
+    is($el->namespace_URI, 'bar.com', 'set element namespace');
+    is($el->name, 'bar:x', 'namespace prefix added');
     return;
 }

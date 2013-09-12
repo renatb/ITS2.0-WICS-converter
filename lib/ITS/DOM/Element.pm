@@ -8,6 +8,7 @@ use Exporter::Easy (
 );
 use XML::LibXML;
 use parent 'ITS::DOM::Node';
+use Carp;
 
 =head1 SYNOPSIS
 
@@ -148,7 +149,22 @@ sub remove_att {
         return $self->{node}->removeAttributeNS($ns, $name);
     }
     return $self->{node}->removeAttribute($name);
+}
 
+=head2 C<set_namespace>
+
+Input arguments are namespace URI and optionally a prefix. This
+method assigns the given namespace URI and prefix to this element.
+A missing prefix argument will make the namespace the default
+namespace for this element.
+
+=cut
+sub set_namespace {
+    my ($self, $URI, $prefix) = @_;
+    croak 'cannot use empty string as namespace URI'
+        unless length $URI;
+    $self->{node}->setNamespace($URI, $prefix || undef);
+    return;
 }
 
 =head2 C<atts>
