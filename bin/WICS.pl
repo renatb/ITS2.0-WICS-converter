@@ -117,6 +117,7 @@ try {
 my $processor = $opt->get_xml2html ?
     sub { xml2html($_[0]) } :
     sub { reduceHtml($_[0]) };
+#TODO: set file extension here, somehow
 
 my @files = $opt->get_input;
 my $overwrite = $opt->get_overwrite;
@@ -147,14 +148,16 @@ sub _get_new_path {
     # if other file with same name exists, just iterate numbers to get a new,
     # unused file name
     my $new_path = path($dir, $name);
-    if($new_path eq $old_path ||
+    if($name eq $old_path->basename ||
         (!$overwrite && $new_path->exists)){
         $name =~ s/\.html$//;
         $new_path = path($dir, $name . '-1.html');
-        my $counter = 1;
-        while($new_path->exists){
-            $counter++;
-            $new_path = path($dir, $name . "-$counter.html");
+        if(!$overwrite){
+            my $counter = 1;
+            while($new_path->exists){
+                $counter++;
+                $new_path = path($dir, $name . "-$counter.html");
+            }
         }
     }
     return $new_path;

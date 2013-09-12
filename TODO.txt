@@ -1,0 +1,7 @@
+
+Current Task: Update how to create standalone
+
+Future TODO:
+    - rewrite GUI in XRC
+    - capture logs with Log::Any::Adapter subclass and Wx::Log subclass, removing timestamps, and print text box
+        - right now we just grab all logs with Log::Any::Test and print them all when the document is done processing
