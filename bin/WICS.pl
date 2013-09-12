@@ -19,7 +19,6 @@ use Getopt::Lucid qw( :all );
 This is a command-line application for altering ITS-decorated
 data. The currently supported operations are XML->HTML5 conversion
 and HTML5 file consolidation.
-conversion.
 
 =head1 USAGE
 
@@ -32,6 +31,13 @@ conversion.
 =item -i | --input <file>...
 
 Specify the XML file or files to be converted into HTML.
+
+=item --xml2html or --reduceHtml
+
+Specifies which operation is to be carried out on the input file. The former
+converts an ITS-decorated XML file into an HTML5 file for displaying the
+contents. The latter consolidates an ITS-decorated HTML5 file and its external
+resources into one file.
 
 =back
 
@@ -59,12 +65,13 @@ procedure as described in WICS-GUI.pl, but since this is not a GUI
 application you will not have to install C<Wx::Perl::Packager> or use C<wxpar>.
 
 Here is an example command used to create a standalone executable. Run in a
-Windows CMD, this should all be one line; I have broken it into three
+Windows CMD, this should all be one line; I have broken it into several
 lines for display purposes.
 
   pp -o WICS.exe -l C:/strawberry/c/bin/libxml2-2__.dll
   -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/libz__.dll
-  -I XML-ITS-0.02/lib -I XML-ITS-WICS-0.02/lib XML-ITS-WICS-0.02/bin/WICS.pl
+  -I ITS-0.04/lib -I ITS-WICS-0.01/lib ITS-XML2HTML-0.05/bin/WICS.pl
+  -I ITS-Reduce-0.01/lib
 
 NOTE: running the exe may fail the first time with an error message with
 "Archive.pm line 192". Just run it again and it should be fine.
@@ -99,7 +106,7 @@ try {
 }catch{
     my $msg = "\nWICS ITS document processor\n";
     $msg .= "$_\n";
-    $msg .= "Usage: WICS [-w] -i <file> [-i <file>...]\n";
+    $msg .= "Usage: WICS --(xml2html|reduceHtml) [-w] -i <file> [-i <file>...]\n";
     $msg .= "  --xml2html: convert ITS-decorated XML to HTML5\n";
     $msg .= "  --reduceHtml: reduce ITS-decorated HTML5 to single file\n";
     $msg .= "  -w or --overwrite: overwrite existing files during conversion\n";
