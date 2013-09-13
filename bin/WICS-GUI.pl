@@ -83,7 +83,8 @@ via the C<-I> option. The required distributions are:
 Here's a sample command to make the standalone executable. We use C<-l>
 to make C<pp> include the DLL files in the executable file. The working
 directory contains the ITS and ITS::WICS distributions, and we
-use -I to include their C<lib> folders. We use C<-o> to specify the
+use -I to include their C<lib> folders (remember that this is unnecessary
+if these distributions have been installed). We use C<-o> to specify the
 name of the created executable. We pass the path to this script as the
 final argument. Run in a Windows CMD, this should all be one line; I have
 broken it into several lines for display purposes.
@@ -104,9 +105,6 @@ and maybe do some escaping so that everything stays consistent.
 
 Real icons instead of colored boxes would be less cheesy.
 
-Real-time logging instead of just saving the log strings and displaying them after
-all file processing.
-
 Use XRC to clean up the bulk of the code.
 
 It would be useful to be able to add and remove files from a list for conversion,
@@ -114,7 +112,23 @@ instead of just selecting all of the files for processing at once.
 
 =cut
 
-package MyApp;
+#first a small logging class
+package WicsGui::Log::Adapter;
+use base qw(Log::Any::Adapter::Base);
+use Log::Any::Adapter::Util qw(make_method);
+use Wx;
+
+# Create logging methods: debug, info, etc.
+foreach my $method ( Log::Any->logging_methods() ) {
+    make_method($method, sub { Wx::LogMessage($_[1], undef) });
+}
+
+# Create detection methods: is_debug, is_info, etc.
+foreach my $method ( Log::Any->detection_methods() ) {
+    make_method($method, sub { 1 });
+}
+
+package WicsGui;
 use Wx::Perl::Packager;
 use Wx qw(
     :clipboard
@@ -134,8 +148,11 @@ use Wx::Event qw(EVT_BUTTON EVT_LISTBOX EVT_LISTBOX_DCLICK);
 use base 'Wx::App';
 use Path::Tiny;
 use Try::Tiny;
-use Log::Any::Test;
 use Log::Any qw($log);
+use Log::Any::Adapter;
+print "$_\n" for sort keys %INC;
+print keys %WicsGui::Log::Adapter::;
+Log::Any::Adapter->set('+WicsGui::Log::Adapter');
 use ITS::WICS;
 
 sub OnInit {
@@ -360,9 +377,11 @@ sub _convert_files {
         $text->AppendText($_[0]);
         $text->SetDefaultStyle($normal_style);
     };
+    #send log messages to $text
+    Wx::Log::SetActiveTarget(Wx::LogTextCtrl->new($text));
     for my $path (@$files_array){
         $path = path($path);
-        $log->clear;
+        # $log->clear;
         try{
             $text->SetDefaultStyle($normal_style);
             $text->AppendText(
@@ -371,10 +390,10 @@ sub _convert_files {
             my $new_path = _get_new_path($path, $output_ext);
             my $fh = $new_path->filehandle('>:encoding(UTF-8)');
             print $fh ${ $html };
-            $text->AppendText(
-                join "\n", map {
-                    $_->{message}
-                } @{$log->msgs});
+            # $text->AppendText(
+            #     join "\n", map {
+            #         $_->{message}
+            #     } @{$log->msgs});
             $text->SetDefaultStyle($done_style);
             $text->AppendText("\nwrote $new_path\n");
         }catch{
@@ -382,6 +401,8 @@ sub _convert_files {
             $text->AppendText($_);
         };
     }
+    # restore default logger
+    Wx::Log::SetActiveTarget(Wx::LogGui->new());
     return;
 }
 
@@ -517,5 +538,5 @@ sub OnDrawBackground {
 1;
 
 package main; ## no critic(ProhibitMultiplePackages)
-my $app = MyApp->new;
+my $app = WicsGui->new;
 $app->MainLoop;

@@ -73,21 +73,6 @@ lines for display purposes.
   -I ITS-0.04/lib -I ITS-WICS-0.01/lib ITS-XML2HTML-0.05/bin/WICS.pl
   -I ITS-Reduce-0.01/lib
 
-NOTE: running the exe may fail the first time with an error message with
-"Archive.pm line 192". Just run it again and it should be fine.
-
-=head1 TODO
-
-This script should support unicode filenames; however, it doesn't
-decode CMD input, so unicode input gets garbled. One way to do this
-is to use the Encode::Locale module to decode input. Creating the
-standalone executable would then require the inclusion of the Unicode
-modules directory. However, this poses problems because at best the
-executable could only decode whatever it could decode on the computer
-with which it was made. This problem needs further investigation.
-
-Fixing the Archive.pm error for the standalone would also be nice.
-
 =cut
 
 my @specs = (
