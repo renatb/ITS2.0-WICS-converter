@@ -114,10 +114,15 @@ try {
     die $msg;
 };
 
-my $processor = $opt->get_xml2html ?
-    sub { xml2html($_[0]) } :
-    sub { reduceHtml($_[0]) };
-#TODO: set file extension here, somehow
+my ($processor, $output_ext);
+if($opt->get_xml2html){
+    $processor = sub { xml2html($_[0]) };
+    $output_ext = 'html';
+}elsif($opt->get_reduceHtml){
+    $processor = sub { reduceHtml($_[0]) };
+    $output_ext = 'html';
+}
+#TODO: XLIFF2HTML and XML2XLIFF
 
 my @files = $opt->get_input;
 my $overwrite = $opt->get_overwrite;
@@ -128,7 +133,7 @@ for my $path (@files){
     print "\n----------\n$path\n----------\n";
     try{
         my $html = $processor->( $path );
-        my $new_path = _get_new_path($path, $overwrite);
+        my $new_path = _get_new_path($path, $overwrite, $output_ext);
         my $out_fh = $new_path->filehandle('>:encoding(UTF-8)');
         print $out_fh ${ $html };
         print "wrote $new_path\n";
@@ -139,24 +144,24 @@ for my $path (@files){
 
 #input: Path::Tiny object for input file path
 sub _get_new_path {
-    my ($old_path, $overwrite) = @_;
+    my ($old_path, $overwrite, $output_ext) = @_;
     my $name = $old_path->basename;
     my $dir = $old_path->dirname;
 
     #new file will have html extension instead of whatever there was before
-    $name =~ s/(\.[^.]+)?$/.html/;
+    $name =~ s/(\.[^.]+)?$/.$output_ext/;
     # if other file with same name exists, just iterate numbers to get a new,
     # unused file name
     my $new_path = path($dir, $name);
     if($name eq $old_path->basename ||
         (!$overwrite && $new_path->exists)){
-        $name =~ s/\.html$//;
-        $new_path = path($dir, $name . '-1.html');
+        $name =~ s/\.$output_ext$//;
+        $new_path = path($dir, $name . "-1.$output_ext");
         if(!$overwrite){
             my $counter = 1;
             while($new_path->exists){
                 $counter++;
-                $new_path = path($dir, $name . "-$counter.html");
+                $new_path = path($dir, $name . "-$counter.$output_ext");
             }
         }
     }
