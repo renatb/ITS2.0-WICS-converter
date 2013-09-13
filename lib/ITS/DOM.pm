@@ -10,10 +10,13 @@ use Try::Tiny;
 use Path::Tiny;
 # the XML and HTML engines currently used
 use XML::LibXML;
-# returns an XML::LibXML document, unifying the APIs
+my $xml_parser = XML::LibXML->new;
+# this HTML parser returns an XML::LibXML document, unifying the APIs
 use HTML::HTML5::Parser;
+my $html_parser = HTML::HTML5::Parser->new;
 use HTML::HTML5::Writer;
 my $writer = HTML::HTML5::Writer->new();
+use URI;
 use Encode qw(decode);
 
 =head1 SYNOPSIS
@@ -154,8 +157,8 @@ sub _get_dom {
         croak 'must specify either "xml" or "html"';
     }
     my $parser = $type eq 'xml' ?
-        XML::LibXML->new() :
-        HTML::HTML5::Parser->new;
+        $xml_parser :
+        $html_parser;
 
     if(ref $data eq 'SCALAR'){
         #string refs are content;
@@ -191,7 +194,8 @@ sub _get_dom {
                 croak "error parsing file '$data': $_";
             };
         }else{
-            $dom = $parser->parse_html_file( $data );
+            #have to use URI::file for now (RT #88636)
+            $dom = $parser->parse_html_file(URI::file->new_abs($data));
             _carp_parse_errors($parser);
         }
     }
