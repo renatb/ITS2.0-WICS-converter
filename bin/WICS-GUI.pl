@@ -169,8 +169,10 @@ sub OnListBoxDoubleClick {
     my( $parent, $event ) = @_;
     my $vlist = $event->GetEventObject;
 
-    my $title = $vlist->{lbdata}->[$vlist->GetSelection]->{name};
-    my $transformer = $vlist->{lbdata}->[$vlist->GetSelection]->{transformer};
+    my $lbdata = $vlist->{lbdata}->[$vlist->GetSelection];
+    my $title = $lbdata->{name};
+    my $transformer = $lbdata->{transformer};
+    my $output_ext = $lbdata->{output_ext};
 
     my $frame = Wx::Frame->new(
         $parent,            # parent window
@@ -204,7 +206,7 @@ sub OnListBoxDoubleClick {
     my $convert_btn     = Wx::Button->new($panel, wxID_OK, 'Convert');
     EVT_BUTTON( $panel, $convert_btn, sub {
             my ($panel, $event) = @_;
-            _convert_files($panel, $transformer, $files);
+            _convert_files($panel, $transformer, $files, $output_ext);
         }
     );
     my $choose_file_btn     = Wx::Button->new($panel, wxID_ANY, 'Choose File...');
@@ -284,7 +286,7 @@ sub _open_files {
 }
 
 sub _convert_files {
-    my ($parent, $transformer, $files_array) = @_;
+    my ($parent, $transformer, $files_array, $output_ext) = @_;
     my $frame = Wx::Frame->new(
         $parent,# parent window
         -1,                 # ID -1 means any
@@ -366,7 +368,7 @@ sub _convert_files {
             $text->AppendText(
                 "\n----------\n$path\n----------\n");
             my $html = $transformer->($path);
-            my $new_path = _get_new_path($path);
+            my $new_path = _get_new_path($path, $output_ext);
             my $fh = $new_path->filehandle('>:encoding(UTF-8)');
             print $fh ${ $html };
             $text->AppendText(
@@ -385,22 +387,22 @@ sub _convert_files {
 
 #input: Path::Tiny object for input file path
 sub _get_new_path {
-    my ($old_path) = @_;
+    my ($old_path, $output_ext) = @_;
     my $name = $old_path->basename;
     my $dir = $old_path->dirname;
 
     #new file will have html extension instead of whatever there was before
-    $name =~ s/(\.[^.]+)?$/.html/;
+    $name =~ s/(\.[^.]+)?$/.$output_ext/;
     # if other file with same name exists, just iterate numbers to get a new,
     # unused file name
     my $new_path = path($dir, $name);
     if($new_path->exists){
-        $name =~ s/\.html$//;
-        $new_path = path($dir, $name . '-1.html');
+        $name =~ s/\.$output_ext$//;
+        $new_path = path($dir, $name . "-1.$output_ext");
         my $counter = 1;
         while($new_path->exists){
             $counter++;
-            $new_path = path($dir, $name . "-$counter.html");
+            $new_path = path($dir, $name . "-$counter.$output_ext");
         }
     }
     return $new_path;
@@ -423,19 +425,23 @@ sub new {
           description => 'Convert XML into HTML, preserving ITS information',
           colour => [ 255, 0, 0 ],
           transformer => \&ITS::WICS::xml2html,
+          output_ext => 'html',
         },
         { name => 'HTML5 Reduce',
           description => 'Recude HTML5 and external ITS resources to a single file',
           colour => [ 0, 255, 0 ],
           transformer => \&ITS::WICS::reduceHtml,
+          output_ext => 'html',
         },
         { name => 'XLIFF2HTML',
           description => 'Write HTML to display ITS data in XLIFF source and target elements',
           colour => [ 0, 0, 255 ],
+          output_ext => 'html',
         },
         { name => 'XML2XLIFF',
           description => 'Create an XLIFF file with translation units extracted from XML',
           colour => [ 255, 255, 0 ],
+          output_ext => 'xlf',
         },
     ];
 
