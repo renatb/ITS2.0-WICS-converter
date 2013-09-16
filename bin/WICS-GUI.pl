@@ -112,22 +112,6 @@ instead of just selecting all of the files for processing at once.
 
 =cut
 
-#first a small logging class
-package WicsGui::Log::Adapter;
-use base qw(Log::Any::Adapter::Base);
-use Log::Any::Adapter::Util qw(make_method);
-use Wx;
-
-# Create logging methods: debug, info, etc.
-foreach my $method ( Log::Any->logging_methods() ) {
-    make_method($method, sub { Wx::LogMessage($_[1], undef) });
-}
-
-# Create detection methods: is_debug, is_info, etc.
-foreach my $method ( Log::Any->detection_methods() ) {
-    make_method($method, sub { 1 });
-}
-
 package WicsGui;
 use Wx::Perl::Packager;
 use Wx qw(
@@ -148,11 +132,8 @@ use Wx::Event qw(EVT_BUTTON EVT_LISTBOX EVT_LISTBOX_DCLICK);
 use base 'Wx::App';
 use Path::Tiny;
 use Try::Tiny;
-use Log::Any qw($log);
 use Log::Any::Adapter;
-print "$_\n" for sort keys %INC;
-print keys %WicsGui::Log::Adapter::;
-Log::Any::Adapter->set('+WicsGui::Log::Adapter');
+Log::Any::Adapter->set('+WicsGui::Logger');
 use ITS::WICS;
 
 sub OnInit {
@@ -381,7 +362,6 @@ sub _convert_files {
     Wx::Log::SetActiveTarget(Wx::LogTextCtrl->new($text));
     for my $path (@$files_array){
         $path = path($path);
-        # $log->clear;
         try{
             $text->SetDefaultStyle($normal_style);
             $text->AppendText(
@@ -390,10 +370,6 @@ sub _convert_files {
             my $new_path = _get_new_path($path, $output_ext);
             my $fh = $new_path->filehandle('>:encoding(UTF-8)');
             print $fh ${ $html };
-            # $text->AppendText(
-            #     join "\n", map {
-            #         $_->{message}
-            #     } @{$log->msgs});
             $text->SetDefaultStyle($done_style);
             $text->AppendText("\nwrote $new_path\n");
         }catch{
