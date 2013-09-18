@@ -7,7 +7,7 @@ Basic Outline:
     ✓-start with a fork of XML2HTML.
     -Mostly keep the code that processes rules, but add a new index that allows lookup by matched element to facilitate ITS info comparison for label application later on.
     -Completely change out the code for processing individual elements. Convert XLIFF ITS to HTML5 ITS. This will require checking attributes and child elements, and besides creating attributes sometimes creating new global rules (external resource and domain are global-only outside of XLIFF).
-        - translate
+        ✓- translate
         - localization note
         - terminology
         ✓- directionality

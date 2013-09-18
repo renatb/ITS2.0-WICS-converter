@@ -285,14 +285,15 @@ sub _process_att {
 	# (xml:space means nothing in HTML)
 	}elsif($att->name eq 'xml:space'){
 		_att_delete($el, $att);
-	#its:* attributes with HTML semantics
-	}elsif($att->namespace_URI eq its_ns()){
-		if($att->local_name eq 'translate'){
+	}elsif($att->name eq 'translate'){
 			_att_rename($el, $att, 'translate');
-		}else{
-			# default transformation for all other its:* atts
-			_htmlize_its_att($el, $att);
+	}elsif($att->name eq 'mtype'){
+		if($att->value eq 'protected'){
+			$el->set_att('translate', 'no');
+		}elsif($att->value eq 'x-its-translate-yes'){
+			$el->set_att('translate', 'yes');
 		}
+		$att->remove;
 	}else{
 		# then delete other attributes (they are illegal in HTML and we
 		# don't care about the contents)

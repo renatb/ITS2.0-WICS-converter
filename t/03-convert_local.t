@@ -148,12 +148,15 @@ should be converted into lang
       <div title="foo" lang="lut"></div>
     </div>
 
-=== its:translate
-should be converted into translate
+=== translate ITS
+translate att is converted as is;
+mtype value of 'protected' is 'no' and 'x-its-translate-yes' is 'yes'
 --- input
-<xml xmlns:its="http://www.w3.org/2005/11/its">
-  <foo its:translate="no"/>
-</xml>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <foo translate="no"/>
+  <mrk mtype="protected"/>
+  <mrk mtype="x-its-translate-yes"/>
+</xliff>
 --- output
 <!DOCTYPE html>
     <meta charset="utf-8">
@@ -165,33 +168,10 @@ should be converted into translate
         <its:translateRule selector="//@*" translate="no"/>
       </its:rules>
     </script>
-    <div title="xml">
+    <div title="xliff">
       <div title="foo" translate="no"></div>
-    </div>
-
-=== other its:* atts
-prefix its- and use dashes instead of camelCasing
---- input
-<xml xmlns:its="http://www.w3.org/2005/11/its">
-  <foo its:person="Boss">Pointy Hair</foo>
-  <bar its:locNote="foo">Elbonian</bar>
-  <baz its:blahBlahFooBar="qux">that's not a thing...</baz>
-</xml>
---- output
-<!DOCTYPE html>
-    <meta charset="utf-8">
-    <title>WICS</title>
-    <script type="application/its+xml">
-      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
-        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
-        <its:dirRule selector="//@*" dir="ltr"/>
-        <its:translateRule selector="//@*" translate="no"/>
-      </its:rules>
-    </script>
-    <div title="xml">
-      <div title="foo" its-person="Boss">Pointy Hair</div>
-      <div title="bar" its-loc-note="foo">Elbonian</div>
-      <div title="baz" its-blah-blah-foo-bar="qux">that's not a thing...</div>
+      <div title="mrk" translate="no"></div>
+      <div title="mrk" translate="yes"></div>
     </div>
 
 === standoff markup
