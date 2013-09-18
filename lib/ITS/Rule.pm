@@ -106,7 +106,7 @@ sub selector {
     return $self->{node}->att('selector');
 }
 
-=head2 C<node>
+=head2 C<element>
 
 Returns the ITS::DOM::Element that this rule represents.
 
