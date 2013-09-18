@@ -38,8 +38,8 @@ if(!caller){
     my $rules = $ITS->get_rules;
     for my $rule (@$rules){
         say $rule->type;
-        for my $match(@{ $ITS->get_matches($rule) }){
-            say "$_ => $match{$_}" for keyes %$match;
+        for my $match (@{ $ITS->get_matches($rule) }){
+            say "$_ => $match->{$_}" for keys %$match;
         }
     }
 
