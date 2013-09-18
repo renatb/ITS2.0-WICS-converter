@@ -1,6 +1,8 @@
 Revision history for ITS
 
 {{$NEXT}}
+
+0.03      2013-09-18 11:50:09 America/Los_Angeles
     renamed from XML-ITS to just ITS
     get_type method for ITS::DOM
     temporary workaround for RT #88636
