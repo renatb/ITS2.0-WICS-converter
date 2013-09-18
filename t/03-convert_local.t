@@ -33,7 +33,6 @@ HTML skeleton, and creating default rules.
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
       </its:rules>
     </script>
   <div title="xml"></div>
@@ -54,7 +53,6 @@ HTML skeleton, and creating default rules.
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
       </its:rules>
     </script>
     <div title="xml">
@@ -79,7 +77,6 @@ HTML skeleton, and creating default rules.
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
       </its:rules>
     </script>
     <div title="xml">
@@ -103,7 +100,6 @@ should be converted into id
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
       </its:rules>
     </script>
     <div title="xml">
@@ -125,7 +121,6 @@ should be converted removed, having no HTML equivalent
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
       </its:rules>
     </script>
     <div title="xml">
@@ -147,7 +142,6 @@ should be converted into lang
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
       </its:rules>
     </script>
     <div title="xml">
@@ -169,7 +163,6 @@ should be converted into translate
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
       </its:rules>
     </script>
     <div title="xml">
@@ -196,7 +189,6 @@ rlo/lro should create an inline bdo element
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
       </its:rules>
     </script>
     <div title="xml">
@@ -224,7 +216,6 @@ prefix its- and use dashes instead of camelCasing
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
       </its:rules>
     </script>
     <div title="xml">
@@ -252,7 +243,6 @@ from standoff markup.
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
       </its:rules>
     </script>
     <div title="xml"></div>
@@ -272,7 +262,6 @@ its:version should be deleted (doesn't exist in its HTML)
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
       </its:rules>
     </script>
     <div title="xml">

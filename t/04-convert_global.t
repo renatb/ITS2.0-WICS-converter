@@ -39,7 +39,6 @@ __DATA__
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
         <its:translateRule selector="id('i1')" translate="yes"/>
       </its:rules>
     </script>
@@ -68,7 +67,6 @@ __DATA__
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
         <its:translateRule selector="id('ITS_1')" translate="yes"/>
       </its:rules>
     </script>
@@ -100,7 +98,6 @@ __DATA__
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
         <its:locNoteRule selector="id('ITS_1')" translate="yes">
         <its:locNote>Some note</its:locNote>
         </its:locNoteRule>
@@ -137,7 +134,6 @@ __DATA__
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
         <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
       </its:rules>
     </script>
@@ -169,7 +165,6 @@ __DATA__
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
         <its:termRule selector="id('ITS_1')" term="yes"/>
       </its:rules>
     </script>
@@ -200,7 +195,6 @@ preserveSpaceRule has no meaning in HTML, and thus it is not output.
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
       </its:rules>
     </script>
     <div title="xml">

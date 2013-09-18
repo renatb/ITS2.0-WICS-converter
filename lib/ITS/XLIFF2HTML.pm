@@ -518,26 +518,8 @@ sub _update_rules {
 	}
 
 	$self->_false_elt_inheritance_rules($rules_el, $indent);
-	$self->_span_withinText_rule($rules_el, $indent);
 	$self->_false_att_inheritance_rules($rules_el, $indent);
 
-	return;
-}
-
-sub _span_withinText_rule {
-	my ($self, $rules_el, $indent) = @_;
-
-	# in HTML, <span> elements have withinText="yes", the opposite
-	# of the default in XML. This doesn't inherit, so it's safe to
-	# set it globally here
-	my $txt_node = $rules_el->append_text("\n" . $indent x 3, 'first_child');
-	my $span_rule = new_element('its:withinTextRule',
-		{withinText => 'no', selector => '//h:span'});
-	$span_rule->paste($txt_node, 'after');
-	if($log->is_debug){
-		$log->debug('Creating new rule ' . node_log_id($span_rule) .
-			' to set correct withinText default on <span> elements');
-	}
 	return;
 }
 

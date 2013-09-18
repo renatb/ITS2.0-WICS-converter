@@ -49,7 +49,6 @@ Multiple matches of same namespace should only create one new element.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
       <its:dirRule selector="id('ITS_2')" dir="ltr"/>
       <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
@@ -93,7 +92,6 @@ Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPo
 Creating new rule <its:translateRule> to prevent false inheritance
 Creating new rule <its:dirRule> to prevent false inheritance
 Creating new rule <its:localeFilterRule> to prevent false inheritance
-Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
 Creating new rule <its:translateRule> to reset its:translateRule on new attributes
 Creating new rule <its:dirRule> to reset its:dirRule on new attributes
 Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes
