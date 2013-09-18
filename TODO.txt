@@ -1,13 +1,23 @@
-XML to HTML converter
+XLIFF to HTML converter
 
 Next:
+
+Basic Outline:
+
+    ✓-start with a fork of XML2HTML.
+    -Mostly keep the code that processes rules, but add a new index that allows lookup by matched element to facilitate ITS info comparison for label application later on.
+    -Completely change out the code for processing individual elements. Convert XLIFF ITS to HTML5 ITS. This will require checking attributes and child elements, and besides creating attributes sometimes creating new global rules (external resource and domain are global-only outside of XLIFF).
+    ✓-Delete other attributes (instead of making them into futures)
+    -no more <its:span>
+    -rename <trans-unit> its and ancestors to <div>, <source> and <target> to <p>, and children of these to <span>. The only text that we are worried about displaying is contained in <source> and <target> elements, so add a small CSS to hide everything but <p>.
+    -After <source> and <target> elements are processed, their ITS information will be compared to each other, and an appropriate label applied in the form of another <p> element inside the converted <trans-unit>. Comparing after conversion like this will make it easier to change to the split/recombine strategy later.
+    -Create global rules to reset ITS defaults on labeling elements, and also add a global rule to match sources with targets (targetPointerRule).
+
 
 Engineering Tasks:
     - do some HTML post-processing to fine-tune tests:
         - convert_local.t shouldn't have to also check that default global rules to prevent inheritance have been added
         - should be able to check XML equality of script elements instead of text equality
-    - do we really need to test logs?
-        - it seemed to be a project stipulation at first, but it seems a little out of hand. One tiny log change and everything's broken.
     - Test::HTML::Differences is not very good. Would like a module that handles HTML5, properly normalizes all of it and then takes a diff. Even better would be a structural test instead of line-by-line comparison. Also, need to be able to tell it how to compare contents of <script> elements, which tend to vary in non-semantic whitespace, causing test failures.
 
 To Do on current task:

@@ -588,38 +588,6 @@ Namespacing probably doesn't make a difference here; just covering the bases.
         </div>
     </div>
 
-=== non-ITS, non-xmlns attributes are saved
-All document attributes are saved as elements, which also
-triggers anti-inheritance rules.
---- input
-<?xml version="1.0"?>
-<xml>
-  <para foo="bar" xmlns="blah">Some text</para>
-</xml>
---- output
-<!DOCTYPE html>
-    <meta charset="utf-8">
-    <title>WICS</title>
-    <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
-      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
-      <its:dirRule selector="//@*" dir="ltr"/>
-      <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
-      <its:translateRule selector="id('ITS_1')" translate="no"/>
-      </its:rules>
-    </script>
-    <div title="xml">
-        <div title="para">
-          <span
-            id="ITS_1"
-            class="_ITS_ATT"
-            its-within-text="no"
-            title="foo">bar</span>
-          Some text
-        </div>
-    </div>
-
 === DOM value match handled correctly
 Below idValue is a literal string;
 it should just be copied to the final rule.

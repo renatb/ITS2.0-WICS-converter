@@ -32,7 +32,6 @@ __DATA__
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
       <its:withinTextRule selector="//h:span" withinText="no"/>
-      <its:translateRule selector="id('ITS_1')" translate="no"/>
       <its:translateRule xml:id="ext3rule" selector="id('root')" translate="yes"/>
       <foo:translateRule xmlns:foo="http://www.w3.org/2005/11/its" xml:id="ext2rule" selector="id('trmark')" translate="yes"/>
       <its:translateRule xml:id="ext1rule" selector="id('par')" translate="yes"/>
@@ -43,12 +42,6 @@ __DATA__
     <div title="head"></div>
     <div id="body" title="body">
       <div id="par" title="par">
-        <span class="_ITS_ATT"
-            title="title"
-            its-within-text="no"
-            id="ITS_1">
-          Text
-        </span>
         The
         <span id="trmark" title="trmark">
           World Wide Web Consortium

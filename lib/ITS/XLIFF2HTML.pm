@@ -339,9 +339,8 @@ sub _process_att {
 			_htmlize_its_att($el, $att);
 		}
 	}else{
-		# save other atts as FutureNodes, then delete
-		# (they are illegal in HTML)
-		$self->{futureNodeManager}->create_future($att);
+		# then delete other attributes (they are illegal in HTML and we
+		# don't care about the contents)
 		$att->remove;
 	}
 	return;
