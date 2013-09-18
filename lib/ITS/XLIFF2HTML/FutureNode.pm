@@ -1,9 +1,9 @@
-package ITS::XML2HTML::FutureNode;
+package ITS::XLIFF2HTML::FutureNode;
 use strict;
 use warnings;
 use Exporter::Easy (OK => [qw(new_future)]);
 use ITS::DOM::Element qw(new_element);
-use ITS::XML2HTML::LogUtils qw(get_or_set_id);
+use ITS::XLIFF2HTML::LogUtils qw(get_or_set_id);
 use Carp;
 use Log::Any qw($log);
 
@@ -12,9 +12,9 @@ use Log::Any qw($log);
 
 =head1 SYNOPSIS
 
-    use ITS::XML2HTML::FutureNodeManager;
+    use ITS::XLIFF2HTML::FutureNodeManager;
     use ITS;
-    my $f_manager = ITS::XML2HTML::FutureNodeManager->new();
+    my $f_manager = ITS::XLIFF2HTML::FutureNodeManager->new();
     my $ITS = ITS->new('xml', doc => 'myITSfile.xml');
     my ($ns) = $ITS->get_root->get_xpath('namespace::*');
     my $f_ns = create_future($ns);

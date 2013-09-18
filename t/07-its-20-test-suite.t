@@ -21,17 +21,17 @@ use IO::Compress::Gzip qw(gzip $GzipError) ;
 use HTML::HTML5::Parser;
 use Log::Any::Test;
 use Log::Any qw($log);
-use ITS::XML2HTML;
+use ITS::XLIFF2HTML;
 
 if ( not $ENV{ITS_20_TESTSUITE_PATH}) {
     plan skip_all => 'Requires ITS 2.0 test suite. ' .
     'Set $ENV{ITS_20_TESTSUITE_PATH} to run.';
 }
 
-my $converter = ITS::XML2HTML->new();
+my $converter = ITS::XLIFF2HTML->new();
 
 my $xml_dir = path($ENV{ITS_20_TESTSUITE_PATH},
-    'its2.0', 'inputdata');
+    'its2.0', 'xliffsamples', 'inputdata');
 
 my $validator_url = $ENV{HTML5_VALIDATOR_URL} ||
     'http://validator.w3.org/nu/';

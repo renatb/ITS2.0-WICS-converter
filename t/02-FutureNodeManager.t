@@ -4,8 +4,8 @@ use strict;
 use warnings;
 use ITS::DOM;
 use Test::More 0.88;
-use ITS::XML2HTML::FutureNodeManager qw(new_manager);
-use ITS::XML2HTML::FutureNode;
+use ITS::XLIFF2HTML::FutureNodeManager qw(new_manager);
+use ITS::XLIFF2HTML::FutureNode;
 plan tests => 13;
 
 my $dom = ITS::DOM->new( xml => \<<'END_XML' );
@@ -40,7 +40,7 @@ my @futures = (
     $doc_future, $elt_future, $att_future, $com_future,
     $pi_future, $txt_future, $ns_future);
 
-isa_ok($_, 'ITS::XML2HTML::FutureNode', 'create_future returns a FutureNode')
+isa_ok($_, 'ITS::XLIFF2HTML::FutureNode', 'create_future returns a FutureNode')
     for @futures;
 
 my @elementals = $manager->elementals;

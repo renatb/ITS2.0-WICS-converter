@@ -4,14 +4,14 @@ use warnings;
 use Test::More 0.88;
 plan tests => 1;
 use Test::Exception;
-use ITS::XML2HTML;
+use ITS::XLIFF2HTML;
 use Path::Tiny;
 use FindBin qw($Bin);
 
 my $file = path($Bin, 'corpus', 'external_rules_XML3.xml');
 
 throws_ok {
-    my $converter = ITS::XML2HTML->new();
+    my $converter = ITS::XLIFF2HTML->new();
     return $converter->convert($file);
 } qr/cannot process a file containing only rules.*08-rules_only_file\.t/is,
     'dies with warning for trying to process rules-only file';

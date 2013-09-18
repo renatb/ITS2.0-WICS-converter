@@ -1,19 +1,4 @@
-Revision history for ITS-XML2HTML
+Revision history for ITS-XLIFF2HTML
 
 {{$NEXT}}
-
-0.05      2013-09-12 13:00:31 America/Los_Angeles
-    Distribution renamed
-    WICS applications moved to separate distribution
-    New rules added to prevent added attributes from inheriting ITS
-    New rule added to prevent <span> from taking withinText=yes by default
-    Tests updated to match HTML5 printer now used in ITS distro
-0.04      2013-09-03 13:25:12 America/Los_Angeles
-    Remove preserveSpaceRule from output HTML
-0.03      2013-08-30 09:19:35 America/Los_Angeles
-    Usage statement of WICS.pl calls itself "WICS" (final exe won't be a pl)
-0.02      2013-08-29 21:04:45 America/Los_Angeles
-    Added documentation on how to create a standalone executable to WICS-GUI.pl
-    Print "wrote file" message in blue
-0.01      2013-08-28 00:30:58 America/Los_Angeles
-	initial release
+	initial release, forked from ITS-XML2HTML

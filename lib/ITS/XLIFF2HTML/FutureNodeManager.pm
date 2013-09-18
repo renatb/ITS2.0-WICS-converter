@@ -1,7 +1,7 @@
-package ITS::XML2HTML::FutureNodeManager;
+package ITS::XLIFF2HTML::FutureNodeManager;
 use strict;
 use warnings;
-use ITS::XML2HTML::FutureNode qw(new_future);
+use ITS::XLIFF2HTML::FutureNode qw(new_future);
 use Exporter::Easy (OK => [qw(new_manager)]);
 use Carp;
 
@@ -10,11 +10,11 @@ use Carp;
 
 =head1 SYNOPSIS
 
-    use ITS::XML2HTML::FutureNodeManager;
+    use ITS::XLIFF2HTML::FutureNodeManager;
     use ITS;
     my $ITS = ITS->new('xml', doc => 'myITSfile.xml');
     my $f_manager =
-        ITS::XML2HTML::FutureNodeManager->new($ITS->get_doc);
+        ITS::XLIFF2HTML::FutureNodeManager->new($ITS->get_doc);
 
     #create one or more FutureNodes through this manager instance
     my ($ns) = $ITS->get_root->get_xpath('namespace::*');

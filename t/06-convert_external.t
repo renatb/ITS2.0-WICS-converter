@@ -1,23 +1,23 @@
 # Test conversion of a document with external rules.
 use strict;
 use warnings;
-use t::TestXML2HTML;
+use t::TestXLIFF2HTML;
 plan tests => 1;
 use Path::Tiny;
 use FindBin qw($Bin);
 use Test::HTML::Differences;
-use ITS::XML2HTML;
-use t::TestXML2HTML;
+use ITS::XLIFF2HTML;
+use t::TestXLIFF2HTML;
 
 use Data::Section::Simple qw(get_data_section);
 my $all_data = get_data_section();
 
 my $file = path($Bin, 'corpus', 'test_external_internal.xml');
 
-my $wics = ITS::XML2HTML->new();
+my $wics = ITS::XLIFF2HTML->new();
 my $converted = ${ $wics->convert("$file") };
-$converted = t::TestXML2HTML::Filter->normalize_html($converted);
-my $expected = t::TestXML2HTML::Filter->normalize_html($all_data->{html});
+$converted = t::TestXLIFF2HTML::Filter->normalize_html($converted);
+my $expected = t::TestXLIFF2HTML::Filter->normalize_html($all_data->{html});
 
 eq_or_diff_html($converted, $expected, 'HTML structure');
 

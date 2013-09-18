@@ -2,7 +2,7 @@
 perl-module.sublime-workspace
 _Inline
 .build
-ITS-WICS-*/
+ITS-XLIFF2HTML-*/
 /*.tar.gz
 t/testsuite_html
 WICS.wxparargs

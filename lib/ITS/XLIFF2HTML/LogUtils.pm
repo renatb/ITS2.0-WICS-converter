@@ -1,4 +1,4 @@
-package ITS::XML2HTML::LogUtils;
+package ITS::XLIFF2HTML::LogUtils;
 use strict;
 use warnings;
 use ITS::DOM::Node;

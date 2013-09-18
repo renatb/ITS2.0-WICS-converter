@@ -7,9 +7,9 @@ plan tests => 14;
 use Test::Exception;
 
 use ITS::DOM;
-use ITS::XML2HTML::FutureNodeManager qw(new_manager);
+use ITS::XLIFF2HTML::FutureNodeManager qw(new_manager);
 use ITS::DOM::Element qw(new_element);
-use ITS::XML2HTML::FutureNode qw(new_future);
+use ITS::XLIFF2HTML::FutureNode qw(new_future);
 
 #test the storage and retrieval of all 7 types of nodes in a FutureNode.
 #use a new FutureNodeManager each time

@@ -1,24 +1,24 @@
 #some test::base filters for HTML conversion
-package t::TestXML2HTML;
+package t::TestXLIFF2HTML;
 use Test::Base -base;
 
 1;
 
-package t::TestXML2HTML::Filter;
+package t::TestXLIFF2HTML::Filter;
 use Test::Base::Filter -base;
 use strict;
 use warnings;
 use Log::Any::Test;
 use Log::Any qw($log);
 use ITS::DOM;
-use ITS::XML2HTML;
+use ITS::XLIFF2HTML;
 use parent 'Exporter';
 our @EXPORT = qw(normalize_html);
 
 #convert the input XML into html and return the html string
 sub htmlize {
     my ($self, $xml) = @_;
-    my $converter = ITS::XML2HTML->new();
+    my $converter = ITS::XLIFF2HTML->new();
     my $converted = ${ $converter->convert(\$xml) };
     $converted = $self->normalize_html($converted);
     # print $converted;
@@ -29,7 +29,7 @@ sub htmlize {
 sub html_log {
     my ($self, $xml) = @_;
     $log->clear();
-    my $converter = ITS::XML2HTML->new();
+    my $converter = ITS::XLIFF2HTML->new();
     my $converted = ${ $converter->convert(\$xml) };
     $converted = $self->normalize_html($converted);
     # print $converted;

@@ -1,10 +1,10 @@
 # NAME
 
-ITS::XML2HTML - Convert ITS-decorated XML into HTML with equivalent markup
+ITS::XLIFF2HTML - Convert ITS-decorated XML into HTML with equivalent markup
 
 # VERSION
 
-version 0.05
+version 0.01
 
 # METHODS
 

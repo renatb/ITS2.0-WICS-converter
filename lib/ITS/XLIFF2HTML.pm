@@ -1,4 +1,4 @@
-package ITS::XML2HTML;
+package ITS::XLIFF2HTML;
 use strict;
 use warnings;
 use Carp;
@@ -8,8 +8,8 @@ use Log::Any qw($log);
 use ITS qw(its_ns);
 use ITS::DOM;
 use ITS::DOM::Element qw(new_element);
-use ITS::XML2HTML::FutureNodeManager qw(new_manager);
-use ITS::XML2HTML::LogUtils qw(node_log_id log_match log_new_rule);
+use ITS::XLIFF2HTML::FutureNodeManager qw(new_manager);
+use ITS::XLIFF2HTML::LogUtils qw(node_log_id log_match log_new_rule);
 
 use feature 'state';
 our $HTML_NS = 'http://www.w3.org/1999/xhtml';
