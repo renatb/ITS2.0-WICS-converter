@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 51;
+plan tests => 55;
 use Test::NoWarnings;
 
 use ITS::DOM;
@@ -18,6 +18,7 @@ test_atts($dom);
 test_equality($dom);
 test_namespaces($dom);
 test_inlininess($dom);
+test_children($dom);
 test_element_editing();
 
 # test element attribute methods
@@ -143,6 +144,24 @@ sub test_inlininess {
 
     ($el) = $dom->get_root->get_xpath('//second');
     ok(!$el->is_inline, '<second> is not inline');
+}
+
+# test child_els method
+sub test_children {
+    my ($dom) = @_;
+    my $root = $dom->get_root;
+
+    my $children = $root->child_els();
+    is(scalar @$children, 5, 'five children of root');
+
+    $children = $root->child_els('foo:sixth');
+    is(scalar @$children, 1, 'retrieved foo:sixth child by name');
+
+    $children = $root->child_els('sixth', 'www.bar.com');
+    is(scalar @$children, 1, 'retrieved foo:sixth child by name and ns');
+
+    $children = $root->child_els('sixth', '*');
+    is(scalar @$children, 1, 'retrieved foo:sixth child by local name');
 }
 
 # paste is technically a node method,

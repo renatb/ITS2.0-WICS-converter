@@ -250,14 +250,27 @@ sub strip_ns {
 =head2 C<child_els>
 
 Returns an array pointer containing the child elements of
-this element.
+this element. You may optionally provide name and namespace parameters
+(C<$el->child_els($name, $ns)>) to restrict the list of children that
+is returned to those with the given name or name and namespace.
+
+If both a name and a namespace are provided, the name should be the local
+name (without a prefix). '*' can be provided as the namespace to match any
+namespace and only filter returned elements by local name.
 
 =cut
 sub child_els {
-    my ($self) = @_;
-    my @children =
-        map {ITS::DOM::Node->new($_)}
+    my ($self, $name, $ns) = @_;
+    my @children;
+    if(defined $ns){
+        @children = $self->{node}->getChildrenByTagNameNS($ns, $name);
+    }elsif(defined $name){
+        @children = $self->{node}->getChildrenByTagName($name);
+    }else{
+        @children =
         $self->{node}->getChildrenByTagName('*');
+    }
+    @children = map {ITS::DOM::Node->new($_)} @children;
     return \@children;
 }
 
