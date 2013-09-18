@@ -162,6 +162,7 @@ sub test_children {
 
     $children = $root->child_els('sixth', '*');
     is(scalar @$children, 1, 'retrieved foo:sixth child by local name');
+    return;
 }
 
 # paste is technically a node method,
