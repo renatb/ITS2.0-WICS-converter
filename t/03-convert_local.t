@@ -257,43 +257,6 @@ from standoff markup.
     </script>
     <div title="xml"></div>
 
-=== its:span
-<its:span> are just converted to <span>; attributes need
-special handling, though, because all of them are ITS
-but don't have the namespace associated with them.
---- input
-<xml xmlns:its="http://www.w3.org/2005/11/its">
-  <its:span
-      person="Boss"
-      locNote="foo"
-      xml:id="a"
-      translate="no"
-      dir="ltr"
-      >Pointy Hair</its:span>
-</xml>
---- output
-<!DOCTYPE html>
-    <meta charset="utf-8">
-    <title>WICS</title>
-    <script type="application/its+xml">
-      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
-        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
-        <its:dirRule selector="//@*" dir="ltr"/>
-        <its:translateRule selector="//@*" translate="no"/>
-        <its:withinTextRule selector="//h:span" withinText="no"/>
-      </its:rules>
-    </script>
-    <div title="xml">
-      <span
-          title="its:span"
-          its-person="Boss"
-          its-loc-note="foo"
-          translate="no"
-          id="a"
-          dir="ltr">
-        Pointy Hair</span>
-    </div>
-
 === its:version
 its:version should be deleted (doesn't exist in its HTML)
 --- input

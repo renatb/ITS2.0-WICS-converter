@@ -172,11 +172,9 @@ sub _htmlize {
 sub _traverse_convert{
 	my ($self, $el, $inline_ancestor) = @_;
 
-	#its:* elements are either rules, span, or standoff
-	#let its:span be renamed to span later
+	#its:* elements are either rules or standoff
 	if($el->namespace_URI &&
-		$el->namespace_URI eq its_ns() &&
-		$el->local_name ne 'span'){
+		$el->namespace_URI eq its_ns()){
 		#its:rules; just remove these and paste new ones later
 		if($el->local_name eq 'rules'){
 			$el->remove;
@@ -269,18 +267,10 @@ sub _rename_el {
 	my ($el, $div_child, $inline_ancestor) = @_;
 
 	my $new_name;
-	#true if element was its:span
-	my $its_span = $el->att('title') =~ m/^its:span(?:\[|$)/;
 
 	# if a child is a div, $el has to be a div
 	if($div_child){
 		$new_name = 'div';
-		if($its_span && $log->is_warn){
-			$log->warn('its:span converted to div due to div child');
-		}
-	# its:spans must be inline (conformance clause 1-4)
-	}elsif($its_span){
-		$new_name = 'span';
 	# if an ancestor was a span/bdo, $el has to be a span
 	}elsif($inline_ancestor){
 		$new_name = 'span';
@@ -292,8 +282,7 @@ sub _rename_el {
 		$new_name = 'div';
 	}
 	# log element rename,
-	# but log "renaming span to span" for its:spans!
-	if($log->is_debug && !($new_name eq 'span' && $its_span)){
+	if($log->is_debug){
 		$log->debug('renaming ' . node_log_id($el) . " to <$new_name>");
 	}
 
@@ -316,10 +305,7 @@ sub _process_att {
 		_att_delete($el, $att);
 	}elsif(
 		#its:* attributes with HTML semantics
-		$att->namespace_URI eq its_ns() ||
-		# this should only be applying to its:span; non-namespace attributes
-		# are interpreted as ITS attributes.
-		$el->namespace_URI eq its_ns() && !$att->namespace_URI
+		$att->namespace_URI eq its_ns()
 	){
 		if($att->local_name eq 'translate'){
 			_att_rename($el, $att, 'translate');
