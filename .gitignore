@@ -2,6 +2,6 @@
 perl-module.sublime-workspace
 _Inline
 .build
-ITS-WICS-*
+ITS-*
 ./*.tar.gz
 *.tar.gz
