@@ -155,7 +155,7 @@ sub get_xpath {
     }else{
         push @nodes, ITS::DOM::Value->new($object);
     }
-    return @nodes;
+    return @nodes || ();
 }
 
 #simple dictionary-lookup sub for parameter handling in get_xpath method
