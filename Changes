@@ -2,9 +2,15 @@ Revision history for ITS
 
 {{$NEXT}}
     renamed from XML-ITS to just ITS
-    filter_rules method
     get_type method for ITS::DOM
     temporary workaround for RT #88636
+    name and namespace arguments now accepted in child_els method of ITS::DOM::Element
+    ITS::RuleContainer class, and ITS method for getting containers
+    ITS eval_rules method
+    HTML supported equally with XML (rule extraction implemented)
+    removed rules setter
+    removed iterate_matches
+
 0.02      2013-08-29 14:05:44 America/Los_Angeles
     XML::ITS::DOM now accepts filehandles
 
