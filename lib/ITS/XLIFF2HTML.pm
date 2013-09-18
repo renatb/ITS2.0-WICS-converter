@@ -156,8 +156,7 @@ sub _htmlize {
 	# traverse every document element, converting into HTML
 	# save standoff or rules elements in its_els
 	$self->{its_els} = [];
-	# 0 means there is no inline ancestor
-	$self->_traverse_convert($doc->get_root, 0);
+	$self->_traverse_convert($doc->get_root);
 
 	# return an HTML doc with the current doc as its body contents
 	return $self->_html_structure($doc);
@@ -170,7 +169,7 @@ sub _htmlize {
 # the existence of an inline ancestor (so this element should not
 # be made a <div>)
 sub _traverse_convert{
-	my ($self, $el, $inline_ancestor) = @_;
+	my ($self, $el) = @_;
 
 	#its:* elements are either rules or standoff
 	if($el->namespace_URI &&
@@ -194,9 +193,7 @@ sub _traverse_convert{
 		$log->debug('processing ' . node_log_id($el));
 	}
 
-	# true if the element has been renamed to bdo, an
-	# inline element (happens with its:dir=rlo)
-	my $bdo_rename = $self->_convert_atts($el);
+	$self->_convert_atts($el);
 
 	# strip namespacing; requires special care because it replaces
 	# an element, requiring reworking of FutureNode indices
@@ -218,21 +215,15 @@ sub _traverse_convert{
 	my $div_child;
 	# recursively process children
 	for my $child(@$children){
-		my $div_result = $self->_traverse_convert(
-			$child, $bdo_rename);
+		my $div_result = $self->_traverse_convert($child);
 		$div_child ||= $div_result;
 	}
 
 	#set the element in the HTML namespace
     $el->set_namespace('http://www.w3.org/1999/xhtml');
 
-	#if already renamed to bdo, return indication of inline element
-	if($bdo_rename){
-		return 0;
-	}
-
 	#otherwise rename it and return indication of div or span
-	return _rename_el($el, $div_child, $inline_ancestor);
+	return _rename_el($el, $div_child);
 }
 
 #handle all attribute converting for the given element. Return true
@@ -243,20 +234,14 @@ sub _convert_atts {
 	my $title = $el->name;
 	my @atts = $el->get_xpath('@*');
 
-	#true if this element has been renamed (to 'bdo')
-	my $bdo_rename;
-	if(@atts){
-		for my $att (@atts){
-			my $renamed =
-				$self->_process_att($el, $att);
-			$bdo_rename ||= $renamed;
-		}
+	for my $att (@atts){
+		$self->_process_att($el, $att);
 	}
 	if($log->is_debug){
 		$log->debug('setting @title of ' . node_log_id($el) . " to '$title'");
 	}
 	$el->set_att('title', $title);
-	return $bdo_rename;
+	return;
 }
 
 # rename the given element to either div or span; return true for div,
@@ -264,16 +249,13 @@ sub _convert_atts {
 # args: element, boolean for existing block child (div, etc.),
 # boolean for existing inline ancestor (span, bdo, etc.)
 sub _rename_el {
-	my ($el, $div_child, $inline_ancestor) = @_;
+	my ($el, $div_child) = @_;
 
 	my $new_name;
 
 	# if a child is a div, $el has to be a div
 	if($div_child){
 		$new_name = 'div';
-	# if an ancestor was a span/bdo, $el has to be a span
-	}elsif($inline_ancestor){
-		$new_name = 'span';
 	# inline elements become spans
 	}elsif($el->is_inline){
 		$new_name = 'span';
@@ -303,20 +285,10 @@ sub _process_att {
 	# (xml:space means nothing in HTML)
 	}elsif($att->name eq 'xml:space'){
 		_att_delete($el, $att);
-	}elsif(
-		#its:* attributes with HTML semantics
-		$att->namespace_URI eq its_ns()
-	){
+	#its:* attributes with HTML semantics
+	}elsif($att->namespace_URI eq its_ns()){
 		if($att->local_name eq 'translate'){
 			_att_rename($el, $att, 'translate');
-		}elsif($att->local_name eq 'dir'){
-			if($att->value =~ /^(?:lro|rlo)$/){
-				_process_dir_override($el, $att);
-				return 'bdo';
-			}else{
-				#ltr and rtl are just 'dir' attributes
-				_att_rename($el, $att, 'dir');
-			}
 		}else{
 			# default transformation for all other its:* atts
 			_htmlize_its_att($el, $att);
@@ -352,26 +324,6 @@ sub _att_delete {
 		$log->debug('removing ' . node_log_id($att) .
 			' from ' . node_log_id($el));
 	}
-	$att->remove;
-	return;
-}
-
-# process an element with an att which is its:dir=lro or rlo;
-# this requires renaming the element to 'bdo' in HTML.
-sub _process_dir_override {
-	my ($el, $att) = @_;
-
-	my $dir = $att->value eq 'lro' ?
-		'ltr':
-		'rtl';
-	if($log->is_debug){
-		$log->debug('found ' . $att->name . '=' .
-		 	$att->value . '; renaming ' . node_log_id($el) .
-			" to bdo and adding \@dir=$dir");
-	}
-	#inline bdo element
-	$el->set_name('bdo');
-	$el->set_att(dir => $dir);
 	$att->remove;
 	return;
 }

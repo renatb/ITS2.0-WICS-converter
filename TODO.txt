@@ -10,7 +10,7 @@ Basic Outline:
         - translate
         - localization note
         - terminology
-        - directionality
+        ✓- directionality
         - language information
         - withinText
         - domain

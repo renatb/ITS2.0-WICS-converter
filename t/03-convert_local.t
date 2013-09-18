@@ -169,36 +169,6 @@ should be converted into translate
       <div title="foo" translate="no"></div>
     </div>
 
-=== its:dir
-ltr/rtl should be converted into a dir att, and
-rlo/lro should create an inline bdo element
---- input
-<xml xmlns:its="http://www.w3.org/2005/11/its">
-  <foo xml:id="i1" its:dir="rtl">foo</foo>
-  <foo xml:id="i2" its:dir="ltr">foo</foo>
-  <foo xml:id="i3" its:dir="lro">foo<bar/></foo>
-  <foo xml:id="i4" its:dir="rlo">foo</foo>
-  <foo xml:id="i5" its:dir="rlo"><bar>bar</bar></foo>
-</xml>
---- output
-<!DOCTYPE html>
-    <meta charset="utf-8">
-    <title>WICS</title>
-    <script type="application/its+xml">
-      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
-        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
-        <its:dirRule selector="//@*" dir="ltr"/>
-        <its:translateRule selector="//@*" translate="no"/>
-      </its:rules>
-    </script>
-    <div title="xml">
-      <div id="i1" title="foo" dir="rtl">foo</div>
-      <div id="i2" title="foo" dir="ltr">foo</div>
-      <bdo id="i3" title="foo" dir="ltr">foo<span title="bar"></span></bdo>
-      <bdo id="i4" title="foo" dir="rtl">foo</bdo>
-      <bdo id="i5" title="foo" dir="rtl"><span title="bar">bar</span></bdo>
-    </div>
-
 === other its:* atts
 prefix its- and use dashes instead of camelCasing
 --- input
