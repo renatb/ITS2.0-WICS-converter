@@ -317,9 +317,6 @@ sub _process_att {
 				#ltr and rtl are just 'dir' attributes
 				_att_rename($el, $att, 'dir');
 			}
-		#HTML ITS has no version, because HTML5 has no versioning
-		}elsif($att->local_name eq 'version'){
-			_att_delete($el, $att);
 		}else{
 			# default transformation for all other its:* atts
 			_htmlize_its_att($el, $att);

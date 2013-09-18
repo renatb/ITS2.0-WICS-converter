@@ -246,24 +246,3 @@ from standoff markup.
       </its:rules>
     </script>
     <div title="xml"></div>
-
-=== its:version
-its:version should be deleted (doesn't exist in its HTML)
---- input
-<xml xmlns:its="http://www.w3.org/2005/11/its" its:version="2.0">
-  hello
-</xml>
---- output
-<!DOCTYPE html>
-    <meta charset="utf-8">
-    <title>WICS</title>
-    <script type="application/its+xml">
-      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
-        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
-        <its:dirRule selector="//@*" dir="ltr"/>
-        <its:translateRule selector="//@*" translate="no"/>
-      </its:rules>
-    </script>
-    <div title="xml">
-     hello
-    </div>
