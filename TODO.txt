@@ -24,11 +24,13 @@ Basic Outline:
             - inline els=yes: just make these spans
             ✓- sub: explicitly set its-within-text to 'yes'
         ✓- domain
+            ✓- create global rule for each instance
         ✓- text analysis
         ✓- locale filter
         ✓- provenance
         ✓- external resource
-        - target pointer
+        ✓- target pointer
+            ✓- create rule to match all targets with all sources
         - id value
         - preserve space
         - localization quality issue

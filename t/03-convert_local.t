@@ -33,6 +33,7 @@ HTML skeleton, and creating default rules.
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
   <div title="xml"></div>
@@ -53,6 +54,7 @@ HTML skeleton, and creating default rules.
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xml">
@@ -77,6 +79,7 @@ HTML skeleton, and creating default rules.
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xml">
@@ -100,6 +103,7 @@ should be converted into id
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xml">
@@ -121,6 +125,7 @@ should be converted removed, having no HTML equivalent
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xml">
@@ -142,6 +147,7 @@ should be converted into lang
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xml">
@@ -166,6 +172,7 @@ mtype value of 'protected' is 'no' and 'x-its-translate-yes' is 'yes'
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xliff">
@@ -206,6 +213,7 @@ sibling <note annotates="source|target"> for sources and targets
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xliff">
@@ -245,6 +253,7 @@ mtype value of 'term' sets its-term='yes'
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xliff">
@@ -271,6 +280,7 @@ will translate as the default for div and span in HTML anyway.
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xliff">
@@ -302,6 +312,7 @@ requires the creation of a global rule
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
         <its:translateRule selector="id('ITS_2')" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
         <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
       </its:rules>
     </script>
@@ -342,6 +353,7 @@ requires the creation of a global rule
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xliff">
@@ -372,6 +384,7 @@ requires the creation of a global rule
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xliff">
@@ -399,6 +412,7 @@ requires the creation of a global rule
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xliff">
@@ -429,6 +443,7 @@ requires the creation of a global rule
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xliff">
@@ -457,6 +472,7 @@ from standoff markup.
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xml"></div>

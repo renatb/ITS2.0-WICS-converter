@@ -45,6 +45,7 @@ Elements are all renamed, so XPaths change accordingly.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule xmlns:foo="www.foo.com" selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
@@ -78,6 +79,7 @@ match here). This also triggers anti-inheritance rules.
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
@@ -120,6 +122,7 @@ Multiple matches of one attribute should only create one new element.
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
@@ -162,6 +165,7 @@ Multiple matches of one attribute should only create one new element.
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
       <its:translateRule selector="id('ITS_1')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:translateRule selector="id('ITS_1')" translate="yes"/>
     </its:rules>
     </script>
@@ -202,6 +206,7 @@ Nothing is done to comments. Just need a new XPath for the new document.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="/*/*[2]/*/*[2]/comment()"/>
       <its:domainRule selector="id('ITS_2')" domainPointer="/*/*[2]/*/*[3]/comment()"/>
     </its:rules>
@@ -246,6 +251,7 @@ into child elements, which also triggers anti-inheritance rules.
       <its:dirRule selector="id('ITS_2')" dir="ltr"/>
       <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
@@ -291,6 +297,7 @@ Multiple matches for one node should only create one new element.
       <its:dirRule selector="id('ITS_2')" dir="ltr"/>
       <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
@@ -335,6 +342,7 @@ Multiple matches for one node should only create one new element.
       <its:dirRule selector="id('ITS_2')" dir="ltr"/>
       <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
@@ -373,6 +381,7 @@ Nothing is done to these. Just need a new XPath.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="/*/*[2]/*/*[2]/text()"/>
     </its:rules>
     </script>
@@ -411,6 +420,7 @@ triggers anti-inheritance rules.
       <its:dirRule selector="id('ITS_2')" dir="ltr"/>
       <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
@@ -455,6 +465,7 @@ Multiple matches of same namespace should only create one new element.
       <its:dirRule selector="id('ITS_2')" dir="ltr"/>
       <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
@@ -497,6 +508,7 @@ test it.
       <its:dirRule selector="id('ITS_2')" dir="ltr"/>
       <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
@@ -532,6 +544,7 @@ Document match stays the same ("/").
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="/"/>
     </its:rules>
     </script>
@@ -564,6 +577,7 @@ Namespacing probably doesn't make a difference here; just covering the bases.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="/"/>
     </its:rules>
     </script>
@@ -597,6 +611,7 @@ it should just be copied to the final rule.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:idValueRule selector="id('ITS_1')" idValue="'p1'"/>
     </its:rules>
     </script>

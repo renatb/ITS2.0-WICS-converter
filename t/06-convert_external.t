@@ -31,6 +31,7 @@ __DATA__
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:translateRule xml:id="ext3rule" selector="id('root')" translate="yes"/>
       <foo:translateRule xmlns:foo="http://www.w3.org/2005/11/its" xml:id="ext2rule" selector="id('trmark')" translate="yes"/>
       <its:translateRule xml:id="ext1rule" selector="id('par')" translate="yes"/>

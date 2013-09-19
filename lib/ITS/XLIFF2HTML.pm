@@ -588,9 +588,30 @@ sub _update_rules {
 		}
 	}
 
+	$self->_source_target_rule($rules_el, $indent);
 	$self->_false_elt_inheritance_rules($rules_el, $indent);
 	$self->_false_att_inheritance_rules($rules_el, $indent);
 
+	return;
+}
+
+# create a single global rule to match sources and
+# targets to each other via a targetPointerRule
+sub _source_target_rule {
+	my ($self, $rules_el, $indent) = @_;
+	my $txt_node = $rules_el->append_text("\n" . $indent x 3, 'first_child');
+	my $target_rule = new_element(
+		'its:targetPointerRule',
+		{
+			selector => q<//*[@title='source']>,
+			targetPointer => q<../*[@title='target']>
+		}
+	);
+	$target_rule->paste($txt_node, 'after');
+	if($log->is_debug){
+		$log->debug('Creating new rule ' . node_log_id($target_rule) .
+			' to match convert <source> and <target> elements');
+	}
 	return;
 }
 

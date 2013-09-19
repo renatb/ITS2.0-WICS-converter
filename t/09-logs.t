@@ -52,6 +52,7 @@ Multiple matches of same namespace should only create one new element.
       <its:dirRule selector="id('ITS_2')" dir="ltr"/>
       <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
@@ -89,6 +90,7 @@ Setting id of <div> to ITS_1
 Setting id of <span> to ITS_2
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
 Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
+Creating new rule <its:targetPointerRule> to match convert <source> and <target> elements
 Creating new rule <its:translateRule> to prevent false inheritance
 Creating new rule <its:dirRule> to prevent false inheritance
 Creating new rule <its:localeFilterRule> to prevent false inheritance
