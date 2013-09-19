@@ -111,7 +111,7 @@ should be converted into id
     </div>
 
 === xml:space
-should be converted removed, having no HTML equivalent
+should be removed, having no HTML equivalent
 --- input
 <xml>
   <foo xml:space="preserve"/>
@@ -130,55 +130,6 @@ should be converted removed, having no HTML equivalent
     </script>
     <div title="xml">
       <div title="foo"></div>
-    </div>
-
-=== xml:lang
-should be converted into lang
---- input
-<xml>
-  <foo xml:lang="lut"/>
-</xml>
---- output
-<!DOCTYPE html>
-    <meta charset="utf-8">
-    <title>WICS</title>
-    <script type="application/its+xml">
-      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
-        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
-        <its:dirRule selector="//@*" dir="ltr"/>
-        <its:translateRule selector="//@*" translate="no"/>
-        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
-      </its:rules>
-    </script>
-    <div title="xml">
-      <div title="foo" lang="lut"></div>
-    </div>
-
-=== translate ITS
-translate att is converted as is;
-mtype value of 'protected' is 'no' and 'x-its-translate-yes' is 'yes'
---- input
-<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2">
-  <foo translate="no"/>
-  <mrk mtype="protected"/>
-  <mrk mtype="x-its-translate-yes"/>
-</xliff>
---- output
-<!DOCTYPE html>
-    <meta charset="utf-8">
-    <title>WICS</title>
-    <script type="application/its+xml">
-      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
-        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
-        <its:dirRule selector="//@*" dir="ltr"/>
-        <its:translateRule selector="//@*" translate="no"/>
-        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
-      </its:rules>
-    </script>
-    <div title="xliff">
-      <div title="foo" translate="no"></div>
-      <div title="mrk" translate="no"></div>
-      <div title="mrk" translate="yes"></div>
     </div>
 
 === localization note ITS
@@ -260,6 +211,55 @@ mtype value of 'term' sets its-term='yes'
       <div title="mrk" its-term="yes" its-term-confidence="5">foo</div>
       <div title="mrk" its-term="no">bar</div>
       <div title="mrk" its-term-info-ref="www.qux.com">qux</div>
+    </div>
+
+=== xml:lang
+should be converted into lang
+--- input
+<xml>
+  <foo xml:lang="lut"/>
+</xml>
+--- output
+<!DOCTYPE html>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+      </its:rules>
+    </script>
+    <div title="xml">
+      <div title="foo" lang="lut"></div>
+    </div>
+
+=== translate ITS
+translate att is converted as is;
+mtype value of 'protected' is 'no' and 'x-its-translate-yes' is 'yes'
+--- input
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <foo translate="no"/>
+  <mrk mtype="protected"/>
+  <mrk mtype="x-its-translate-yes"/>
+</xliff>
+--- output
+<!DOCTYPE html>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+      </its:rules>
+    </script>
+    <div title="xliff">
+      <div title="foo" translate="no"></div>
+      <div title="mrk" translate="no"></div>
+      <div title="mrk" translate="yes"></div>
     </div>
 
 === withinText ITS

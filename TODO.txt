@@ -32,7 +32,7 @@ Basic Outline:
         ✓- target pointer
             ✓- create rule to match all targets with all sources
         ✓- id value
-        - preserve space
+        ✓- preserve space
         - localization quality issue
         - localization quality issue rating
         - MT confidence

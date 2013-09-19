@@ -403,9 +403,6 @@ sub _process_att {
 		_att_rename($el, $att, 'id');
 	}elsif($name eq 'xml:lang'){
 		_att_rename($el, $att, 'lang');
-	# (xml:space means nothing in HTML)
-	}elsif($name eq 'xml:space'){
-		_att_delete($el, $att);
 	}else{
 		# then delete other attributes (they are illegal in HTML and we
 		# don't care about the contents)
@@ -451,16 +448,6 @@ sub _att_rename {
 	$att->remove;
 	#put att into empty namespace
 	$el->set_att($new_name, $value, '');
-	return;
-}
-
-sub _att_delete {
-	my ($el, $att) = @_;
-	if($log->is_debug){
-		$log->debug('removing ' . node_log_id($att) .
-			' from ' . node_log_id($el));
-	}
-	$att->remove;
 	return;
 }
 
