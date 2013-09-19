@@ -189,6 +189,13 @@ sibling <note annotates="source|target"> for sources and targets
     <target>bar</target>
     <note annotates="target" priority="2">target note</note>
   </trans-unit>
+  <trans-unit>
+    <source><mrk
+        xmlns:itsxlf="http://www.w3.org/ns/its-xliff/"
+        comment="foo note"
+        itsxlf:locNoteType="description">
+      foo</mrk></source>
+  </trans-unit>
 </xliff>
 --- output
 <!DOCTYPE html>
@@ -211,6 +218,11 @@ sibling <note annotates="source|target"> for sources and targets
         <div title="note">source note</div>
         <div title="target" its-loc-note="target note" its-loc-note-type="description">bar</div>
         <div title="note">target note</div>
+      </div>
+      <div title="trans-unit">
+        <div title="source">
+          <span its-loc-note="foo note" its-loc-note-type="description" title="mrk">
+            foo</span></div>
       </div>
     </div>
 

@@ -13,11 +13,13 @@ use ITS::XLIFF2HTML::LogUtils qw(node_log_id log_match log_new_rule);
 
 use feature 'state';
 our $HTML_NS = 'http://www.w3.org/1999/xhtml';
+my $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
 
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
 # VERSION
 
 __PACKAGE__->new()->convert($ARGV[0]) unless caller;
+
 
 =head1 METHODS
 
@@ -322,6 +324,21 @@ sub _process_att {
 	#an its-* HTML attribute that was already created
 	if(index($att->name, 'its-') == 0){
 		return;
+	# mtype also gives translate values
+	}elsif($att->name eq 'mtype'){
+		if($att->value eq 'protected'){
+			$el->set_att('translate', 'no');
+		}elsif($att->value eq 'x-its-translate-yes'){
+			$el->set_att('translate', 'yes');
+		}
+		$att->remove;
+	}elsif($att->name eq 'comment'){
+		_att_rename($el, $att, 'its-loc-note');
+	#itsxlf:* atts are all ITS
+	}elsif($att->namespace_URI eq $ITSXLF_NS){
+		if($att->local_name eq 'locNoteType'){
+			_att_rename($el, $att, 'its-loc-note-type');
+		}
 	# xml:* attributes with vaild HTML ITS semantics
 	}elsif($att->name eq 'xml:id'){
 		_att_rename($el, $att, 'id');
@@ -332,13 +349,6 @@ sub _process_att {
 		_att_delete($el, $att);
 	}elsif($att->name eq 'translate'){
 			_att_rename($el, $att, 'translate');
-	}elsif($att->name eq 'mtype'){
-		if($att->value eq 'protected'){
-			$el->set_att('translate', 'no');
-		}elsif($att->value eq 'x-its-translate-yes'){
-			$el->set_att('translate', 'yes');
-		}
-		$att->remove;
 	}else{
 		# then delete other attributes (they are illegal in HTML and we
 		# don't care about the contents)

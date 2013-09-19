@@ -8,9 +8,11 @@ Basic Outline:
     -Mostly keep the code that processes rules, but add a new index that allows lookup by matched element to facilitate ITS info comparison for label application later on.
     -Completely change out the code for processing individual elements. Convert XLIFF ITS to HTML5 ITS. This will require checking attributes and child elements, and besides creating attributes sometimes creating new global rules (external resource and domain are global-only outside of XLIFF).
         ✓- translate
-        - localization note
+            ✓- translate att
+            ✓- mtype value of 'protected' or 'x-its-translate-yes'
+        ✓- localization note
             ✓- <note>, taking into account 'annotates' attribute value
-            - comment and itsxlf:locNoteType
+            ✓- comment and itsxlf:locNoteType
         - terminology
         ✓- directionality
         - language information
