@@ -31,7 +31,7 @@ Basic Outline:
         ✓- external resource
         ✓- target pointer
             ✓- create rule to match all targets with all sources
-        - id value
+        ✓- id value
         - preserve space
         - localization quality issue
         - localization quality issue rating

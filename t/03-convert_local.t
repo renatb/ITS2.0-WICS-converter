@@ -453,6 +453,32 @@ requires the creation of a global rule
       </div>
     </div>
 
+=== ID value ITS
+requires the creation of a global rule
+--- input
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <trans-unit resname="foo_res">foo</trans-unit>
+</xliff>
+--- output
+<!DOCTYPE html>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+        <its:idValueRule selector="id('ITS_1')" idValue="'foo_res'"/>
+      </its:rules>
+    </script>
+    <div title="xliff">
+      <div title="trans-unit" id="ITS_1">
+        foo
+      </div>
+    </div>
+
 === standoff markup
 <script> tags are treated as text, so to ease testing we remove all whitespace
 from standoff markup.

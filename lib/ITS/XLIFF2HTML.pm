@@ -334,13 +334,14 @@ sub _rename_el {
 sub _process_att {
 	my ($self, $el, $att) = @_;
 
+	my $name = $att->name;
 	#an its-* HTML attribute that was already created
-	if(index($att->name, 'its-') == 0){
+	if(index($name, 'its-') == 0){
 		return;
-	}elsif($att->name eq 'translate'){
+	}elsif($name eq 'translate'){
 		_att_rename($el, $att, 'translate');
 	# mtype give translate and term values
-	}elsif($att->name eq 'mtype'){
+	}elsif($name eq 'mtype'){
 		my $value = $att->value;
 		if($value eq 'protected'){
 			$el->set_att('translate', 'no');
@@ -354,7 +355,7 @@ sub _process_att {
 			$el->set_att('its-term', 'no');
 		}
 		$att->remove;
-	}elsif($att->name eq 'comment'){
+	}elsif($name eq 'comment'){
 		_att_rename($el, $att, 'its-loc-note');
 	#itsxlf:* atts are all ITS
 	}elsif($att->namespace_URI eq $ITSXLF_NS){
@@ -370,7 +371,8 @@ sub _process_att {
 			$self->_add_new_rule_match(
 				'domain',
 				selector => $el,
-				domainPointer => $att);
+				domainPointer => $att
+			);
 			$att->remove;
 		}elsif($name eq 'externalResourceRef'){
 			_htmlize_its_att($el, $att);
@@ -388,13 +390,21 @@ sub _process_att {
 		#its:provRef
 		#its:provenanceRecordsRef
 		_htmlize_its_att($el, $att);
+	}elsif($name eq 'resname'){
+		$self->_add_new_rule_match(
+			'idValue',
+			selector => $el,
+			#create an ITS::DOM::Value consisting of the att value
+			idValue => $att->get_xpath(q<'> . $att->value . q<'>)
+		);
+		$att->remove;
 	# xml:* attributes with vaild HTML ITS semantics
-	}elsif($att->name eq 'xml:id'){
+	}elsif($name eq 'xml:id'){
 		_att_rename($el, $att, 'id');
-	}elsif($att->name eq 'xml:lang'){
+	}elsif($name eq 'xml:lang'){
 		_att_rename($el, $att, 'lang');
 	# (xml:space means nothing in HTML)
-	}elsif($att->name eq 'xml:space'){
+	}elsif($name eq 'xml:space'){
 		_att_delete($el, $att);
 	}else{
 		# then delete other attributes (they are illegal in HTML and we
@@ -405,7 +415,7 @@ sub _process_att {
 }
 
 # this is for when a local attribute in XLIFF maps only to a global rule
-# in HTML. %matches should be match names with nodes as values.
+# in HTML. %matches should be match names with Nodes (or Values) as values.
 sub _add_new_rule_match {
 	my ($self, $type, %matches) = @_;
 	my $rule_el = new_element(
@@ -415,8 +425,13 @@ sub _add_new_rule_match {
 	);
 	$rule_el->set_namespace( its_ns(), 'its' );
 	my $match;
-	while (my ($name, $el) = each %matches){
-		$match->{$name} = $self->{futureNodeManager}->create_future($el);
+	while (my ($name, $node) = each %matches){
+		#add Values as-is; add Nodes as FutureNodes
+		if( (ref $node) =~ /Value/){
+			$match->{$name} = $node;
+		}else{
+			$match->{$name} = $self->{futureNodeManager}->create_future($node);
+		}
 	}
 	my $rule = ITS::Rule->new($rule_el, $self->{dummy_container});
 	push @{ $self->{matches_index} }, [$rule, $match];
