@@ -76,17 +76,12 @@ sub convert {
 	$self->{futureNodeManager} =
 		new_manager($dom);
 
-	# [rule, {selector => futureNode, *pointer => futureNode...}]
-	my @matches;
-	# create closure to save all rule matches in @matches
-	my $match_processor = $self->_create_indexer(\@matches);
-
 	#iterate all document rules and their matches, indexing each one
 	for my $rule (@{ $ITS->get_rules }){
 		# process if compatible with HTML
 		if($rule->type ne 'preserveSpace'){
 			my $matches = $ITS->get_matches($rule);
-			$match_processor->($rule, $_) for @$matches;
+			$self->_index_match($rule, $_) for @$matches;
 		# otherwise, log the removal
 		}else{
 			$log->debug('removed ' . node_log_id($rule->element));
@@ -100,7 +95,7 @@ sub convert {
 	#grab the head to put rules in it
 	my $head = ( $html_doc->get_root->children )[0];
 	# paste FutureNodes and create new rules to match them
-	$self->_update_rules(\@matches, $head);
+	$self->_update_rules($head);
 
 	# return string pointer
 	return \($html_doc->string);
@@ -117,36 +112,31 @@ sub _is_rules_dom {
 	return;
 }
 
-# create an indexing sub for ITS::iterate_matches, and use a
-# closure to create an index of rule matches during processing
-# This sub pushes matches and FutureNodes onto $matches_index
-sub _create_indexer {
-	my ($self, $matches_index) = @_;
+# index a single set of rule matches
+# This sub pushes matches and FutureNodes onto $self->{matches_index} like so:
+# [rule, {selector => futureNode, *pointer => futureNode...}]
+sub _index_match{
+	my ($self, $rule, $matches) = @_;
+	log_match($rule, $matches, $log);
 
-	#iterate_matches passes in a rule and it's matched nodes
-	return sub {
-		my ($rule, $matches) = @_;
-		log_match($rule, $matches, $log);
-
-		# create FutureNodes to represent each matched node;
-		# $futureNodes is $match, but with FutureNodes instead of Nodes
-		my $futureNodes = {};
-		# $name is 'selector', 'locNotePointer', etc.
-		for my $name (keys %$matches) {
-			my $match = $matches->{$name};
-			# nothing special for literal values
-			if((ref $match) =~ /Value$/){
-				$futureNodes->{$name} = $match;
-			}
-			# store futureNode in place of match in new structure
-			else{
-				$futureNodes->{$name} =
-					 $self->{futureNodeManager}->create_future($match);
-			}
+	# create FutureNodes to represent each matched node;
+	# $futureNodes is $match, but with FutureNodes instead of Nodes
+	my $futureNodes = {};
+	# $name is 'selector', 'locNotePointer', etc.
+	for my $name (keys %$matches) {
+		my $match = $matches->{$name};
+		# nothing special for literal values
+		if((ref $match) =~ /Value$/){
+			$futureNodes->{$name} = $match;
 		}
-		push @{ $matches_index }, [$rule, $futureNodes];
-		return;
-	};
+		# store futureNode in place of match in new structure
+		else{
+			$futureNodes->{$name} =
+				 $self->{futureNodeManager}->create_future($match);
+		}
+	}
+	push @{ $self->{matches_index} }, [$rule, $futureNodes];
+	return;
 }
 
 # Pass in document to be htmlized and a hash containing node->futureNode ref pairs
@@ -488,7 +478,8 @@ sub _get_script {
 # make sure all rule matches are elements, and create new rules that give them
 # the same information as in the original document
 sub _update_rules {
-	my ($self, $matches, $head) = @_;
+	my ($self, $head) = @_;
+	my $matches = $self->{matches_index};
 
 	#cause all DOM changes to occur
 	$self->{futureNodeManager}->realize_all;
