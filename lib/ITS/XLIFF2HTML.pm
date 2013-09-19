@@ -373,6 +373,12 @@ sub _process_att {
 				domainPointer => $att);
 			$att->remove;
 		}
+	}elsif( $att->namespace_URI eq its_ns() ){
+		#its:taConfidence
+		#its:annotatorsRef
+		#its:taIdentRef
+		#its:taClassRef
+		_htmlize_its_att($el, $att);
 	# xml:* attributes with vaild HTML ITS semantics
 	}elsif($att->name eq 'xml:id'){
 		_att_rename($el, $att, 'id');
