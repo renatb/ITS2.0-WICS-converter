@@ -33,7 +33,7 @@ Basic Outline:
             ✓- create rule to match all targets with all sources
         ✓- id value
         ✓- preserve space
-        - localization quality issue
+        ✓- localization quality issue
         - localization quality issue rating
         - MT confidence
         - allowed characters

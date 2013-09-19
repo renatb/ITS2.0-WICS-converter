@@ -110,28 +110,6 @@ should be converted into id
       <div title="foo" id="bar"></div>
     </div>
 
-=== xml:space
-should be removed, having no HTML equivalent
---- input
-<xml>
-  <foo xml:space="preserve"/>
-</xml>
---- output
-<!DOCTYPE html>
-    <meta charset="utf-8">
-    <title>WICS</title>
-    <script type="application/its+xml">
-      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
-        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
-        <its:dirRule selector="//@*" dir="ltr"/>
-        <its:translateRule selector="//@*" translate="no"/>
-        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
-      </its:rules>
-    </script>
-    <div title="xml">
-      <div title="foo"></div>
-    </div>
-
 === localization note ITS
 child <note> for trans-units
 sibling <note annotates="source|target"> for sources and targets
@@ -476,6 +454,75 @@ requires the creation of a global rule
     <div title="xliff">
       <div title="trans-unit" id="ITS_1">
         foo
+      </div>
+    </div>
+
+=== preserve space ITS
+xml:space should be removed, having no HTML equivalent
+--- input
+<xml>
+  <foo xml:space="preserve"/>
+</xml>
+--- output
+<!DOCTYPE html>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+      </its:rules>
+    </script>
+    <div title="xml">
+      <div title="foo"></div>
+    </div>
+
+=== localaization quality issue ITS
+--- input
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its">
+  <trans-unit>
+   <source>This is the content</source>
+   <target its:locQualityIssuesRef="#lqi1">c'es le contenu</target>
+  </trans-unit>
+  <trans-unit>
+   <source>This is the content</source>
+   <target its:locQualityIssueType="misspelling"
+           its:locQualityIssueComment="'c'es' is unknown."
+           its:locQualityIssueSeverity="50">c'es le contenu</target>
+  </trans-unit>
+</xliff>
+--- output
+<!DOCTYPE html>
+    <meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+      </its:rules>
+    </script>
+    <div title=xliff>
+      <div title=trans-unit>
+        <div title=source>This is the content</div>
+        <div
+            its-loc-quality-issues-ref="#lqi1"
+            title="target">
+          c'es le contenu
+        </div>
+      </div>
+      <div title=trans-unit>
+        <div title=source>This is the content</div>
+        <div
+            its-loc-quality-issue-comment="'c'es' is unknown."
+            its-loc-quality-issue-severity="50"
+            its-loc-quality-issue-type="misspelling"
+            title="target">
+          c'es le contenu
+        </div>
       </div>
     </div>
 

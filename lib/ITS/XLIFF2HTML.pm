@@ -389,6 +389,10 @@ sub _process_att {
 		#its:revOrgRef
 		#its:provRef
 		#its:provenanceRecordsRef
+		#its:locQualityIssueType
+		#its:locQualityIssueComment
+		#its:locQualityIssueSeverity
+		#its:locQualityIssuesRef
 		_htmlize_its_att($el, $att);
 	}elsif($name eq 'resname'){
 		$self->_add_new_rule_match(
