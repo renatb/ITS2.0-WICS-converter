@@ -253,6 +253,38 @@ mtype value of 'term' sets its-term='yes'
       <div title="mrk" its-term-info-ref="www.qux.com">qux</div>
     </div>
 
+=== withinText ITS
+'nested' for sub; trans-unit is 'no' and other inlines are 'yes', but these
+will translate as the default for div and span in HTML anyway.
+--- input
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <trans-unit>
+    <source><it><sub>foo</sub></it></source>
+  </trans-unit>
+</xliff>
+--- output
+<!DOCTYPE html>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+      </its:rules>
+    </script>
+    <div title="xliff">
+      <div title="trans-unit">
+        <div title="source">
+          <span title="it">
+            <span title="sub" its-within-text="nested">foo
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+
 === standoff markup
 <script> tags are treated as text, so to ease testing we remove all whitespace
 from standoff markup.

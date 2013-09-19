@@ -14,6 +14,8 @@ use ITS::XLIFF2HTML::LogUtils qw(node_log_id log_match log_new_rule);
 use feature 'state';
 our $HTML_NS = 'http://www.w3.org/1999/xhtml';
 my $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
+my $XLF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
+my @inline_els = qw(g x bx ex bpt ept sub it ph);
 
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
 # VERSION
@@ -195,9 +197,12 @@ sub _traverse_convert{
 		$log->debug('processing ' . node_log_id($el));
 	}
 
+	# check all of the atts for ITS data and delete the others
 	$self->_convert_atts($el);
-
+	# convert child <note> elements into ITS localizaton notes
 	$self->_convert_note($el);
+	# set its-within-text value
+	$self->_set_within_text($el);
 
 	# strip namespacing; requires special care because it replaces
 	# an element, requiring reworking of FutureNode indices
@@ -284,7 +289,17 @@ sub _convert_note {
 		$noted_el->set_att('its-loc-note-type',
 			$priority > 1 ? 'description' : 'alert');
 	}
+	return;
+}
 
+# set its-within-text value to 'nested' for <sub> elements
+sub _set_within_text {
+	my ($self, $el) = @_;
+
+	if($el->namespace_URI eq $XLF_NS and
+			$el->local_name eq 'sub'){
+		$el->set_att('its-within-text', 'nested');
+	}
 	return;
 }
 
@@ -324,6 +339,8 @@ sub _process_att {
 	#an its-* HTML attribute that was already created
 	if(index($att->name, 'its-') == 0){
 		return;
+	}elsif($att->name eq 'translate'){
+		_att_rename($el, $att, 'translate');
 	# mtype give translate and term values
 	}elsif($att->name eq 'mtype'){
 		my $value = $att->value;
@@ -360,8 +377,6 @@ sub _process_att {
 	# (xml:space means nothing in HTML)
 	}elsif($att->name eq 'xml:space'){
 		_att_delete($el, $att);
-	}elsif($att->name eq 'translate'){
-			_att_rename($el, $att, 'translate');
 	}else{
 		# then delete other attributes (they are illegal in HTML and we
 		# don't care about the contents)

@@ -18,8 +18,11 @@ Basic Outline:
             ✓- itsxlf:termInfoRef
             ✓- itsxlf:termConfidence
         ✓- directionality
-        - language information
+        ✓- language information
         - withinText
+            - trans-unit=no: just make trans-unit a div
+            - inline els=yes: just make these spans
+            ✓- sub: explicitly set its-within-text to 'yes'
         - domain
         - text analysis
         - locale filter
