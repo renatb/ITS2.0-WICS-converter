@@ -226,6 +226,33 @@ sibling <note annotates="source|target"> for sources and targets
       </div>
     </div>
 
+=== terminology ITS
+mtype value of 'term' sets its-term='yes'
+--- input
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:itsxlf="http://www.w3.org/ns/its-xliff/">
+  <mrk mtype="term" itsxlf:termConfidence="5">foo</mrk>
+  <mrk mtype="x-its-term-no">bar</mrk>
+  <mrk itsxlf:termInfoRef="www.qux.com">qux</mrk>
+</xliff>
+--- output
+<!DOCTYPE html>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+      </its:rules>
+    </script>
+    <div title="xliff">
+      <div title="mrk" its-term="yes" its-term-confidence="5">foo</div>
+      <div title="mrk" its-term="no">bar</div>
+      <div title="mrk" its-term-info-ref="www.qux.com">qux</div>
+    </div>
+
 === standoff markup
 <script> tags are treated as text, so to ease testing we remove all whitespace
 from standoff markup.

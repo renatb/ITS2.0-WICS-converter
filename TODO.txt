@@ -13,7 +13,10 @@ Basic Outline:
         ✓- localization note
             ✓- <note>, taking into account 'annotates' attribute value
             ✓- comment and itsxlf:locNoteType
-        - terminology
+        ✓- terminology
+            ✓- mtype value of 'term' or 'x-its-term-no'
+            ✓- itsxlf:termInfoRef
+            ✓- itsxlf:termConfidence
         ✓- directionality
         - language information
         - withinText

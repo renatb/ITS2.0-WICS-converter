@@ -324,20 +324,33 @@ sub _process_att {
 	#an its-* HTML attribute that was already created
 	if(index($att->name, 'its-') == 0){
 		return;
-	# mtype also gives translate values
+	# mtype give translate and term values
 	}elsif($att->name eq 'mtype'){
-		if($att->value eq 'protected'){
+		my $value = $att->value;
+		if($value eq 'protected'){
 			$el->set_att('translate', 'no');
-		}elsif($att->value eq 'x-its-translate-yes'){
+		}elsif($value eq 'x-its-translate-yes'){
 			$el->set_att('translate', 'yes');
+		}elsif($value eq 'term'){
+			$att->remove;
+			$el->set_att('its-term', 'yes');
+		}elsif($value eq 'x-its-term-no'){
+			$att->remove;
+			$el->set_att('its-term', 'no');
 		}
 		$att->remove;
 	}elsif($att->name eq 'comment'){
 		_att_rename($el, $att, 'its-loc-note');
 	#itsxlf:* atts are all ITS
 	}elsif($att->namespace_URI eq $ITSXLF_NS){
-		if($att->local_name eq 'locNoteType'){
-			_att_rename($el, $att, 'its-loc-note-type');
+		my $name = $att->local_name;
+		#TODO: this might get to be simplified
+		if($name eq 'locNoteType'){
+			_htmlize_its_att($el, $att);
+		}elsif($name eq 'termInfoRef'){
+			_htmlize_its_att($el, $att);
+		}elsif($name eq 'termConfidence'){
+			_htmlize_its_att($el, $att);
 		}
 	# xml:* attributes with vaild HTML ITS semantics
 	}elsif($att->name eq 'xml:id'){
@@ -628,6 +641,12 @@ sub _false_att_inheritance_rules {
 }
 
 1;
+
+=head1 CAVEATS
+
+The xml:id attribute is preserved as the C<id> attribute in HTML. As no DTDs
+or other validating documents are utilized, no other attributes are treated
+as an element's unique ID or converted into HTML's <id> attribute.
 
 =head1 C<TODO>
 
