@@ -284,6 +284,39 @@ will translate as the default for div and span in HTML anyway.
       </div>
     </div>
 
+=== domain ITS
+requires the creation of a global rule
+--- input
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:itsxlf="http://www.w3.org/ns/its-xliff/">
+  <mrk itsxlf:domains="meta-syntactic variables">foo</mrk>
+</xliff>
+--- output
+<!DOCTYPE html>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:translateRule selector="id('ITS_2')" translate="no"/>
+        <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
+      </its:rules>
+    </script>
+    <div title="xliff">
+      <div title="mrk" id="ITS_1">
+        <span
+            class="_ITS_ATT"
+            id="ITS_2"
+            its-within-text="no"
+            title="itsxlf:domains">
+          meta-syntactic variables
+        </span>
+        foo
+      </div>
+    </div>
 
 === standoff markup
 <script> tags are treated as text, so to ease testing we remove all whitespace

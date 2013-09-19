@@ -6,6 +6,7 @@ our @CARP_NOT = qw(ITS);
 use Log::Any qw($log);
 
 use ITS qw(its_ns);
+use ITS::Rule;
 use ITS::DOM;
 use ITS::DOM::Element qw(new_element);
 use ITS::XLIFF2HTML::FutureNodeManager qw(new_manager);
@@ -44,7 +45,14 @@ sub new {
 		title => 'WICS',
 		%args,
 	);
-	return bless \%args, $class;
+
+	my $self = bless \%args, $class;
+
+	#this is used when creating new rules out of local XLIFF ITS markup
+	$self->{dummy_container} = ITS::RuleContainer->new(
+		new_element( 'rules', {}, undef, its_ns() )
+	);
+	return $self;
 }
 
 =head2 C<convert>
@@ -358,6 +366,12 @@ sub _process_att {
 			_htmlize_its_att($el, $att);
 		}elsif($name eq 'termConfidence'){
 			_htmlize_its_att($el, $att);
+		}elsif($name eq 'domains'){
+			$self->_add_new_rule_match(
+				'domain',
+				selector => $el,
+				domainPointer => $att);
+			$att->remove;
 		}
 	# xml:* attributes with vaild HTML ITS semantics
 	}elsif($att->name eq 'xml:id'){
@@ -373,6 +387,24 @@ sub _process_att {
 		$att->remove;
 	}
 	return;
+}
+
+# this is for when a local attribute in XLIFF maps only to a global rule
+# in HTML. %matches should be match names with nodes as values.
+sub _add_new_rule_match {
+	my ($self, $type, %matches) = @_;
+	my $rule_el = new_element(
+		"${type}Rule",
+		{},
+		undef,
+	);
+	$rule_el->set_namespace( its_ns(), 'its' );
+	my $match;
+	while (my ($name, $el) = each %matches){
+		$match->{$name} = $self->{futureNodeManager}->create_future($el);
+	}
+	my $rule = ITS::Rule->new($rule_el, $self->{dummy_container});
+	push @{ $self->{matches_index} }, [$rule, $match];
 }
 
 #rename given att on given el to new_name.

@@ -1,6 +1,6 @@
 XLIFF to HTML converter
 
-Next:
+Current/next: itsxlf:domains needs to produce a domainRule with a domainPointer
 
 Basic Outline:
 
@@ -23,7 +23,7 @@ Basic Outline:
             - trans-unit=no: just make trans-unit a div
             - inline els=yes: just make these spans
             ✓- sub: explicitly set its-within-text to 'yes'
-        - domain
+        ✓- domain
         - text analysis
         - locale filter
         - provenance
