@@ -195,6 +195,8 @@ sub _traverse_convert{
 
 	$self->_convert_atts($el);
 
+	$self->_convert_note($el);
+
 	# strip namespacing; requires special care because it replaces
 	# an element, requiring reworking of FutureNode indices
 	my $new_el = $el->strip_ns;
@@ -244,6 +246,46 @@ sub _convert_atts {
 	return;
 }
 
+#<note> elements are converted into its-loc-note
+sub _convert_note {
+	my ($self, $el) = @_;
+	my $notes = $el->child_els('note');
+	for my $note (@$notes){
+		my $annotates = $note->att('annotates') || 'general';
+		my $priority = $note->att('priority') || '1';
+		#the element to be given a note
+		my $noted_el;
+		if($annotates eq '' or $annotates eq 'general'){
+			$noted_el = $el;
+		}
+		if($annotates eq 'target'){
+			if(my ($target) = @{$el->child_els('target')}){
+				$noted_el = $target;
+			}else{
+				$log->warn('Element ' . node_log_id($note) .
+					q< annotates target, but target doesn't exist.>);
+				next;
+			}
+		}
+		if($annotates eq 'source'){
+			# for a valid document this should never be false; just being
+			# safe here
+			if(my ($source) = @{$el->child_els('source')}){
+				$noted_el = $source;
+			}else{
+				$log->warn('Element ' . node_log_id($note) .
+					q< annotates source, but source doesn't exist.>);
+				next;
+			}
+		}
+		$noted_el->set_att('its-loc-note', $note->text);
+		$noted_el->set_att('its-loc-note-type',
+			$priority > 1 ? 'description' : 'alert');
+	}
+
+	return;
+}
+
 # rename the given element to either div or span; return true for div,
 # false for span.
 # args: element, boolean for existing block child (div, etc.),
@@ -277,8 +319,11 @@ sub _rename_el {
 sub _process_att {
 	my ($self, $el, $att) = @_;
 
+	#an its-* HTML attribute that was already created
+	if(index($att->name, 'its-') == 0){
+		return;
 	# xml:* attributes with vaild HTML ITS semantics
-	if($att->name eq 'xml:id'){
+	}elsif($att->name eq 'xml:id'){
 		_att_rename($el, $att, 'id');
 	}elsif($att->name eq 'xml:lang'){
 		_att_rename($el, $att, 'lang');

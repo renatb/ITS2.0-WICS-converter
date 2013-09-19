@@ -174,6 +174,46 @@ mtype value of 'protected' is 'no' and 'x-its-translate-yes' is 'yes'
       <div title="mrk" translate="yes"></div>
     </div>
 
+=== localization note ITS
+child <note> for trans-units
+sibling <note annotates="source|target"> for sources and targets
+--- input
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <trans-unit>
+    <source>foo</source>
+    <note>Some note</note>
+  </trans-unit>
+  <trans-unit>
+    <source>foo</source>
+    <note annotates="source" priority="1">source note</note>
+    <target>bar</target>
+    <note annotates="target" priority="2">target note</note>
+  </trans-unit>
+</xliff>
+--- output
+<!DOCTYPE html>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+      </its:rules>
+    </script>
+    <div title="xliff">
+      <div title="trans-unit" its-loc-note="Some note" its-loc-note-type="alert">
+        <div title="source">foo</div>
+        <div title="note">Some note</div>
+      </div>
+      <div title="trans-unit">
+        <div title="source" its-loc-note="source note" its-loc-note-type="alert">foo</div>
+        <div title="note">source note</div>
+        <div title="target" its-loc-note="target note" its-loc-note-type="description">bar</div>
+        <div title="note">target note</div>
+      </div>
+    </div>
+
 === standoff markup
 <script> tags are treated as text, so to ease testing we remove all whitespace
 from standoff markup.
