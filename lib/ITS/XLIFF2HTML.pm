@@ -378,6 +378,7 @@ sub _process_att {
 		#its:annotatorsRef
 		#its:taIdentRef
 		#its:taClassRef
+		#its:localeFilterList
 		_htmlize_its_att($el, $att);
 	# xml:* attributes with vaild HTML ITS semantics
 	}elsif($att->name eq 'xml:id'){
