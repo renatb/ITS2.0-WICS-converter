@@ -27,7 +27,7 @@ Basic Outline:
         ✓- text analysis
         ✓- locale filter
         ✓- provenance
-        - external resource
+        ✓- external resource
         - target pointer
         - id value
         - preserve space

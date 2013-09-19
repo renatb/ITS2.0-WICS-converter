@@ -372,6 +372,8 @@ sub _process_att {
 				selector => $el,
 				domainPointer => $att);
 			$att->remove;
+		}elsif($name eq 'externalResourceRef'){
+			_htmlize_its_att($el, $att);
 		}
 	}elsif( $att->namespace_URI eq its_ns() ){
 		#its:taConfidence
