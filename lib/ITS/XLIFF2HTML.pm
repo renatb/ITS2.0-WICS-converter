@@ -131,8 +131,7 @@ sub _index_match{
 	# $futureNodes is $match, but with FutureNodes instead of Nodes
 	my $futureNodes = {};
 	# $name is 'selector', 'locNotePointer', etc.
-	for my $name (keys %$matches) {
-		my $match = $matches->{$name};
+	while (my ($name, $match) = each %$matches) {
 		# nothing special for literal values
 		if((ref $match) =~ /Value$/){
 			$futureNodes->{$name} = $match;
@@ -351,18 +350,12 @@ sub _process_att {
 		my $name = $att->local_name;
 		#TODO: this might get to be simplified
 		if($name eq 'domains'){
-			$self->_add_new_rule_match(
-				'domain',
-				selector => $el,
-				domainPointer => $att
-			);
+			$self->_add_new_rule_match('domain',
+				{selector => $el, domainPointer => $att});
 			$att->remove;
 		}elsif($name eq 'externalResourceRef'){
-			$self->_add_new_rule_match(
-				'externalResourceRef',
-				selector => $el,
-				externalResourceRefPointer => $att
-			);
+			$self->_add_new_rule_match('externalResourceRef',
+				{selector => $el, externalResourceRefPointer => $att});
 			$att->remove;
 		#all other known itsxlf atts translate directly into HTML ITS atts
 		}else{
@@ -372,12 +365,12 @@ sub _process_att {
 	}elsif( $att->namespace_URI eq its_ns() ){
 		_htmlize_its_att($el, $att);
 	}elsif($name eq 'resname'){
-		$self->_add_new_rule_match(
-			'idValue',
-			selector => $el,
-			#create an ITS::DOM::Value consisting of the att value
-			idValue => $att->get_xpath(q<'> . $att->value . q<'>)
-		);
+		$self->_add_new_rule_match('idValue',
+			{
+				selector => $el,
+				#create an ITS::DOM::Value consisting of the att value
+				idValue => $att->get_xpath(q<'> . $att->value . q<'>)
+			});
 		$att->remove;
 	# xml:* attributes with vaild HTML ITS semantics
 	}elsif($name eq 'xml:id'){
@@ -392,27 +385,21 @@ sub _process_att {
 	return;
 }
 
-# this is for when a local attribute in XLIFF maps only to a global rule
-# in HTML. %matches should be match names with Nodes (or Values) as values.
+# Creates a new global rule with the given match.
+# This is for when a local attribute in XLIFF maps only to a global rule
+# in HTML. $type is the type of rule to be created. $match should be in
+# the same structure returned by ITS::get_matches.
 sub _add_new_rule_match {
-	my ($self, $type, %matches) = @_;
+	my ($self, $type, $match) = @_;
 	my $rule_el = new_element(
 		"${type}Rule",
 		{},
 		undef,
 	);
 	$rule_el->set_namespace( its_ns(), 'its' );
-	my $match;
-	while (my ($name, $node) = each %matches){
-		#add Values as-is; add Nodes as FutureNodes
-		if( (ref $node) =~ /Value/){
-			$match->{$name} = $node;
-		}else{
-			$match->{$name} = $self->{futureNodeManager}->create_future($node);
-		}
-	}
 	my $rule = ITS::Rule->new($rule_el, $self->{dummy_container});
-	push @{ $self->{matches_index} }, [$rule, $match];
+	$self->_index_match($rule, $match);
+	return;
 }
 
 #rename given att on given el to new_name.
