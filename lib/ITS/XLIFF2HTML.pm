@@ -393,7 +393,7 @@ sub _add_new_rule_match {
 	my ($self, $type, $match) = @_;
 	my $rule_el = new_element(
 		"${type}Rule",
-		{},
+		{selector => 'dummy'},
 		undef,
 	);
 	$rule_el->set_namespace( its_ns(), 'its' );

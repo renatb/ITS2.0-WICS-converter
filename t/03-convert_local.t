@@ -401,7 +401,7 @@ requires the creation of a global rule
         <its:translateRule selector="//@*" translate="no"/>
         <its:translateRule selector="id('ITS_1')" translate="no"/>
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
-        <its:externalResourceRefRule externalResourceRefPointer="id('ITS_1')" selector="id('ITS_2')"/>
+        <its:externalResourceRefRule selector="id('ITS_2')" externalResourceRefPointer="id('ITS_1')"/>
       </its:rules>
     </script>
     <div title="xliff">
