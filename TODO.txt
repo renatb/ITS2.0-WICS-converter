@@ -35,7 +35,7 @@ Basic Outline:
         ✓- preserve space
         ✓- localization quality issue
         ✓- localization quality issue rating
-        - MT confidence
+        ✓- MT confidence
         - allowed characters
         - storage size
     ✓-Delete other attributes (instead of making them into futures)

@@ -396,7 +396,7 @@ sub _process_att {
 		#its:locQualityRatingScore
 		#its:locQualityRatingScoreThreshold
 		#its:locQualityRatingProfileRef
-		#
+		#its:mtConfidence
 		_htmlize_its_att($el, $att);
 	}elsif($name eq 'resname'){
 		$self->_add_new_rule_match(
