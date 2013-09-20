@@ -36,7 +36,7 @@ Basic Outline:
         ✓- localization quality issue
         ✓- localization quality issue rating
         ✓- MT confidence
-        - allowed characters
+        ✓- allowed characters
         - storage size
     ✓-Delete other attributes (instead of making them into futures)
     ✓-no more handling of <its:span>
