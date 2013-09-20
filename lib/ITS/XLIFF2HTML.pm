@@ -398,6 +398,9 @@ sub _process_att {
 		#its:locQualityRatingProfileRef
 		#its:mtConfidence
 		#its:allowedCharacters
+		#its:storageSize
+		#its:storageEncoding
+		#its:lineBreakType
 		_htmlize_its_att($el, $att);
 	}elsif($name eq 'resname'){
 		$self->_add_new_rule_match(

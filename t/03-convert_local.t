@@ -603,6 +603,42 @@ xml:space should be removed, having no HTML equivalent
       <div title="source" its-allowed-characters="[a-z]">text</div>
     </div>
 
+=== storage size ITS
+--- input
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its">
+  <trans-unit id="1">
+    <source
+        its:storageSize="12"
+        its:storageEncoding="UTF-16"
+        its:lineBreakType="crlf">Text</source>
+  </trans-unit>
+</xliff>
+--- output
+<!DOCTYPE html>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+      </its:rules>
+    </script>
+    <div title="xliff">
+      <div title="trans-unit">
+        <div
+            title="source"
+            its-storage-size="12"
+            its-storage-encoding="UTF-16"
+            its-line-break-type="crlf">
+          Text
+        </div>
+      </div>
+    </div>
+
 === standoff markup
 <script> tags are treated as text, so to ease testing we remove all whitespace
 from standoff markup.

@@ -37,7 +37,7 @@ Basic Outline:
         ✓- localization quality issue rating
         ✓- MT confidence
         ✓- allowed characters
-        - storage size
+        ✓- storage size
     ✓-Delete other attributes (instead of making them into futures)
     ✓-no more handling of <its:span>
     ✓-no more global rule to set withinText=no for created <span>'s (withinText value will be set explicitly where it matters)
