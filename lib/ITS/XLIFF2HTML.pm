@@ -361,13 +361,7 @@ sub _process_att {
 	}elsif($att->namespace_URI eq $ITSXLF_NS){
 		my $name = $att->local_name;
 		#TODO: this might get to be simplified
-		if($name eq 'locNoteType'){
-			_htmlize_its_att($el, $att);
-		}elsif($name eq 'termInfoRef'){
-			_htmlize_its_att($el, $att);
-		}elsif($name eq 'termConfidence'){
-			_htmlize_its_att($el, $att);
-		}elsif($name eq 'domains'){
+		if($name eq 'domains'){
 			$self->_add_new_rule_match(
 				'domain',
 				selector => $el,
@@ -381,31 +375,12 @@ sub _process_att {
 				externalResourceRefPointer => $att
 			);
 			$att->remove;
+		#all other known itsxlf atts translate directly into HTML ITS atts
+		}else{
+			_htmlize_its_att($el, $att);
 		}
+	#its:* atts
 	}elsif( $att->namespace_URI eq its_ns() ){
-		#its:taConfidence
-		#its:annotatorsRef
-		#its:taIdentRef
-		#its:taClassRef
-		#its:localeFilterList
-		#its:person
-		#its:orgRef
-		#its:revPerson
-		#its:revOrgRef
-		#its:provRef
-		#its:provenanceRecordsRef
-		#its:locQualityIssueType
-		#its:locQualityIssueComment
-		#its:locQualityIssueSeverity
-		#its:locQualityIssuesRef
-		#its:locQualityRatingScore
-		#its:locQualityRatingScoreThreshold
-		#its:locQualityRatingProfileRef
-		#its:mtConfidence
-		#its:allowedCharacters
-		#its:storageSize
-		#its:storageEncoding
-		#its:lineBreakType
 		_htmlize_its_att($el, $att);
 	}elsif($name eq 'resname'){
 		$self->_add_new_rule_match(
@@ -421,7 +396,7 @@ sub _process_att {
 	}elsif($name eq 'xml:lang'){
 		_att_rename($el, $att, 'lang');
 	}else{
-		# then delete other attributes (they are illegal in HTML and we
+		# delete other attributes (they are illegal in HTML and we
 		# don't care about the contents)
 		$att->remove;
 	}
