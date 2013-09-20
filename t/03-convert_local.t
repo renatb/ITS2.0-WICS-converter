@@ -421,13 +421,23 @@ requires the creation of a global rule
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:translateRule selector="id('ITS_1')" translate="no"/>
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+        <its:externalResourceRefRule externalResourceRefPointer="id('ITS_1')" selector="id('ITS_2')"/>
       </its:rules>
     </script>
     <div title="xliff">
       <div title="source">
         Image:
-        <span title="x" its-external-resource-ref="example.png"></span>
+        <span id="ITS_2" title="x">
+          <span
+              class="_ITS_ATT"
+              id="ITS_1"
+              its-within-text="no"
+              title="itsxlf:externalResourceRef">
+            example.png
+          </span>
+        </span>
       </div>
     </div>
 

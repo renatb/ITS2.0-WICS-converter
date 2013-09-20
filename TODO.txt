@@ -29,6 +29,7 @@ Basic Outline:
         ✓- locale filter
         ✓- provenance
         ✓- external resource
+            ✓- create global rule for each instance
         ✓- target pointer
             ✓- create rule to match all targets with all sources
         ✓- id value
