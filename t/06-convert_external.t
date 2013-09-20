@@ -43,9 +43,9 @@ __DATA__
     <div id="body" title="body">
       <div id="par" title="par">
         The
-        <span id="trmark" title="trmark">
+        <div id="trmark" title="trmark">
           World Wide Web Consortium
-        </span>
+        </div>
         is making the World Wide Web worldwide!
       </div>
     </div>

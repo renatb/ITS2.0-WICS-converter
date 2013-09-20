@@ -15,15 +15,15 @@ filters {
 for my $block(blocks()){
     my $html = $block->input;
     # print $html;
-    eq_or_diff_html($html, $block->output, $block->name . ' (HTML output)');
+    eq_or_diff_html($html, $block->output, $block->name);
 }
 
 __DATA__
 === html skeleton
-Tests basic conversion of root element into <div>, placing contents into an
-HTML skeleton, and creating default rules.
+Tests basic conversion of root element into <div>, removing namespaces,
+placing contents into an HTML skeleton, and creating default rules.
 --- input
-<xml/>
+<xliff/>
 --- output
 <!DOCTYPE html>
     <meta charset="utf-8">
@@ -36,15 +36,17 @@ HTML skeleton, and creating default rules.
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-  <div title="xml"></div>
+  <div title="xliff"></div>
 
 === correct div and span
+inlines are <span>, source and target are <p>, everything else is <div>
 --- input
-<xml>
-  <stuff/>
-  <foo>Some <i>stuff</i></foo>
-  <bar>Some <b><i>real</i></b> stuff</bar>
-</xml>
+<xliff>
+  <trans-unit>
+    <source>Some <mrk>stuff</mrk></source>
+    <target>Some <mrk>stuff</mrk></target>
+  </trans-unit>
+</xliff>
 --- output
 <!DOCTYPE html>
     <meta charset="utf-8">
@@ -57,34 +59,10 @@ HTML skeleton, and creating default rules.
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <div title="xml">
-      <div title="stuff"></div>
-      <div title="foo">Some <span title="i">stuff</span></div>
-      <div title="bar">Some <span title="b"><span title="i">real</span></span> stuff</div>
-    </div>
-
-=== namespaces stripped
---- input
-<xml xmlns:bar="bar.io">
-  <bar:foo>
-    <qux/>
-  </bar:foo>
-</xml>
---- output
-<!DOCTYPE html>
-    <meta charset="utf-8">
-    <title>WICS</title>
-    <script type="application/its+xml">
-      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
-        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
-        <its:dirRule selector="//@*" dir="ltr"/>
-        <its:translateRule selector="//@*" translate="no"/>
-        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
-      </its:rules>
-    </script>
-    <div title="xml">
-      <div title="bar:foo">
-        <div title="qux"></div>
+    <div title="xliff">
+      <div title=trans-unit>
+        <p title=source>Some <span title=mrk>stuff</span></p>
+        <p title=target>Some <span title=mrk>stuff</span></p>
       </div>
     </div>
 
@@ -147,19 +125,19 @@ sibling <note annotates="source|target"> for sources and targets
     </script>
     <div title="xliff">
       <div title="trans-unit" its-loc-note="Some note" its-loc-note-type="alert">
-        <div title="source">foo</div>
+        <p title="source">foo</p>
         <div title="note">Some note</div>
       </div>
       <div title="trans-unit">
-        <div title="source" its-loc-note="source note" its-loc-note-type="alert">foo</div>
+        <p title="source" its-loc-note="source note" its-loc-note-type="alert">foo</p>
         <div title="note">source note</div>
-        <div title="target" its-loc-note="target note" its-loc-note-type="description">bar</div>
+        <p title="target" its-loc-note="target note" its-loc-note-type="description">bar</p>
         <div title="note">target note</div>
       </div>
       <div title="trans-unit">
-        <div title="source">
+        <p title="source">
           <span its-loc-note="foo note" its-loc-note-type="description" title="mrk">
-            foo</span></div>
+            foo</span></p>
       </div>
     </div>
 
@@ -186,9 +164,9 @@ mtype value of 'term' sets its-term='yes'
       </its:rules>
     </script>
     <div title="xliff">
-      <div title="mrk" its-term="yes" its-term-confidence="5">foo</div>
-      <div title="mrk" its-term="no">bar</div>
-      <div title="mrk" its-term-info-ref="www.qux.com">qux</div>
+      <span title="mrk" its-term="yes" its-term-confidence="5">foo</span>
+      <span title="mrk" its-term="no">bar</span>
+      <span title="mrk" its-term-info-ref="www.qux.com">qux</span>
     </div>
 
 === xml:lang
@@ -236,8 +214,8 @@ mtype value of 'protected' is 'no' and 'x-its-translate-yes' is 'yes'
     </script>
     <div title="xliff">
       <div title="foo" translate="no"></div>
-      <div title="mrk" translate="no"></div>
-      <div title="mrk" translate="yes"></div>
+      <span title="mrk" translate="no"></span>
+      <span title="mrk" translate="yes"></span>
     </div>
 
 === withinText ITS
@@ -263,12 +241,12 @@ will translate as the default for div and span in HTML anyway.
     </script>
     <div title="xliff">
       <div title="trans-unit">
-        <div title="source">
+        <p title="source">
           <span title="it">
             <span title="sub" its-within-text="nested">foo
             </span>
           </span>
-        </div>
+        </p>
       </div>
     </div>
 
@@ -295,7 +273,7 @@ requires the creation of a global rule
       </its:rules>
     </script>
     <div title="xliff">
-      <div title="mrk" id="ITS_1">
+      <span title="mrk" id="ITS_1">
         <span
             class="_ITS_ATT"
             id="ITS_2"
@@ -304,7 +282,7 @@ requires the creation of a global rule
           meta-syntactic variables
         </span>
         foo
-      </div>
+      </span>
     </div>
 
 === text analysis ITS
@@ -335,16 +313,16 @@ requires the creation of a global rule
       </its:rules>
     </script>
     <div title="xliff">
-      <div title="source"
+      <p title="source"
           its-annotators-ref="text-analysis|http://enrycher.ijs.si">
-      <div
+      <span
           title="mrk"
           its-ta-class-ref="http://nerd.eurecom.fr/ontology#Place"
           its-ta-ident-ref="http://dbpedia.org/resource/Arizona"
           its-ta-confidence="0.7">
         Arizona
-      </div>
-    </div>
+      </span>
+    </p>
 
 === locale filter ITS
 --- input
@@ -394,15 +372,15 @@ requires the creation of a global rule
       </its:rules>
     </script>
     <div title="xliff">
-      <div title="target"
+      <p title="target"
           its-person="John Doe"
           its-org-ref="http://www.legaltrans-ex.com/"
           its-rev-person="Tommy Atkins"
           its-rev-org-ref="http://www.vistatec.com/"
           its-prov-ref="http://www.examplelsp.com/excontent987/legal/prov/e6354">
         Text
-      </div>
-      <div title="mrk" its-provenance-records-ref="#ph3"></div>
+      </p>
+      <span title="mrk" its-provenance-records-ref="#ph3"></span>
     </div>
 
 === external resource ITS
@@ -427,7 +405,7 @@ requires the creation of a global rule
       </its:rules>
     </script>
     <div title="xliff">
-      <div title="source">
+      <p title="source">
         Image:
         <span id="ITS_2" title="x">
           <span
@@ -438,7 +416,7 @@ requires the creation of a global rule
             example.png
           </span>
         </span>
-      </div>
+      </p>
     </div>
 
 === ID value ITS
@@ -489,7 +467,7 @@ xml:space should be removed, having no HTML equivalent
       <div title="foo"></div>
     </div>
 
-=== localaization quality issue ITS
+=== localization quality issue ITS
 --- input
 <xliff
     xmlns="urn:oasis:names:tc:xliff:document:1.2"
@@ -517,22 +495,22 @@ xml:space should be removed, having no HTML equivalent
     </script>
     <div title=xliff>
       <div title=trans-unit>
-        <div title=source>This is the content</div>
-        <div
+        <p title=source>This is the content</p>
+        <p
             its-loc-quality-issues-ref="#lqi1"
             title="target">
           c'es le contenu
-        </div>
+        </p>
       </div>
       <div title=trans-unit>
-        <div title=source>This is the content</div>
-        <div
+        <p title=source>This is the content</p>
+        <p
             its-loc-quality-issue-comment="'c'es' is unknown."
             its-loc-quality-issue-severity="50"
             its-loc-quality-issue-type="misspelling"
             title="target">
           c'es le contenu
-        </div>
+        </p>
       </div>
     </div>
 
@@ -587,7 +565,7 @@ xml:space should be removed, having no HTML equivalent
       </its:rules>
     </script>
     <div title="xliff" its-annotators-ref="mt-confidence|MTServices-XYZ">
-      <div title="source" its-mt-confidence="0.8982">Texte</div>
+      <p title="source" its-mt-confidence="0.8982">Texte</p>
     </div>
 
 === allowed characters ITS
@@ -610,7 +588,7 @@ xml:space should be removed, having no HTML equivalent
       </its:rules>
     </script>
     <div title="xliff">
-      <div title="source" its-allowed-characters="[a-z]">text</div>
+      <p title="source" its-allowed-characters="[a-z]">text</p>
     </div>
 
 === storage size ITS
@@ -639,13 +617,13 @@ xml:space should be removed, having no HTML equivalent
     </script>
     <div title="xliff">
       <div title="trans-unit">
-        <div
+        <p
             title="source"
             its-storage-size="12"
             its-storage-encoding="UTF-16"
             its-line-break-type="crlf">
           Text
-        </div>
+        </p>
       </div>
     </div>
 

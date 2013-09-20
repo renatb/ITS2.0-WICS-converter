@@ -15,7 +15,7 @@ filters {
 for my $block(blocks()){
     my $html = $block->input;
     # print $html;
-    eq_or_diff_html($html, $block->output, $block->name . ' (HTML output)');
+    eq_or_diff_html($html, $block->output, $block->name);
 }
 
 __DATA__

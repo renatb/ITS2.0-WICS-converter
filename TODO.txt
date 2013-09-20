@@ -6,7 +6,7 @@ Basic Outline:
 
     ✓-start with a fork of XML2HTML.
     -Mostly keep the code that processes rules, but add a new index that allows lookup by matched element to facilitate ITS info comparison for label application later on.
-    -Completely change out the code for processing individual elements. Convert XLIFF ITS to HTML5 ITS. This will require checking attributes and child elements, and besides creating attributes sometimes creating new global rules (external resource and domain are global-only outside of XLIFF).
+    ✓-Completely change out the code for processing individual elements. Convert XLIFF ITS to HTML5 ITS. This will require checking attributes and child elements, and besides creating attributes sometimes creating new global rules (external resource and domain are global-only outside of XLIFF).
         ✓- translate
             ✓- translate att
             ✓- mtype value of 'protected' or 'x-its-translate-yes'
@@ -19,9 +19,9 @@ Basic Outline:
             ✓- itsxlf:termConfidence
         ✓- directionality
         ✓- language information
-        - withinText
-            - trans-unit=no: just make trans-unit a div
-            - inline els=yes: just make these spans
+        ✓- withinText
+            ✓- trans-unit=no: just make trans-unit a div
+            ✓- inline els=yes: just make these spans
             ✓- sub: explicitly set its-within-text to 'yes'
         ✓- domain
             ✓- create global rule for each instance
@@ -42,7 +42,7 @@ Basic Outline:
     ✓-Delete other attributes (instead of making them into futures)
     ✓-no more handling of <its:span>
     ✓-no more global rule to set withinText=no for created <span>'s (withinText value will be set explicitly where it matters)
-    -rename <source> and <target> to <p>, inline elements to <span>, and everything else to <div>.
+    ✓-rename <source> and <target> to <p>, inline elements to <span>, and everything else to <div>.
     -small CSS to hide everything but <p>.
     -After <source> and <target> elements are processed, their ITS information will be compared to each other, and an appropriate label applied in the form of another <p> element inside the converted <trans-unit>. Comparing after conversion like this will make it easier to change to the split/recombine strategy later.
     -Create global rules to reset ITS defaults on labeling elements, and also add a global rule to match sources with targets (targetPointerRule).

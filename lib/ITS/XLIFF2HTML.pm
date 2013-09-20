@@ -16,7 +16,7 @@ use feature 'state';
 our $HTML_NS = 'http://www.w3.org/1999/xhtml';
 my $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
 my $XLF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
-my @inline_els = qw(g x bx ex bpt ept sub it ph);
+my @inline_els = qw(g x bx ex bpt ept sub it ph mrk);
 
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
 # VERSION
@@ -166,10 +166,7 @@ sub _htmlize {
 
 
 # transforms elements into HTML and returns
-# true for a child renamed as a div, false otherwise (span or bdo).
-# Arguments are the element to transform and a boolean indicating
-# the existence of an inline ancestor (so this element should not
-# be made a <div>)
+# Argument is the element to transform
 sub _traverse_convert{
 	my ($self, $el) = @_;
 
@@ -218,19 +215,16 @@ sub _traverse_convert{
 	# grab children for recursive processing
 	my $children = $el->child_els;
 
-	# true if any child is a div
-	my $div_child;
 	# recursively process children
 	for my $child(@$children){
-		my $div_result = $self->_traverse_convert($child);
-		$div_child ||= $div_result;
+		$self->_traverse_convert($child);
 	}
 
 	#set the element in the HTML namespace
     $el->set_namespace('http://www.w3.org/1999/xhtml');
 
-	#otherwise rename it and return indication of div or span
-	return _rename_el($el, $div_child);
+	_rename_el($el);
+	return;
 }
 
 #handle all attribute converting for the given element. Return true
@@ -301,32 +295,27 @@ sub _set_within_text {
 	return;
 }
 
-# rename the given element to either div or span; return true for div,
-# false for span.
-# args: element, boolean for existing block child (div, etc.),
-# boolean for existing inline ancestor (span, bdo, etc.)
+# rename the input element to something in HTML
 sub _rename_el {
 	my ($el, $div_child) = @_;
 
+	my $old_name = $el->name;
 	my $new_name;
-
-	# if a child is a div, $el has to be a div
-	if($div_child){
-		$new_name = 'div';
-	# inline elements become spans
-	}elsif($el->is_inline){
+	if($old_name =~ m/^(?:source|target)$/){
+		$new_name = 'p';
+	}elsif(grep {$old_name eq $_} @inline_els){
 		$new_name = 'span';
-	# other elements become divs
 	}else{
 		$new_name = 'div';
 	}
-	# log element rename,
+
+	# log element rename
 	if($log->is_debug){
 		$log->debug('renaming ' . node_log_id($el) . " to <$new_name>");
 	}
 
 	$el->set_name($new_name);
-	return $new_name eq 'div' ? 1 : 0;
+	return;
 }
 
 # process given attribute on given element;
@@ -443,7 +432,7 @@ sub _att_rename {
 	return;
 }
 
-# convert a given its att into an HTML one by replacing
+# convert a given its or itsxlf att into an HTML one by replacing
 # caps with dashes and appending its- on the front.
 sub _htmlize_its_att {
 	my ($el, $att) = @_;
