@@ -34,7 +34,7 @@ Basic Outline:
         ✓- id value
         ✓- preserve space
         ✓- localization quality issue
-        - localization quality issue rating
+        ✓- localization quality issue rating
         - MT confidence
         - allowed characters
         - storage size

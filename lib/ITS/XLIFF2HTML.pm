@@ -393,6 +393,10 @@ sub _process_att {
 		#its:locQualityIssueComment
 		#its:locQualityIssueSeverity
 		#its:locQualityIssuesRef
+		#its:locQualityRatingScore
+		#its:locQualityRatingScoreThreshold
+		#its:locQualityRatingProfileRef
+		#
 		_htmlize_its_att($el, $att);
 	}elsif($name eq 'resname'){
 		$self->_add_new_rule_match(
