@@ -109,9 +109,8 @@ sub convert {
 	# and paste the root in an HTML body.
 	my $html_doc = $self->_htmlize($dom, $add_labels);
 
-	my $label_els = [];
 	if($add_labels){
-		$label_els = $self->_add_labels($html_doc);
+		$self->_add_labels($html_doc);
 	}
 
 	#grab the head to put rules in it
@@ -516,23 +515,26 @@ sub _add_labels {
 	for my $trans_unit ($root->get_xpath('//*[@title="trans-unit"]')){
 		my ($target) = $trans_unit->get_xpath('*[@title="target"]');
 		if($target && $target->text eq ''){
-			push @$new_els, _new_label($trans_unit,
+			push @$new_els, $self->_new_label($trans_unit,
 				'Target is empty', 'ITS_EMPTY_TARGET');
 		}
 	}
-	return $new_els;
+	return $self->{label_futures} = $new_els;
 }
 
 # create a new label element given the trans-unit element to label, the
 # label text, and a class to assign (besides ITS_LABEL, which is applied
 # to all labels)
-# Return the label element
+# Return a FutureNode for the label element
 sub _new_label {
-	my ($trans_unit, $label, $class) = @_;
+	my ($self, $trans_unit, $label, $class) = @_;
 	my $el = new_element('p', {class => "ITS_LABEL $class"}, $label);
 	$el->set_namespace($HTML_NS);
 	$el->paste($trans_unit, 'first_child');
-	return $el;
+
+	my $future = $self->{futureNodeManager}->create_future($el);
+
+	return $future;
 }
 
 # make sure all rule matches are elements, and create new rules that give them
@@ -601,6 +603,7 @@ sub _update_rules {
 		}
 	}
 
+	#add new rules as the transformation required
 	$self->_source_target_rule($rules_el, $indent);
 	$self->_false_elt_inheritance_rules($rules_el, $indent);
 	$self->_false_att_inheritance_rules($rules_el, $indent);
@@ -628,22 +631,28 @@ sub _source_target_rule {
 	return;
 }
 
-# Nodes turned into elements (attributes, namespaces, PIs)
-# will incorrectly inherit ITS information.
-# Create rules to undo incorrect inheritance for these types
-# of nodes, where possible. This is only possible for three
+# New elements in the document will incorrectly inherit
+# ITS not meant for them. The elements are those created
+# from other types of nodes (atts, namespace, PIs, etc.),
+# and also those added as information labels.
+# Create rules to undo incorrect inheritance for these elements,
+# where possible. This is only possible for three ITS
 # categories: translate, direction, and localeFilter. The other
 # inheriting categories will just be incorrect :(. These
-# are langInfo, domain and provenance.
+# are langInfo, domain and provenance, and they cannot be fixed because
+# they have no default value to reset to.
 # The resetting can be done via explicit global selection; this is safe
-# because none of the selected nodes have child nodes to receive ITS
-# inheritance.
+# because none of the selected nodes have child nodes to be influenced
+# via inheritance.
 sub _false_elt_inheritance_rules {
 	my ($self, $rules_el, $indent) = @_;
 
 	# separate elements representing attributes
 	# from those representing non-attributes
 	my @elementals = $self->{futureNodeManager}->elementals();
+
+	# add the label futures to the list of new elements
+	push @elementals, @{$self->{label_futures}};
 	my (@att_paths, @non_att_paths);
 	for my $future (@elementals){
 		$future->type eq 'ATT' ?

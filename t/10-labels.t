@@ -37,12 +37,15 @@ __DATA__
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
+        <its:dirRule selector="id('ITS_1')" dir="ltr"/>
+        <its:localeFilterRule localeFilterList="*" selector="id('ITS_1')" localeFilterType="include"/>
+        <its:translateRule selector="id('ITS_1')" translate="no"/>
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
     <div title="xliff">
       <div title="trans-unit">
-        <p class="ITS_LABEL ITS_EMPTY_TARGET">Target is empty</p>
+        <p class="ITS_LABEL ITS_EMPTY_TARGET" id="ITS_1">Target is empty</p>
         <p title="source">foo</p>
         <p title="target"></p>
       </div>

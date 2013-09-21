@@ -45,7 +45,10 @@ Basic Outline:
     ✓-rename <source> and <target> to <p>, inline elements to <span>, and everything else to <div>.
     -small CSS to hide everything but <p>.
     -After <source> and <target> elements are processed, their ITS information will be compared to each other, and an appropriate label applied in the form of another <p> element inside the converted <trans-unit>. Comparing after conversion like this will make it easier to change to the split/recombine strategy later.
-    -Create global rules to reset ITS defaults on labeling elements, and also add a global rule to match sources with targets (targetPointerRule).
+        ✓- target is empty
+        - target is exact match of source
+    ✓-Create global rules to reset ITS defaults on labeling elements
+    ✓-Create a global rule to match sources with targets (targetPointerRule).
 
 
 Engineering Tasks:
