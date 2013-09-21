@@ -12,8 +12,6 @@ use Log::Any::Test;
 use Log::Any qw($log);
 use ITS::DOM;
 use ITS::XLIFF2HTML;
-use parent 'Exporter';
-our @EXPORT = qw(normalize_html);
 
 #convert the input XML into html and return the html string
 sub htmlize {
@@ -21,7 +19,16 @@ sub htmlize {
     my $converter = ITS::XLIFF2HTML->new();
     my $converted = ${ $converter->convert(\$xml) };
     $converted = $self->normalize_html($converted);
-    # print $converted;
+    return $converted;
+}
+
+#convert the input XML into html, adding labels, and
+#return the html string
+sub htmlize_with_labels {
+    my ($self, $xml) = @_;
+    my $converter = ITS::XLIFF2HTML->new();
+    my $converted = ${ $converter->convert(\$xml, 1) };
+    $converted = $self->normalize_html($converted);
     return $converted;
 }
 

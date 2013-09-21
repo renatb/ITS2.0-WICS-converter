@@ -60,15 +60,24 @@ sub new {
 Converts the input XML document into an HTML document equivalent, and
 displayable, HTML.
 
-Argument is either a string containing an XML file name, a string pointer
-containing actual XML data, or a filehandle for a file containing the data.
+The first argument is either a string containing an XML file name, a string
+pointer containing actual XML data, or a filehandle for a file containing
+the data.
 
-Return value is a string pointer containing the output HTML string.
+The second argument is a boolean, true if informative warning labels should
+be added to the output. These are small snippets of text to point out the
+presence of 1) empty C<target> elements or 2) C<target> elements which are
+exact copies of their C<source> element and also have the same ITS markup
+(the first step to translating an XLIFF document is often to copy the C<source>
+into the C<target>, and this label might help the user remember to translate
+it).
+
+Th return value is a string pointer containing the output HTML string.
 
 =cut
 
 sub convert {
-	my ($self, $doc_data) = @_;
+	my ($self, $doc_data, $add_labels) = @_;
 
 	#create the document from the input data
 	my $ITS = ITS->new('xml', doc => $doc_data);
@@ -98,7 +107,12 @@ sub convert {
 
 	# convert $ITS into an HTML document; rename elements, process atts,
 	# and paste the root in an HTML body.
-	my $html_doc = $self->_htmlize($dom);
+	my $html_doc = $self->_htmlize($dom, $add_labels);
+
+	my $label_els = [];
+	if($add_labels){
+		$label_els = $self->_add_labels($html_doc);
+	}
 
 	#grab the head to put rules in it
 	my $head = ( $html_doc->get_root->children )[0];
@@ -146,9 +160,8 @@ sub _index_match{
 	return;
 }
 
-# Pass in document to be htmlized and a hash containing node->futureNode ref pairs
-# (these are nodes which have been matched by rules; this is needed in case the
-# element is replaced because of namespace removal)
+# Pass in document to be htmlized and a boolean indicating
+# if labels should be applied
 sub _htmlize {
 	my ($self, $doc) = @_;
 
@@ -298,6 +311,8 @@ sub _set_within_text {
 sub _rename_el {
 	my ($el, $div_child) = @_;
 
+	# note: we're not checking namespace here. Hopefully noone puts a
+	# source or target element from a different namespace into their XLIFF doc!
 	my $old_name = $el->name;
 	my $new_name;
 	if($old_name =~ m/^(?:source|target)$/){
@@ -490,6 +505,34 @@ sub _get_script {
 	$element->paste($script);
 	$script->append_text("\n");
 	return $script;
+}
+
+# add warning labels where applicable (empty or duplicate targets)
+# return an array pointer containing the new elements created
+sub _add_labels {
+	my ($self, $doc) = @_;
+	my $new_els = [];
+	my $root = $doc->get_root;
+	for my $trans_unit ($root->get_xpath('//*[@title="trans-unit"]')){
+		my ($target) = $trans_unit->get_xpath('*[@title="target"]');
+		if($target && $target->text eq ''){
+			push @$new_els, _new_label($trans_unit,
+				'Target is empty', 'ITS_EMPTY_TARGET');
+		}
+	}
+	return $new_els;
+}
+
+# create a new label element given the trans-unit element to label, the
+# label text, and a class to assign (besides ITS_LABEL, which is applied
+# to all labels)
+# Return the label element
+sub _new_label {
+	my ($trans_unit, $label, $class) = @_;
+	my $el = new_element('p', {class => "ITS_LABEL $class"}, $label);
+	$el->set_namespace($HTML_NS);
+	$el->paste($trans_unit, 'first_child');
+	return $el;
 }
 
 # make sure all rule matches are elements, and create new rules that give them
