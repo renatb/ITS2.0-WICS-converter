@@ -147,24 +147,26 @@ __DATA__
     </div>
 
 === duplicate <target> element with same global ITS metadata (pointers)
---- SKIP
 --- input
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2">
-  <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+  <its:rules
+        xmlns:its="http://www.w3.org/2005/11/its"
+        xmlns:xlf="urn:oasis:names:tc:xliff:document:1.2"
+        version="2.0">
     <!--Rules to make source and target differ slightly-->
 
-    <its:storageSizeRule selector="/*/trans-unit[1]/source"
+    <its:storageSizeRule selector="/*/xlf:trans-unit[1]/xlf:source"
         storageSizePointer="id('m1')/@foo"
         storageEncodingPointer="id('m1')/@qux"/>
-    <its:storageSizeRule selector="/*/trans-unit[1]/target"
+    <its:storageSizeRule selector="/*/xlf:trans-unit[1]/xlf:target"
         storageSizePointer="id('m1')/@qux"
         storageEncodingPointer="id('m1')/@foo"/>
 
     <!--Rules to make source and target ITS the same-->
-    <its:storageSizeRule selector="/*/trans-unit[2]/source"
+    <its:storageSizeRule selector="/*/xlf:trans-unit[2]/xlf:source"
         storageSizePointer="id('m1')/@foo"
         storageEncodingPointer="id('m1')/@qux"/>
-    <its:storageSizeRule selector="/*/trans-unit[2]/target"
+    <its:storageSizeRule selector="/*/xlf:trans-unit[2]/xlf:target"
         storageSizePointer="id('m1')/@foo"
         storageEncodingPointer="id('m1')/@buff"/>
 
@@ -181,34 +183,36 @@ __DATA__
 </xliff>
 --- output
 <!DOCTYPE html>
-    <meta charset="utf-8">
-    <title>WICS</title>
-    <script type="application/its+xml">
-      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
-        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
-        <its:dirRule selector="//@*" dir="ltr"/>
-        <its:translateRule selector="//@*" translate="no"/>
-        <its:dirRule selector="id('ITS_1')" dir="ltr"/>
-        <its:localeFilterRule localeFilterList="*" selector="id('ITS_1')" localeFilterType="include"/>
-        <its:translateRule selector="id('ITS_1')" translate="no"/>
-        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
-      </its:rules>
-    </script>
-    <div title="xliff">
-      <div title="trans-unit">
-        <p title="source" translate="no">foo</p>
-        <p title="target">foo</p>
-      </div>
-      <div title="trans-unit">
-        <p class="ITS_LABEL ITS_DUP_TARGET" id="ITS_1">
-            Target is duplicate of source with the same ITS metadata inside</p>
-        <p title="source">
-            foo
-            <span title="mrk" translate="yes">stuff</span>
-        </p>
-        <p title="target">
-            foo
-            <span title="mrk" translate="yes">stuff</span>
-        </p>
-      </div>
+  <meta charset=utf-8>
+  <title>WICS</title>
+  <script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:dirRule selector="id('ITS_8')" dir="ltr"/>
+      <its:localeFilterRule localeFilterList="*" selector="id('ITS_8')" localeFilterType="include"/>
+      <its:translateRule selector="id('ITS_2')|id('ITS_3')|id('ITS_7')|id('ITS_8')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+      <its:storageSizeRule selector="id('ITS_1')" storageSizePointer="id('ITS_2')" storageEncodingPointer="id('ITS_3')"/>
+      <its:storageSizeRule selector="id('ITS_4')" storageSizePointer="id('ITS_3')" storageEncodingPointer="id('ITS_2')"/>
+      <its:storageSizeRule selector="id('ITS_5')" storageSizePointer="id('ITS_2')" storageEncodingPointer="id('ITS_3')"/>
+      <its:storageSizeRule selector="id('ITS_6')" storageSizePointer="id('ITS_2')" storageEncodingPointer="id('ITS_7')"/>
+    </its:rules>
+  </script>
+  <div title=xliff>
+    <span id="m1" title="mrk">
+      <span class=_ITS_ATT id=ITS_3 its-within-text=no title=qux>baz</span>
+      <span class=_ITS_ATT id=ITS_2 its-within-text=no title=foo>bar</span>
+      <span class=_ITS_ATT id=ITS_7 its-within-text=no title=buff>baz</span>
+    </span>
+    <div title=trans-unit>
+      <p id=ITS_1 title=source>foo</p>
+      <p id=ITS_4 title=target>foo</p>
     </div>
+    <div title=trans-unit><p class="ITS_LABEL ITS_DUP_TARGET" id=ITS_8>
+      Target is duplicate of source with the same ITS metadata inside</p>
+      <p id=ITS_5 title=source>foo<span title=mrk>stuff</span></p>
+      <p id=ITS_6 title=target>foo<span title=mrk>stuff</span></p>
+    </div>
+  </div>

@@ -15,7 +15,7 @@ use ITS::XLIFF2HTML::FutureNode qw(new_future);
 #use a new FutureNodeManager each time
 for my $block(blocks()){
     subtest $block->name => sub {
-        my $num_tests = 7;
+        my $num_tests = 8;
         $num_tests++ if($block->title);
         $num_tests++ if($block->contents);
         $num_tests++ if($block->class);
@@ -29,6 +29,7 @@ for my $block(blocks()){
         ok($new_node->is_same_node($dup_new_node),
             'new_node always returns same node');
 
+        is($future->name, $block->node_name, 'correct name value');
         is(!!($future->creates_element),
             !!$block->creates_element, 'correct creates_element value');
         is($future->type, $block->type, 'future type');
@@ -92,6 +93,7 @@ __DATA__
 --- type: ELT
 --- new_type: ELT
 --- doc: <xml/>
+--- node_name: xml
 --- future: /xml
 --- new_path: id('ITS_1')
 --- long_path: /xml
@@ -99,6 +101,7 @@ __DATA__
 
 === ATT node
 --- type: ATT
+--- node_name: foo
 --- new_type: ELT
 --- doc: <xml foo="bar"/>
 --- future: /xml/@foo
@@ -111,6 +114,7 @@ __DATA__
 
 === NS node
 --- type: NS
+--- node_name: xmlns:foo
 --- new_type: ELT
 --- doc
 <xml>
@@ -128,6 +132,7 @@ __DATA__
 
 === PI node
 --- type: PI
+--- node_name: foo_pi
 --- new_type: ELT
 --- doc
 <xml>
@@ -145,6 +150,7 @@ __DATA__
 
 === COM node
 --- type: COM
+--- node_name: #comment
 --- new_type: COM
 --- doc
 <xml>
@@ -159,6 +165,7 @@ __DATA__
 
 === TXT node
 --- type: TXT
+--- node_name: #text
 --- new_type: TXT
 --- doc
 <xml>this text<foo>
@@ -173,6 +180,7 @@ __DATA__
 
 === DOC node
 --- type: DOC
+--- node_name: #document
 --- new_type: DOC
 --- doc
 <xml/>

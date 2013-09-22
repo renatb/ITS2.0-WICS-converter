@@ -67,21 +67,19 @@ sub new {
 
     #store the state required to paste a representative node later
     my $type = $node->type;
-    my $state = {type => $type, dom => $doc};
+    my $state = {type => $type, dom => $doc, name => $node->name};
     if($type eq 'ELT'){
         $state->{node} = $node;
     }elsif($type eq 'ATT' or $type eq 'PI'){
         # maintainer note: don't try to store the actual attribute node;
         # It causes perl to crash!
         $state->{parent} = $manager->create_future($node->parent);
-        $state->{name} = $node->name;
         $state->{value} = $node->value;
         $state->{creates_element} = 1;
     }elsif($type eq 'COM' or $type eq 'TXT'){
         $state->{node} = $node;
     }elsif($type eq 'NS'){
         # save document root for pasting
-        $state->{name} = $node->name;
         $state->{value} = $node->value;
         $state->{parent} = $manager->create_future($doc->get_root);
         $state->{creates_element} = 1;
@@ -222,6 +220,17 @@ sub new_node {
     }
 
     return $self->{element};
+}
+
+=head2 C<name>
+
+Returns the name of the original node that this FutureNode represents.
+This is provided for sorting purposes.
+
+=cut
+sub name {
+    my ($self) = @_;
+    return $self->{name};
 }
 
 =head2 C<new_path>

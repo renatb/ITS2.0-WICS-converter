@@ -111,6 +111,9 @@ sub convert {
 	# and paste the root in an HTML body.
 	my $html_doc = $self->_htmlize($dom, $add_labels);
 
+	#cause all DOM changes to occur
+	$self->{futureNodeManager}->realize_all;
+
 	if($add_labels){
 		$self->_add_labels($html_doc);
 	}
@@ -161,7 +164,7 @@ sub _index_match {
 	#save a reverse index for the _deep_its_eq method later
 	if(exists $matches->{selector}){
 		push @{ $self->{reverse_match_index}->
-			{$matches->{selector}->unique_key} }, [$rule, $matches];
+			{$matches->{selector}->unique_key} }, [$rule, $futureNodes];
 	}
 	return;
 }
@@ -549,6 +552,11 @@ sub _add_labels {
 # Return a FutureNode for the label element
 sub _new_label {
 	my ($self, $trans_unit, $label, $class) = @_;
+
+	if($log->debug){
+		$log->debug('marking ' . node_log_id($trans_unit) . ": $label");
+	}
+
 	my $el = new_element('p', {class => "ITS_LABEL $class"}, $label);
 	$el->set_namespace($HTML_NS);
 	$el->paste($trans_unit, 'first_child');
@@ -618,7 +626,18 @@ sub _global_its_eq {
 				for my $att(@{ $rule->value_atts }){
 					$its->{$att} = $rule->element->att($att);
 				}
-				#comapre values given through pointers
+				#compare contents of matched nodes; these
+				#futures should already be realized in the document
+				while(my ($name, $future) = each %$match){
+					next if $name eq 'selector';
+					my $node = $future->new_node;
+					if($node->type eq 'ELT'){
+						$its->{$name} = $node->text;
+					}else{
+						$its->{$name} = $node->value;
+					}
+				}
+				#compare values given through pointers
 			}
 		}
 		$its;
@@ -631,9 +650,6 @@ sub _global_its_eq {
 sub _update_rules {
 	my ($self, $head) = @_;
 	my $matches = $self->{matches_index};
-
-	#cause all DOM changes to occur
-	$self->{futureNodeManager}->realize_all;
 
 	if($log->is_debug){
 		$log->debug('Creating new its:rules element to contain all rules');

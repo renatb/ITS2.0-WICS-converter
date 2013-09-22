@@ -150,7 +150,8 @@ causing all DOM changes to occur.
 =cut
 sub realize_all {
     my ($self) = @_;
-    for my $future_pointer (values %{ $self->{future_cache} }){
+    for my $future_pointer (
+        sort {$a->name cmp $b->name} values %{ $self->{future_cache} }){
         $future_pointer->new_node;
     }
     return;

@@ -5,7 +5,7 @@ Current/next: labels
 Basic Outline:
 
     ✓-start with a fork of XML2HTML.
-    -Mostly keep the code that processes rules, but add a new index that allows lookup by matched element to facilitate ITS info comparison for label application later on.
+    ✓-Mostly keep the code that processes rules, but add a new index that allows lookup by matched element to facilitate ITS info comparison for label application later on.
     ✓-Completely change out the code for processing individual elements. Convert XLIFF ITS to HTML5 ITS. This will require checking attributes and child elements, and besides creating attributes sometimes creating new global rules (external resource and domain are global-only outside of XLIFF).
         ✓- translate
             ✓- translate att
@@ -47,10 +47,12 @@ Basic Outline:
     -After <source> and <target> elements are processed, their ITS information will be compared to each other, and an appropriate label applied in the form of another <p> element inside the converted <trans-unit>. Comparing after conversion like this will make it easier to change to the split/recombine strategy later.
         ✓- target is empty
         ✓- target is exact match of source
-            - with matching global rule ITS values
+            ✓- with matching global rule ITS values
     ✓-Create global rules to reset ITS defaults on labeling elements
     ✓-Create a global rule to match sources with targets (targetPointerRule).
-
+    -Retest logging
+    -Check output from ITS 2.0 testsuite
+    -Integrate into standalone
 
 Engineering Tasks:
     - do some HTML post-processing to fine-tune tests:
