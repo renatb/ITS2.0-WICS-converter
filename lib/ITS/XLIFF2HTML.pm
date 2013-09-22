@@ -94,6 +94,12 @@ sub convert {
 	#create a futureNodeManager associated with the input document
 	$self->{futureNodeManager} =
 		new_manager($dom);
+	#reset other state
+	#TODO: obvious sign that this method should just be the constructor...
+	delete $self->{reverse_match_index};
+	delete $self->{label_futures};
+	delete $self->{matches_index};
+	delete $self->{old_nodes};
 
 	#iterate all document rules and their matches, indexing each one
 	for my $rule (@{ $ITS->get_rules }){
@@ -543,7 +549,9 @@ sub _add_labels {
 			}
 		}
 	}
-	return $self->{label_futures} = $label_futures;
+
+	$self->{label_futures} = $label_futures;
+	return;
 }
 
 # create a new label element given the trans-unit element to label, the
@@ -630,6 +638,10 @@ sub _global_its_eq {
 				#futures should already be realized in the document
 				while(my ($name, $future) = each %$match){
 					next if $name eq 'selector';
+					if( (ref $future) =~ /Value/){
+						$its->{$name} = $future->as_xpath;
+						next;
+					}
 					my $node = $future->new_node;
 					if($node->type eq 'ELT'){
 						$its->{$name} = $node->text;

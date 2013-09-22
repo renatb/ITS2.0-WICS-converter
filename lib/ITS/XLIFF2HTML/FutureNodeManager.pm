@@ -87,10 +87,23 @@ No changes are made to the owning DOM in this method.
 =cut
 sub create_future {
     my ($self, $node) = @_;
+    # print $node->name . ': ' . $node->unique_key . $node->text . "\n";
 
     # if this node has been saved in a FutureNode before,
     # return the pointer to that
     if($self->{future_cache}->{$node->unique_key}){
+        my $old_node = $self->{future_cache}->{$node->unique_key};
+        if($old_node->type eq 'ELT'){
+            $old_node = $old_node->{node};
+            print "found cached node\n";
+            # print $old_node->unique_key;
+            # print $self->{future_cache}->{$node->unique_key}->{node}->
+            # is_same_node($node) ? 'is_equal' : 'not';
+        print "old: " . $old_node->name .
+            ":" . $old_node->unique_key . ':' . $old_node->text;
+        print "\nnew: " . $node->name . ":" .
+            $node->unique_key . ':' . $node->text . "\n";
+        }
         return $self->{future_cache}->{$node->unique_key};
     }
 
@@ -128,6 +141,9 @@ sub replace_el_future {
     if($self->{future_cache}->{$key}){
         $self->{future_cache}->{$key}->replace_el($new_el);
     }
+    #prevent any new elements from taking the old element's ID, which
+    #would mess up our caches
+    push @{$self->{old_els}}, $old_el;
     return;
 }
 

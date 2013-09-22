@@ -91,7 +91,7 @@ __DATA__
     </div>
     </div>
 
-=== duplicate <target> element with same global ITS metadata
+=== duplicate <target> element with same global ITS metadata (rule values)
 --- input
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <its:rules
@@ -146,7 +146,63 @@ __DATA__
       </div>
     </div>
 
-=== duplicate <target> element with same global ITS metadata (pointers)
+=== duplicate <target> element with same global ITS metadata (Value pointers)
+--- input
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <its:rules
+        xmlns:its="http://www.w3.org/2005/11/its"
+        xmlns:xlf="urn:oasis:names:tc:xliff:document:1.2"
+        version="2.0">
+    <!--Rules to make source and target differ-->
+    <its:idValueRule selector="/*/xlf:trans-unit[1]/xlf:source" idValue="'foo'"/>
+    <its:idValueRule selector="/*/xlf:trans-unit[1]/xlf:target" idValue="'bar'"/>
+    <!--Rules to make source and target the same-->
+    <its:idValueRule selector="/*/xlf:trans-unit[2]/xlf:source" idValue="'foo'"/>
+    <its:idValueRule selector="/*/xlf:trans-unit[2]/xlf:target" idValue="'foo'"/>
+  </its:rules>
+  <trans-unit>
+    <source>foo</source>
+    <target>foo</target>
+  </trans-unit>
+  <trans-unit>
+    <source>foo<mrk>stuff</mrk></source>
+    <target>foo<mrk>stuff</mrk></target>
+  </trans-unit>
+</xliff>
+--- output
+<!DOCTYPE html>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:dirRule selector="id('ITS_5')" dir="ltr"/>
+        <its:localeFilterRule localeFilterList="*" selector="id('ITS_5')" localeFilterType="include"/>
+        <its:translateRule selector="id('ITS_5')" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+        <its:idValueRule selector="id('ITS_1')" idValue="'foo'"/>
+        <its:idValueRule selector="id('ITS_2')" idValue="'bar'"/>
+        <its:idValueRule selector="id('ITS_3')" idValue="'foo'"/>
+        <its:idValueRule selector="id('ITS_4')" idValue="'foo'"/>
+      </its:rules>
+    </script>
+    <div title=xliff>
+      <div title=trans-unit>
+        <p id="ITS_1" title=source>foo</p>
+        <p id="ITS_2" title=target>foo</p>
+      </div>
+      <div title=trans-unit>
+        <p class="ITS_LABEL ITS_DUP_TARGET" id=ITS_5>
+          Target is duplicate of source with the same ITS metadata inside</p>
+        <p id="ITS_3" title=source>foo<span title=mrk>stuff</span></p>
+        <p id="ITS_4" title=target>foo<span title=mrk>stuff</span></p>
+      </div>
+    </div>
+
+=== duplicate <target> element with same global ITS metadata (node pointers)
+# --- ONLY
 --- input
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <its:rules
@@ -210,8 +266,9 @@ __DATA__
       <p id=ITS_1 title=source>foo</p>
       <p id=ITS_4 title=target>foo</p>
     </div>
-    <div title=trans-unit><p class="ITS_LABEL ITS_DUP_TARGET" id=ITS_8>
-      Target is duplicate of source with the same ITS metadata inside</p>
+    <div title=trans-unit>
+      <p class="ITS_LABEL ITS_DUP_TARGET" id=ITS_8>
+        Target is duplicate of source with the same ITS metadata inside</p>
       <p id=ITS_5 title=source>foo<span title=mrk>stuff</span></p>
       <p id=ITS_6 title=target>foo<span title=mrk>stuff</span></p>
     </div>
