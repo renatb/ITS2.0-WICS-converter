@@ -4,6 +4,7 @@ use warnings;
 use Carp;
 our @CARP_NOT = qw(ITS);
 use Log::Any qw($log);
+use List::MoreUtils qw(each_array);
 
 use ITS qw(its_ns);
 use ITS::Rule;
@@ -510,16 +511,24 @@ sub _get_script {
 # return an array pointer containing the new elements created
 sub _add_labels {
 	my ($self, $doc) = @_;
-	my $new_els = [];
+	my $label_futures = [];
 	my $root = $doc->get_root;
 	for my $trans_unit ($root->get_xpath('//*[@title="trans-unit"]')){
 		my ($target) = $trans_unit->get_xpath('*[@title="target"]');
-		if($target && $target->text eq ''){
-			push @$new_els, $self->_new_label($trans_unit,
-				'Target is empty', 'ITS_EMPTY_TARGET');
+		if($target){
+			if($target->text eq ''){
+				push @$label_futures, $self->_new_label($trans_unit,
+					'Target is empty', 'ITS_EMPTY_TARGET');
+			}
+			my ($source) = $trans_unit->get_xpath('*[@title="source"]');
+			if($self->_deep_its_eq($source, $target)){
+				push @$label_futures, $self->_new_label($trans_unit,
+					'Target is duplicate of source with the same ITS ' .
+					'metadata inside', 'ITS_DUP_TARGET');
+			}
 		}
 	}
-	return $self->{label_futures} = $new_els;
+	return $self->{label_futures} = $label_futures;
 }
 
 # create a new label element given the trans-unit element to label, the
@@ -535,6 +544,49 @@ sub _new_label {
 	my $future = $self->{futureNodeManager}->create_future($el);
 
 	return $future;
+}
+
+# pass in source and target elements (or a child element of each);
+# return boolean indication of equality plus ITS equality
+sub _deep_its_eq {
+	my ($self, $source, $target) = @_;
+
+	return 0 unless $source->name eq $target->name;
+	return 0 unless $source->text eq $target->text;
+
+	#must have same number of children
+	my @source_children = $source->children;
+	my @target_children = $target->children;
+	return 0 unless scalar @source_children == scalar @target_children;
+
+	#must have same number of attributes
+	my $source_atts = $source->atts;
+	my $target_atts = $target->atts;
+	return 0 unless scalar keys %$source_atts == scalar keys %$target_atts;
+
+	#compare individual attributes
+	for my $key (keys %$source_atts){
+		return 0 unless $target_atts->{$key};
+		#compare value (title att will differ for source and target elements)
+		next if($key eq 'title' and
+			$source_atts->{$key} eq 'source');
+		return 0 unless $source_atts->{$key} eq $target_atts->{$key};
+	}
+
+	#compare source and target children
+	my $ea = each_array(@source_children, @target_children);
+	while (my ($source_child, $target_child) = $ea->()){
+		return 0 unless
+			$source_child->type eq $target_child->type;
+		#compare children recursively if they are elements
+		if($source_child->type eq 'ELT'){
+			return $self->_deep_its_eq($source_child, $target_child);
+		}
+		#compare name
+		return 0 unless $source_child->name eq $target_child->name;
+		return 0 unless $source_child->value eq $target_child->value;
+	}
+	return 1;
 }
 
 # make sure all rule matches are elements, and create new rules that give them
