@@ -50,7 +50,7 @@ __DATA__
       </div>
     </div>
 
-=== duplicate <target> element with same ITS metadata
+=== duplicate <target> element with same local ITS metadata
 --- input
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <trans-unit>
@@ -58,8 +58,125 @@ __DATA__
     <target>foo</target>
   </trans-unit>
   <trans-unit>
-    <source>foo<mrk translate="yes">stuff</mrk></source>
-    <target>foo<mrk translate="yes">stuff</mrk></target>
+    <source translate="no">foo<mrk translate="yes">stuff</mrk></source>
+    <target translate="no">foo<mrk translate="yes">stuff</mrk></target>
+  </trans-unit>
+</xliff>
+--- output
+<!DOCTYPE html>
+    <meta charset=utf-8>
+    <title>WICS</title>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:dirRule selector="id('ITS_1')" dir="ltr"/>
+      <its:localeFilterRule localeFilterList="*" selector="id('ITS_1')" localeFilterType="include"/>
+      <its:translateRule selector="id('ITS_1')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+      </its:rules>
+    </script><div title=xliff>
+    <div title=trans-unit>
+        <p title=source translate="no">foo</p>
+        <p title=target>foo</p>
+    </div>
+    <div title=trans-unit>
+        <p class="ITS_LABEL ITS_DUP_TARGET" id=ITS_1>
+            Target is duplicate of source with the same ITS metadata inside</p>
+        <p title=source translate="no">foo
+            <span title=mrk translate="yes">stuff</span></p>
+        <p title=target translate="no">foo
+            <span title=mrk translate="yes">stuff</span></p>
+    </div>
+    </div>
+
+=== duplicate <target> element with same global ITS metadata
+--- input
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <its:rules
+        xmlns:its="http://www.w3.org/2005/11/its"
+        xmlns:xlf="urn:oasis:names:tc:xliff:document:1.2"
+        version="2.0">
+    <!--Rules to make source and target differ-->
+    <its:translateRule selector="/*/xlf:trans-unit[1]/xlf:source" translate="yes"/>
+    <its:translateRule selector="/*/xlf:trans-unit[1]/xlf:target" translate="no"/>
+    <!--Rules to make source and target the same-->
+    <its:translateRule selector="/*/xlf:trans-unit[2]/xlf:source" translate="yes"/>
+    <its:translateRule selector="/*/xlf:trans-unit[2]/xlf:target" translate="yes"/>
+  </its:rules>
+  <trans-unit>
+    <source>foo</source>
+    <target>foo</target>
+  </trans-unit>
+  <trans-unit>
+    <source>foo<mrk>stuff</mrk></source>
+    <target>foo<mrk>stuff</mrk></target>
+  </trans-unit>
+</xliff>
+--- output
+<!DOCTYPE html>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:dirRule selector="id('ITS_5')" dir="ltr"/>
+        <its:localeFilterRule localeFilterList="*" selector="id('ITS_5')" localeFilterType="include"/>
+        <its:translateRule selector="id('ITS_5')" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+        <its:translateRule selector="id('ITS_1')" translate="yes"/>
+        <its:translateRule selector="id('ITS_2')" translate="no"/>
+        <its:translateRule selector="id('ITS_3')" translate="yes"/>
+        <its:translateRule selector="id('ITS_4')" translate="yes"/>
+      </its:rules>
+    </script>
+    <div title=xliff>
+      <div title=trans-unit>
+        <p id="ITS_1" title=source>foo</p>
+        <p id="ITS_2" title=target>foo</p>
+      </div>
+      <div title=trans-unit>
+        <p class="ITS_LABEL ITS_DUP_TARGET" id=ITS_5>
+          Target is duplicate of source with the same ITS metadata inside</p>
+        <p id="ITS_3" title=source>foo<span title=mrk>stuff</span></p>
+        <p id="ITS_4" title=target>foo<span title=mrk>stuff</span></p>
+      </div>
+    </div>
+
+=== duplicate <target> element with same global ITS metadata (pointers)
+--- SKIP
+--- input
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+    <!--Rules to make source and target differ slightly-->
+
+    <its:storageSizeRule selector="/*/trans-unit[1]/source"
+        storageSizePointer="id('m1')/@foo"
+        storageEncodingPointer="id('m1')/@qux"/>
+    <its:storageSizeRule selector="/*/trans-unit[1]/target"
+        storageSizePointer="id('m1')/@qux"
+        storageEncodingPointer="id('m1')/@foo"/>
+
+    <!--Rules to make source and target ITS the same-->
+    <its:storageSizeRule selector="/*/trans-unit[2]/source"
+        storageSizePointer="id('m1')/@foo"
+        storageEncodingPointer="id('m1')/@qux"/>
+    <its:storageSizeRule selector="/*/trans-unit[2]/target"
+        storageSizePointer="id('m1')/@foo"
+        storageEncodingPointer="id('m1')/@buff"/>
+
+  </its:rules>
+  <mrk foo="bar" qux="baz" buff="baz" xml:id="m1"/>
+  <trans-unit>
+    <source>foo</source>
+    <target>foo</target>
+  </trans-unit>
+  <trans-unit>
+    <source>foo<mrk>stuff</mrk></source>
+    <target>foo<mrk>stuff</mrk></target>
   </trans-unit>
 </xliff>
 --- output

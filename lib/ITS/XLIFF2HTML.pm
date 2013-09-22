@@ -5,6 +5,7 @@ use Carp;
 our @CARP_NOT = qw(ITS);
 use Log::Any qw($log);
 use List::MoreUtils qw(each_array);
+use Data::Compare;
 
 use ITS qw(its_ns);
 use ITS::Rule;
@@ -137,7 +138,7 @@ sub _is_rules_dom {
 # index a single set of rule matches
 # This sub pushes matches and FutureNodes onto $self->{matches_index} like so:
 # [rule, {selector => futureNode, *pointer => futureNode...}]
-sub _index_match{
+sub _index_match {
 	my ($self, $rule, $matches) = @_;
 	log_match($rule, $matches, $log);
 
@@ -157,6 +158,11 @@ sub _index_match{
 		}
 	}
 	push @{ $self->{matches_index} }, [$rule, $futureNodes];
+	#save a reverse index for the _deep_its_eq method later
+	if(exists $matches->{selector}){
+		push @{ $self->{reverse_match_index}->
+			{$matches->{selector}->unique_key} }, [$rule, $matches];
+	}
 	return;
 }
 
@@ -221,6 +227,12 @@ sub _traverse_convert{
 		# if this element has an associated future (match), change the future
 		# to one for the new node
 		$self->{futureNodeManager}->replace_el_future($el, $new_el);
+
+		#update the reverse index
+		my $temp = $self->{reverse_match_index}->{$el->unique_key};
+		delete $self->{reverse_match_index}->{$el->unique_key};
+		$self->{reverse_match_index}->{$new_el->unique_key} = $temp;
+
 		$el = $new_el;
 	}
 
@@ -553,18 +565,20 @@ sub _deep_its_eq {
 
 	return 0 unless $source->name eq $target->name;
 	return 0 unless $source->text eq $target->text;
+	return 0 unless $self->_global_its_eq($source, $target);
 
 	#must have same number of children
 	my @source_children = $source->children;
 	my @target_children = $target->children;
-	return 0 unless scalar @source_children == scalar @target_children;
+	return 0 unless @source_children == @target_children;
 
 	#must have same number of attributes
 	my $source_atts = $source->atts;
 	my $target_atts = $target->atts;
 	return 0 unless scalar keys %$source_atts == scalar keys %$target_atts;
 
-	#compare individual attributes
+	# compare individual attributes; don't need to check ITS for these, since
+	# these are all added attributes
 	for my $key (keys %$source_atts){
 		return 0 unless $target_atts->{$key};
 		#compare value (title att will differ for source and target elements)
@@ -572,6 +586,7 @@ sub _deep_its_eq {
 			$source_atts->{$key} eq 'source');
 		return 0 unless $source_atts->{$key} eq $target_atts->{$key};
 	}
+
 
 	#compare source and target children
 	my $ea = each_array(@source_children, @target_children);
@@ -587,6 +602,28 @@ sub _deep_its_eq {
 		return 0 unless $source_child->value eq $target_child->value;
 	}
 	return 1;
+}
+
+#check if nodes a and b have equal ITS via global matches
+sub _global_its_eq {
+	my ($self, $a, $b) = @_;
+	#create hash structure to represent data for each node
+	my ($a_vals, $b_vals) = map {
+		my $its = {};
+		if($self->{reverse_match_index}->{$_->unique_key}){
+			for my $rule_match( @{
+					$self->{reverse_match_index}->{$_->unique_key} } ){
+				my ($rule, $match) = @$rule_match;
+				#compare values given by the rule
+				for my $att(@{ $rule->value_atts }){
+					$its->{$att} = $rule->element->att($att);
+				}
+				#comapre values given through pointers
+			}
+		}
+		$its;
+	} ($a, $b);
+	return Compare($a_vals, $b_vals);
 }
 
 # make sure all rule matches are elements, and create new rules that give them
@@ -704,7 +741,8 @@ sub _false_elt_inheritance_rules {
 	my @elementals = $self->{futureNodeManager}->elementals();
 
 	# add the label futures to the list of new elements
-	push @elementals, @{$self->{label_futures}};
+	push @elementals, @{$self->{label_futures}}
+		if exists $self->{label_futures};
 	my (@att_paths, @non_att_paths);
 	for my $future (@elementals){
 		$future->type eq 'ATT' ?

@@ -118,8 +118,8 @@ replacing elements with new ones (which is required, for example, to
 remove namespacing from an element with LibXML).
 
 This only supports replacement of the original FutureNode. In other words,
-you can't replace replace element A with element B and then call this
-method with with element B as the old element.
+you can't replace element A with element B and then call this
+method with element B as the old element.
 
 =cut
 sub replace_el_future {
