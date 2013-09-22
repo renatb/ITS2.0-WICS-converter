@@ -117,4 +117,23 @@ sub element {
     return $self->{node};
 }
 
+=head2 C<value_atts>
+
+Returns an array ref containing the names of the attributes of this rule
+that are neither a C<pointer> attribute nor the C<selector>. For example,
+the C<translate> attribute of a C<its:translateRule> would be returned.
+
+=cut
+sub value_atts {
+    my ($self) = @_;
+    my $atts = $self->{node}->atts;
+    my @value_atts = sort grep {
+        $_ !~ /.+Pointer$/ and
+        $_ ne 'idValue' and
+        $_ ne 'selector' and
+        $_ !~ /xmlns/
+    } keys %$atts;
+    return \@value_atts;
+}
+
 1;

@@ -169,7 +169,7 @@ sub set_namespace {
 
 =head2 C<atts>
 
-If this node is an element, returns a hash pointer containing all of its
+Returns a hash pointer containing all of this element's
 attributes and their values.
 
 =cut

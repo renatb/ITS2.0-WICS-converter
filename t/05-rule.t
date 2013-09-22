@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use ITS::Rule;
 use Test::More 0.88;
-plan tests => 5;
+plan tests => 6;
 use Test::Warn;
 use Test::NoWarnings;
 use ITS::DOM;
@@ -85,8 +85,23 @@ subtest 'pointer attributes' => sub {
     );
 };
 
-#test that a warning is given for a missing selector
+#test that value atts are recognized
 my $el = new_element(
+    'its:storageSizeRule' => {
+        'xmlns:its' => 'http://www.w3.org/2005/11/its',
+        'selector' => 'id("id_1")',
+        'storageSizePointer' => '@size',
+        'storageEncodingPointer' => '@encoding',
+        'foo' => 'bar'
+    }
+);
+is_deeply(ITS::Rule->new($el, $plain_container)->value_atts,
+    [qw(foo)],
+    '1 value attribute found'
+);
+
+#test that a warning is given for a missing selector
+$el = new_element(
     'its:locNoteRule' => {
         'xmlns:its' => 'http://www.w3.org/2005/11/its',
         'locNoteType' => 'description',
