@@ -354,7 +354,8 @@ sub _rename_el {
 }
 
 # process given attribute on given element;
-# return the name of the element used to wrap the children, if any.
+# the given element is assument to be in the
+# XLIFF namespace
 sub _process_att {
 	my ($self, $el, $att) = @_;
 
@@ -399,7 +400,11 @@ sub _process_att {
 		}
 	#its:* atts
 	}elsif( $att->namespace_URI eq its_ns() ){
-		_htmlize_its_att($el, $att);
+		if($att->local_name eq 'version'){
+			$att->remove;
+		}else{
+			_htmlize_its_att($el, $att);
+		}
 	}elsif($name eq 'resname'){
 		$self->_add_new_rule_match('idValue',
 			{

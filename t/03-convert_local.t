@@ -88,6 +88,26 @@ should be converted into id
       <div title="foo" id="bar"></div>
     </div>
 
+=== its:version
+should be removed, having no HTML equivalent
+--- input
+<xml
+    xmlns:its="http://www.w3.org/2005/11/its"
+    its:version="2.0"/>
+--- output
+<!DOCTYPE html>
+    <meta charset="utf-8">
+    <title>WICS</title>
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
+        <its:dirRule selector="//@*" dir="ltr"/>
+        <its:translateRule selector="//@*" translate="no"/>
+        <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+      </its:rules>
+    </script>
+    <div title="xml"></div>
+
 === localization note ITS
 child <note> for trans-units
 sibling <note annotates="source|target"> for sources and targets
