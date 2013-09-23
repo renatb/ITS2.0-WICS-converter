@@ -561,7 +561,7 @@ sub _add_labels {
 sub _new_label {
 	my ($self, $trans_unit, $label, $class) = @_;
 
-	if($log->debug){
+	if($log->is_debug){
 		$log->debug('marking ' . node_log_id($trans_unit) . ": $label");
 	}
 

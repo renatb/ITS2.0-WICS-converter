@@ -53,7 +53,7 @@ Basic Outline:
                 ✓-pointer Value
     ✓-Create global rules to reset ITS defaults on labeling elements
     ✓-Create a global rule to match sources with targets (targetPointerRule).
-    -Retest logging
+    ✓-Retest logging
     -Check output from ITS 2.0 testsuite
     -Integrate into standalone
 

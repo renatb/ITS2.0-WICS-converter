@@ -13,7 +13,7 @@ filters {
 };
 
 for my $block(blocks()){
-    my $html = $block->input;
+    my ($html) = $block->input;
     # print $html;
     eq_or_diff_html($html, $block->output, $block->name);
 }
@@ -98,12 +98,14 @@ __DATA__
         xmlns:its="http://www.w3.org/2005/11/its"
         xmlns:xlf="urn:oasis:names:tc:xliff:document:1.2"
         version="2.0">
+
     <!--Rules to make source and target differ-->
     <its:translateRule selector="/*/xlf:trans-unit[1]/xlf:source" translate="yes"/>
     <its:translateRule selector="/*/xlf:trans-unit[1]/xlf:target" translate="no"/>
     <!--Rules to make source and target the same-->
     <its:translateRule selector="/*/xlf:trans-unit[2]/xlf:source" translate="yes"/>
     <its:translateRule selector="/*/xlf:trans-unit[2]/xlf:target" translate="yes"/>
+
     <!--Rules to make source and target differ-->
     <its:translateRule selector="/*/xlf:trans-unit[3]/xlf:source/@foo" translate="yes"/>
     <!--Rules to make source and target the same-->
@@ -235,15 +237,14 @@ __DATA__
     </div>
 
 === duplicate <target> element with same global ITS metadata (node pointers)
-# --- ONLY
 --- input
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <its:rules
         xmlns:its="http://www.w3.org/2005/11/its"
         xmlns:xlf="urn:oasis:names:tc:xliff:document:1.2"
         version="2.0">
-    <!--Rules to make source and target differ slightly-->
 
+    <!--Rules to make source and target differ slightly-->
     <its:storageSizeRule selector="/*/xlf:trans-unit[1]/xlf:source"
         storageSizePointer="id('m1')/@foo"
         storageEncodingPointer="id('m1')/@qux"/>

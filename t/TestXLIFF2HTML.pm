@@ -43,6 +43,18 @@ sub html_log {
     return ($converted, _get_messages($log->msgs()) );
 }
 
+#convert the input XML into html and return the html string and the log
+#add labels where applicable
+sub html_log_with_labels {
+    my ($self, $xml) = @_;
+    $log->clear();
+    my $converter = ITS::XLIFF2HTML->new();
+    my $converted = ${ $converter->convert(\$xml, 1) };
+    $converted = $self->normalize_html($converted);
+    # print $converted;
+    return ($converted, _get_messages($log->msgs()) );
+}
+
 sub _get_messages {
     my ($logs) = @_;
     my $messages = [];
