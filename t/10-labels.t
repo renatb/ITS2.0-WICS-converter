@@ -104,6 +104,11 @@ __DATA__
     <!--Rules to make source and target the same-->
     <its:translateRule selector="/*/xlf:trans-unit[2]/xlf:source" translate="yes"/>
     <its:translateRule selector="/*/xlf:trans-unit[2]/xlf:target" translate="yes"/>
+    <!--Rules to make source and target differ-->
+    <its:translateRule selector="/*/xlf:trans-unit[3]/xlf:source/@foo" translate="yes"/>
+    <!--Rules to make source and target the same-->
+    <its:translateRule selector="/*/xlf:trans-unit[4]/xlf:source/@foo" translate="yes"/>
+    <its:translateRule selector="/*/xlf:trans-unit[4]/xlf:target/@foo" translate="yes"/>
   </its:rules>
   <trans-unit>
     <source>foo</source>
@@ -112,6 +117,14 @@ __DATA__
   <trans-unit>
     <source>foo<mrk>stuff</mrk></source>
     <target>foo<mrk>stuff</mrk></target>
+  </trans-unit>
+  <trans-unit>
+    <source foo="bar">foo</source>
+    <target foo="bar">foo</target>
+  </trans-unit>
+  <trans-unit>
+    <source foo="bar">foo</source>
+    <target foo="bar">foo</target>
   </trans-unit>
 </xliff>
 --- output
@@ -123,14 +136,17 @@ __DATA__
         <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
         <its:dirRule selector="//@*" dir="ltr"/>
         <its:translateRule selector="//@*" translate="no"/>
-        <its:dirRule selector="id('ITS_5')" dir="ltr"/>
-        <its:localeFilterRule localeFilterList="*" selector="id('ITS_5')" localeFilterType="include"/>
-        <its:translateRule selector="id('ITS_5')" translate="no"/>
+        <its:dirRule selector="id('ITS_8')|id('ITS_9')" dir="ltr"/>
+        <its:localeFilterRule localeFilterList="*" selector="id('ITS_8')|id('ITS_9')" localeFilterType="include"/>
+        <its:translateRule selector="id('ITS_5')|id('ITS_6')|id('ITS_7')|id('ITS_8')|id('ITS_9')" translate="no"/>
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
         <its:translateRule selector="id('ITS_1')" translate="yes"/>
         <its:translateRule selector="id('ITS_2')" translate="no"/>
         <its:translateRule selector="id('ITS_3')" translate="yes"/>
         <its:translateRule selector="id('ITS_4')" translate="yes"/>
+        <its:translateRule selector="id('ITS_5')" translate="yes"/>
+        <its:translateRule selector="id('ITS_6')" translate="yes"/>
+        <its:translateRule selector="id('ITS_7')" translate="yes"/>
       </its:rules>
     </script>
     <div title=xliff>
@@ -139,10 +155,27 @@ __DATA__
         <p id="ITS_2" title=target>foo</p>
       </div>
       <div title=trans-unit>
-        <p class="ITS_LABEL ITS_DUP_TARGET" id=ITS_5>
+        <p class="ITS_LABEL ITS_DUP_TARGET" id=ITS_8>
           Target is duplicate of source with the same ITS metadata inside</p>
         <p id="ITS_3" title=source>foo<span title=mrk>stuff</span></p>
         <p id="ITS_4" title=target>foo<span title=mrk>stuff</span></p>
+      </div>
+      <div title=trans-unit>
+        <p title=source>
+          <span class=_ITS_ATT id=ITS_5 its-within-text=no title=foo>bar</span>
+          foo
+        </p>
+        <p title=target>foo</p>
+      </div>
+      <div title=trans-unit>
+        <p class="ITS_LABEL ITS_DUP_TARGET" id=ITS_9>
+          Target is duplicate of source with the same ITS metadata inside</p>
+        <p title=source>
+          <span class=_ITS_ATT id=ITS_6 its-within-text=no title=foo>bar</span>
+            foo</p>
+        <p title=target>
+          <span class=_ITS_ATT id=ITS_7 its-within-text=no title=foo>bar</span>
+          foo</p>
       </div>
     </div>
 
