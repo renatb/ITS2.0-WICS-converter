@@ -91,9 +91,9 @@ broken it into several lines for display purposes.
 
   wxpar -o WICS-GUI.exe -l C:/strawberry/c/bin/libxml2-2__.dll
   -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/libz__.dll
-  -I ITS-0.04/lib -I ITS-XML2HTML-0.05/lib -I ITS-WICS-0.02/lib
-  -I ITS-Reduce-0.02/lib XML-ITS-WICS-0.02/bin/WICS-GUI.pl
-
+  -I ITS-0.04/lib -I ITS-XML2HTML-0.05/lib -I ITS-XLIFF2HTML-0.02/lib
+  -I ITS-Reduce-0.02/lib  -I ITS-WICS-0.02/lib
+  XML-ITS-WICS-0.02/bin/WICS-GUI.pl
 
 =head1 TODO
 
@@ -433,6 +433,7 @@ sub new {
         { name => 'XLIFF2HTML',
           description => 'Write HTML to display ITS data in XLIFF source and target elements',
           colour => [ 0, 0, 255 ],
+          transformer => \&ITS::WICS::xliff2html,
           output_ext => 'html',
         },
         { name => 'XML2XLIFF',
