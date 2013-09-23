@@ -33,6 +33,8 @@ my $converter = ITS::XLIFF2HTML->new();
 my $xml_dir = path($ENV{ITS_20_TESTSUITE_PATH},
     'its2.0', 'xliffsamples', 'inputdata');
 
+bail_out("couldn't find $xml_dir") unless $xml_dir->exists;
+
 my $validator_url = $ENV{HTML5_VALIDATOR_URL} ||
     'http://validator.w3.org/nu/';
 
@@ -65,12 +67,12 @@ find(\&validate, $html_dir);
 # convert the XML file and store it in $html_dir, along with the
 # conversion log
 sub convert {
-    return unless $File::Find::name =~ m!/xml/[^/.]+xml\.xml$!;
+    return unless $File::Find::name =~ m!\.xlf$!;
     $file_count++;
     $log->clear();
 
     # create destination sub-directory
-    $File::Find::dir =~ m!/([^/]+)/xml!;
+    $File::Find::dir =~ m!/([^/]+)$!;
     my $sub_dir = $1;
     mkdir path($html_dir, $sub_dir)
         unless -d path($html_dir, $sub_dir);
@@ -78,13 +80,14 @@ sub convert {
     # output files will have the same names as XML originals,
     # but with html or log extensions
     my $html_file = $_;
-    $html_file =~ s/\.xml$/.html/;
+    $html_file =~ s/\.xlf$/.html/;
     my $log_file = $_;
-    $log_file =~ s/\.xml$/.log/;
+    $log_file =~ s/\.xlf$/.log/;
 
-    # convert the XML and print it into the new directory
+    # convert the XML (adding labels) and print it
+    # into the new directory
     my $html_fh = path($html_dir, $sub_dir, $html_file)->filehandle('>:utf8');
-    print $html_fh ${$converter->convert($File::Find::name)};
+    print $html_fh ${$converter->convert($File::Find::name, 1)};
 
     my $log_fh = path($html_dir, $sub_dir, $log_file)->filehandle('>:utf8');
     print $log_fh "$_->{message}\n"
