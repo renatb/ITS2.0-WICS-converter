@@ -133,6 +133,8 @@ use base 'Wx::App';
 use Path::Tiny;
 use Try::Tiny;
 use Log::Any::Adapter;
+#need the use statement so that pp will include it in the exe
+use WicsGui::Logger;
 Log::Any::Adapter->set('+WicsGui::Logger');
 use ITS::WICS;
 
