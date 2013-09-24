@@ -43,7 +43,7 @@ Basic Outline:
     ✓-no more handling of <its:span>
     ✓-no more global rule to set withinText=no for created <span>'s (withinText value will be set explicitly where it matters)
     ✓-rename <source> and <target> to <p>, inline elements to <span>, and everything else to <div>.
-    -small CSS to hide everything but <p>.
+    ✓-small CSS to hide everything but <p>.
     ✓-After <source> and <target> elements are processed, their ITS information will be compared to each other, and an appropriate label applied in the form of another <p> element inside the converted <trans-unit>. Comparing after conversion like this will make it easier to change to the split/recombine strategy later.
         ✓- target is empty
         ✓- target is exact match of source
@@ -54,8 +54,8 @@ Basic Outline:
     ✓-Create global rules to reset ITS defaults on labeling elements
     ✓-Create a global rule to match sources with targets (targetPointerRule).
     ✓-Retest logging
-    -Check output from ITS 2.0 testsuite
-    -Integrate into standalone
+    ✓-Check output from ITS 2.0 testsuite
+    ✓-Integrate into standalone
 
 Engineering Tasks:
     - do some HTML post-processing to fine-tune tests:

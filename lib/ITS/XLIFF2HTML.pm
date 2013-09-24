@@ -25,7 +25,6 @@ my @inline_els = qw(g x bx ex bpt ept sub it ph mrk);
 
 __PACKAGE__->new()->convert($ARGV[0]) unless caller;
 
-
 =head1 METHODS
 
 =head2 C<new>
@@ -128,6 +127,7 @@ sub convert {
 	my $head = ( $html_doc->get_root->children )[0];
 	# paste FutureNodes and create new rules to match them
 	$self->_update_rules($head);
+	$self->_set_visibility($head);
 
 	# return string pointer
 	return \($html_doc->string);
@@ -859,6 +859,16 @@ sub _false_att_inheritance_rules {
 	return;
 }
 
+#add a css rule to hide everything except for <p> elements
+sub _set_visibility {
+	my ($self, $head) = @_;
+	my $script = new_element('style', {},
+		':not(p) {visibility:hidden} p {visibility: visible}');
+	$script->set_namespace($HTML_NS);
+	$script->paste($head, 'last_child');
+	return;
+}
+
 1;
 
 =head1 CAVEATS
@@ -866,6 +876,11 @@ sub _false_att_inheritance_rules {
 The xml:id attribute is preserved as the C<id> attribute in HTML. As no DTDs
 or other validating documents are utilized, no other attributes are treated
 as an element's unique ID or converted into HTML's <id> attribute.
+
+No effort is made to make up for invalid XML input. Invalid input throws an
+error. The most common problem with XLIFF files is a duplicate xml:id
+value because it is  common to copy the C<source> element and rename it
+C<target> before beginning translation.
 
 =head1 C<TODO>
 

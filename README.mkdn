@@ -21,10 +21,25 @@ Creates a new converter instance. Optional arguments are:
 Converts the input XML document into an HTML document equivalent, and
 displayable, HTML.
 
-Argument is either a string containing an XML file name, a string pointer
-containing actual XML data, or a filehandle for a file containing the data.
+The first argument is either a string containing an XML file name, a string
+pointer containing actual XML data, or a filehandle for a file containing
+the data.
 
-Return value is a string pointer containing the output HTML string.
+The second argument is a boolean, true if informative warning labels should
+be added to the output. These are small snippets of text to point out the
+presence of 1) empty `target` elements or 2) `target` elements which are
+exact copies of their `source` element and also have the same ITS markup
+(the first step to translating an XLIFF document is often to copy the `source`
+into the `target`, and this label might help the user remember to translate
+it).
+
+Th return value is a string pointer containing the output HTML string.
+
+# CAVEATS
+
+The xml:id attribute is preserved as the `id` attribute in HTML. As no DTDs
+or other validating documents are utilized, no other attributes are treated
+as an element's unique ID or converted into HTML's <id> attribute.
 
 # `TODO`
 

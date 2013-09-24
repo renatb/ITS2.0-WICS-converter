@@ -42,7 +42,8 @@ __DATA__
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
         <its:translateRule selector="id('i1')" translate="yes"/>
       </its:rules>
-    </script>
+    </script>
+    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="i1">Some text</div>
@@ -71,7 +72,8 @@ __DATA__
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
         <its:translateRule selector="id('ITS_1')" translate="yes"/>
       </its:rules>
-    </script>
+    </script>
+    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">Some text</div>
@@ -108,7 +110,8 @@ __DATA__
         <its:locNote>Some note</its:locNote>
         </its:locNoteRule>
       </its:rules>
-    </script>
+    </script>
+    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">Some text</div>
@@ -140,7 +143,8 @@ __DATA__
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
         <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
       </its:rules>
-    </script>
+    </script>
+    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">Some text</div>
@@ -172,7 +176,8 @@ __DATA__
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
         <its:termRule selector="id('ITS_1')" term="yes"/>
       </its:rules>
-    </script>
+    </script>
+    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">Some text</div>
@@ -202,7 +207,8 @@ preserveSpaceRule has no meaning in HTML, and thus it is not output.
         <its:translateRule selector="//@*" translate="no"/>
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
-    </script>
+    </script>
+    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para">Some text</div>
