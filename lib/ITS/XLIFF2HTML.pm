@@ -659,7 +659,17 @@ sub _global_its_eq {
 		}
 		$its;
 	} ($a, $b);
-	return Compare($a_vals, $b_vals);
+	return _hash_eq($a_vals, $b_vals);
+}
+
+#compare two hashes of strings for equality
+sub _hash_eq {
+	my ($a_hash, $b_hash) = @_;
+	return 0 unless keys %$a_hash == keys %$b_hash;
+	for (keys %$a_hash){
+		return 0 unless $a_hash->{$_} eq $b_hash->{$_};
+	}
+	return 1;
 }
 
 # make sure all rule matches are elements, and create new rules that give them
