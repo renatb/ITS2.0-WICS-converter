@@ -5,7 +5,6 @@ use Carp;
 our @CARP_NOT = qw(ITS);
 use Log::Any qw($log);
 use List::MoreUtils qw(each_array);
-use Data::Compare;
 
 use ITS qw(its_ns);
 use ITS::Rule;
@@ -254,7 +253,7 @@ sub _traverse_convert{
 	}
 
 	#set the element in the HTML namespace
-    $el->set_namespace('http://www.w3.org/1999/xhtml');
+    $el->set_namespace($HTML_NS);
 
 	_rename_el($el);
 	return;
@@ -488,19 +487,16 @@ sub _html_structure {
 
 	my $html_doc = ITS::DOM->new(
 		'html', \'<!DOCTYPE html><html>');
-	# we remove the XHTML namespace because it is unused in HTML5, and
-	# we want it clear that all of our XPathing is in the default
-	# namespace.
 	my $root = $html_doc->get_root;
 	my ($head, $body) = @{ $root->child_els };
 
 	# grab the HTML head and paste in the
 	# encoding, title, and standoff markup
 	my $meta = new_element('meta', { charset => 'utf-8' });
-	$meta->set_namespace('http://www.w3.org/1999/xhtml');
+	$meta->set_namespace($HTML_NS);
 	$meta->paste($head);
 	my $title = new_element('title', {}, $self->{title});
-	$title->set_namespace('http://www.w3.org/1999/xhtml');
+	$title->set_namespace($HTML_NS);
 	$title->paste($head);
 
 	#paste all standoff markup
@@ -520,7 +516,7 @@ sub _html_structure {
 sub _get_script {
 	my ($element) = @_;
 	my $script = new_element('script', {type => 'application/its+xml'});
-	$script->set_namespace('http://www.w3.org/1999/xhtml');
+	$script->set_namespace($HTML_NS);
 	if(my $id = $element->att('xml:id')){
 		$script->set_att('id', $id);
 	}
@@ -684,7 +680,7 @@ sub _update_rules {
 	my $rules_el = new_element('its:rules',
 		{
 			'xmlns:its'	=> its_ns(),
-			'xmlns:h' => 'http://www.w3.org/1999/xhtml',
+			'xmlns:h' => $HTML_NS,
 			version 	=> '2.0',
 		 }
 	);
