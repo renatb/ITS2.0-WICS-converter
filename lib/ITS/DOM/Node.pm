@@ -421,6 +421,8 @@ whether children should also be copied.
 =cut
 sub copy {
     my ($self, $deep) = @_;
+    #default value is false
+    $deep //= 0;
     return __PACKAGE__->new($self->{node}->cloneNode($deep));
 }
 

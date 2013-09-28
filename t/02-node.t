@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 58;
+plan tests => 61;
 use Test::NoWarnings;
 use Test::Exception;
 
@@ -195,6 +195,11 @@ sub test_copy {
     ok($third->unique_key != $copy->unique_key, 'new node created');
     ok($copy->name eq 'third', 'new node has correct name');
     ok($copy->children == 0, 'no children copied');
+
+    $copy = $third->copy();
+    ok($third->unique_key != $copy->unique_key, 'new node created');
+    ok($copy->name eq 'third', 'new node has correct name');
+    ok($copy->children == 0, 'no children copied (default behavior)');
 
     $copy = $third->copy(1);
     ok($third->unique_key != $copy->unique_key, 'new node created');
