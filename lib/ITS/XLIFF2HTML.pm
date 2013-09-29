@@ -669,7 +669,8 @@ sub _hash_eq {
 }
 
 # make sure all rule matches are elements, and create new rules that give them
-# the same information as in the original document
+# the same information as in the original document. The argument
+# is the head element, which the rules element will be pasted in.
 sub _update_rules {
 	my ($self, $head) = @_;
 	my $matches = $self->{matches_index};

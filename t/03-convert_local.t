@@ -669,8 +669,8 @@ xml:space should be removed, having no HTML equivalent
     </div>
 
 === standoff markup
-<script> tags are treated as text, so to ease testing we remove all whitespace
-from standoff markup.
+Test that standoff markup is pasted into a <script> element
+in the head.
 --- input
 <xml xmlns:its="http://www.w3.org/2005/11/its">
   <its:locQualityIssues xml:id="lq1" xmlns:its="http://www.w3.org/2005/11/its"><its:locQualityIssue locQualityIssueType="misspelling"/></its:locQualityIssues>
