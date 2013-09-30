@@ -1,4 +1,4 @@
-# Test matching elements globally
+# Test that rules element is not allowed as document root
 use strict;
 use warnings;
 use Test::More 0.88;

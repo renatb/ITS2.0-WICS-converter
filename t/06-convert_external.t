@@ -37,8 +37,9 @@ __DATA__
       <its:translateRule xml:id="ext1rule" selector="id('par')" translate="yes"/>
       <its:idValueRule xml:id="baseFileRule" selector="id('body')" idValue="'bodyId'"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div id="root" title="myDoc">
     <div title="head"></div>
     <div id="body" title="body">

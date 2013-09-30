@@ -48,8 +48,9 @@ Elements are all renamed, so XPaths change accordingly.
       <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule xmlns:foo="www.foo.com" selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">Some text</div>
@@ -83,8 +84,9 @@ match here). This also triggers anti-inheritance rules.
       <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -128,8 +130,9 @@ Multiple matches of one attribute should only create one new element.
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -171,8 +174,9 @@ Multiple matches of one attribute should only create one new element.
       <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:translateRule selector="id('ITS_1')" translate="yes"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="foo:para">
@@ -214,8 +218,9 @@ Nothing is done to comments. Just need a new XPath for the new document.
       <its:domainRule selector="id('ITS_1')" domainPointer="/*/*[2]/*/*[2]/comment()"/>
       <its:domainRule selector="id('ITS_2')" domainPointer="/*/*[2]/*/*[3]/comment()"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -259,8 +264,9 @@ into child elements, which also triggers anti-inheritance rules.
       <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -307,8 +313,9 @@ Multiple matches for one node should only create one new element.
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -352,8 +359,9 @@ Multiple matches for one node should only create one new element.
       <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">
@@ -392,8 +400,9 @@ Nothing is done to these. Just need a new XPath.
       <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="/*/*[2]/*/*[2]/text()"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -432,8 +441,9 @@ triggers anti-inheritance rules.
       <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <span
           title="xmlns:foo"
@@ -479,8 +489,9 @@ Multiple matches of same namespace should only create one new element.
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <span
           title="xmlns:foo"
@@ -522,8 +533,9 @@ test it.
       <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="bar:xml">
         <span
           title="xmlns:foo"
@@ -559,8 +571,9 @@ Document match stays the same ("/").
       <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="/"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">
@@ -593,8 +606,9 @@ Namespacing probably doesn't make a difference here; just covering the bases.
       <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="/"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="foo:xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -628,8 +642,9 @@ it should just be copied to the final rule.
       <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:idValueRule selector="id('ITS_1')" idValue="'p1'"/>
     </its:rules>
-    </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">Some text</div>

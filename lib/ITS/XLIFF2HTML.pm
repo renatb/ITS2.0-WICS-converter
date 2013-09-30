@@ -866,11 +866,12 @@ sub _false_att_inheritance_rules {
 	return;
 }
 
-#add a css rule to hide everything except for <p> elements
+# add a css rule to hide everything except for <p>
+# elements and their descendants
 sub _set_visibility {
 	my ($self, $head) = @_;
 	my $script = new_element('style', {},
-		':not(p) {visibility:hidden} p {visibility: visible}');
+		'body {visibility:hidden} p {visibility: visible}');
 	$script->set_namespace($HTML_NS);
 	$script->paste($head, 'last_child');
 	return;

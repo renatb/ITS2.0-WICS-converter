@@ -82,7 +82,7 @@ Just test logs for one document.
       <its:storageSizeRule selector="id('ITS_6')" storageSizePointer="id('ITS_2')" storageEncodingPointer="id('ITS_7')"/>
     </its:rules>
   </script>
-  <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+  <style>body {visibility:hidden} p {visibility: visible}</style>
   <div title=xliff>
     <span id="m1" title="mrk">
       <span class=_ITS_ATT id=ITS_3 its-within-text=no title=qux>baz</span>

@@ -36,7 +36,7 @@ placing contents into an HTML skeleton, and creating default rules.
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
   <div title="xliff"></div>
 
 === correct div and span
@@ -60,7 +60,7 @@ inlines are <span>, source and target are <p>, everything else is <div>
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <div title=trans-unit>
         <p title=source>Some <span title=mrk>stuff</span></p>
@@ -86,7 +86,7 @@ should be converted into id
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
       <div title="foo" id="bar"></div>
     </div>
@@ -109,7 +109,7 @@ should be removed, having no HTML equivalent
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml"></div>
 
 === localization note ITS
@@ -147,7 +147,7 @@ sibling <note annotates="source|target"> for sources and targets
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <div title="trans-unit" its-loc-note="Some note" its-loc-note-type="alert">
         <p title="source">foo</p>
@@ -188,7 +188,7 @@ mtype value of 'term' sets its-term='yes'
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <span title="mrk" its-term="yes" its-term-confidence="5">foo</span>
       <span title="mrk" its-term="no">bar</span>
@@ -213,7 +213,7 @@ should be converted into lang
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
       <div title="foo" lang="lut"></div>
     </div>
@@ -239,7 +239,7 @@ mtype value of 'protected' is 'no' and 'x-its-translate-yes' is 'yes'
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <div title="foo" translate="no"></div>
       <span title="mrk" translate="no"></span>
@@ -267,7 +267,7 @@ will translate as the default for div and span in HTML anyway.
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <div title="trans-unit">
         <p title="source">
@@ -301,7 +301,7 @@ requires the creation of a global rule
         <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <span title="mrk" id="ITS_1">
         <span
@@ -342,7 +342,7 @@ requires the creation of a global rule
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <p title="source"
           its-annotators-ref="text-analysis|http://enrycher.ijs.si">
@@ -374,7 +374,7 @@ requires the creation of a global rule
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <div title="foo" its-locale-filter-list="ja">bar</div>
     </div>
@@ -403,7 +403,7 @@ requires the creation of a global rule
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <p title="target"
           its-person="John Doe"
@@ -437,7 +437,7 @@ requires the creation of a global rule
         <its:externalResourceRefRule selector="id('ITS_2')" externalResourceRefPointer="id('ITS_1')"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <p title="source">
         Image:
@@ -473,7 +473,7 @@ requires the creation of a global rule
         <its:idValueRule selector="id('ITS_1')" idValue="'foo_res'"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <div title="trans-unit" id="ITS_1">
         foo
@@ -498,7 +498,7 @@ xml:space should be removed, having no HTML equivalent
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
       <div title="foo"></div>
     </div>
@@ -529,7 +529,7 @@ xml:space should be removed, having no HTML equivalent
       <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title=xliff>
       <div title=trans-unit>
         <p title=source>This is the content</p>
@@ -573,7 +573,7 @@ xml:space should be removed, having no HTML equivalent
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <div
           its-loc-quality-rating-profile-ref="http://example.org/qaModel/v13"
@@ -602,7 +602,7 @@ xml:space should be removed, having no HTML equivalent
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff" its-annotators-ref="mt-confidence|MTServices-XYZ">
       <p title="source" its-mt-confidence="0.8982">Texte</p>
     </div>
@@ -626,7 +626,7 @@ xml:space should be removed, having no HTML equivalent
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <p title="source" its-allowed-characters="[a-z]">text</p>
     </div>
@@ -655,7 +655,7 @@ xml:space should be removed, having no HTML equivalent
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <div title="trans-unit">
         <p
@@ -690,5 +690,5 @@ in the head.
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml"></div>

@@ -42,7 +42,7 @@ __DATA__
         <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xliff">
       <div title="trans-unit">
         <p class="ITS_LABEL ITS_EMPTY_TARGET" id="ITS_1">Target is empty</p>
@@ -78,7 +78,7 @@ __DATA__
       <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title=xliff>
     <div title=trans-unit>
         <p title=source translate="no">foo</p>
@@ -154,7 +154,7 @@ __DATA__
         <its:translateRule selector="id('ITS_7')" translate="yes"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title=xliff>
       <div title=trans-unit>
         <p id="ITS_1" title=source>foo</p>
@@ -227,7 +227,7 @@ __DATA__
         <its:idValueRule selector="id('ITS_4')" idValue="'foo'"/>
       </its:rules>
     </script>
-    <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title=xliff>
       <div title=trans-unit>
         <p id="ITS_1" title=source>foo</p>
@@ -295,7 +295,7 @@ __DATA__
       <its:storageSizeRule selector="id('ITS_6')" storageSizePointer="id('ITS_2')" storageEncodingPointer="id('ITS_7')"/>
     </its:rules>
   </script>
-  <style>:not(p) {visibility:hidden} p {visibility: visible}</style>
+  <style>body {visibility:hidden} p {visibility: visible}</style>
   <div title=xliff>
     <span id="m1" title="mrk">
       <span class=_ITS_ATT id=ITS_3 its-within-text=no title=qux>baz</span>
