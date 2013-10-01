@@ -890,6 +890,15 @@ error. The most common problem with XLIFF files is a duplicate xml:id
 value because it is  common to copy the C<source> element and rename it
 C<target> before beginning translation.
 
+In the course of conversion, non-element nodes (like attributes) are
+pasted as elements so as to be both visible and legal HTML, and new
+attributes are also added (`title` and `id`). This unfortunately causes
+them to inherit ITS information that does not belong to them. Global rules
+are created to reset ITS information to defaults where possible
+(`translate`, `direction`, and `localeFilter`). Where there are no defaults
+(`langInfo`, `domain` and `provenance`), the newly pasted elements may be
+assigned incorrect ITS information.
+
 =head1 C<TODO>
 
 It would be nice if the ITS rules placed in script elements were printed XML style
