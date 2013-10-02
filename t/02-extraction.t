@@ -9,7 +9,6 @@ use Test::XML;
 
 filters {
   input => 'xlfize',
-  log => [qw(lines chomp array)]
 };
 
 for my $block(blocks()){
@@ -128,6 +127,56 @@ Test that standoff markup is pasted into XLIFF body
       </trans-unit>
       <trans-unit>
         <source>stoof</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
+
+=== TU with inline element
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  stuff
+  <foo its:withinText="yes">starf<bar>guff</bar></foo>
+  stoof
+</xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit>
+        <source>stuff<mrk>starf</mrk>stoof</source>
+      </trans-unit>
+      <trans-unit>
+        <source>guff</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
+
+=== TU with nested element
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  stuff
+  <foo its:withinText="nested">starf</foo>
+  stoof
+</xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit>
+        <source>stuff stoof</source>
+      </trans-unit>
+      <trans-unit>
+        <source>starf</source>
       </trans-unit>
     </body>
   </file>

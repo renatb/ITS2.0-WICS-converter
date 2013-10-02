@@ -115,10 +115,31 @@ sub _extract_convert {
 				}
 				return;
 			}
-			# break the text flow
-			$new_parent = undef;
-			# recursively extract
-			$self->_extract_convert($child);
+			#TODO: check if it's translatable
+			#TODO: check withinText global rules
+			my $within_text = $child->att('withinText', its_ns()) || '';
+			#remove the no-longer-needed attribute before copying the element
+			if($within_text){
+				$child->remove_att('withinText', its_ns());
+			}
+			if( $within_text eq 'yes'){
+				# create a new source element if needed
+				$new_parent ||= $self->_get_new_source($el);
+				$self->_extract_convert($child,
+					$self->_get_new_mrk($child, $new_parent));
+			}elsif($within_text eq 'nested'){
+				# create a new source element if needed
+				$new_parent ||= $self->_get_new_source($el);
+				#one space to separate text on either side of nested element
+				$new_parent->append_text(' ');
+				# recursively extract
+				$self->_extract_convert($child);
+			}else{
+				# break the text flow
+				$new_parent = undef;
+				# recursively extract
+				$self->_extract_convert($child);
+			}
 		}
 	}
 	return;
@@ -137,8 +158,21 @@ sub _get_new_source {
 	$tu->set_namespace($XLIFF_NS);
 	$source->paste($tu);
 	push @{$self->{tu}}, $tu;
-	# $self->_convert_atts($source);
+	# TODO: $self->_convert_atts($source);
 	return $source;
+}
+
+#create a new XLIFF mrk element to represent given element and paste
+#is last in given parent
+sub _get_new_mrk {
+	my ($self, $el, $parent) = @_;
+	#TODO: need to copy rule matches here
+	my $mrk = $el->copy(0);
+	$mrk->set_name('mrk');
+	$mrk->set_namespace($XLIFF_NS);
+	$mrk->paste($parent);
+	# TODO: $self->_convert_atts($mrk);
+	return $mrk;
 }
 
 # Place extracted translation units into an XLIFF skeleton.
