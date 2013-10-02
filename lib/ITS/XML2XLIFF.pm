@@ -8,10 +8,11 @@ use Log::Any qw($log);
 use ITS qw(its_ns);
 use ITS::DOM;
 use ITS::DOM::Element qw(new_element);
-use ITS::XML2XLIFF::LogUtils qw(node_log_id);
+use ITS::XML2XLIFF::LogUtils qw(node_log_id log_match);
 
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 our $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
+use Data::Dumper;#debug
 
 # ABSTRACT: Extract ITS-decorated XML into XLIFF
 # VERSION
@@ -56,6 +57,16 @@ sub convert {
 			'another ITS document instead.';
 	}
 
+	#TODO: obvious sign that this method should just be the constructor...
+	delete $self->{match_index};
+
+	#iterate all document rules and their matches, indexing each one
+	for my $rule (@{ $ITS->get_rules }){
+		my $matches = $ITS->get_matches($rule);
+		$self->_index_match($rule, $_) for @$matches;
+	}
+	# print Dumper $self->{match_index};
+
 	# extract $doc into an XLIFF document;
 	my ($xlf_doc) = $self->_xlfize($doc);
 	return \($xlf_doc->string);
@@ -73,6 +84,46 @@ sub _is_legal_doc {
 	return 1;
 }
 
+# index a single set of rule matches
+# This sub saves ITS info in $self like so:
+# $self->{match_index}->{$node->unique_key}->{its name} = "its value"
+sub _index_match {
+	my ($self, $rule, $matches) = @_;
+	log_match($rule, $matches, $log);
+
+	my $node = $matches->{selector};
+	delete $matches->{selector};
+
+	# create a hash containing all ITS info given to the selected node
+	my $its_info = {};
+	for my $att (@{ $rule->value_atts }){
+		$its_info->{$att} = $rule->element->att($att);
+	}
+	#for <its:locNote> or similar (in future ITS standards)
+	if(my @children = @{ $rule->element->child_els }){
+		for (@children){
+			$its_info->{$_->local_name} = $_->text;
+		}
+	}
+
+	# $name is 'selector', 'locNotePointer', etc.
+	# Store string its_info for all pointer matches
+	while (my ($name, $match) = each %$matches) {
+		$name =~ s/Pointer$//;
+		if((ref $match) =~ /Value$/){
+			$its_info->{$name} = $match->value;
+		}elsif($match->type eq 'ELT'){
+			$its_info->{$name} = $match->text;
+		}else{
+			$its_info->{$name} = $match->value;
+		}
+	}
+	# merge the new ITS info with whatever ITS info may already exist
+	# for the given node
+	@{ $self->{match_index}->{$node->unique_key} }{keys %$its_info} =
+		values %$its_info;
+	return;
+}
 
 # Pass in document to be the source of an XLIFF file
 # return the new XLIFF document
@@ -172,8 +223,11 @@ sub _get_new_source {
 	}
 	$new_el->set_namespace($XLIFF_NS);
 
-	$self->_convert_atts($new_el, $tu);
-	# TODO: localize global rules
+	# attributes get added while localizing rules; so save the ones
+	# that need to be processed by convert_atts first
+	my @atts = $new_el->get_xpath('@*');
+	$self->_localize_rules($el, $new_el, $tu);
+	$self->_convert_atts($new_el, \@atts, $tu);
 	return $new_el;
 }
 
@@ -197,22 +251,50 @@ sub _get_new_mrk {
 	$mrk->set_name('mrk');
 	$mrk->set_namespace($XLIFF_NS);
 	$mrk->paste($parent);
-	$self->_convert_atts($mrk);
-	#TODO: localize global rules
+
+	# attributes get added while localizing rules; so save the ones
+	# that need to be processed by convert_atts first
+	my @atts = $mrk->get_xpath('@*');
+	$self->_localize_rules($el, $mrk, $parent);
+	$self->_convert_atts($mrk, \@atts);
 	return $mrk;
 }
 
-#handle all attribute converting for the given element.
-#$tu is containing trans-unit (not needed if $el is inline)
+#convert ITS info from global rules matching $old_el into local markup
+#on $new_el or $tu (containing trans-unit)
+sub _localize_rules {
+	my ($self, $old_el, $new_el, $tu) = @_;
+
+	my $its_info = $self->{match_index}->{$old_el->unique_key};
+	if(!$its_info){
+		return;
+	}
+
+	#TODO: there might be elements other than source and mrk someday
+	my $inline = $new_el->local_name eq 'mrk' ? 1 : 0;
+
+	while (my ($name, $value) = each %$its_info){
+		if($name eq 'locNote'){
+			my $type = $its_info->{locNoteType} || 'description';
+			_process_locNote($new_el, $value, $type, $inline)
+		}
+	}
+	return;
+}
+
+# handle all attribute converting for the given element.
+# $atts is array of att nodes to be processed
+# $tu is containing trans-unit (not needed if $el is inline)
 sub _convert_atts {
-	my ($self, $el, $tu) = @_;
+	my ($self, $el, $atts, $tu) = @_;
 
-	my @atts = $el->get_xpath('@*');
+	#TODO: there might be elements other than source and mrk someday
+	my $inline = $el->local_name eq 'mrk' ? 1 : 0;
 
-	for my $att (@atts){
+	for my $att (@$atts){
 		# if not already removed while processing other atts
 		if(!$att->doc_node){
-			$self->_process_att($el, $att, $tu);
+			$self->_process_att($el, $att, $tu, $inline);
 		}
 	}
 	return;
@@ -222,20 +304,20 @@ sub _convert_atts {
 # return the name of the element used to wrap the children, if any.
 # $tu is containing trans-unit (not needed if $el is inline)
 sub _process_att {
-	my ($self, $el, $att, $tu) = @_;
+	my ($self, $el, $att, $tu, $inline) = @_;
 	my $att_ns = $att->namespace_URI || '';
 	my $att_name = $att->local_name;
-	#TODO: there might be elements other than source and mrk someday
-	my $inline = $el->local_name eq 'mrk' ? 1 : 0;
+	print "$att_name\n";
 	if($att_ns eq its_ns()){
 		if($att_name eq 'version'){
 			$att->remove;
 		}
-		#need separate method to process all atts at once
-		#If there's a locNoteType but no locNote then it
-		#doesn't get processed (no reason to).
+		# need separate method to process all atts at once
+		# If there's a locNoteType but no locNote then it
+		# doesn't get processed (no reason to).
 		if($att_name eq 'locNote'){
-			_process_locNote($el, $inline);
+			my $type = $el->att('locNoteType', its_ns()) || 'description';
+			_process_locNote($el, $att->value, $type, $inline);
 		}elsif($att_name eq 'translate'){
 			if($inline){
 				$el->set_att('mtype',
@@ -266,16 +348,18 @@ sub _process_att {
 			$tu->set_att('resname', $att->value);
 		}
 		$att->remove;
+	}else{
+		$att->remove;
 	}
 	return;
 }
 
+# pass in an element to be annotated, locNote and locNoteType values,
+# and whether the element is inline or not
 sub _process_locNote {
-	my ($el, $inline) = @_;
-	my $note = $el->att('locNote', its_ns());
-	my $type = $el->att('locNoteType', its_ns()) || 'description';
-	my $priority = $type eq 'alert' ? '1' : '2';
+	my ($el, $note, $type, $inline) = @_;
 
+	my $priority = $type eq 'alert' ? '1' : '2';
 	if($inline){
 		$el->set_att('comment', $note);
 		$el->set_att('itsxlf:locNoteType', $type, $ITSXLF_NS);
