@@ -19,12 +19,52 @@ for my $block(blocks()){
 }
 
 __DATA__
-=== its:locNoteRule
+=== its:translateRule
 --- input
-<xml
+<xml xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+  <its:rules>
+    <its:translateRule translate="yes" selector="//x|//x/foo"/>
+    <its:translateRule translate="no" selector="//y|//y/foo"/>
+  </its:rules>
+  <x>
+    stuff
+    <foo its:withinText="yes">starf</foo>
+  </x>
+  <y>
+    stuff
+    <foo its:withinText="yes">starf</foo>
+  </y>
+</xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
     xmlns:its="http://www.w3.org/2005/11/its"
     its:version="2.0">
-  <its:rules version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit translate="yes">
+        <source>stuff
+          <mrk mtype="x-its-translate-yes">
+            starf
+          </mrk>
+        </source>
+      </trans-unit>
+      <trans-unit translate="no">
+        <source>stuff
+          <mrk mtype="protected">
+            starf
+          </mrk>
+        </source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
+
+=== its:locNoteRule
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its" its:version="2.0">
+  <its:rules>
     <its:locNoteRule locNoteType="alert" selector="/xml">
       <its:locNote>Note 1</its:locNote>
     </its:locNoteRule>

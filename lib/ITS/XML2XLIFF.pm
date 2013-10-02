@@ -277,6 +277,8 @@ sub _localize_rules {
 		if($name eq 'locNote'){
 			my $type = $its_info->{locNoteType} || 'description';
 			_process_locNote($new_el, $value, $type, $inline)
+		}elsif($name eq 'translate'){
+			_process_translate($new_el, $value, $tu, $inline);
 		}
 	}
 	return;
@@ -307,26 +309,17 @@ sub _process_att {
 	my ($self, $el, $att, $tu, $inline) = @_;
 	my $att_ns = $att->namespace_URI || '';
 	my $att_name = $att->local_name;
-	print "$att_name\n";
 	if($att_ns eq its_ns()){
 		if($att_name eq 'version'){
 			$att->remove;
 		}
-		# need separate method to process all atts at once
-		# If there's a locNoteType but no locNote then it
+		# If there's a locNoteType but no locNote, then it
 		# doesn't get processed (no reason to).
 		if($att_name eq 'locNote'){
 			my $type = $el->att('locNoteType', its_ns()) || 'description';
 			_process_locNote($el, $att->value, $type, $inline);
 		}elsif($att_name eq 'translate'){
-			if($inline){
-				$el->set_att('mtype',
-					$att->value eq 'yes' ?
-					'x-its-translate-yes' :
-					'protected');
-			}else{
-				$tu->set_att('translate', $att->value);
-			}
+			_process_translate($el, $att->value, $tu, $inline);
 			$att->remove;
 		}elsif($att_name eq 'term'){
 			$att->value eq 'yes' ?
@@ -370,6 +363,21 @@ sub _process_locNote {
 	}
 	$el->remove_att('locNote', its_ns());
 	$el->remove_att('locNoteType', its_ns());
+}
+
+# input element and it's ITS translate value, containing TU, and whether
+# it's inline
+sub _process_translate {
+	my ($el, $translate, $tu, $inline) = @_;
+	if($inline){
+		$el->set_att('mtype',
+			$translate eq 'yes' ?
+			'x-its-translate-yes' :
+			'protected');
+	}else{
+		$tu->set_att('translate', $translate);
+	}
+	return;
 }
 
 # Place extracted translation units into an XLIFF skeleton, and
