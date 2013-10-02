@@ -30,9 +30,9 @@ It is a thin wrapper around an XML::LibXML::Node.
 
 Argument: a single XML::LibXML node.
 
-Note that this constructor DOES NOT support subclassing by other libraries. The
-package of the returned object depends on the type of XML::LibXML node passed in.
-
+Note that this constructor DOES NOT support subclassing by other libraries.
+The package of the returned object depends on the type of XML::LibXML node
+passed in.
 
 =cut
 sub new {
@@ -303,13 +303,19 @@ sub parent {
 
 =head2 C<doc_node>
 
-Returns the document node for the document which owns this node.
+Returns the document node for the document which owns this node,
+or undef if there is no owner.
 
 =cut
 sub doc_node {
     my ($self) = @_;
     my $doc = $self->{node}->ownerDocument;
-    return __PACKAGE__->new($doc);
+    #owner document exists?
+    if($doc){
+        return __PACKAGE__->new($doc);
+    }
+    #return nothing if this node is an orphan
+    return;
 }
 
 =head2 C<path>

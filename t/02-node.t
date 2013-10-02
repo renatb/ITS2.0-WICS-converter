@@ -2,9 +2,10 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 61;
+plan tests => 65;
 use Test::NoWarnings;
 use Test::Exception;
+use XML::LibXML;
 
 use ITS::DOM;
 
@@ -14,6 +15,8 @@ use FindBin qw($Bin);
 my $dom_path = path($Bin, 'corpus', 'XML', 'dom_test.xml');
 my $dom = ITS::DOM->new( 'xml' => $dom_path );
 
+test_constructor();
+test_owner_doc($dom);
 test_type_name_value($dom);
 test_path($dom);
 test_xpath($dom);
@@ -21,6 +24,27 @@ test_node_namespaces($dom);
 test_unique_key($dom);
 test_copy($dom);
 test_family($dom);
+
+sub test_constructor {
+    my $el = XML::LibXML::Element->new( 'x' );
+    my $node = ITS::DOM::Node->new($el);
+    isa_ok($node, 'ITS::DOM::Node',
+        'constructor returns Node object');
+    isa_ok($node, 'ITS::DOM::Element',
+        'element is insance of Element package');
+    return;
+}
+
+#test Node's doc_node method
+sub test_owner_doc {
+    my ($dom) = @_;
+    my $root = $dom->get_root;
+    isa_ok($root->doc_node, 'ITS::DOM::Node', 'owner document retrieved');
+
+    my $el = XML::LibXML::Element->new( 'x' );
+    my $node = ITS::DOM::Node->new($el);
+    ok(!defined $node->doc_node, 'no doc node returned for orphan');
+}
 
 # test types, names and values of all types of nodes
 # (and test quite a bit of XPath functionality in the process)

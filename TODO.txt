@@ -11,4 +11,6 @@ To Do on current task:
 Later To Do:
     - use Log::Any
     - check test coverage and fill it in!
+    - Implement ITS inheritance
+    - Create a way to specify elements that are inline (INI file? constructor args?)
 
