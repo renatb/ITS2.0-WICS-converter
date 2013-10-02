@@ -87,7 +87,6 @@ Test that standoff markup is pasted into XLIFF body
   </file>
 </xliff>
 
-
 === whitespace not extracted
 --- input
 <xml>
@@ -104,3 +103,32 @@ Test that standoff markup is pasted into XLIFF body
   </file>
 </xliff>
 
+=== several TUs
+--- input
+<xml>stuff<foo>really<bar>Raleigh</bar>Raley</foo>stoof</xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit>
+        <source>stuff</source>
+      </trans-unit>
+      <trans-unit>
+        <source>really</source>
+      </trans-unit>
+      <trans-unit>
+        <source>Raleigh</source>
+      </trans-unit>
+      <trans-unit>
+        <source>Raley</source>
+      </trans-unit>
+      <trans-unit>
+        <source>stoof</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
