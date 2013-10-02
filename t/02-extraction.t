@@ -87,3 +87,20 @@ Test that standoff markup is pasted into XLIFF body
   </file>
 </xliff>
 
+
+=== whitespace not extracted
+--- input
+<xml>
+
+  </xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body/>
+  </file>
+</xliff>
+

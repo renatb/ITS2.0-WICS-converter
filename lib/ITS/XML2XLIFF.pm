@@ -95,7 +95,7 @@ sub _extract_convert {
 	my ($self, $el, $new_parent) = @_;
 	for my $child ($el->children){
 		# extract non-empty text nodes
-		if($child->type eq 'TXT'){
+		if($child->type eq 'TXT' && $child->text =~ /\S/){
 			# create a new source element if needed
 			$new_parent ||= $self->_get_new_source($el);
 			$child->paste($new_parent);
