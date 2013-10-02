@@ -224,11 +224,11 @@ sub _process_att {
 			$att->remove;
 		}
 	}elsif($att->name eq 'xml:id'){
+		#ignore this for inline elements
 		if(!$inline){
-
+			$tu->set_att('resname', $att->value);
 		}
 		$att->remove;
-		_process_xml_id($el, $inline);
 	}
 	return;
 }
