@@ -11,6 +11,7 @@ use ITS::DOM::Element qw(new_element);
 use ITS::XML2XLIFF::LogUtils qw(node_log_id);
 
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
+our $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
 
 # ABSTRACT: Extract ITS-decorated XML into XLIFF
 # VERSION
@@ -195,12 +196,36 @@ sub _process_att {
 	my ($self, $el, $att) = @_;
 	my $att_ns = $att->namespace_URI || '';
 	my $att_name = $att->local_name;
+	#TODO: there might be elements other than source and mrk someday
+	my $inline = $el->local_name eq 'mrk' ? 1 : 0;
 	if($att_ns eq its_ns()){
 		if($att_name eq 'version'){
 			$att->remove;
 		}
+		if($att_name eq 'locNote'){
+			_process_locNote($el, $inline);
+		}
 	}
 	return;
+}
+
+sub _process_locNote {
+	my ($el, $inline) = @_;
+	my $note = $el->att('locNote', its_ns());
+	my $type = $el->att('locNoteType', its_ns()) || 'description';
+	my $priority = $type eq 'alert' ? '1' : '2';
+
+	if($inline){
+		$el->set_att('comment', $note);
+		$el->set_att('itsxlf:locNoteType', $type, $ITSXLF_NS);
+	}else{
+		my $note = new_element('note', {}, $note, $XLIFF_NS);
+		$note->set_att('priority', $priority);
+		$note->paste($el, 'after');
+	}
+	$el->remove_att('locNote', its_ns());
+	$el->remove_att('locNoteType', its_ns());
+
 }
 
 # Place extracted translation units into an XLIFF skeleton, and
@@ -213,9 +238,11 @@ sub _xliff_structure {
 	$log->debug('wrapping document in XLIFF structure')
 		if $log->is_debug;
 
+	#put its and itsxlf namespace declarations in root, and its:version
 	my $xlf_doc = ITS::DOM->new(
-		'xml', \("<xliff xmlns='$XLIFF_NS' xmlns:its='" . its_ns() .
-		"' its:version='2.0'/>"));
+		'xml', \("<xliff xmlns='$XLIFF_NS' xmlns:itsxlf='$ITSXLF_NS' " .
+			'xmlns:its="' . its_ns() . q<" > .
+		"its:version='2.0'/>"));
 	my $root = $xlf_doc->get_root;
 
 	my $file = new_element('file', {

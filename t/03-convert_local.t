@@ -44,3 +44,58 @@ Should be removed; it's declared in the XLIFF root
     </body>
   </file>
 </xliff>
+
+=== its:locNote*
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  <x
+      its:locNoteType="alert"
+      its:locNote="note1">
+    stuff
+    <foo
+        its:withinText="yes"
+        its:locNoteType="description"
+        its:locNote="note2">starf</foo>
+  </x>
+  <x
+      its:locNoteType="description"
+      its:locNote="note1">
+    stuff
+    <foo
+        its:withinText="yes"
+        its:locNoteType="alert"
+        its:locNote="note2">starf</foo>
+  </x>
+</xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    xmlns:itsxlf="http://www.w3.org/ns/its-xliff/"
+    its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit>
+        <source>stuff
+          <mrk
+              comment="note2"
+              itsxlf:locNoteType="description">
+            starf
+          </mrk>
+        </source>
+        <note priority="1">note1</note>
+      </trans-unit>
+      <trans-unit>
+        <source>stuff
+          <mrk
+              comment="note2"
+              itsxlf:locNoteType="alert">
+            starf
+          </mrk>
+        </source>
+        <note priority="2">note1</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
