@@ -1,107 +1,69 @@
-#modified from "Effective Perl Programming" by Joseph N. Hall, et al.
 package ITS::XML2XLIFF;
 use strict;
 use warnings;
-use autodie;
+use Carp;
+our @CARP_NOT = qw(ITS);
+use Log::Any qw($log);
+
+use ITS qw(its_ns);
+use ITS::DOM;
+use ITS::DOM::Element qw(new_element);
+
+our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
+
+# ABSTRACT: Extract ITS-decorated XML into XLIFF
 # VERSION
 
-
-# ABSTRACT: Default Module Template
-=head1 SYNOPSIS
-
-	use ITS::XML2XLIFF;
-	my $obj = ITS::XML2XLIFF->new();
-	$obj->message();
-
-=head1 DESCRIPTION
-
-Description here
-
-=cut
-
-__PACKAGE__->new->_run unless caller;
-
-sub _run {
-	my ($application) = @_;
-	print { $application->{output_fh} }
-		$application->message;
-}
+__PACKAGE__->new()->convert($ARGV[0]) unless caller;
 
 =head1 METHODS
 
 =head2 C<new>
 
-Creates a new instance of ITS::XML2XLIFF
+Creates a new converter instance.
+
+=back
 
 =cut
-
 sub new {
-	my ($class) = @_;
-	my $application = bless {}, $class;
-	$application->_init;
-	return $application;
+	my ($class, %args) = @_;
+	return bless {}, $class;
 }
 
-sub _init {
-	my ($application) = @_;
-	$application->{output_fh} = \*STDOUT;
-	$application->{input_fh} = \*STDIN;
-	return;
-}
+=head2 C<convert>
 
-=head2 C<output_fh>
+Extracts strings from the input XML document into an XLIFF document.
 
-Input: filehandle or filename
+Argument is either a string containing an XML file name, a string pointer
+containing actual XML data, or a filehandle for a file containing the data.
 
-Sets the filehandle for this object to print to.
+Return value is a string pointer containing the output XLIFF string.
 
 =cut
 
-sub output_fh {
-	my ( $application, $fh ) = @_;
-	if ($fh) {
-		if(ref($fh) eq 'GLOB'){
-			$application->{output_fh} = $fh;
-		}
-		else{
-			open my $fh2, '>', $fh;
-			$application->{output_fh} = $fh2;
-		}
+sub convert {
+	my ($self, $doc_data) = @_;
+
+	#create the document from the input data
+	my $ITS = ITS->new('xml', doc => $doc_data);
+	my $dom = $ITS->get_doc;
+
+	if(!_is_legal_doc($dom)){
+		croak 'cannot process a file with ITS element ' .
+			'as root (except span). Include this file within ' .
+			'another ITS document instead.';
 	}
-	return $application->{output_fh};
+	return '';
 }
 
-=head2 C<input_fh>
-
-Input: filehandle or filename
-
-Sets the filehandle for this object to read from.
-
-=cut
-
-sub input_fh {
-	my ( $application, $fh ) = @_;
-	if ($fh) {
-		if(ref($fh) eq 'GLOB'){
-			$application->{input_fh} = $fh;
-		}
-		else{
-			open my $fh2, '<', $fh;
-			$application->{input_fh} = $fh2;
-		}
+# returns true if the root of the given document not an ITS element
+# (or is an ITS span element)
+sub _is_legal_doc {
+	my ($doc) = @_;
+	my $root = $doc->get_root;
+	if($root->namespace_URI eq its_ns() &&
+		$root->local_name ne 'span'){
+		return 0;
 	}
-	return $application->{input_fh};
+	return 1;
 }
-
-=head2 C<other_subroutines>
-
-PUT MORE SUBROUTINES HERE
-
-=cut
-
-sub other_subroutines {
-	"YOUR WORK STARTS HERE\n";
-}
-
-1;
-
