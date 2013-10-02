@@ -94,7 +94,12 @@ sub _xlfize {
 sub _extract_convert {
 	my ($self, $el, $new_parent) = @_;
 	for my $child ($el->children){
-		if($child->type eq 'ELT'){
+		# extract non-empty text nodes
+		if($child->type eq 'TXT'){
+			# create a new source element if needed
+			$new_parent ||= $self->_get_new_source($el);
+			$child->paste($new_parent);
+		}elsif($child->type eq 'ELT'){
 			#ITS standoff and rules need special processing
 			if($el->namespace_URI &&
 				$el->namespace_URI eq its_ns() &&
@@ -110,10 +115,30 @@ sub _extract_convert {
 				}
 				return;
 			}
-				$self->_extract_convert($child);
+			# break the text flow
+			$new_parent = undef;
+			# recursively extract
+			$self->_extract_convert($child);
 		}
 	}
 	return;
+}
+
+# pass in the element which contains the text to be placed in a
+# new source element. Create the source element and paste in
+# inside a new trans-unit element.
+sub _get_new_source {
+	my ($self, $el) = @_;
+	#TODO: need to copy rule matches here
+	my $source = $el->copy(0);
+	$source->set_name('source');
+	$source->set_namespace($XLIFF_NS);
+	my $tu = new_element('trans-unit', {});
+	$tu->set_namespace($XLIFF_NS);
+	$source->paste($tu);
+	push @{$self->{tu}}, $tu;
+	# $self->_convert_atts($source);
+	return $source;
 }
 
 # Place extracted translation units into an XLIFF skeleton.
@@ -143,6 +168,8 @@ sub _xliff_structure {
 	my $body = new_element('body');
 	$body->set_namespace($XLIFF_NS);
 	$body->paste($file);
+	# paste all trans-unit elements
+	$_->paste($body) for @{ $self->{tu} };
 
 	if(@{ $self->{its_els} }){
 		my $header = new_element('header');
