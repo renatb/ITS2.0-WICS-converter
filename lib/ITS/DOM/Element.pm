@@ -146,9 +146,11 @@ Removes the specified attribute from its containing element.
 sub remove_att {
     my ($self, $name, $ns) = @_;
     if($ns){
-        return $self->{node}->removeAttributeNS($ns, $name);
+        $self->{node}->removeAttributeNS($ns, $name);
+        return;
     }
-    return $self->{node}->removeAttribute($name);
+    $self->{node}->removeAttribute($name);
+    return;
 }
 
 =head2 C<set_namespace>
