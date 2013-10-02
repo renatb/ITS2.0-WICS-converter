@@ -150,7 +150,7 @@ sub _extract_convert {
 # inside a new trans-unit element.
 sub _get_new_source {
 	my ($self, $el) = @_;
-	#TODO: need to copy rule matches here
+	#copy element and atts, but not children
 	my $source = $el->copy(0);
 	$source->set_name('source');
 	$source->set_namespace($XLIFF_NS);
@@ -158,7 +158,8 @@ sub _get_new_source {
 	$tu->set_namespace($XLIFF_NS);
 	$source->paste($tu);
 	push @{$self->{tu}}, $tu;
-	# TODO: $self->_convert_atts($source);
+	$self->_convert_atts($source);
+	# TODO: localize global rules
 	return $source;
 }
 
@@ -166,17 +167,44 @@ sub _get_new_source {
 #is last in given parent
 sub _get_new_mrk {
 	my ($self, $el, $parent) = @_;
-	#TODO: need to copy rule matches here
+	#copy element and atts, but not children
 	my $mrk = $el->copy(0);
 	$mrk->set_name('mrk');
 	$mrk->set_namespace($XLIFF_NS);
 	$mrk->paste($parent);
-	# TODO: $self->_convert_atts($mrk);
+	$self->_convert_atts($mrk);
+	#TODO: localize global rules
 	return $mrk;
 }
 
-# Place extracted translation units into an XLIFF skeleton.
-# TODO: standoff markup
+#handle all attribute converting for the given element.
+sub _convert_atts {
+	my ($self, $el) = @_;
+
+	my @atts = $el->get_xpath('@*');
+
+	for my $att (@atts){
+		$self->_process_att($el, $att);
+	}
+	return;
+}
+
+# process given attribute on given element;
+# return the name of the element used to wrap the children, if any.
+sub _process_att {
+	my ($self, $el, $att) = @_;
+	my $att_ns = $att->namespace_URI || '';
+	my $att_name = $att->local_name;
+	if($att_ns eq its_ns()){
+		if($att_name eq 'version'){
+			$att->remove;
+		}
+	}
+	return;
+}
+
+# Place extracted translation units into an XLIFF skeleton, and
+# standoff markup into header element.
 # Single argument is the source of the original document.
 # The XLIFF document is returned.
 sub _xliff_structure {
