@@ -151,17 +151,41 @@ sub _extract_convert {
 # inside a new trans-unit element.
 sub _get_new_source {
 	my ($self, $el) = @_;
-	#copy element and atts, but not children
-	my $source = $el->copy(0);
-	$source->set_name('source');
-	$source->set_namespace($XLIFF_NS);
+
+	#create new trans-unit to hold element contents
 	my $tu = new_element('trans-unit', {});
 	$tu->set_namespace($XLIFF_NS);
-	$source->paste($tu);
 	push @{$self->{tu}}, $tu;
-	$self->_convert_atts($source, $tu);
+
+	#copy element and atts, but not children
+	my $new_el = $el->copy(0);
+	#check if element should be source or mrk inside of source
+	if(_its_requires_inline($new_el)){
+		$new_el->set_name('mrk');
+		my $source = new_element('source');
+		$source->set_namespace($XLIFF_NS);
+		$source->paste($tu);
+		$new_el->paste($source);
+	}else{
+		$new_el->set_name('source');
+		$new_el->paste($tu);
+	}
+	$new_el->set_namespace($XLIFF_NS);
+
+	$self->_convert_atts($new_el, $tu);
 	# TODO: localize global rules
-	return $source;
+	return $new_el;
+}
+
+# return true if converting the ITS markup on the given element
+# requires that it be rendered inline (as mrk) instead of structural
+# (as its own source)
+sub _its_requires_inline {
+	my ($el) = @_;
+	if($el->att('term', its_ns())){
+		return 1;
+	}
+	return 0;
 }
 
 #create a new XLIFF mrk element to represent given element and paste
@@ -221,6 +245,19 @@ sub _process_att {
 			}else{
 				$tu->set_att('translate', $att->value);
 			}
+			$att->remove;
+		}elsif($att_name eq 'term'){
+			$att->value eq 'yes' ?
+				$el->set_att('mtype', 'term') :
+				$el->set_att('mtype', 'x-its-term-no');
+			$att->remove;
+		# TODO: there may be lots of these.
+		# Set to default for any ITS att (where there are more)
+		}elsif($att_name eq 'termInfoRef'){
+			$el->set_att('itsxlf:termInfoRef', $att->value, $ITSXLF_NS);
+			$att->remove;
+		}elsif($att_name eq 'termConfidence'){
+			$el->set_att('itsxlf:termConfidence', $att->value, $ITSXLF_NS);
 			$att->remove;
 		}
 	}elsif($att->name eq 'xml:id'){

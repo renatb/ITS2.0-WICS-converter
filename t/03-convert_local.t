@@ -162,3 +162,60 @@ Should be removed; it's declared in the XLIFF root
     </body>
   </file>
 </xliff>
+
+=== its:term*
+This requires wrapping children of structural elements in <mrk>
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  <x
+      its:term="yes"
+      its:termInfoRef="stuff.com"
+      its:termConfidence=".5">
+    stuff
+    <foo
+        its:withinText="yes"
+        its:term="yes"
+        its:termInfoRef="starf.com"
+        its:termConfidence=".5">
+      starf</foo>
+  </x>
+  <x its:term="no">
+    stuff
+    <foo its:withinText="yes" its:term="no">
+      starf</foo>
+  </x>
+</xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    xmlns:itsxlf="http://www.w3.org/ns/its-xliff/"
+    its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit>
+        <source>
+          <mrk
+              mtype="term"
+              itsxlf:termInfoRef="stuff.com"
+              itsxlf:termConfidence=".5">
+            stuff
+            <mrk
+                mtype="term"
+                itsxlf:termInfoRef="starf.com"
+                itsxlf:termConfidence=".5">starf</mrk>
+          </mrk>
+        </source>
+      </trans-unit>
+      <trans-unit>
+        <source>
+          <mrk mtype="x-its-term-no">
+            stuff
+            <mrk mtype="x-its-term-no">starf</mrk>
+          </mrk>
+        </source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
