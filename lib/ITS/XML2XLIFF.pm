@@ -159,7 +159,7 @@ sub _get_new_source {
 	$tu->set_namespace($XLIFF_NS);
 	$source->paste($tu);
 	push @{$self->{tu}}, $tu;
-	$self->_convert_atts($source);
+	$self->_convert_atts($source, $tu);
 	# TODO: localize global rules
 	return $source;
 }
@@ -179,21 +179,26 @@ sub _get_new_mrk {
 }
 
 #handle all attribute converting for the given element.
+#$tu is containing trans-unit (not needed if $el is inline)
 sub _convert_atts {
-	my ($self, $el) = @_;
+	my ($self, $el, $tu) = @_;
 
 	my @atts = $el->get_xpath('@*');
 
 	for my $att (@atts){
-		$self->_process_att($el, $att);
+		# if not already removed while processing other atts
+		if(!$att->doc_node){
+			$self->_process_att($el, $att, $tu);
+		}
 	}
 	return;
 }
 
 # process given attribute on given element;
 # return the name of the element used to wrap the children, if any.
+# $tu is containing trans-unit (not needed if $el is inline)
 sub _process_att {
-	my ($self, $el, $att) = @_;
+	my ($self, $el, $att, $tu) = @_;
 	my $att_ns = $att->namespace_URI || '';
 	my $att_name = $att->local_name;
 	#TODO: there might be elements other than source and mrk someday
@@ -202,9 +207,28 @@ sub _process_att {
 		if($att_name eq 'version'){
 			$att->remove;
 		}
+		#need separate method to process all atts at once
+		#If there's a locNoteType but no locNote then it
+		#doesn't get processed (no reason to).
 		if($att_name eq 'locNote'){
 			_process_locNote($el, $inline);
+		}elsif($att_name eq 'translate'){
+			if($inline){
+				$el->set_att('mtype',
+					$att->value eq 'yes' ?
+					'x-its-translate-yes' :
+					'protected');
+			}else{
+				$tu->set_att('translate', $att->value);
+			}
+			$att->remove;
 		}
+	}elsif($att->name eq 'xml:id'){
+		if(!$inline){
+
+		}
+		$att->remove;
+		_process_xml_id($el, $inline);
 	}
 	return;
 }
@@ -225,7 +249,6 @@ sub _process_locNote {
 	}
 	$el->remove_att('locNote', its_ns());
 	$el->remove_att('locNoteType', its_ns());
-
 }
 
 # Place extracted translation units into an XLIFF skeleton, and

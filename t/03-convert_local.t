@@ -99,3 +99,41 @@ Should be removed; it's declared in the XLIFF root
     </body>
   </file>
 </xliff>
+
+=== its:translate
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  <x its:translate="yes">
+    stuff
+    <foo its:withinText="yes" its:translate="yes">starf</foo>
+  </x>
+  <x its:translate="no">
+    stuff
+    <foo its:withinText="yes" its:translate="no">starf</foo>
+  </x>
+</xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit translate="yes">
+        <source>stuff
+          <mrk mtype="x-its-translate-yes">
+            starf
+          </mrk>
+        </source>
+      </trans-unit>
+      <trans-unit translate="no">
+        <source>stuff
+          <mrk mtype="protected">
+            starf
+          </mrk>
+        </source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
