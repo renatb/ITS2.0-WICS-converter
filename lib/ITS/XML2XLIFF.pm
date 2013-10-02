@@ -8,6 +8,7 @@ use Log::Any qw($log);
 use ITS qw(its_ns);
 use ITS::DOM;
 use ITS::DOM::Element qw(new_element);
+use ITS::XML2XLIFF::LogUtils qw(node_log_id);
 
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 
@@ -79,9 +80,40 @@ sub _xlfize {
 
 	$log->debug('extracting translation units from document')
 		if $log->is_debug;
-	# TODO: traverse every document element, extracting text for trans-units
-
+	# traverse every document element, extracting text for trans-units
+	# and saving standoff/rules markup
+	$self->{its_els} = [];
+	$self->{tu} = [];
+	$self->_extract_convert($doc->get_root);
 	return $self->_xliff_structure($doc->get_source);
+}
+
+# Extract translation units from the given element, placing them in
+# the given new parent element. If newParent is undef, a new translation
+# unit is created.
+sub _extract_convert {
+	my ($self, $el, $new_parent) = @_;
+	for my $child ($el->children){
+		if($child->type eq 'ELT'){
+			#ITS standoff and rules need special processing
+			if($el->namespace_URI &&
+				$el->namespace_URI eq its_ns() &&
+				$el->local_name !~ 'span'){
+				#ignore its:rules and save standoff for later pasting
+				if($el->local_name ne 'rules'){
+					# save standoff markup for pasting in the head
+					push @{ $self->{its_els} }, $el;
+					if($log->is_debug){
+						$log->debug('placing ' . node_log_id($el) .
+							' as-is in XLIFF document');
+					}
+				}
+				return;
+			}
+				$self->_extract_convert($child);
+		}
+	}
+	return;
 }
 
 # Place extracted translation units into an XLIFF skeleton.
@@ -111,6 +143,14 @@ sub _xliff_structure {
 	my $body = new_element('body');
 	$body->set_namespace($XLIFF_NS);
 	$body->paste($file);
+
+	if(@{ $self->{its_els} }){
+		my $header = new_element('header');
+		$header->set_namespace($XLIFF_NS);
+		$header->paste($file);
+		# paste all standoff markup
+		$_->paste($header) for @{ $self->{its_els} };
+	}
 
 	return ($xlf_doc);
 }

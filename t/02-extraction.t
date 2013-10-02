@@ -34,3 +34,37 @@ Tests creation of basic XLIFF skeleton
     <body></body>
   </file>
 </xliff>
+
+=== standoff markup
+Test that standoff markup is pasted into XLIFF body
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its"
+    xmlns:xlf="urn:oasis:names:tc:xliff:document:1.2">
+  <its:locQualityIssues xml:id="lq1"
+      xmlns:its="http://www.w3.org/2005/11/its">
+    <its:locQualityIssue locQualityIssueType="misspelling"/>
+  </its:locQualityIssues>
+  <its:provenanceRecords xml:id="pr1"
+      xmlns:its="http://www.w3.org/2005/11/its">
+    <its:provenanceRecord org="acme-CAT-v2.3"/>
+  </its:provenanceRecords>
+</xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <header>
+      <its:locQualityIssues xml:id="lq1">
+        <its:locQualityIssue locQualityIssueType="misspelling"/>
+      </its:locQualityIssues>
+      <its:provenanceRecords xml:id="pr1">
+        <its:provenanceRecord org="acme-CAT-v2.3"/>
+      </its:provenanceRecords>
+    </header>
+    <body>
+    </body>
+  </file>
+</xliff>
