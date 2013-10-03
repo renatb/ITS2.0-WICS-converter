@@ -12,12 +12,30 @@ use ITS::XML2XLIFF::LogUtils qw(node_log_id log_match);
 
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 our $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
-use Data::Dumper;#debug
 
 # ABSTRACT: Extract ITS-decorated XML into XLIFF
 # VERSION
 
-__PACKAGE__->new()->convert($ARGV[0]) unless caller;
+#default: convert and print input
+print ${ __PACKAGE__->new()->convert($ARGV[0]) } unless caller;
+
+=head1 SYNOPSIS
+
+    use ITS::XML2XLIFF;
+    my $converter = ITS::XML2XLIFF->new();
+    my $result = $converter->convert(\'<xml>some text</xml>');
+    print $$result;
+
+=head1 DESCRIPTION
+
+This module extracts strings from an XML file to create an XLIFF file,
+keeping the original ITS information intact.
+
+=head1 CAVEATS
+
+This module is very preliminary, and there are plenty of things to
+implmement still. Only a few ITS data categories are converted, and no
+inherited ITS information is saved.
 
 =head1 METHODS
 
