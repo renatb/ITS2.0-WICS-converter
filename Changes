@@ -1,6 +1,10 @@
 Revision history for ITS
 
 {{$NEXT}}
+    value_atts method in ITS::Rule
+    ITS::Node::copy copies shallowly by default
+    ITS::Node::doc_node returns null for orphans
+    Improved documentation
 
 0.03      2013-09-18 11:50:09 America/Los_Angeles
     renamed from XML-ITS to just ITS
