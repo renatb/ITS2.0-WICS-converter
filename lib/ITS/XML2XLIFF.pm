@@ -211,7 +211,7 @@ sub _get_new_source {
 	#copy element and atts, but not children
 	my $new_el = $el->copy(0);
 	#check if element should be source or mrk inside of source
-	if(_its_requires_inline($new_el)){
+	if($self->_its_requires_inline($el)){
 		$new_el->set_name('mrk');
 		my $source = new_element('source');
 		$source->set_namespace($XLIFF_NS);
@@ -231,12 +231,19 @@ sub _get_new_source {
 	return $new_el;
 }
 
-# return true if converting the ITS markup on the given element
+# return true if converting the ITS info on the given element
 # requires that it be rendered inline (as mrk) instead of structural
 # (as its own source)
 sub _its_requires_inline {
-	my ($el) = @_;
+	my ($self, $el) = @_;
+
+	# any terminology information requires inlining
 	if($el->att('term', its_ns())){
+		return 1;
+	}
+	my $global = $self->{match_index}->{$el->unique_key};
+	return 0 unless $global;
+	if(exists $global->{term}){
 		return 1;
 	}
 	return 0;
@@ -280,6 +287,17 @@ sub _localize_rules {
 		}elsif($name eq 'translate'){
 			_process_translate($new_el, $value, $tu, $inline);
 		}
+		elsif($name eq 'term'){
+			my %termHash;
+			my @termAtts = qw(
+				term
+				termInfo
+				termInfoRef
+				termConfidence
+			);
+			@termHash{@termAtts} = @$its_info{@termAtts};
+			_process_term($new_el, %termHash);
+		}
 	}
 	return;
 }
@@ -318,22 +336,23 @@ sub _process_att {
 		if($att_name eq 'locNote'){
 			my $type = $el->att('locNoteType', its_ns()) || 'description';
 			_process_locNote($el, $att->value, $type, $inline);
+			$el->remove_att('locNote', its_ns());
+			$el->remove_att('locNoteType', its_ns());
 		}elsif($att_name eq 'translate'){
 			_process_translate($el, $att->value, $tu, $inline);
 			$att->remove;
+		# If there's a term* but no term, then it
+		# doesn't get processed (no reason to).
 		}elsif($att_name eq 'term'){
-			$att->value eq 'yes' ?
-				$el->set_att('mtype', 'term') :
-				$el->set_att('mtype', 'x-its-term-no');
+			_process_term(
+				$el,
+				term => $att->value,
+				termInfoRef => $el->att('termInfoRef'),
+				termConfidence => $el->att('termConfidence'),
+			);
 			$att->remove;
-		# TODO: there may be lots of these.
-		# Set to default for any ITS att (where there are more)
-		}elsif($att_name eq 'termInfoRef'){
-			$el->set_att('itsxlf:termInfoRef', $att->value, $ITSXLF_NS);
-			$att->remove;
-		}elsif($att_name eq 'termConfidence'){
-			$el->set_att('itsxlf:termConfidence', $att->value, $ITSXLF_NS);
-			$att->remove;
+			$el->remove_att('termInfoRef');
+			$el->remove_att('termConfidence');
 		}
 	}elsif($att->name eq 'xml:id'){
 		#ignore this for inline elements
@@ -361,8 +380,6 @@ sub _process_locNote {
 		$note->set_att('priority', $priority);
 		$note->paste($el, 'after');
 	}
-	$el->remove_att('locNote', its_ns());
-	$el->remove_att('locNoteType', its_ns());
 }
 
 # input element and it's ITS translate value, containing TU, and whether
@@ -376,6 +393,23 @@ sub _process_translate {
 			'protected');
 	}else{
 		$tu->set_att('translate', $translate);
+	}
+	return;
+}
+
+sub _process_term {
+	my ($el, %termInfo) = @_;
+	$termInfo{term} eq 'yes' ?
+		$el->set_att('mtype', 'term') :
+		$el->set_att('mtype', 'x-its-term-no');
+	if(my $ref = $termInfo{termInfoRef}){
+		$el->set_att('itsxlf:termInfoRef', $ref, $ITSXLF_NS);
+	}
+	if(my $conf = $termInfo{termConfidence}){
+		$el->set_att('itsxlf:termConfidence', $conf, $ITSXLF_NS);
+	}
+	if(my $info = $termInfo{termInfo}){
+		$el->set_att('itsxlf:termInfo', $info, $ITSXLF_NS);
 	}
 	return;
 }

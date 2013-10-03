@@ -21,7 +21,7 @@ for my $block(blocks()){
 __DATA__
 === its:translateRule
 --- input
-<xml xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+<xml xmlns:its="http://www.w3.org/2005/11/its" its:version="2.0">
   <its:rules>
     <its:translateRule translate="yes" selector="//x|//x/foo"/>
     <its:translateRule translate="no" selector="//y|//y/foo"/>
@@ -54,6 +54,69 @@ __DATA__
         <source>stuff
           <mrk mtype="protected">
             starf
+          </mrk>
+        </source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
+
+=== its:termRule
+This requires wrapping children of structural elements in <mrk>
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its" its:version="2.0">
+  <its:rules>
+    <its:termRule
+        term="yes"
+        termInfoRefPointer="@ref"
+        termConfidence=".5"
+        selector="//x"/>
+    <its:termRule
+        term="yes"
+        termInfoPointer="@info"
+        termConfidence=".5"
+        selector="//x/foo"/>
+    <its:termRule term="no" selector="//y|//y/foo"/>
+  </its:rules>
+  <x ref="stuff.com">
+    stuff
+    <foo info="nonce" its:withinText="yes">
+      starf</foo>
+  </x>
+  <y>
+    stuff
+    <foo its:withinText="yes">
+      starf</foo>
+  </y>
+</xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    xmlns:itsxlf="http://www.w3.org/ns/its-xliff/"
+    its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit>
+        <source>
+          <mrk
+              mtype="term"
+              itsxlf:termInfoRef="stuff.com"
+              itsxlf:termConfidence=".5">
+            stuff
+            <mrk
+                mtype="term"
+                itsxlf:termInfo="nonce"
+                itsxlf:termConfidence=".5">starf</mrk>
+          </mrk>
+        </source>
+      </trans-unit>
+      <trans-unit>
+        <source>
+          <mrk mtype="x-its-term-no">
+            stuff
+            <mrk mtype="x-its-term-no">starf</mrk>
           </mrk>
         </source>
       </trans-unit>
