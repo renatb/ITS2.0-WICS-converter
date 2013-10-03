@@ -363,3 +363,12 @@ is the menaing of i<default> value here? Are there documents without param
 declarations but with XPaths that contain variables? Or should this just be
 a mechanism to allow the user to set the value of a param, no matter what
 values are present in the document?
+
+=head1 SEE ALSO
+
+This module relies on the L<ITS> module for processing ITS markup and rules.
+
+The ITS 2.0 specification for XML and HTML5: L<http://www.w3.org/TR/its20/>.
+
+ITS interest group mail archives:
+L<http://lists.w3.org/Archives/Public/public-i18n-its-ig/>
