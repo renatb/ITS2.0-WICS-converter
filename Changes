@@ -1,6 +1,8 @@
 Revision history for ITS
 
 {{$NEXT}}
+
+0.04      2013-10-03 16:27:07 America/Los_Angeles
     value_atts method in ITS::Rule
     ITS::Node::copy copies shallowly by default
     ITS::Node::doc_node returns null for orphans
