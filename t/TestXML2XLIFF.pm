@@ -22,3 +22,21 @@ sub xlfize {
     # print $converted;
     return $converted;
 }
+
+#convert the input XML into XLIFF and return the html string and the log
+sub xlf_log {
+    my ($self, $xml) = @_;
+    $log->clear();
+    my $converter = ITS::XML2XLIFF->new();
+    my $converted = ${ $converter->convert(\$xml) };
+    return ($converted, _get_messages($log->msgs()) );
+}
+
+sub _get_messages {
+    my ($logs) = @_;
+    my $messages = [];
+    for(@$logs){
+        push @$messages, $_->{message};
+    }
+    return $messages;
+}

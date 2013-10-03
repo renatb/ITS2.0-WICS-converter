@@ -177,20 +177,21 @@ sub _extract_convert {
 			$child->paste($new_parent);
 		}elsif($child->type eq 'ELT'){
 			#ITS standoff and rules need special processing
-			if($el->namespace_URI &&
-				$el->namespace_URI eq its_ns() &&
-				$el->local_name !~ 'span'){
+			if($child->namespace_URI &&
+				($child->namespace_URI eq its_ns() ) &&
+				$child->local_name !~ 'span'){
 				#ignore its:rules and save standoff for later pasting
-				if($el->local_name ne 'rules'){
+				if($child->local_name ne 'rules'){
 					# save standoff markup for pasting in the head
-					push @{ $self->{its_els} }, $el;
+					push @{ $self->{its_els} }, $child;
 					if($log->is_debug){
-						$log->debug('placing ' . node_log_id($el) .
-							' as-is in XLIFF document');
+						$log->debug('placing ' . node_log_id($child) .
+							' (standoff markup) as-is in XLIFF document');
 					}
 				}
-				return;
+				next;
 			}
+
 			#TODO: check if it's translatable
 			#TODO: check withinText global rules
 			my $within_text = $child->att('withinText', its_ns()) || '';
@@ -284,6 +285,10 @@ sub _transfer_inline_its {
 sub _get_new_source {
 	my ($self, $el) = @_;
 
+	if($log->is_debug){
+		$log->debug('Creating new trans-unit with ' . node_log_id($el) .
+			' as source');
+	}
 	#create new trans-unit to hold element contents
 	my $tu = new_element('trans-unit', {});
 	$tu->set_namespace($XLIFF_NS);
@@ -308,6 +313,10 @@ sub _get_new_source {
 #is last in given parent
 sub _get_new_mrk {
 	my ($self, $el, $parent) = @_;
+
+	if($log->is_debug){
+		$log->debug('Creating inline <mrk> from ' . node_log_id($el));
+	}
 	#copy element and atts, but not children
 	my $mrk = $el->copy(0);
 	$mrk->set_name('mrk');
