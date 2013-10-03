@@ -19,6 +19,35 @@ for my $block(blocks()){
 }
 
 __DATA__
+=== idValueRule
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  <its:rules>
+    <its:idValueRule idValue="'id1'" selector="/xml/x"/>
+    <its:idValueRule idValue="'id2'" selector="/xml/x/foo"/>
+  </its:rules>
+  <x>
+    stuff
+    <foo its:withinText="yes">starf</foo>
+  </x>
+</xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit resname="id1">
+        <source>stuff
+          <mrk>starf</mrk>
+        </source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
+
 === its:translateRule
 --- input
 <xml xmlns:its="http://www.w3.org/2005/11/its" its:version="2.0">

@@ -286,8 +286,9 @@ sub _localize_rules {
 			_process_locNote($new_el, $value, $type, $inline)
 		}elsif($name eq 'translate'){
 			_process_translate($new_el, $value, $tu, $inline);
-		}
-		elsif($name eq 'term'){
+		}elsif($name eq 'idValue'){
+			_process_idValue($value, $tu, $inline);
+		}elsif($name eq 'term'){
 			my %termHash;
 			my @termAtts = qw(
 				term
@@ -355,10 +356,7 @@ sub _process_att {
 			$el->remove_att('termConfidence');
 		}
 	}elsif($att->name eq 'xml:id'){
-		#ignore this for inline elements
-		if(!$inline){
-			$tu->set_att('resname', $att->value);
-		}
+		_process_idValue($att->value, $tu, $inline);
 		$att->remove;
 	}else{
 		$att->remove;
@@ -410,6 +408,15 @@ sub _process_term {
 	}
 	if(my $info = $termInfo{termInfo}){
 		$el->set_att('itsxlf:termInfo', $info, $ITSXLF_NS);
+	}
+	return;
+}
+
+sub _process_idValue {
+	my ($id, $tu, $inline) = @_;
+	#this att is ignored on inline elements
+	if(!$inline){
+		$tu->set_att('resname', $id);
 	}
 	return;
 }
