@@ -239,7 +239,6 @@ sub _its_requires_inline {
 sub _transfer_inline_its {
 	my ($from, $to) = @_;
 
-	# print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
 	#all of the terminology information has to be moved
 	my $mtype = $from->att('mtype');
 	if($mtype =~ /term/){
@@ -251,7 +250,6 @@ sub _transfer_inline_its {
 			termConfidence
 		);
 
-		# print "removing atts from " . $from->name . "\n";
 		for my $att (@term_atts){
 			if (my $value = $from->att($att, $ITSXLF_NS)){
 				$from->remove_att($att, $ITSXLF_NS);
@@ -461,7 +459,7 @@ sub _process_term {
 	$termInfo{term} eq 'yes' ?
 		$el->set_att('mtype', 'term') :
 		$el->set_att('mtype', 'x-its-term-no');
-	# print Dumper \%termInfo;
+
 	for my $name(qw(termInfoRef termConfidence termInfo)){
 		if (my $val = $termInfo{$name}){
 			$el->set_att("itsxlf:$name", $val, $ITSXLF_NS);
