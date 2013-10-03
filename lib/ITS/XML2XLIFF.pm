@@ -206,10 +206,8 @@ sub _extract_convert {
 		my $mrk = new_element('mrk');
 		$mrk->set_namespace($XLIFF_NS);
 		for my $child ($new_parent->children){
-			print "pasting child " . $child->name;
 			$child->paste($mrk);
 		}
-		print "there were " . scalar $new_parent->children . " children\n";
 		$mrk->paste($new_parent);
 		_transfer_inline_its($new_parent, $mrk);
 	}
@@ -321,15 +319,21 @@ sub _localize_rules {
 	#TODO: there might be elements other than source and mrk someday
 	my $inline = $new_el->local_name eq 'mrk' ? 1 : 0;
 
+	#each of these is a check that 1) the category is selected in a global
+	#rule and 2) there is no local selection. TODO: clean this up?
 	while (my ($name, $value) = each %$its_info){
-		if($name eq 'locNote'){
+		if($name eq 'locNote' and
+				!defined $new_el->att('locNote', its_ns())){
 			my $type = $its_info->{locNoteType} || 'description';
 			_process_locNote($new_el, $value, $type, $tu, $inline)
-		}elsif($name eq 'translate'){
+		}elsif($name eq 'translate' and
+				!defined $new_el->att('translate', its_ns())){
 			_process_translate($new_el, $value, $tu, $inline);
-		}elsif($name eq 'idValue'){
+		}elsif($name eq 'idValue' and
+				!defined $new_el->att('xml:id')){
 			_process_idValue($value, $tu, $inline);
-		}elsif($name eq 'term'){
+		}elsif($name eq 'term' and
+				!defined $new_el->att('term', its_ns())){
 			my %termHash;
 			my @term_atts = qw(
 				term
@@ -342,6 +346,22 @@ sub _localize_rules {
 		}
 	}
 	return;
+}
+
+sub _has_att {
+	my ($el, $att, $ns) = @_;
+	return 0 unless $el->att($att, $ns);
+	return 1;
+}
+
+# return true if there's a global selection on the given el for the given
+# metadata, but there isn't the specified local attribute
+sub _global_only {
+	my ($self, $el, $meta_cat, $local, $local_ns) = @_;
+	my $global = $self->{match_index}->{$el->unique_key};
+	return 0 unless $global && exists $global->{$meta_cat};
+	return 0 if $el->att($local, $local_ns);
+	return 1;
 }
 
 # handle all attribute converting for the given element.

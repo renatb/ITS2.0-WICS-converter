@@ -188,3 +188,42 @@ This requires wrapping children of structural elements in <mrk>
     </body>
   </file>
 </xliff>
+
+=== local overrides global
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  <its:rules>
+    <its:idValueRule idValue="'id1'" selector="/xml/x"/>
+    <its:termRule
+        term="yes"
+        termInfoPointer="../y"
+        selector="/xml/x"/>
+    <its:translateRule selector="//y" translate="yes"/>
+    <its:locNoteRule selector="//y" locNote="note1"/>
+  </its:rules>
+  <x xml:id="id2" its:term="yes" its:termInfoRef="stuff.com">stuff</x>
+  <y its:translate="no" its:locNote="note2">stoof</y>
+</xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    xmlns:itsxlf="http://www.w3.org/ns/its-xliff/"
+    its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit resname="id2">
+        <source>
+          <mrk mtype="term" itsxlf:termInfoRef="stuff.com">
+            stuff
+          </mrk>
+        </source>
+      </trans-unit>
+      <trans-unit translate="no">
+        <source>stoof</source>
+        <note priority="2">note2</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

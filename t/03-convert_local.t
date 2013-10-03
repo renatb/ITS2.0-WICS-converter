@@ -248,7 +248,6 @@ This requires wrapping children of structural elements in <mrk>
 </xliff>
 
 === ITS in sources forced into mrks still have correct structural ITS
---- ONLY
 --- input
 <xml xmlns:its="http://www.w3.org/2005/11/its">
   <x
