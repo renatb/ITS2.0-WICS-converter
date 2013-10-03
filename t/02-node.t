@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 65;
+plan tests => 64;
 use Test::NoWarnings;
 use Test::Exception;
 use XML::LibXML;
@@ -16,7 +16,6 @@ my $dom_path = path($Bin, 'corpus', 'XML', 'dom_test.xml');
 my $dom = ITS::DOM->new( 'xml' => $dom_path );
 
 test_constructor();
-test_owner_doc($dom);
 test_type_name_value($dom);
 test_path($dom);
 test_xpath($dom);
@@ -33,17 +32,6 @@ sub test_constructor {
     isa_ok($node, 'ITS::DOM::Element',
         'element is insance of Element package');
     return;
-}
-
-#test Node's doc_node method
-sub test_owner_doc {
-    my ($dom) = @_;
-    my $root = $dom->get_root;
-    isa_ok($root->doc_node, 'ITS::DOM::Node', 'owner document retrieved');
-
-    my $el = XML::LibXML::Element->new( 'x' );
-    my $node = ITS::DOM::Node->new($el);
-    ok(!defined $node->doc_node, 'no doc node returned for orphan');
 }
 
 # test types, names and values of all types of nodes
@@ -248,4 +236,8 @@ sub test_family {
 
     my $doc_node = $third->doc_node;
     is($doc_node->type, 'DOC', 'Retrieved owning document');
+
+    my $el = XML::LibXML::Element->new( 'x' );
+    my $node = ITS::DOM::Node->new($el);
+    ok(!defined $node->doc_node, 'no doc node returned for orphan');
 }
