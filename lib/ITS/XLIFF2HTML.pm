@@ -22,7 +22,37 @@ my @inline_els = qw(g x bx ex bpt ept sub it ph mrk);
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
 # VERSION
 
-__PACKAGE__->new()->convert($ARGV[0]) unless caller;
+=head1 SYNOPSIS
+
+    use ITS::XLIFF2HTML;
+    my $converter = ITS::XLIFF2HTML->new('Page Title');
+    my $result = $converter->convert(\'<xml>some text</xml>');
+    print $$result;
+
+=head1 DESCRIPTION
+
+This module creates an HTML5 file out of an XLIFF file. The new file contains
+all of the original text, but is styled to hide everything except for C<source>
+and C<target> element contents (no other styling is added to the document).
+Attributes, namespace declarations and processing instructions, where
+required by relative selectors, are made into elements and pasted in the
+document. They are given the class values of C<_ITS_ATT>, C<_ITS_NS>,
+and C<_ITS_PI>, respectively.
+
+The structure of the original XLIFF is basically preserved. Elements are
+renamed as either C<p> (C<source> and C<target>), C<span> (XLIFF inline
+elements), or C<div> (everything else). Global rules and local markup are
+converted and preserved separately. The conversion of other types of
+nodes into elements, and some differences between information in XML
+and HTML ITS, necessitates the creation of a few extra rules.
+
+Sometimes it is impossible to completely faithfully transfer the ITS
+information. See the L</CAVEATS> section for more information.
+
+=cut
+
+#default: convert and print input file
+print ${ __PACKAGE__->new()->convert($ARGV[0]) } unless caller;
 
 =head1 METHODS
 
@@ -97,7 +127,6 @@ sub convert {
 	delete $self->{reverse_match_index};
 	delete $self->{label_futures};
 	delete $self->{matches_index};
-	delete $self->{old_nodes};
 
 	#iterate all document rules and their matches, indexing each one
 	for my $rule (@{ $ITS->get_rules }){
@@ -413,6 +442,7 @@ sub _process_att {
 			});
 		$att->remove;
 	# xml:* attributes with vaild HTML ITS semantics
+	# TOD: what about 'id'?
 	}elsif($name eq 'xml:id'){
 		_att_rename($el, $att, 'id');
 	}elsif($name eq 'xml:lang'){
@@ -634,6 +664,12 @@ sub _global_its_eq {
 				#compare values given by the rule
 				for my $att(@{ $rule->value_atts }){
 					$its->{$att} = $rule->element->att($att);
+				}
+				#for <its:locNote> and the like
+				if(my @children = @{ $rule->element->child_els }){
+					for (@children){
+						$its->{$_->local_name} = $_->text;
+					}
 				}
 				#compare contents of matched nodes; these
 				#futures should already be realized in the document
@@ -878,6 +914,18 @@ sub _set_visibility {
 }
 
 1;
+
+=head1 SEE ALSO
+
+This module relies on the L<ITS> module for processing ITS markup and rules.
+
+The ITS 2.0 specification for XML and HTML5: L<http://www.w3.org/TR/its20/>.
+
+The spec for representing ITS in XLIFF:
+L<http://www.w3.org/International/its/wiki/XLIFF_1.2_Mapping>.
+
+ITS interest group mail archives:
+L<http://lists.w3.org/Archives/Public/public-i18n-its-ig/>
 
 =head1 CAVEATS
 

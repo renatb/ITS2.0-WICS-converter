@@ -1,6 +1,6 @@
 XLIFF to HTML converter
 
-Current/next:
+Current/next: Account for <its:locNote> in <its:locNoteRule> in _deep_its_eq
 
 Engineering Tasks:
     - do some HTML post-processing to fine-tune tests:
