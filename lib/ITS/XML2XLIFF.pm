@@ -144,6 +144,13 @@ sub _xlfize {
 # unit is created.
 sub _extract_convert {
 	my ($self, $el, $new_parent) = @_;
+
+	#check if element should be source or mrk inside of source
+	my $place_inline = $self->_its_requires_inline($el);
+	if($new_parent && $new_parent->name eq 'mrk'){
+		$place_inline = 0;
+	}
+
 	for my $child ($el->children){
 		# extract non-empty text nodes
 		if($child->type eq 'TXT' && $child->text =~ /\S/){
@@ -193,47 +200,23 @@ sub _extract_convert {
 			}
 		}
 	}
+
+	#ITS may require wrapping children in in mrk and moving some markup
+	if($place_inline){
+		my $mrk = new_element('mrk');
+		$mrk->set_namespace($XLIFF_NS);
+		for my $child ($new_parent->children){
+			print "pasting child " . $child->name;
+			$child->paste($mrk);
+		}
+		print "there were " . scalar $new_parent->children . " children\n";
+		$mrk->paste($new_parent);
+		_transfer_inline_its($new_parent, $mrk);
+	}
+
 	return;
 }
 
-# pass in the element which contains the text to be placed in a
-# new source element. Create the source element and paste in
-# inside a new trans-unit element.
-sub _get_new_source {
-	my ($self, $el) = @_;
-
-	#create new trans-unit to hold element contents
-	my $tu = new_element('trans-unit', {});
-	$tu->set_namespace($XLIFF_NS);
-	push @{$self->{tu}}, $tu;
-
-	#copy element and atts, but not children
-	my $new_el = $el->copy(0);
-
-	#check if element should be source or mrk inside of source
-	my $place_inline = $self->_its_requires_inline($el);
-
-	# attributes get added while localizing rules; so save the ones
-	# that need to be processed by convert_atts first
-	my @atts = $new_el->get_xpath('@*');
-	$self->_localize_rules($el, $new_el, $tu);
-	$self->_convert_atts($new_el, \@atts, $tu);
-
-	#ITS may require this be a mrk; so wrap in a source
-	if($place_inline){
-		$new_el->set_name('mrk');
-		my $source = new_element('source');
-		$source->set_namespace($XLIFF_NS);
-		$source->paste($tu);
-		$new_el->paste($source);
-	}else{
-		$new_el->set_name('source');
-		$new_el->paste($tu);
-	}
-	$new_el->set_namespace($XLIFF_NS);
-
-	return $new_el;
-}
 
 # return true if converting the ITS info on the given element
 # requires that it be rendered inline (as mrk) instead of structural
@@ -251,6 +234,60 @@ sub _its_requires_inline {
 		return 1;
 	}
 	return 0;
+}
+
+# transfer ITS that is required to be on a mrk (not on a source) from $from
+# to $to
+sub _transfer_inline_its {
+	my ($from, $to) = @_;
+
+	# print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+	#all of the terminology information has to be moved
+	my $mtype = $from->att('mtype');
+	if($mtype =~ /term/){
+		$to->set_att('mtype', $from->att('mtype'));
+		$from->remove_att('mtype');
+		my @term_atts = qw(
+			termInfo
+			termInfoRef
+			termConfidence
+		);
+
+		# print "removing atts from " . $from->name . "\n";
+		for my $att (@term_atts){
+			if (my $value = $from->att($att, $ITSXLF_NS)){
+				$from->remove_att($att, $ITSXLF_NS);
+				$to->set_att("itsxlf:$att", $value, $ITSXLF_NS);
+			}
+		}
+	}
+	return;
+}
+
+# pass in the element which contains the text to be placed in a
+# new source element. Create the source element and paste in
+# inside a new trans-unit element.
+sub _get_new_source {
+	my ($self, $el) = @_;
+
+	#create new trans-unit to hold element contents
+	my $tu = new_element('trans-unit', {});
+	$tu->set_namespace($XLIFF_NS);
+	push @{$self->{tu}}, $tu;
+
+	#copy element and atts, but not children
+	my $new_el = $el->copy(0);
+	$new_el->set_name('source');
+	$new_el->set_namespace($XLIFF_NS);
+	$new_el->paste($tu);
+
+	# attributes get added while localizing rules; so save the ones
+	# that need to be processed by convert_atts first
+	my @atts = $new_el->get_xpath('@*');
+	$self->_localize_rules($el, $new_el, $tu);
+	$self->_convert_atts($new_el, \@atts, $tu);
+
+	return $new_el;
 }
 
 #create a new XLIFF mrk element to represent given element and paste
@@ -294,13 +331,13 @@ sub _localize_rules {
 			_process_idValue($value, $tu, $inline);
 		}elsif($name eq 'term'){
 			my %termHash;
-			my @termAtts = qw(
+			my @term_atts = qw(
 				term
 				termInfo
 				termInfoRef
 				termConfidence
 			);
-			@termHash{@termAtts} = @$its_info{@termAtts};
+			@termHash{@term_atts} = @$its_info{@term_atts};
 			_process_term($new_el, %termHash);
 		}
 	}
@@ -352,13 +389,14 @@ sub _process_att {
 			_process_term(
 				$el,
 				term => $att->value,
-				termInfoRef => $el->att('termInfoRef'),
-				termConfidence => $el->att('termConfidence'),
+				termInfoRef => $el->att('termInfoRef', its_ns()),
+				termConfidence => $el->att('termConfidence', its_ns()),
 			);
 			$att->remove;
-			$el->remove_att('termInfoRef');
-			$el->remove_att('termConfidence');
+			$el->remove_att('termInfoRef', its_ns());
+			$el->remove_att('termConfidence', its_ns());
 		}
+		#default for ITS atts: leave them there
 	}elsif($att->name eq 'xml:id'){
 		_process_idValue($att->value, $tu, $inline);
 		$att->remove;
@@ -403,6 +441,7 @@ sub _process_term {
 	$termInfo{term} eq 'yes' ?
 		$el->set_att('mtype', 'term') :
 		$el->set_att('mtype', 'x-its-term-no');
+	# print Dumper \%termInfo;
 	for my $name(qw(termInfoRef termConfidence termInfo)){
 		if (my $val = $termInfo{$name}){
 			$el->set_att("itsxlf:$name", $val, $ITSXLF_NS);

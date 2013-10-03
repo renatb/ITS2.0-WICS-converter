@@ -220,14 +220,43 @@ This requires wrapping children of structural elements in <mrk>
   </file>
 </xliff>
 
-=== ITS in sources forced into mrks still affect trans-unit
+=== its:allowedChars
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  <x its:allowedChars="[1-9]">
+    5
+    <foo its:withinText="yes" its:allowedChars="[a-z]">starf</foo>
+  </x>
+</xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit>
+        <source its:allowedChars="[1-9]">5
+          <mrk its:allowedChars="[a-z]">
+            starf
+          </mrk>
+        </source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
+
+=== ITS in sources forced into mrks still have correct structural ITS
+--- ONLY
 --- input
 <xml xmlns:its="http://www.w3.org/2005/11/its">
   <x
       xml:id="id1"
       its:term="yes"
       its:termInfoRef="stuff.com"
-      its:locNote="whatevs">
+      its:locNote="whatevs"
+      its:allowedChars="[a-z]">
     stuff
   </x>
 </xml>
@@ -241,7 +270,7 @@ This requires wrapping children of structural elements in <mrk>
   <file original="STRING" source-language="en" datatype="plaintext">
     <body>
       <trans-unit resname="id1">
-        <source>
+        <source its:allowedChars="[a-z]">
           <mrk mtype="term" itsxlf:termInfoRef="stuff.com">
             stuff
           </mrk>
