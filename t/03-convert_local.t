@@ -219,3 +219,36 @@ This requires wrapping children of structural elements in <mrk>
     </body>
   </file>
 </xliff>
+
+=== ITS in sources forced into mrks still affect trans-unit
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  <x
+      xml:id="id1"
+      its:term="yes"
+      its:termInfoRef="stuff.com"
+      its:locNote="whatevs">
+    stuff
+  </x>
+</xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    xmlns:itsxlf="http://www.w3.org/ns/its-xliff/"
+    its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit resname="id1">
+        <source>
+          <mrk mtype="term" itsxlf:termInfoRef="stuff.com">
+            stuff
+          </mrk>
+        </source>
+        <note priority="2">whatevs</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
+

@@ -65,7 +65,6 @@ sub convert {
 		my $matches = $ITS->get_matches($rule);
 		$self->_index_match($rule, $_) for @$matches;
 	}
-	# print Dumper $self->{match_index};
 
 	# extract $doc into an XLIFF document;
 	my ($xlf_doc) = $self->_xlfize($doc);
@@ -210,8 +209,18 @@ sub _get_new_source {
 
 	#copy element and atts, but not children
 	my $new_el = $el->copy(0);
+
 	#check if element should be source or mrk inside of source
-	if($self->_its_requires_inline($el)){
+	my $place_inline = $self->_its_requires_inline($el);
+
+	# attributes get added while localizing rules; so save the ones
+	# that need to be processed by convert_atts first
+	my @atts = $new_el->get_xpath('@*');
+	$self->_localize_rules($el, $new_el, $tu);
+	$self->_convert_atts($new_el, \@atts, $tu);
+
+	#ITS may require this be a mrk; so wrap in a source
+	if($place_inline){
 		$new_el->set_name('mrk');
 		my $source = new_element('source');
 		$source->set_namespace($XLIFF_NS);
@@ -223,11 +232,6 @@ sub _get_new_source {
 	}
 	$new_el->set_namespace($XLIFF_NS);
 
-	# attributes get added while localizing rules; so save the ones
-	# that need to be processed by convert_atts first
-	my @atts = $new_el->get_xpath('@*');
-	$self->_localize_rules($el, $new_el, $tu);
-	$self->_convert_atts($new_el, \@atts, $tu);
 	return $new_el;
 }
 
@@ -283,7 +287,7 @@ sub _localize_rules {
 	while (my ($name, $value) = each %$its_info){
 		if($name eq 'locNote'){
 			my $type = $its_info->{locNoteType} || 'description';
-			_process_locNote($new_el, $value, $type, $inline)
+			_process_locNote($new_el, $value, $type, $tu, $inline)
 		}elsif($name eq 'translate'){
 			_process_translate($new_el, $value, $tu, $inline);
 		}elsif($name eq 'idValue'){
@@ -314,7 +318,7 @@ sub _convert_atts {
 
 	for my $att (@$atts){
 		# if not already removed while processing other atts
-		if(!$att->doc_node){
+		if($att->parent){
 			$self->_process_att($el, $att, $tu, $inline);
 		}
 	}
@@ -336,7 +340,7 @@ sub _process_att {
 		# doesn't get processed (no reason to).
 		if($att_name eq 'locNote'){
 			my $type = $el->att('locNoteType', its_ns()) || 'description';
-			_process_locNote($el, $att->value, $type, $inline);
+			_process_locNote($el, $att->value, $type, $tu, $inline);
 			$el->remove_att('locNote', its_ns());
 			$el->remove_att('locNoteType', its_ns());
 		}elsif($att_name eq 'translate'){
@@ -367,8 +371,7 @@ sub _process_att {
 # pass in an element to be annotated, locNote and locNoteType values,
 # and whether the element is inline or not
 sub _process_locNote {
-	my ($el, $note, $type, $inline) = @_;
-
+	my ($el, $note, $type, $tu, $inline) = @_;
 	my $priority = $type eq 'alert' ? '1' : '2';
 	if($inline){
 		$el->set_att('comment', $note);
@@ -376,7 +379,7 @@ sub _process_locNote {
 	}else{
 		my $note = new_element('note', {}, $note, $XLIFF_NS);
 		$note->set_att('priority', $priority);
-		$note->paste($el, 'after');
+		$note->paste($tu);
 	}
 }
 
@@ -400,14 +403,10 @@ sub _process_term {
 	$termInfo{term} eq 'yes' ?
 		$el->set_att('mtype', 'term') :
 		$el->set_att('mtype', 'x-its-term-no');
-	if(my $ref = $termInfo{termInfoRef}){
-		$el->set_att('itsxlf:termInfoRef', $ref, $ITSXLF_NS);
-	}
-	if(my $conf = $termInfo{termConfidence}){
-		$el->set_att('itsxlf:termConfidence', $conf, $ITSXLF_NS);
-	}
-	if(my $info = $termInfo{termInfo}){
-		$el->set_att('itsxlf:termInfo', $info, $ITSXLF_NS);
+	for my $name(qw(termInfoRef termConfidence termInfo)){
+		if (my $val = $termInfo{$name}){
+			$el->set_att("itsxlf:$name", $val, $ITSXLF_NS);
+		}
 	}
 	return;
 }
