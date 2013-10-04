@@ -57,11 +57,9 @@ L<http://lists.w3.org/Archives/Public/public-i18n-its-ig/>
 
 Creates a new converter instance.
 
-=back
-
 =cut
 sub new {
-	my ($class, %args) = @_;
+	my ($class) = @_;
 	return bless {}, $class;
 }
 
@@ -360,17 +358,17 @@ sub _localize_rules {
 	#each of these is a check that 1) the category is selected in a global
 	#rule and 2) there is no local selection. TODO: clean this up?
 	while (my ($name, $value) = each %$its_info){
-		if($name eq 'locNote' and
+		if($name eq 'locNote' &&
 				!defined $new_el->att('locNote', its_ns())){
 			my $type = $its_info->{locNoteType} || 'description';
 			_process_locNote($new_el, $value, $type, $tu, $inline)
-		}elsif($name eq 'translate' and
+		}elsif($name eq 'translate' &&
 				!defined $new_el->att('translate', its_ns())){
 			_process_translate($new_el, $value, $tu, $inline);
-		}elsif($name eq 'idValue' and
+		}elsif($name eq 'idValue' &&
 				!defined $new_el->att('xml:id')){
 			_process_idValue($value, $tu, $inline);
-		}elsif($name eq 'term' and
+		}elsif($name eq 'term' &&
 				!defined $new_el->att('term', its_ns())){
 			my %termHash;
 			my @term_atts = qw(
@@ -477,6 +475,7 @@ sub _process_locNote {
 		$note->set_att('priority', $priority);
 		$note->paste($tu);
 	}
+	return;
 }
 
 # input element and it's ITS translate value, containing TU, and whether
@@ -559,3 +558,5 @@ sub _xliff_structure {
 
 	return ($xlf_doc);
 }
+
+1;
