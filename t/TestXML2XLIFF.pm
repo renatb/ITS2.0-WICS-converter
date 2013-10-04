@@ -17,9 +17,8 @@ use ITS::XML2XLIFF;
 sub xlfize {
     my ($self, $xml) = @_;
     my $converter = ITS::XML2XLIFF->new();
-    my $converted = ${ $converter->convert(\$xml) };
-    # $converted = $self->normalize_xlf($converted);
-    # print $converted;
+    my $ITS = ITS->new('xml', doc => \$xml);
+    my $converted = ${ $converter->convert($ITS) };
     return $converted;
 }
 
@@ -28,7 +27,8 @@ sub xlf_log {
     my ($self, $xml) = @_;
     $log->clear();
     my $converter = ITS::XML2XLIFF->new();
-    my $converted = ${ $converter->convert(\$xml) };
+    my $ITS = ITS->new('xml', doc => \$xml);
+    my $converted = ${ $converter->convert($ITS) };
     return ($converted, _get_messages($log->msgs()) );
 }
 

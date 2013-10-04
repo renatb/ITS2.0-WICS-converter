@@ -21,9 +21,11 @@ print ${ __PACKAGE__->new()->convert($ARGV[0]) } unless caller;
 
 =head1 SYNOPSIS
 
+    use ITS;
     use ITS::XML2XLIFF;
-    my $converter = ITS::XML2XLIFF->new();
-    my $result = $converter->convert(\'<xml>some text</xml>');
+    my $converter = ITS::XML2XLIFF->new('Page Title');
+    my $ITS = ITS->new('xml', doc => \'<xml>some text</xml>');
+    my $result = $converter->convert($ITS);
     print $$result;
 
 =head1 DESCRIPTION
@@ -36,6 +38,18 @@ keeping the original ITS information intact.
 This module is very preliminary, and there are plenty of things to
 implmement still. Only a few ITS data categories are converted, and no
 inherited ITS information is saved.
+
+=head1 SEE ALSO
+
+This module relies on the L<ITS> module for processing ITS markup and rules.
+
+The ITS 2.0 specification for XML and HTML5: L<http://www.w3.org/TR/its20/>.
+
+The spec for representing ITS in XLIFF:
+L<http://www.w3.org/International/its/wiki/XLIFF_1.2_Mapping>.
+
+ITS interest group mail archives:
+L<http://lists.w3.org/Archives/Public/public-i18n-its-ig/>
 
 =head1 METHODS
 
@@ -53,20 +67,19 @@ sub new {
 
 =head2 C<convert>
 
-Extracts strings from the input XML document into an XLIFF document.
-
-Argument is either a string containing an XML file name, a string pointer
-containing actual XML data, or a filehandle for a file containing the data.
+Extracts strings from the input ITS object containing an XML document
+into an XLIFF document, preserving ITS information.
 
 Return value is a string pointer containing the output XLIFF string.
 
 =cut
 
 sub convert {
-	my ($self, $doc_data) = @_;
+	my ($self, $ITS) = @_;
 
-	#create the document from the input data
-	my $ITS = ITS->new('xml', doc => $doc_data);
+	if($ITS->get_doc_type ne 'xml'){
+		croak 'Cannot process document of type ' . $ITS->get_doc_type;
+	}
 	my $doc = $ITS->get_doc;
 
 	if(!_is_legal_doc($doc)){
