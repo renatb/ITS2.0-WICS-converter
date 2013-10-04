@@ -29,7 +29,7 @@ via extraction and visualization.
 
 This module wraps up the functionality of several others into one package.
 Two standalone applications, a GUI and a CLI, are also provided in this
-distribution (see L<WICS-GUI.pl> and L<WICS.pl>).
+distribution (see WICS-GUI.pl and WICS.pl).
 
 =head1 EXPORTS
 
@@ -70,7 +70,7 @@ sub xliff2html {
     my ($doc, $add_labels) = @_;
     my $converter = ITS::XLIFF2HTML->new();
     my $ITS = ITS->new('xml', doc => $doc);
-    return $converter->convert($ITS);
+    return $converter->convert($ITS, $add_labels);
 }
 
 =head2 C<xml2xliff>

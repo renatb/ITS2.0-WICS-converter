@@ -2,6 +2,7 @@
 package WicsGui::Logger;
 use strict;
 use warnings;
+#VERSION
 use base qw(Log::Any::Adapter::Base);
 use Log::Any::Adapter::Util qw(make_method);
 use Wx;
