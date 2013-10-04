@@ -17,7 +17,8 @@ use ITS::XLIFF2HTML;
 sub htmlize {
     my ($self, $xml) = @_;
     my $converter = ITS::XLIFF2HTML->new();
-    my $converted = ${ $converter->convert(\$xml) };
+    my $ITS = ITS->new('xml', doc => \$xml);
+    my $converted = ${ $converter->convert($ITS) };
     $converted = $self->normalize_html($converted);
     return $converted;
 }
@@ -27,7 +28,8 @@ sub htmlize {
 sub htmlize_with_labels {
     my ($self, $xml) = @_;
     my $converter = ITS::XLIFF2HTML->new();
-    my $converted = ${ $converter->convert(\$xml, 1) };
+    my $ITS = ITS->new('xml', doc => \$xml);
+    my $converted = ${ $converter->convert($ITS, 1) };
     $converted = $self->normalize_html($converted);
     return $converted;
 }
@@ -36,8 +38,10 @@ sub htmlize_with_labels {
 sub html_log {
     my ($self, $xml) = @_;
     $log->clear();
+
     my $converter = ITS::XLIFF2HTML->new();
-    my $converted = ${ $converter->convert(\$xml) };
+    my $ITS = ITS->new('xml', doc => \$xml);
+    my $converted = ${ $converter->convert($ITS) };
     $converted = $self->normalize_html($converted);
     # print $converted;
     return ($converted, _get_messages($log->msgs()) );
@@ -48,8 +52,10 @@ sub html_log {
 sub html_log_with_labels {
     my ($self, $xml) = @_;
     $log->clear();
+
     my $converter = ITS::XLIFF2HTML->new();
-    my $converted = ${ $converter->convert(\$xml, 1) };
+    my $ITS = ITS->new('xml', doc => \$xml);
+    my $converted = ${ $converter->convert($ITS, 1) };
     $converted = $self->normalize_html($converted);
     # print $converted;
     return ($converted, _get_messages($log->msgs()) );

@@ -23,11 +23,11 @@ my @inline_els = qw(g x bx ex bpt ept sub it ph mrk);
 # VERSION
 
 =head1 SYNOPSIS
-
+    use ITS;
     use ITS::XLIFF2HTML;
     my $converter = ITS::XLIFF2HTML->new('Page Title');
-    my $result = $converter->convert(\'<xml>some text</xml>');
-    print $$result;
+    my $ITS = ITS->new('xml', doc => \'<xml>some text</xml>');
+    my $result = $converter->convert($ITS);
 
 =head1 DESCRIPTION
 
@@ -90,9 +90,7 @@ sub new {
 Converts the input XML document into an HTML document equivalent, and
 displayable, HTML.
 
-The first argument is either a string containing an XML file name, a string
-pointer containing actual XML data, or a filehandle for a file containing
-the data.
+The first argument is an ITS object containing an XML document.
 
 The second argument is a boolean, true if informative warning labels should
 be added to the output. These are small snippets of text to point out the
@@ -105,12 +103,13 @@ it).
 Th return value is a string pointer containing the output HTML string.
 
 =cut
-
 sub convert {
-	my ($self, $doc_data, $add_labels) = @_;
+	my ($self, $ITS, $add_labels) = @_;
 
-	#create the document from the input data
-	my $ITS = ITS->new('xml', doc => $doc_data);
+	if($ITS->get_doc_type ne 'xml'){
+		croak 'Cannot process document of type ' . $ITS->get_doc_type;
+	}
+
 	my $dom = $ITS->get_doc;
 
 	if(_is_rules_dom($dom)){

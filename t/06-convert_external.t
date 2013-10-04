@@ -6,6 +6,7 @@ plan tests => 1;
 use Path::Tiny;
 use FindBin qw($Bin);
 use Test::HTML::Differences;
+use ITS;
 use ITS::XLIFF2HTML;
 use t::TestXLIFF2HTML;
 
@@ -15,7 +16,8 @@ my $all_data = get_data_section();
 my $file = path($Bin, 'corpus', 'test_external_internal.xml');
 
 my $wics = ITS::XLIFF2HTML->new();
-my $converted = ${ $wics->convert("$file") };
+my $ITS = ITS->new('xml', doc => "$file");
+my $converted = ${ $wics->convert($ITS) };
 $converted = t::TestXLIFF2HTML::Filter->normalize_html($converted);
 my $expected = t::TestXLIFF2HTML::Filter->normalize_html($all_data->{html});
 

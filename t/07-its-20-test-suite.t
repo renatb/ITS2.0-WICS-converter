@@ -21,6 +21,7 @@ use IO::Compress::Gzip qw(gzip $GzipError) ;
 use HTML::HTML5::Parser;
 use Log::Any::Test;
 use Log::Any qw($log);
+use ITS;
 use ITS::XLIFF2HTML;
 
 if ( not $ENV{ITS_20_TESTSUITE_PATH}) {
@@ -87,7 +88,8 @@ sub convert {
     # convert the XML (adding labels) and print it
     # into the new directory
     my $html_fh = path($html_dir, $sub_dir, $html_file)->filehandle('>:utf8');
-    print $html_fh ${$converter->convert($File::Find::name, 1)};
+    my $ITS = ITS->new('xml', doc => $File::Find::name);
+    print $html_fh ${$converter->convert($ITS, 1)};
 
     my $log_fh = path($html_dir, $sub_dir, $log_file)->filehandle('>:utf8');
     print $log_fh "$_->{message}\n"
