@@ -76,6 +76,8 @@ via the C<-I> option. The required distributions are:
 
 =item ITS-XML2HTML
 
+=item ITS-XML2XLIFF
+
 =item ITS-Reduce
 
 =back
@@ -92,7 +94,7 @@ broken it into several lines for display purposes.
   wxpar -o WICS-GUI.exe -l C:/strawberry/c/bin/libxml2-2__.dll
   -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/libz__.dll
   -I ITS-0.04/lib -I ITS-XML2HTML-0.05/lib -I ITS-XLIFF2HTML-0.02/lib
-  -I ITS-Reduce-0.02/lib  -I ITS-WICS-0.02/lib
+  -I ITS-XML2XLIFF-0.01/lib -I ITS-Reduce-0.02/lib -I ITS-WICS-0.02/lib
   XML-ITS-WICS-0.02/bin/WICS-GUI.pl
 
 =head1 TODO
@@ -441,6 +443,7 @@ sub new {
         { name => 'XML2XLIFF',
           description => 'Create an XLIFF file with translation units extracted from XML',
           colour => [ 255, 255, 0 ],
+          transformer => \&ITS::WICS::xml2xliff,
           output_ext => 'xlf',
         },
     ];

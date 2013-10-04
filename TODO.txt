@@ -1,5 +1,7 @@
 
-Current Task: Update how to create standalone
+Most obviously, tests would be really nice.
+
 
 Future TODO:
     - rewrite GUI in XRC for better organization
+    - make the applications more localizable (po/mo files, share/locale directory, etc.)

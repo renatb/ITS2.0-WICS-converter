@@ -7,9 +7,10 @@ use ITS;
 use ITS::XML2HTML;
 use ITS::Reduce qw(reduce);
 use ITS::XLIFF2HTML;
+use ITS::XML2XLIFF;
 
 use Exporter::Easy (
-	OK => [qw(xml2html xliff2html reduceHtml)]
+	OK => [qw(xml2html xliff2html reduceHtml xml2xliff)]
 );
 # VERSION
 # ABSTRACT: Work with ITS-decorated documents
@@ -68,6 +69,25 @@ Return value is a pointer to a string containing the output HTML5 text.
 sub xliff2html {
     my ($doc, $add_labels) = @_;
     my $converter = ITS::XLIFF2HTML->new();
+    my $ITS = ITS->new('xml', doc => $doc);
+    return $converter->convert($ITS);
+}
+
+=head2 C<xml2xliff>
+
+Extracts translation units and ITS information from input XML data and
+creates an XLIFF file.
+
+The first argument is either a string containing an XML file name,
+a string pointer containing actual XML data, or a filehandle for a
+file containing the data.
+
+Return value is a pointer to a string containing the output XLIFF text.
+
+=cut
+sub xml2xliff {
+    my ($doc, $add_labels) = @_;
+    my $converter = ITS::XML2XLIFF->new();
     my $ITS = ITS->new('xml', doc => $doc);
     return $converter->convert($ITS);
 }
