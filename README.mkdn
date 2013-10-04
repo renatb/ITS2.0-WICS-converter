@@ -6,6 +6,33 @@ ITS::XLIFF2HTML - Convert ITS-decorated XML into HTML with equivalent markup
 
 version 0.01
 
+# DESCRIPTION
+
+This module creates an HTML5 file out of an XLIFF file. The new file contains
+all of the original text, but is styled to hide everything except for `source`
+and `target` element contents (no other styling is added to the document).
+Attributes, namespace declarations and processing instructions, where
+required by relative selectors, are made into elements and pasted in the
+document. They are given the class values of `_ITS_ATT`, `_ITS_NS`,
+and `_ITS_PI`, respectively.
+
+The structure of the original XLIFF is basically preserved. Elements are
+renamed as either `p` (`source` and `target`), `span` (XLIFF inline
+elements), or `div` (everything else). Global rules and local markup are
+converted and preserved separately. The conversion of other types of
+nodes into elements, and some differences between information in XML
+and HTML ITS, necessitates the creation of a few extra rules.
+
+Sometimes it is impossible to completely faithfully transfer the ITS
+information. See the ["CAVEATS"](#CAVEATS) section for more information.
+
+# SYNOPSIS
+    use ITS;
+    use ITS::XLIFF2HTML;
+    my $converter = ITS::XLIFF2HTML->new('Page Title');
+    my $ITS = ITS->new('xml', doc => \\'<xml>some text</xml>');
+    my $result = $converter->convert($ITS);
+
 # METHODS
 
 ## `new`
@@ -21,9 +48,7 @@ Creates a new converter instance. Optional arguments are:
 Converts the input XML document into an HTML document equivalent, and
 displayable, HTML.
 
-The first argument is either a string containing an XML file name, a string
-pointer containing actual XML data, or a filehandle for a file containing
-the data.
+The first argument is an ITS object containing an XML document.
 
 The second argument is a boolean, true if informative warning labels should
 be added to the output. These are small snippets of text to point out the
@@ -35,11 +60,37 @@ it).
 
 Th return value is a string pointer containing the output HTML string.
 
+# SEE ALSO
+
+This module relies on the [ITS](http://search.cpan.org/perldoc?ITS) module for processing ITS markup and rules.
+
+The ITS 2.0 specification for XML and HTML5: [http://www.w3.org/TR/its20/](http://www.w3.org/TR/its20/).
+
+The spec for representing ITS in XLIFF:
+[http://www.w3.org/International/its/wiki/XLIFF\_1.2\_Mapping](http://www.w3.org/International/its/wiki/XLIFF\_1.2\_Mapping).
+
+ITS interest group mail archives:
+[http://lists.w3.org/Archives/Public/public-i18n-its-ig/](http://lists.w3.org/Archives/Public/public-i18n-its-ig/)
+
 # CAVEATS
 
 The xml:id attribute is preserved as the `id` attribute in HTML. As no DTDs
 or other validating documents are utilized, no other attributes are treated
 as an element's unique ID or converted into HTML's <id> attribute.
+
+No effort is made to make up for invalid XML input. Invalid input throws an
+error. The most common problem with XLIFF files is a duplicate xml:id
+value because it is  common to copy the `source` element and rename it
+`target` before beginning translation.
+
+In the course of conversion, non-element nodes (like attributes) are
+pasted as elements so as to be both visible and legal HTML, and new
+attributes are also added (\`title\` and \`id\`). This unfortunately causes
+them to inherit ITS information that does not belong to them. Global rules
+are created to reset ITS information to defaults where possible
+(\`translate\`, \`direction\`, and \`localeFilter\`). Where there are no defaults
+(\`langInfo\`, \`domain\` and \`provenance\`), the newly pasted elements may be
+assigned incorrect ITS information.
 
 # `TODO`
 
