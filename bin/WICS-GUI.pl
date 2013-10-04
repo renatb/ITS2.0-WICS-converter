@@ -409,7 +409,7 @@ sub _get_new_path {
     return $new_path;
 }
 
-package Wx::wxVListBox::Tasks;
+package Wx::wxVListBox::Tasks; ## no critic(ProhibitMultiplePackages)
 
 use strict;
 use base qw(Wx::PlVListBox);
@@ -496,7 +496,7 @@ sub OnDrawItem {
         $itemdata->{description},
         $r->x + $woffset,
         $r->y + $self->{largefontsize}->y + $self->{margin});
-
+    return;
 }
 
 sub OnDrawSeparator {
@@ -507,6 +507,7 @@ sub OnDrawSeparator {
     $dc->DrawLine($bl->x, $bl->y, $br->x, $br->y);
     # shave off the line width of one pixel
     $rect->SetHeight( $rect->GetHeight - 1);
+    return;
 }
 
 sub OnDrawBackground {
@@ -515,6 +516,7 @@ sub OnDrawBackground {
     $dc->SetBrush(Wx::Brush->new($bgcolour, wxSOLID ));
     $dc->SetPen(Wx::Pen->new($bgcolour, 1, wxSOLID ));
     $dc->DrawRectangle($rect->x, $rect->y, $rect->width, $rect->height);
+    return;
 }
 
 1;
