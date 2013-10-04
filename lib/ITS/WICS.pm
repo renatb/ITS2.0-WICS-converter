@@ -22,10 +22,13 @@ use Exporter::Easy (
 
 =head1 DESCRIPTION
 
-WICS stands for Work In Context System. It is a way to make
-Internationalization Tag Set information more accessible. This module wraps
-up the functionality of several others into one package and provides a couple
-of standalone applications.
+WICS stands for Work In Context System. As a project, it is meant to make
+the Internationalization Tag Set (ITS) information more accessible to end-users
+via extraction and visualization.
+
+This module wraps up the functionality of several others into one package.
+Two standalone applications, a GUI and a CLI, are also provided in this
+distribution (see L<WICS-GUI.pl> and L<WICS.pl>).
 
 =head1 EXPORTS
 
@@ -45,7 +48,8 @@ Return value is a pointer to a string containing the output HTML5 text.
 sub xml2html {
     my ($doc) = @_;
     my $converter = ITS::XML2HTML->new();
-    return $converter->convert($doc);
+    my $ITS = ITS->new('xml', doc => $doc);
+    return $converter->convert($ITS);
 }
 
 =head2 C<xliff2html>
@@ -64,7 +68,8 @@ Return value is a pointer to a string containing the output HTML5 text.
 sub xliff2html {
     my ($doc, $add_labels) = @_;
     my $converter = ITS::XLIFF2HTML->new();
-    return $converter->convert($doc, $add_labels);
+    my $ITS = ITS->new('xml', doc => $doc);
+    return $converter->convert($ITS);
 }
 
 =head2 C<reduceHtml>
@@ -84,4 +89,16 @@ sub reduceHtml {
 }
 
 1;
+
+=head1 SEE ALSO
+
+This module relies on the L<ITS> module for processing ITS markup and rules.
+
+The ITS 2.0 specification for XML and HTML5: L<http://www.w3.org/TR/its20/>.
+
+The spec for representing ITS in XLIFF:
+L<http://www.w3.org/International/its/wiki/XLIFF_1.2_Mapping>.
+
+ITS interest group mail archives:
+L<http://lists.w3.org/Archives/Public/public-i18n-its-ig/>
 
