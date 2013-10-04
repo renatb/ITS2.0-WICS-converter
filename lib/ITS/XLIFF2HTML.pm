@@ -357,7 +357,7 @@ sub _set_within_text {
 
 # rename the input element to something in HTML
 sub _rename_el {
-	my ($el, $div_child) = @_;
+	my ($el) = @_;
 
 	# note: we're not checking namespace here. Hopefully noone puts a
 	# source or target element from a different namespace into their XLIFF doc!
