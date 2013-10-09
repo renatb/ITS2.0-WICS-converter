@@ -18,7 +18,11 @@ Nathan Glenn <garfieldnate@gmail.com>
         5. [Open-sourcing a Release](#open)
         6. [Building the Executables](#executables)
 3. [Preserving ITS Information During Conversion](#preserving)
-4. [Future Work](#future)
+4. [Known Issues and Limitations](#known)
+    1. [ITS](#known-ITS)
+    2. [ITS-XML2HTML](#known-ITS-XML2HTML)
+    3. [ITS-XLIFF2HTML](#known-ITS-XLIFF2HTML)
+    4. [ITS-XML2XLIFF](#known-ITS-XML2XLIFF)
 5. [Contributions](#contributions)
     1. [Bug Reports](#bugs)
     2. [ITS Interest Group Discussions](#interest)
@@ -28,7 +32,7 @@ Nathan Glenn <garfieldnate@gmail.com>
 ##Overview
 <a id="its"></a>
 ###ITS
-ITS, or the Internationalization Tag Set, is a standard for adding internalization-related information to XML and HTML5 documents. For example, using this tag set you can mark parts of a document as untranslatable, as needing special treatment for a given local, or as being related to a given media resource.
+ITS, or the Internationalization Tag Set, is a standard for adding internalization-related information to XML, XLIFF, and HTML5 documents. For example, using this tag set you can mark parts of a document as untranslatable, as needing special treatment for a given local, or as being related to a given media resource.
 
 ITS provides for two methods of annotating documents. The first is through local attributes. The second is through global rules, which use a query language (XPath for now) to select nodes to be annotated.
 
@@ -43,9 +47,9 @@ XLIFF documents can use XML ITS, but can additionally use markup from the `http:
 WICS stands for "Work In Context System". It is a project which seeks to make ITS markup more useful by displaying it in a more user-friendly manner within a web browser. It has two components:
 
 * A converter for generating HTML5 or XLIFF from original documents (this project)
-* Browser display logic
+* JavaScript to display ITS data in Web browsers
 
-This document describes the converters. They accomplish four tasks:
+This document describes the converters. They accomplish four file conversion tasks:
 
 1. Convert ITS-decorated XML into HTML5 for displaying contents, with ITS
 2. Reduce ITS-decorated HTML5 documents to be usable as a single file
@@ -70,12 +74,11 @@ The weakness is that there are a few cases where ITS information is applied to n
 ##Language and Tools
 The converters are written in Perl. The code consists of the following distributions:
 
-* ITS- an ITS document processor. It extracts ITS rules from XML and HTML documents, and resolves their matches. It also contains a DOM implementation which wraps LibXML and provides extra functionality required by the converter apps. It does not yet have any implementation of inheritance or of querying individual elements for ITS information.
-
-* `ITS-XML2HTML`- accomplishes task 1.
-* `ITS-Reduce`- accomplishes task 2.
-* `ITS-XLIFF2HTML`- accomplishes task 3.
-* `ITS-XML2XLIFF`- accomplishes task 4.
+* `ITS`- an ITS document processor. It extracts ITS rules from XML and HTML documents, and resolves their matches. It also contains a DOM implementation which wraps LibXML and provides extra functionality required by the converter apps. It does not yet have any implementation of inheritance or of querying individual elements for ITS information.
+* `ITS-XML2HTML`- accomplishes file conversion task 1.
+* `ITS-Reduce`- accomplishes file conversion task 2.
+* `ITS-XLIFF2HTML`- accomplishes file conversion task 3.
+* `ITS-XML2XLIFF`- accomplishes file conversion task 4.
 * `ITS-WICS`- Bundles the functionality of all of the converters and provides GUI and CLI frontends.
 
 Each of these distributions has its own Git repository and version number. Most of them are dependent on the availability of the others to run: all of them require `ITS`, and `ITS-WICS` requires all of the others. By "requires" I mean that the distribution must be made available to the Perl interpreter at run time. This is done either by installing the distribution or using the `-I` parameter on the command line.
@@ -104,8 +107,12 @@ Each project contains the following:
 ####Running Tests
 When you run the test scripts, you have to add the `lib` folder (and the `lib` folder of any required distributions) to Perl's include path. There are two ways to run the tests:
 
+`TODO: update this after combining all of the distros into one`
+
 1. One at a time: `perl -Ilib t/name-of-test.t`. The `-I` option adds the `lib` folder to the include path.
 2. All at once: `prove -vl`. The `-l` option adds the `lib` folder to the include path.
+
+`TODO: add note about validating output with validator.w3c/nu`
 
 <a id="installing"></a>
 ####Installing the Libraries
@@ -113,10 +120,16 @@ Installing the libraries is simple. Just use cd into the project directory and d
 
 <a id="viewing"></a>
 ####Viewing Library Documentation
+
+`TODO: Should also be contained in the docs directory in HTML format`
+
 The latest documentation on each of the modules is located in their files in POD format. Once a module is installed, you can view the documentation from the command line by doing `perldoc ITS::XML2HTML` (or substitute the name of the desired module). There is a pod2html utility included with Perl. Also, if you release to CPAN then you can just view the documentation online at [metacpan](https://metacpan.org).
 
 <a id="building"></a>
 ####Building a Release
+
+`TODO: Update executable building instructions after combining repos, then paste it all here`
+
 The code is usable as it exists in the root folder of each repository, but it doesn't have some essential distribution information, like a version number. We use Dist::Zilla (see the [Dependencies](#dependencies) section) to build the release of a distribution. Besides adding a version number, it also creates authoring tests (spelling, copyright, documentation coverage, etc.) and metadata and bundles them into the distribution. Here are some useful commands:
 
 * `dzil build`: builds the distribution in a subdirectory
@@ -145,14 +158,42 @@ After that, you should be able to just do `dzil release` and let Dist::Zilla do 
 ####Building the Executables
 The ITS-WICS distribution comes with two scripts that can be converted into standalone executables. These are `bin/WICS-GUI.pl` and `bin/WICS.pl`. Each file contains specific directions on creating the executables, which is also available via `perldoc WICS(-GUI).pl` if you installed the distribution (see [Viewing the Documentation](#viewing)). Keep in mind that this will be easiest if you install all of the distributions (otherwise you'll have to manually add all of them to the include path). Also, remember that PAR unpacks the Perl interpreter and required libraries into the temp folder the first time the executable is run, so there is a considerable startup time for the first use.
 
-<a id="future"></a>
-##Future Work
+<a id="known"></a>
+##Known Issues and Limitations
 
-Task #4 is obviously unfinished, with only a single sample file converted.
+<a id="known-ITS"></a>
+###`ITS`
+This module only deals with global ITS rules, not with local markup. It would be nice to make this into a more general ITS processor. It does not currently support querying individual elements for ITS information, nor does it implement inheritance. Reference L<http://www.w3.org/International/its/wiki/ITS_Processor_Interface> for an idea of what is wanted. Note that if this functionality is added, we should stop producing a warning for absence of rules from a file.
 
-To finish task #4, however, would require new functionality in the ITS distribution. It would need to be able calculate all ITS information for a given node, including inherited values. Currently it only calculates direct rule matches.
+The ITS specification allows for other types of selectors. This module, however, only allows XPath selectors. CSS selectors could be implemented, for example, with [`HTML::Selector::XPath`](https://metacpan.org/module/HTML::Selector::XPath).
 
-There are other TODO items for each project, listed in the `TODO.txt` file of each. Doubtless there will be countless more improvements once released to the community, including bug fixes, code cleanups and new features. Newer releases to required libraries such as XML::LibXML would also yield improvement.
+Currently this module does not check ITS version. All rules are assumed to be ITS version 2.0.
+
+It would be useful to allow the calling code to provide default ITS parameter values, as specified in section 5.3.5 of the ITS spec.
+
+No attempt is made at recovering from errors caused by invalid XML. Invalid input causes parsing to halt and an error to be thrown.
+
+No external schemas/DTDs are used to validate the XML input.
+
+<a id="known-ITS-XML2HTML"></a>
+###`ITS-XML2HTML`
+See the section on preserving ITS information for instances where ITS is not preserved faithfully.
+Also, as no external schema or DTD are used, only the `xml:id` attribute is treated as a unique ID, and only it is converted to the `id` attribute in the output HTML.
+
+<a id="known-ITS-XLIFF2HTML"></a>
+###`ITS-XLIFF2HTML`
+In XLIFF, it is common to copy the `source` element and rename it `target` before beginning translation. If the `source` element happened to have an `xml:id` attribute (which would be unnecessary since XLIFF defines the `id` attribute), then such a copy would generate invalid XML. As previously mentioned, invalid XML cannot be processed. Therefore, the originator of the XLIFF file should take care not to produce invalid output.
+
+The limitations of `ITS-XML2HTML` also apply to this module.
+
+<a id="known-ITS-XML2XLIFF"></a>
+###`ITS-XML2XLIFF`
+This task is unfinished, as only the conversion of a single sample file was required for project completion. There are 2 areas that need attention to make the converter generalizable to other XML files:
+
+    1- Inherited ITS information is not transferred to the XLIFF file. See also the known limitations on the `ITS` module.
+    2- The segmentation method is hard coded to treat `<seg>` elements as segments (`<group>` in XLIFF) and `<para>` elements as translation units (`<trans-unit>` in XLIFF). To generalize, this should be parameterized.
+
+Doubtless there will be more improvements once released to the community, including bug fixes, code cleanups and new features. Newer releases to utilized libraries such as XML::LibXML would also yield improvement.
 
 <a id="contributions"></a>
 ##Community Contributions During Project Development
@@ -174,7 +215,7 @@ There are other TODO items for each project, listed in the `TODO.txt` file of ea
 * [Use IO::Prompt::Tiny in Metabase::Fact](https://github.com/dagolden/metabase-fact/pull/2)
 * [Win32::Unicode test failure](https://github.com/xaicron/p5-win32-unicode/issues/3)
 * [Null namespace crashes HTML::HTML5::Writer](https://rt.cpan.org/Ticket/Display.html?id=88621)
-* [Space require to Parse File with HTML::HTML5::Parser](https://rt.cpan.org/Ticket/Display.html?id=88636)
+* [Space required to Parse File with HTML::HTML5::Parser](https://rt.cpan.org/Ticket/Display.html?id=88636)
 * [Compare all types of nodes with Test::XML::Ordered](https://rt.cpan.org/Ticket/Display.html?id=88994)
 * [xml:id and provenanceRecordsRef switched in ITS test suite](https://github.com/finnle/ITS-2.0-Testsuite/pull/22)
 * [Illegal itemprops in ITS test suite](https://github.com/finnle/ITS-2.0-Testsuite/pull/23)
