@@ -169,10 +169,11 @@ The limitations of `ITS-XML2HTML` also apply to this module.
 
 <a id="known-ITS-XML2XLIFF"></a>
 ###`ITS-XML2XLIFF`
-This task is unfinished, as only the conversion of a single sample file was required for project completion. There are 2 areas that need attention to make the converter generalizable to other XML files:
+This task is unfinished, as only the conversion of a single sample file was required for project completion. There are 3 areas that need attention to make the converter generalizable to other XML files:
 
     1- Inherited ITS information is not transferred to the XLIFF file. See also the known limitations on the `ITS` module.
     2- The segmentation method is hard coded to treat `<seg>` elements as segments (`<group>` in XLIFF) and `<para>` elements as translation units (`<trans-unit>` in XLIFF). To generalize, this should be parameterized.
+    3- Only a few ITS categories are converted (`idValue`, `locNote`, `translate` and `term`).
 
 Doubtless there will be more improvements once released to the community, including bug fixes, code cleanups and new features. Newer releases to utilized libraries such as XML::LibXML would also yield improvement.
 
