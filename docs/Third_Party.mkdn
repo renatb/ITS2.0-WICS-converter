@@ -7,6 +7,7 @@ Here are a list of the third-party libraries used directly in the WICS converter
 |LibXML | [http://www.xmlsoft.org/](http://www.xmlsoft.org/) | [MIT][] |
 |Wx | [https://metacpan.org/module/Wx](https://metacpan.org/module/Wx) | [Perl 5 Artistic][] |
 |wxWidgets | [http://www.wxwidgets.org](http://www.wxwidgets.org) | [wxWindows](http://www.wxwidgets.org/about/newlicen.htm) |
+|Wx::Perl::Packager|[http://metacpan.org/module/Wx::Perl::Packager](http://metacpan.org/module/Wx::Perl::Packager)|[Perl 5 Artistic][]|
 |Dist::Zilla | [dzil.org](http://dzil.org) | [Perl 5 Artistic][] |
 |Par::Packer | [https://metacpan.org/module/PAR::Packer](https://metacpan.org/module/PAR::Packer) | [Perl 5 Artistic][] |
 |HTML::HTML5::Parser | [https://metacpan.org/module/HTML::HTML5::Parser](https://metacpan.org/module/HTML::HTML5::Parser) | [Perl 5 Artistic][] |
