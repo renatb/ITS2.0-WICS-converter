@@ -1,0 +1,35 @@
+Here are a list of the third-party libraries used directly in the WICS converter code, along with reference URIs and license information. These libraries are installed from CPAN automatically when the WICS converters are installed (except for PAR::Packer and Dist::Zilla), and do not need to be managed individually. Most Perl modules are released under the Perl 5 artistic license.
+
+|Library| URI| License |
+|:------|:---|:--------|
+|Perl | [perl.org](http://perl.org) | [Perl 5 Artistic][] |
+|XML::LibXML | [https://metacpan.org/module/XML::LibXML](https://metacpan.org/module/XML::LibXML) | [Perl 5 Artistic][] |
+|LibXML | [http://www.xmlsoft.org/](http://www.xmlsoft.org/) | [MIT][] |
+|Wx | [https://metacpan.org/module/Wx](https://metacpan.org/module/Wx) | [Perl 5 Artistic][] |
+|wxWidgets | [http://www.wxwidgets.org](http://www.wxwidgets.org) | [wxWindows](http://www.wxwidgets.org/about/newlicen.htm) |
+|Dist::Zilla | [dzil.org](http://dzil.org) | [Perl 5 Artistic][] |
+|Par::Packer | [https://metacpan.org/module/PAR::Packer](https://metacpan.org/module/PAR::Packer) | [Perl 5 Artistic][] |
+|HTML::HTML5::Parser | [https://metacpan.org/module/HTML::HTML5::Parser](https://metacpan.org/module/HTML::HTML5::Parser) | [Perl 5 Artistic][] |
+|HTML::HTML5::Writer | [https://metacpan.org/module/HTML::HTML5::Writer](https://metacpan.org/module/HTML::HTML5::Writer) | [Perl 5 Artistic][] |
+|Test::XML | [https://metacpan.org/module/Test::XML](https://metacpan.org/module/Test::XML) | [Perl 5 Artistic][] |
+|Log::Any | [https://metacpan.org/module/Log::Any](https://metacpan.org/module/Log::Any) | [Perl 5 Artistic][] |
+|HTTP::Message | [https://metacpan.org/module/HTTP::Message](https://metacpan.org/module/HTTP::Message) | [Perl 5 Artistic][] |
+|IO::Compress::Gzip | [https://metacpan.org/module/IO::Compress::Gzip](https://metacpan.org/module/IO::Compress::Gzip) | [Perl 5 Artistic][] |
+|Path::Tiny | [https://metacpan.org/module/Path::Tiny](https://metacpan.org/module/Path::Tiny) | [Apache 2.0][] |
+|Test::HTML::Differences | [https://metacpan.org/module/Test::HTML::Differences](https://metacpan.org/module/Test::HTML::Differences) | [Perl 5 Artistic][] |
+|Getopt::Lucid | [https://metacpan.org/module/Getopt::Lucid](https://metacpan.org/module/Getopt::Lucid) | [Apache 2.0][] |
+|Try::Tiny | [https://metacpan.org/module/Try::Tiny](https://metacpan.org/module/Try::Tiny) | [MIT][] |
+|Data::Section::Simple | [https://metacpan.org/module/Data::Section::Simple](https://metacpan.org/module/Data::Section::Simple) | [Perl 5 Artistic][] |
+|LWP::UserAgent | [https://metacpan.org/module/LWP::UserAgent](https://metacpan.org/module/LWP::UserAgent) | [Perl 5 Artistic][] |
+|autodie | [https://metacpan.org/module/autodie](https://metacpan.org/module/autodie) | [Perl 5 Artistic][] |
+|Test::Base | [https://metacpan.org/module/Test::Base](https://metacpan.org/module/Test::Base) | [Perl 5 Artistic][] |
+|Test::Exception | [https://metacpan.org/module/Test::Exception](https://metacpan.org/module/Test::Exception) | [Perl 5 Artistic][] |
+|Test::NoWarnings | [https://metacpan.org/module/Test::NoWarnings](https://metacpan.org/module/Test::NoWarnings) | [GNU Library][] |
+|File::Slurp | [https://metacpan.org/module/File::Slurp](https://metacpan.org/module/File::Slurp) | [Perl 5 Artistic][] |
+|Test::Warn | [https://metacpan.org/module/Test::Warn](https://metacpan.org/module/Test::Warn) | [Perl 5 Artistic][] |
+|URI | [https://metacpan.org/module/URI](https://metacpan.org/module/URI) | [Perl 5 Artistic][] |
+
+[Perl 5 Artistic]: http://dev.perl.org/licenses/artistic.html "Perl 5 Artistic License"
+[MIT]: http://opensource.org/licenses/MIT "MIT License"
+[GNU Library]: http://www.gnu.org/licenses/old-licenses/lgpl-2.0.html "GNU Library General Public License"
+[Apache 2.0]: http://www.apache.org/licenses/LICENSE-2.0.html "Apache License, Version 2.0"
