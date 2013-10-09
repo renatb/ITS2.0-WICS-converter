@@ -15,7 +15,6 @@ Nathan Glenn <garfieldnate@gmail.com>
         2. [Installing the Libraries](#installing)
         3. [Viewing Library Documentation](#viewing)
         4. [Building a Release](#building)
-        5. [Open-sourcing a Release](#open)
         6. [Building the Executables](#executables)
 3. [Preserving ITS Information During Conversion](#preserving)
 4. [Known Issues and Limitations](#known)
@@ -136,24 +135,6 @@ The code is usable as it exists in the root folder of each repository, but it do
 * `dzil test --release`: runs all of the project unit tests and all of the generated author tests
 * `dzil release`: creates a new release of the project. With the current settings, this runs all of the unit- and author-tests, builds the release, saves it in the `releases` directory, regenerates the `README` file, and commits and pushes changes in Git.
 
-<a id="open"></a>
-####Open-sourcing a Release
-
-Note: if you'd rather I do this, then I'd be happy to.
-
-Dist::Zilla can handling most of the work of releasing the module. Just change a few settings:
-
-* Change the license (line 3) from `None` to `Perl_5` and uncomment the `MetaResrources` lines.
-* Add a git remote for uploading to Github (call it "origin"), and then uncomment the `Repository` lines and the `GithubMeta` line.
-* Uncomment the `UploadToCPAN` line, and create a `~/.pause` file containing your [PAUSE](pause.perl.org) credentials, like this:
-
-    user yourName
-    password yourPass
-
-* If you want to sign the release, uncomment the `Signature` line. If you are doing this on Windows, install gpg4win and create a key.
-
-After that, you should be able to just do `dzil release` and let Dist::Zilla do all of the work.
-
 <a id="executables"></a>
 ####Building the Executables
 The ITS-WICS distribution comes with two scripts that can be converted into standalone executables. These are `bin/WICS-GUI.pl` and `bin/WICS.pl`. Each file contains specific directions on creating the executables, which is also available via `perldoc WICS(-GUI).pl` if you installed the distribution (see [Viewing the Documentation](#viewing)). Keep in mind that this will be easiest if you install all of the distributions (otherwise you'll have to manually add all of them to the include path). Also, remember that PAR unpacks the Perl interpreter and required libraries into the temp folder the first time the executable is run, so there is a considerable startup time for the first use.
@@ -235,3 +216,4 @@ Doubtless there will be more improvements once released to the community, includ
 * [Typos in XLIFF Mapping](http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Sep/0005.html)
 * ["nel" Value for its:lineBreakType](http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Sep/0017.html)
 * [ITS Rules in XLIFF](http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Sep/0029.html)
+* [Is `mtype="x-its"` required?](http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Oct/0005.html)
