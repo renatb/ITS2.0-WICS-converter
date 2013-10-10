@@ -36,7 +36,7 @@ keeping the original ITS information intact.
 =head1 CAVEATS
 
 This module is very preliminary, and there are plenty of things to
-implmement still. Only a few ITS data categories are converted, and no
+implement still. Only a few ITS data categories are converted, and no
 inherited ITS information is saved.
 
 =head1 SEE ALSO
@@ -165,6 +165,7 @@ sub _xlfize {
 	$self->{its_els} = [];
 	$self->{tu} = [];
 	$self->_extract_convert($doc->get_root);
+	$self->_copy_source_to_target;
 	return $self->_xliff_structure($doc->get_source);
 }
 
@@ -231,7 +232,7 @@ sub _extract_convert {
 		}
 	}
 
-	#ITS may require wrapping children in in mrk and moving some markup
+	#ITS may require wrapping children in mrk and moving some markup
 	if($place_inline){
 		my $mrk = new_element('mrk');
 		$mrk->set_namespace($XLIFF_NS);
@@ -287,6 +288,21 @@ sub _transfer_inline_its {
 			}
 		}
 	}
+	return;
+}
+
+#copy the source element in each TU and rename it target; add
+#state="new" to each one.
+sub _copy_source_to_target {
+	my ($self) = @_;
+	for my $tu(@{ $self->{tu} }){
+		my ($source) = @{ $tu->child_els('source') };
+		my $target = $source->copy(1);
+		$target->set_name('target');
+		$target->set_att('state', 'new');
+		$target->paste($tu);
+	}
+	$log->debug('Copying sources to targets');
 	return;
 }
 
@@ -382,22 +398,6 @@ sub _localize_rules {
 		}
 	}
 	return;
-}
-
-sub _has_att {
-	my ($el, $att, $ns) = @_;
-	return 0 unless $el->att($att, $ns);
-	return 1;
-}
-
-# return true if there's a global selection on the given el for the given
-# metadata, but there isn't the specified local attribute
-sub _global_only {
-	my ($self, $el, $meta_cat, $local, $local_ns) = @_;
-	my $global = $self->{match_index}->{$el->unique_key};
-	return 0 unless $global && exists $global->{$meta_cat};
-	return 0 if $el->att($local, $local_ns);
-	return 1;
 }
 
 # handle all attribute converting for the given element.

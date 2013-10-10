@@ -1,5 +1,5 @@
 # Test conversion of global ITS;
-# The only global rule tested in the sample file is locNote
+# Currently only test locNote, translate, idValue and term
 use strict;
 use warnings;
 use t::TestXML2XLIFF;
@@ -43,6 +43,9 @@ __DATA__
         <source>stuff
           <mrk>starf</mrk>
         </source>
+        <target state="new">stuff
+          <mrk>starf</mrk>
+        </target>
       </trans-unit>
     </body>
   </file>
@@ -78,6 +81,11 @@ __DATA__
             starf
           </mrk>
         </source>
+        <target state="new">stuff
+          <mrk mtype="x-its-translate-yes">
+            starf
+          </mrk>
+        </target>
       </trans-unit>
       <trans-unit translate="no">
         <source>stuff
@@ -85,6 +93,11 @@ __DATA__
             starf
           </mrk>
         </source>
+        <target state="new">stuff
+          <mrk mtype="protected">
+            starf
+          </mrk>
+        </target>
       </trans-unit>
     </body>
   </file>
@@ -140,6 +153,18 @@ This requires wrapping children of structural elements in <mrk>
                 itsxlf:termConfidence=".5">starf</mrk>
           </mrk>
         </source>
+        <target state="new">
+          <mrk
+              mtype="term"
+              itsxlf:termInfoRef="stuff.com"
+              itsxlf:termConfidence=".5">
+            stuff
+            <mrk
+                mtype="term"
+                itsxlf:termInfo="nonce"
+                itsxlf:termConfidence=".5">starf</mrk>
+          </mrk>
+        </target>
       </trans-unit>
       <trans-unit>
         <source>
@@ -148,6 +173,12 @@ This requires wrapping children of structural elements in <mrk>
             <mrk mtype="x-its-term-no">starf</mrk>
           </mrk>
         </source>
+        <target state="new">
+          <mrk mtype="x-its-term-no">
+            stuff
+            <mrk mtype="x-its-term-no">starf</mrk>
+          </mrk>
+        </target>
       </trans-unit>
     </body>
   </file>
@@ -183,6 +214,14 @@ This requires wrapping children of structural elements in <mrk>
             starf
           </mrk>
         </source>
+        <target state="new">
+          stuff
+          <mrk
+              comment="Note 2"
+              itsxlf:locNoteType="description">
+            starf
+          </mrk>
+        </target>
         <note priority="1">Note 1</note>
       </trans-unit>
     </body>
@@ -219,9 +258,15 @@ This requires wrapping children of structural elements in <mrk>
             stuff
           </mrk>
         </source>
+        <target state="new">
+          <mrk mtype="term" itsxlf:termInfoRef="stuff.com">
+            stuff
+          </mrk>
+        </target>
       </trans-unit>
       <trans-unit translate="no">
         <source>stoof</source>
+        <target state="new">stoof</target>
         <note priority="2">note2</note>
       </trans-unit>
     </body>

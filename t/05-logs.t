@@ -55,6 +55,14 @@ Just test logs for one document.
             starf
           </mrk>
         </source>
+        <target state="new">
+          stuff
+          <mrk
+              comment="Note 2"
+              itsxlf:locNoteType="description">
+            starf
+          </mrk>
+        </target>
         <note priority="1">Note 1</note>
       </trans-unit>
     </body>
@@ -68,4 +76,5 @@ extracting translation units from document
 placing <its:provenanceRecords xml:id="prov1"> (standoff markup) as-is in XLIFF document
 Creating new trans-unit with <xml> as source
 Creating inline <mrk> from <foo>
+Copying sources to targets
 wrapping document in XLIFF structure

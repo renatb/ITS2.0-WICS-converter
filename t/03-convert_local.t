@@ -39,7 +39,8 @@ Should be removed; it's declared in the XLIFF root
   <file original="STRING" source-language="en" datatype="plaintext">
     <body>
       <trans-unit>
-        <source>stuff<mrk>starf</mrk></source>
+        <source>stuff<mrk>starf</mrk></source>
+        <target state="new">stuff<mrk>starf</mrk></target>
       </trans-unit>
     </body>
   </file>
@@ -84,6 +85,13 @@ Should be removed; it's declared in the XLIFF root
             starf
           </mrk>
         </source>
+        <target state="new">stuff
+          <mrk
+              comment="note2"
+              itsxlf:locNoteType="description">
+            starf
+          </mrk>
+        </target>
         <note priority="1">note1</note>
       </trans-unit>
       <trans-unit>
@@ -94,6 +102,13 @@ Should be removed; it's declared in the XLIFF root
             starf
           </mrk>
         </source>
+        <target state="new">stuff
+          <mrk
+              comment="note2"
+              itsxlf:locNoteType="alert">
+            starf
+          </mrk>
+        </target>
         <note priority="2">note1</note>
       </trans-unit>
     </body>
@@ -126,6 +141,11 @@ Should be removed; it's declared in the XLIFF root
             starf
           </mrk>
         </source>
+        <target state="new">stuff
+          <mrk mtype="x-its-translate-yes">
+            starf
+          </mrk>
+        </target>
       </trans-unit>
       <trans-unit translate="no">
         <source>stuff
@@ -133,6 +153,11 @@ Should be removed; it's declared in the XLIFF root
             starf
           </mrk>
         </source>
+        <target state="new">stuff
+          <mrk mtype="protected">
+            starf
+          </mrk>
+        </target>
       </trans-unit>
     </body>
   </file>
@@ -158,6 +183,9 @@ Should be removed; it's declared in the XLIFF root
         <source>stuff
           <mrk>starf</mrk>
         </source>
+        <target state="new">stuff
+          <mrk>starf</mrk>
+        </target>
       </trans-unit>
     </body>
   </file>
@@ -207,6 +235,18 @@ This requires wrapping children of structural elements in <mrk>
                 itsxlf:termConfidence=".5">starf</mrk>
           </mrk>
         </source>
+        <target state="new">
+          <mrk
+              mtype="term"
+              itsxlf:termInfoRef="stuff.com"
+              itsxlf:termConfidence=".5">
+            stuff
+            <mrk
+                mtype="term"
+                itsxlf:termInfoRef="starf.com"
+                itsxlf:termConfidence=".5">starf</mrk>
+          </mrk>
+        </target>
       </trans-unit>
       <trans-unit>
         <source>
@@ -215,6 +255,12 @@ This requires wrapping children of structural elements in <mrk>
             <mrk mtype="x-its-term-no">starf</mrk>
           </mrk>
         </source>
+        <target state="new">
+          <mrk mtype="x-its-term-no">
+            stuff
+            <mrk mtype="x-its-term-no">starf</mrk>
+          </mrk>
+        </target>
       </trans-unit>
     </body>
   </file>
@@ -242,6 +288,11 @@ This requires wrapping children of structural elements in <mrk>
             starf
           </mrk>
         </source>
+        <target state="new" its:allowedChars="[1-9]">5
+          <mrk its:allowedChars="[a-z]">
+            starf
+          </mrk>
+        </target>
       </trans-unit>
     </body>
   </file>
@@ -274,6 +325,11 @@ This requires wrapping children of structural elements in <mrk>
             stuff
           </mrk>
         </source>
+        <target state="new" its:allowedChars="[a-z]">
+          <mrk mtype="term" itsxlf:termInfoRef="stuff.com">
+            stuff
+          </mrk>
+        </target>
         <note priority="2">whatevs</note>
       </trans-unit>
     </body>

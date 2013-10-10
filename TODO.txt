@@ -11,5 +11,3 @@ This thing only converts a single furnished sample file. There's plenty more wor
 
 - use Test::XML::Ordered instead of Test::XML, after proper comparison of other types of nodes are added.
     - this way we only have to install one XML processor (XML::LibXML)
-- pass ITS object to converter, instead of data
-    - better dependency injection will make it more flexible

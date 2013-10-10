@@ -74,6 +74,7 @@ Test that standoff markup is pasted into XLIFF body
     <body>
       <trans-unit>
         <source>stuff</source>
+        <target state="new">stuff</target>
       </trans-unit>
     </body>
   </file>
@@ -108,18 +109,23 @@ Test that standoff markup is pasted into XLIFF body
     <body>
       <trans-unit>
         <source>stuff</source>
+        <target state="new">stuff</target>
       </trans-unit>
       <trans-unit>
         <source>really</source>
+        <target state="new">really</target>
       </trans-unit>
       <trans-unit>
         <source>Raleigh</source>
+        <target state="new">Raleigh</target>
       </trans-unit>
       <trans-unit>
         <source>Raley</source>
+        <target state="new">Raley</target>
       </trans-unit>
       <trans-unit>
         <source>stoof</source>
+        <target state="new">stoof</target>
       </trans-unit>
     </body>
   </file>
@@ -142,9 +148,11 @@ Test that standoff markup is pasted into XLIFF body
     <body>
       <trans-unit>
         <source>stuff<mrk>starf</mrk>stoof</source>
+        <target state="new">stuff<mrk>starf</mrk>stoof</target>
       </trans-unit>
       <trans-unit>
         <source>guff</source>
+        <target state="new">guff</target>
       </trans-unit>
     </body>
   </file>
@@ -167,9 +175,11 @@ Test that standoff markup is pasted into XLIFF body
     <body>
       <trans-unit>
         <source>stuff stoof</source>
+        <target state="new">stuff stoof</target>
       </trans-unit>
       <trans-unit>
         <source>starf</source>
+        <target state="new">starf</target>
       </trans-unit>
     </body>
   </file>
