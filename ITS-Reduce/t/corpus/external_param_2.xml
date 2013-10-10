@@ -1,0 +1,11 @@
+<its:rules
+    xml:id="ext2container"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    version="2.0"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xlink:type="simple"
+    xlink:href="external_param.xml">
+   <its:param name="title">Text</its:param>
+   <its:param name="trmarkId">notran</its:param>
+   <its:param name="foo">bar1</its:param>
+</its:rules>

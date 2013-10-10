@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>WICS</title>
+        <meta charset="utf-8">
+        <link rel="its-rules" href="external_param_2.xml">
+
+        <script type="application/its+xml" id="lq1">
+          <its:locQualityIssues xml:id="lq1" xmlns:its="http://www.w3.org/2005/11/its">
+            <its:locQualityIssue
+              locQualityIssueType="misspelling"
+              locQualityIssueComment="'c'es' is unknown. Could be 'c'est'"
+              locQualityIssueSeverity="50"/>
+          </its:locQualityIssues>
+        </script>
+        <script type='application/its+xml' id="baseFileContainer">
+          <its:rules
+            xmlns:its="http://www.w3.org/2005/11/its"
+            xmlns:h="http://www.w3.org/1999/xhtml"
+            xml:id="baseFileContainer"
+            version="2.0">
+           <its:param name="title">Text</its:param>
+           <its:param name="trmarkId">notran</its:param>
+           <its:param name="foo">bar1</its:param>
+           <its:idValueRule xml:id="idValRule" selector="id($title)" idValue="bodyId"/>
+           <its:locNoteRule xml:id="locNoteRule" selector="id($title)" locNotePointer="id($trmarkId)"/>
+          </its:rules>
+        </script>
+    </head>
+<body>
+    <p id="InvalidParameter">
+      Invalid parameter</p>
+</body>
+</html>

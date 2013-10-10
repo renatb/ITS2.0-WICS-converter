@@ -1,0 +1,7 @@
+#auto-generated cruft
+perl-module.sublime-workspace
+_Inline
+.build
+ITS-Reduce-*/
+/*.tar.gz
+t/testsuite_html/
