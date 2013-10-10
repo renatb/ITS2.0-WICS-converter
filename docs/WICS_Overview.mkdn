@@ -218,3 +218,4 @@ Doubtless there will be more improvements once released to the community, includ
 * ["nel" Value for its:lineBreakType](http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Sep/0017.html)
 * [ITS Rules in XLIFF](http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Sep/0029.html)
 * [Is `mtype="x-its"` required?](http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Oct/0005.html)
+* [Exclusivity and atomicity of local and global ITS](http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Oct/0006.html)
