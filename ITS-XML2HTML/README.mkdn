@@ -1,0 +1,88 @@
+# NAME
+
+ITS::XML2HTML - Convert ITS-decorated XML into HTML with equivalent markup
+
+# VERSION
+
+version 0.07
+
+# SYNOPSIS
+
+    use ITS;
+    use ITS::XML2HTML;
+    my $converter = ITS::XML2HTML->new('Page Title');
+    my $ITS = ITS->new('xml', doc => \'<xml>some text</xml>');
+    my $result = $converter->convert($ITS);
+    print $$result;
+
+# DESCRIPTION
+
+This module creates an HTML5 file out of an XML file. The new file contains
+all of the original text, and the text of attributes, with all ITS information
+preserved. Attributes, and also namespace declarations and processing
+instructions where required by relative selectors, are made into elements
+and pasted in the document. They are given the class values of `_ITS_ATT`,
+`_ITS_NS`, and `_ITS_PI`, respectively. No styling is added to the document.
+
+The structure of the original document is preserved as faithfully as possible.
+Elements are renamed as either `div` or `span` and attributes are saved as
+children. Global rules and local markup are converted and preserved separately.
+The conversion of other types of nodes into elements, and some differences
+between information in XML and HTML ITS, necessitates the creation of a few
+extra rules.
+
+Sometimes it is impossible to completely faithfully transfer the ITS
+information. See the ["CAVEATS"](#CAVEATS) section for more information.
+
+# SEE ALSO
+
+This module relies on the [ITS](http://search.cpan.org/perldoc?ITS) module for processing ITS markup and rules.
+
+The ITS 2.0 specification for XML and HTML5: [http://www.w3.org/TR/its20/](http://www.w3.org/TR/its20/).
+
+ITS interest group mail archives:
+[http://lists.w3.org/Archives/Public/public-i18n-its-ig/](http://lists.w3.org/Archives/Public/public-i18n-its-ig/)
+
+# METHODS
+
+## `new`
+
+Creates a new converter instance. Optional arguments are:
+
+- title
+
+    Title to give output HTML document (default is "WICS").
+
+## `convert`
+
+Converts the document contained in the input [ITS](http://search.cpan.org/perldoc?ITS) object into an HTML
+document with equivalent ITS information.
+
+# CAVEATS
+
+The xml:id attribute is preserved as the `id` attribute in HTML. As no DTDs
+or other validating documents are utilized, no other attributes are treated
+as an element's unique ID or converted into HTML's <id> attribute.
+
+In the course of conversion, non-element nodes (like attributes) are
+pasted as elements so as to be both visible and legal HTML, and new
+attributes are also added (\`title\` and \`id\`). This unfortunately causes
+them to inherit ITS information that does not belong to them. Global rules
+are created to reset ITS information to defaults where possible
+(\`translate\`, \`direction\`, and \`localeFilter\`). Where there are no defaults
+(\`langInfo\`, \`domain\` and \`provenance\`), the newly pasted elements may be
+assigned incorrect ITS information.
+
+# TODO
+
+It would be nice if the ITS rules placed in script elements were printed XML style
+instead of HTML (using self-ending tags).
+
+# AUTHOR
+
+Nathan Glenn <garfieldnate@gmail.com>
+
+# COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by DFKI.  No
+license is granted to other entities.

@@ -1,0 +1,17 @@
+XML to HTML converter
+
+Next:
+
+Engineering Tasks:
+    - do some HTML post-processing to fine-tune tests:
+        - convert_local.t shouldn't have to also check that default global rules to prevent inheritance have been added
+        - should be able to check XML equality of script elements instead of text equality
+    - Test::HTML::Differences is not very good. Would like a module that handles HTML5, properly normalizes all of it and then takes a diff. Even better would be a structural test instead of line-by-line comparison. Also, need to be able to tell it how to compare contents of <script> elements, which tend to vary in non-semantic whitespace, causing test failures.
+
+To Do on current task:
+
+Later To Do:
+    - change the way xpaths are generated for comments, text, etc.; XML::LibXML sometimes gives a path with asterisks, sometimes gives one with element names. This makes testing fragile.
+    - pass ITS object to converter, instead of data
+        - better dependency injection will make it more flexible
+    - find possible code reuse in converter
