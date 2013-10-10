@@ -1,0 +1,172 @@
+Algorithm to preserve ITS markup during conversion to HTML by replacing global selectors with new ones.
+
+Outline:
+Grab all rules and store in order of application
+    store parameter values in rules
+Find all document matches, store in an index
+    for each rule, store matched elements and pointer elements
+        for non-elements, create new ones to represent selected data (but don't insert in document yet), and also save future insertion point (prev/next sibling, parent)
+Transform document into HTML
+    keep element IDs
+    change elements to div or span
+    #store attributes as child spans (<span title="att_name" class="_ATT" id="parentId-name">value</span>)
+    put inside html structure (html, head, title, body)
+Change rule selectors
+
+__________
+Details:
+----------
+
+Create array containing all its:*Rule elements (internal or referenced), in order of application
+    (order should be external, internal, external, internal, etc. in order of document appearance)
+    initialize $paramIndex
+    [function: GET_RULES(file, $paramIndex)] for each its:rules element in file
+        init @rules
+        store its:param's in $paramIndex
+        if there is an external rules reference,
+            push GET_RULES(referenced file, $paramIndex) onto @rules
+        for each its:*rule in element
+            push rule onto @rules
+            rule should have reference to current $paramIndex entries
+        remove params from $paramIndex
+        return @rules
+
+(Loop through rules and create match index and objects to be pasted to tree later)
+init $matchIndex (tie with Tie::IxHash so that rules will be ordered)
+init $placeholders
+for $rule in rules
+    @nodes = matches($rule.selector)
+    if($rule has pointer att)
+        for $node in @nodes
+            push @{$matchIndex->{$rule}}, [getNode($placeholders, $node), getNode($placeholders, $rule.pointer)]
+    else
+        for $node in @nodes
+            push @{$matchIndex->{$rule}}, getNode($placeholders, $node)
+
+    [function: GET_NODE($domNode)]
+    switch(nodetype($domNode))
+        case ELEMENT:
+            return placeholder object
+                (use existing placeholder if found in %placeholders)
+                (placeholder just holds element, and paste does nothing)
+            return $domNode;
+            break;
+        case ATTRIBUTE, COMMENT, PI, DOCUMENT, NAMESPACE:
+            return placeholder object
+                (use existing placeholder if found in %placeholders)
+                (create new element representing $domNode;
+                    also save prev/next sibling/parent)
+        case TEXT:
+            push @{$matchIndex->{$rule}}, placeholder object
+                (use existing placeholder if found in %placeholders)
+                (create new element representing $domNode;
+                    also save prev/next sibling/parent;
+                    should destroy original text when pasted into document)
+
+put document in html/body, add head, title and encoding
+
+for $element in document
+    if $element.namespace is its (standoff)
+        put in script tag in head
+        next
+    save $element.name in title
+    for $att in $element
+        switch $att.name
+            CASE xml:id
+                becomes id;
+            CASE xml:lang
+                becomes lang
+            CASE: its:translate
+                becomes translate
+            CASE: its:dir
+                becomes dir (may need finagling of values)
+            CASE: its:* (besides above)
+                convert to html version
+            DEFAULT:
+                save in title
+                delete
+    rename element to span or div, depending on inlininess
+
+init @newRules
+for [$rule, $nodeMatch, $nodePointerMatch] in $matchIndex
+    ensure $nodeMatch has an id att
+    call $nodeMatch->paste (if applicable)
+    create $newRule
+        same atts as $rule, except:
+            selector selects "id('$nodeMatch.id')"
+    if $nodePointerMatch is defined
+        ensure $nodePointerMatch has an id att
+        call $nodePointerMatch->paste (if applicable)
+        pointer attribute of $newRule selects "id('$nodePointerMatch.id')"
+    push @newRules, $newRule
+
+create new its:rules element containing data of @newRules
+paste in script element in head
+
+done!
+
+Class design
+------------
+XML processor: XML::Twig or XML::LibXML
+Logger: Log::Any, with Dispatch adapter where needed
+ITS:
+    constructor
+        ARG: ITS-decorated XML document, xml/html flag
+        parses the document,
+        finds rule elements in source and creates array of Rule objects
+        OR
+        ARGS: its:rules element and xml document separately
+            more testable and flexible
+    get_rules_from_element:
+        ARG: its:rules XML element
+        return array pointer of Rule objects
+    get_matches
+        ARG: Rule object
+        return array pointer:
+            [
+                {
+                    'selector' => $selectorMatch,
+                    'pointer name' => $pointerMatch,
+                    ...
+                }
+            ]
+    iterate_matches
+        ARGS: handler, array pointer of Rule objects;
+            uses rules in the document if no rules arg
+        for each rule
+            for each match
+                handler($selectorMatch, $pointerMatch || undef)
+
+Rule:
+    constructor
+        ARGS: rule XML element, hash of current params and values
+        warn if there is no selector
+        copy and store name
+        copy and store all of the attributes
+        store names of pointer atts (undef if there is none)
+        store params and values
+        sotre element contents
+    copy constructor
+        won't need to copy params
+    (string) getter/setter for attributes
+    (string) pointer attribute name (undef if there is none)
+    (string) getter/setter for params
+
+XML2HTML:
+    Creates ITS from document
+    calls ITS.iterate_matches
+        handler fills $matchIndex with rules and element Placeholder objects
+    transforms file into HTML
+    creates new its:rules element and calls ensure_visible on all of the placeholders
+
+Placeholder
+    #this class is a future guarantee of the existence of a visible, selectable element.
+    #if you pass in an attribute node, for example, it will remember it's spot and make sure that there is a visible element representing that element after you call the ensure_visible method.
+    #the document is not changed at all until you call ensure_visible, so that no XPath selectors are broken.
+    constructor
+        ARG: node
+        Save node or create new one depending on type (see GET_NODE in details section)
+        Save node's exact location, if needed
+    ensure_visible
+        if the node is not in the document, this will paste it in the saved spot
+

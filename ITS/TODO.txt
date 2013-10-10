@@ -1,0 +1,16 @@
+ITS
+
+Next:
+    - submit pull request to XML::LibXML to add unique_key method to Namespace class.
+        - once that's released, switch to using the unique_key method.
+
+Engineering Tasks:
+
+To Do on current task:
+
+Later To Do:
+    - use Log::Any
+    - check test coverage and fill it in!
+    - Implement ITS inheritance
+    - Create a way to specify elements that are inline (INI file? constructor args?)
+

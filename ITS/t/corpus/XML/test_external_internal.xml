@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<myDoc xml:id="root">
+ <head>
+  <its:rules xml:id="baseFileContainer" xmlns:its="http://www.w3.org/2005/11/its" version="2.0"
+   xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="external_rules_XML1.xml">
+   <its:idValueRule xml:id="baseFileRule1" selector="//body" idValue="'bodyId'"/>
+   <its:locNoteRule xml:id="baseFileRule2" selector="//par" locNotePointer="@note"/>
+</its:rules>
+ </head>
+ <body xml:id="body">
+  <par xml:id="par1" note="some">The <trmark xml:id="trmark">World Wide Web Consortium</trmark> is making the World Wide Web worldwide!</par>
+  <par xml:id="par2" note="loc"></par>
+  <par xml:id="par3" note="note"></par>
+ </body>
+</myDoc>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WICS</title>
+        <script type='application/its+xml' id="basicContainer">
+          <its:rules version="2.0" xmlns:its="http://www.w3.org/2005/11/its">
+            <its:locNoteRule xml:id="first" locNoteType="alert" selector="id('InvalidParameter')">
+              <its:locNote>Date and time should be in YYYY-DD-MM HH:MM format.</its:locNote>
+            </its:locNoteRule>
+            <its:idValueRule xml:id="second" idValue="foo" selector="/.."/>
+            <its:translateRule xml:id="third" selector="/.." translate="no"/>
+          </its:rules>
+        </script>
+    </head>
+<body>
+    <p id="InvalidParameter">
+      Invalid parameter</p>
+</body>
+</html>
