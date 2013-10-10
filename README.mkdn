@@ -4,7 +4,7 @@ ITS - Work with ITS-decorated XML
 
 # VERSION
 
-version 0.04
+version 0.05
 
 # SYNOPSIS
 
@@ -134,8 +134,6 @@ a mechanism to allow the user to set the value of a param, no matter what
 values are present in the document?
 
 # SEE ALSO
-
-This module relies on the [ITS](http://search.cpan.org/perldoc?ITS) module for processing ITS markup and rules.
 
 The ITS 2.0 specification for XML and HTML5: [http://www.w3.org/TR/its20/](http://www.w3.org/TR/its20/).
 

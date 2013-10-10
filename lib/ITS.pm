@@ -366,8 +366,6 @@ values are present in the document?
 
 =head1 SEE ALSO
 
-This module relies on the L<ITS> module for processing ITS markup and rules.
-
 The ITS 2.0 specification for XML and HTML5: L<http://www.w3.org/TR/its20/>.
 
 ITS interest group mail archives:
