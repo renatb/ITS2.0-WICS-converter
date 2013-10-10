@@ -50,6 +50,7 @@ Just test logs for one document.
         <source>
           stuff
           <mrk
+              mtype="x-its"
               comment="Note 2"
               itsxlf:locNoteType="description">
             starf
@@ -58,6 +59,7 @@ Just test logs for one document.
         <target state="new">
           stuff
           <mrk
+              mtype="x-its"
               comment="Note 2"
               itsxlf:locNoteType="description">
             starf

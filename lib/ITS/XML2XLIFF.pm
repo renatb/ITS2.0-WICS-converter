@@ -355,6 +355,12 @@ sub _get_new_mrk {
 	my @atts = $mrk->get_xpath('@*');
 	$self->_localize_rules($el, $mrk, $parent);
 	$self->_convert_atts($mrk, \@atts);
+
+	#default value for required 'mtype' attribute is 'x-its',
+	#indicating some kind of ITS usage
+	if(!$mrk->att('mtype')){
+		$mrk->set_att('mtype', 'x-its');
+	}
 	return $mrk;
 }
 

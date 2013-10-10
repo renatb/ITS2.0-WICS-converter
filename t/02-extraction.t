@@ -147,8 +147,8 @@ Test that standoff markup is pasted into XLIFF body
   <file original="STRING" source-language="en" datatype="plaintext">
     <body>
       <trans-unit>
-        <source>stuff<mrk>starf</mrk>stoof</source>
-        <target state="new">stuff<mrk>starf</mrk>stoof</target>
+        <source>stuff<mrk mtype="x-its">starf</mrk>stoof</source>
+        <target state="new">stuff<mrk mtype="x-its">starf</mrk>stoof</target>
       </trans-unit>
       <trans-unit>
         <source>guff</source>

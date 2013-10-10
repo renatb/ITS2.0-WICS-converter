@@ -39,8 +39,8 @@ Should be removed; it's declared in the XLIFF root
   <file original="STRING" source-language="en" datatype="plaintext">
     <body>
       <trans-unit>
-        <source>stuff<mrk>starf</mrk></source>
-        <target state="new">stuff<mrk>starf</mrk></target>
+        <source>stuff<mrk mtype="x-its">starf</mrk></source>
+        <target state="new">stuff<mrk mtype="x-its">starf</mrk></target>
       </trans-unit>
     </body>
   </file>
@@ -80,6 +80,7 @@ Should be removed; it's declared in the XLIFF root
       <trans-unit>
         <source>stuff
           <mrk
+              mtype="x-its"
               comment="note2"
               itsxlf:locNoteType="description">
             starf
@@ -87,6 +88,7 @@ Should be removed; it's declared in the XLIFF root
         </source>
         <target state="new">stuff
           <mrk
+              mtype="x-its"
               comment="note2"
               itsxlf:locNoteType="description">
             starf
@@ -97,6 +99,7 @@ Should be removed; it's declared in the XLIFF root
       <trans-unit>
         <source>stuff
           <mrk
+              mtype="x-its"
               comment="note2"
               itsxlf:locNoteType="alert">
             starf
@@ -104,6 +107,7 @@ Should be removed; it's declared in the XLIFF root
         </source>
         <target state="new">stuff
           <mrk
+              mtype="x-its"
               comment="note2"
               itsxlf:locNoteType="alert">
             starf
@@ -181,10 +185,10 @@ Should be removed; it's declared in the XLIFF root
     <body>
       <trans-unit resname="id1">
         <source>stuff
-          <mrk>starf</mrk>
+          <mrk mtype="x-its">starf</mrk>
         </source>
         <target state="new">stuff
-          <mrk>starf</mrk>
+          <mrk mtype="x-its">starf</mrk>
         </target>
       </trans-unit>
     </body>
@@ -284,12 +288,12 @@ This requires wrapping children of structural elements in <mrk>
     <body>
       <trans-unit>
         <source its:allowedChars="[1-9]">5
-          <mrk its:allowedChars="[a-z]">
+          <mrk mtype="x-its" its:allowedChars="[a-z]">
             starf
           </mrk>
         </source>
         <target state="new" its:allowedChars="[1-9]">5
-          <mrk its:allowedChars="[a-z]">
+          <mrk mtype="x-its" its:allowedChars="[a-z]">
             starf
           </mrk>
         </target>

@@ -41,10 +41,10 @@ __DATA__
     <body>
       <trans-unit resname="id1">
         <source>stuff
-          <mrk>starf</mrk>
+          <mrk mtype="x-its">starf</mrk>
         </source>
         <target state="new">stuff
-          <mrk>starf</mrk>
+          <mrk mtype="x-its">starf</mrk>
         </target>
       </trans-unit>
     </body>
@@ -209,6 +209,7 @@ This requires wrapping children of structural elements in <mrk>
         <source>
           stuff
           <mrk
+              mtype="x-its"
               comment="Note 2"
               itsxlf:locNoteType="description">
             starf
@@ -217,6 +218,7 @@ This requires wrapping children of structural elements in <mrk>
         <target state="new">
           stuff
           <mrk
+              mtype="x-its"
               comment="Note 2"
               itsxlf:locNoteType="description">
             starf
