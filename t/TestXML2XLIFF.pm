@@ -22,6 +22,18 @@ sub xlfize {
     return $converted;
 }
 
+#convert the input XML into xlf and return the xlf string;
+#use the custom segmentation rules used by the provided sample file
+#(<sec> for groups, <para> for trans-units)
+sub xlfize_custom {
+    my ($self, $xml) = @_;
+    my $converter = ITS::XML2XLIFF->new();
+    my $ITS = ITS->new('xml', doc => \$xml);
+    my $converted = ${ $converter->convert(
+        $ITS, group => ['sec'], tu => ['para']) };
+    return $converted;
+}
+
 #convert the input XML into XLIFF and return the html string and the log
 sub xlf_log {
     my ($self, $xml) = @_;
