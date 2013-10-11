@@ -1,0 +1,61 @@
+# NAME
+
+ITS::XML2XLIFF - Extract ITS-decorated XML into XLIFF
+
+# VERSION
+
+version 0.01
+
+# SYNOPSIS
+
+    use ITS;
+    use ITS::XML2XLIFF;
+    my $converter = ITS::XML2XLIFF->new('Page Title');
+    my $ITS = ITS->new('xml', doc => \'<xml>some text</xml>');
+    my $result = $converter->convert($ITS);
+    print $$result;
+
+# DESCRIPTION
+
+This module extracts strings from an XML file to create an XLIFF file,
+keeping the original ITS information intact.
+
+# CAVEATS
+
+This module is very preliminary, and there are plenty of things to
+implmement still. Only a few ITS data categories are converted, and no
+inherited ITS information is saved.
+
+# SEE ALSO
+
+This module relies on the [ITS](http://search.cpan.org/perldoc?ITS) module for processing ITS markup and rules.
+
+The ITS 2.0 specification for XML and HTML5: [http://www.w3.org/TR/its20/](http://www.w3.org/TR/its20/).
+
+The spec for representing ITS in XLIFF:
+[http://www.w3.org/International/its/wiki/XLIFF\_1.2\_Mapping](http://www.w3.org/International/its/wiki/XLIFF\_1.2\_Mapping).
+
+ITS interest group mail archives:
+[http://lists.w3.org/Archives/Public/public-i18n-its-ig/](http://lists.w3.org/Archives/Public/public-i18n-its-ig/)
+
+# METHODS
+
+## `new`
+
+Creates a new converter instance.
+
+## `convert`
+
+Extracts strings from the input ITS object containing an XML document
+into an XLIFF document, preserving ITS information.
+
+Return value is a string pointer containing the output XLIFF string.
+
+# AUTHOR
+
+Nathan Glenn <garfieldnate@gmail.com>
+
+# COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by DFKI.  No
+license is granted to other entities.
