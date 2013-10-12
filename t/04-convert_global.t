@@ -1,4 +1,4 @@
-# Test conversion of global ITS;
+# Test conversion of global ITS using ITS segmentation scheme;
 # Currently only test locNote, translate, idValue and term
 use strict;
 use warnings;
@@ -112,13 +112,13 @@ This requires wrapping children of structural elements in <mrk>
         term="yes"
         termInfoRefPointer="@ref"
         termConfidence=".5"
-        selector="//x"/>
+        selector="/xml/x"/>
     <its:termRule
         term="yes"
         termInfoPointer="@info"
         termConfidence=".5"
-        selector="//x/foo"/>
-    <its:termRule term="no" selector="//y|//y/foo"/>
+        selector="/xml/x/foo"/>
+    <its:termRule term="no" selector="/xml/y|/xml/y/foo"/>
   </its:rules>
   <x ref="stuff.com">
     stuff

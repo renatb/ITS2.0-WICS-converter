@@ -383,7 +383,7 @@ sub _extract_convert_tu {
 	$tu->set_namespace($XLIFF_NS);
 
 	#copy element as a new source
-	my $source = $original->copy(1);
+	my $source = $original->copy(0);
 	$source->set_name('source');
 	$source->set_namespace($XLIFF_NS);
 	$source->paste($tu);
@@ -396,9 +396,13 @@ sub _extract_convert_tu {
 	$source->remove_att('withinText', its_ns());
 	$self->_convert_atts($source, \@atts, $tu);
 
-	#process children as inline elements
-	for my $child(@{$source->child_els}){
-		$self->_process_inline($child, $tu);
+	# process children as inline elements
+	# NEXT: make sure to traverse inlines inside of inlines!
+	for my $child($original->children){
+		$child->paste($source);
+		if($child->type eq 'ELT'){
+			$self->_process_inline($child, $tu);
+		}
 	}
 
 	#ITS may require wrapping children in mrk and moving markup
