@@ -392,6 +392,8 @@ sub _extract_convert_tu {
 	# that need to be processed by convert_atts first
 	my @atts = $source->get_xpath('@*');
 	$self->_localize_rules($original, $source, $tu);
+	#segmentation scheme determines withinText, so these should be removed
+	$source->remove_att('withinText', its_ns());
 	$self->_convert_atts($source, \@atts, $tu);
 
 	#process children as inline elements
@@ -431,6 +433,8 @@ sub _process_inline {
 	# that need to be processed by convert_atts first
 	my @atts = $el->get_xpath('@*');
 	$self->_localize_rules($el, $el, $tu);
+	#segmentation scheme determines withinText, so these should be removed
+	$el->remove_att('withinText', its_ns());
 	$self->_convert_atts($el, \@atts);
 
 	#default value for required 'mtype' attribute is 'x-its',

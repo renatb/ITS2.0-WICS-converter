@@ -1,4 +1,4 @@
-# Test conversion of local ITS;
+# Test conversion of local ITS when using the ITS segmentation scheme;
 # The local markup used in the sample is:
 # xml:id, its:[locNote*|translate|term*|version]
 use strict;
@@ -39,7 +39,8 @@ Should be removed; it's declared in the XLIFF root
   <file original="STRING" source-language="en" datatype="plaintext">
     <body>
       <trans-unit>
-        <source>stuff<mrk mtype="x-its">starf</mrk></source>
+        <source>stuff<mrk mtype="x-its">starf</mrk></source>
+
         <target state="new">stuff<mrk mtype="x-its">starf</mrk></target>
       </trans-unit>
     </body>
