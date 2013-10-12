@@ -23,14 +23,20 @@ sub xlfize {
 }
 
 #convert the input XML into xlf and return the xlf string;
-#use the custom segmentation rules used by the provided sample file
-#(<sec> for groups, <para> for trans-units)
+#use custom segmentation rules indicated by arguments:
+#group,group...|tu,tu...
 sub xlfize_custom {
     my ($self, $xml) = @_;
+
+    my $args = $self->current_arguments;
+    my ($group, $tu) = split '\|', $args;
+    $group = [split ',', $group];
+    $tu = [split ',', $tu];
+
     my $converter = ITS::XML2XLIFF->new();
     my $ITS = ITS->new('xml', doc => \$xml);
     my $converted = ${ $converter->convert(
-        $ITS, group => ['sec'], tu => ['para']) };
+        $ITS, group => $group, tu => $tu) };
     return $converted;
 }
 

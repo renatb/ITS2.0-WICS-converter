@@ -1,4 +1,4 @@
-# Test extraction of translation units
+# Test extraction of translation units, using ITS segmentation scheme
 use strict;
 use warnings;
 use t::TestXML2XLIFF;
@@ -14,7 +14,7 @@ filters {
 for my $block(blocks()){
     my $xliff = $block->input;
     # print $xliff;
-    is_xml($block->input, $block->output, $block->name);
+    is_xml($xliff, $block->output, $block->name);
 }
 
 __DATA__

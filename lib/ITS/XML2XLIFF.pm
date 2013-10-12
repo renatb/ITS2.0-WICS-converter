@@ -70,6 +70,24 @@ into an XLIFF document, preserving ITS information.
 
 Return value is a string pointer containing the output XLIFF string.
 
+There are two segmentation schemes: the default behavior is to extract
+all strings in the document, using ITS C<withinText> values (currently
+only implemented with local markup) to decide which elements are inline
+or structural.
+
+You may also passing C<tu> and C<group> parameters after the ITS document
+to get a different segmentation behavior. Each parameter should be an
+array ref containing names of elements to be used for extracting
+C<trans-unit>s and C<group>s, repsectively. Children of C<trans-unit>s are
+placed inline. If no C<group> element names are specified, then C<trans-units>
+for the whole document are placed in one C<group>.
+
+For example, the following will extract C<para> elements and their children
+as C<trans-units>, and place them in groups with other C<trans-units> extracted
+from the same C<sec> elements:
+
+	my $xliff = $XML2XLIFF->convert($ITS, group => ['sec'], tu => ['para']);
+
 =cut
 
 sub convert {
