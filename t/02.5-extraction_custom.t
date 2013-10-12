@@ -159,41 +159,42 @@ nothin' here
   </file>
 </xliff>
 
-=== several groups
+=== inline elements
+Everything inside the TUs is inlined
 --- input
-<xml>
-  <sec>
-    <para>Raley</para>
-    <para>Really</para>
-  </sec>
-  <sec>
-    <para>stuff</para>
-    <para>stoof</para>
-  </sec>
-</xml>
+<sec>
+  stuff
+  <para>starf<foo>guff<bar>buff</bar>duff</foo>poof</para>
+  stoof
+</sec>
 --- output
 <?xml version="1.0" encoding="utf-8"?>
-<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:itsxlf="http://www.w3.org/ns/its-xliff/" xmlns:its="http://www.w3.org/2005/11/its" its:version="2.0">
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    its:version="2.0">
   <file original="STRING" source-language="en" datatype="plaintext">
     <body>
       <group id="1">
         <trans-unit id="1">
-          <source>Raley</source>
-          <target state="new">Raley</target>
-        </trans-unit>
-        <trans-unit id="2">
-          <source>Really</source>
-          <target state="new">Really</target>
-        </trans-unit>
-      </group>
-      <group id="2">
-        <trans-unit id="3">
-          <source>stuff</source>
-          <target state="new">stuff</target>
-        </trans-unit>
-        <trans-unit id="4">
-          <source>stoof</source>
-          <target state="new">stoof</target>
+          <source>
+            starf
+            <mrk mtype="x-its">
+              guff
+              <mrk mtype="x-its">buff</mrk>
+              duff
+            </mrk>
+            poof
+          </source>
+          <target state="new">
+            starf
+            <mrk mtype="x-its">
+              guff
+              <mrk mtype="x-its">buff</mrk>
+              duff
+            </mrk>
+            poof
+          </target>
         </trans-unit>
       </group>
     </body>

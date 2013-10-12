@@ -397,7 +397,6 @@ sub _extract_convert_tu {
 	$self->_convert_atts($source, \@atts, $tu);
 
 	# process children as inline elements
-	# NEXT: make sure to traverse inlines inside of inlines!
 	for my $child($original->children){
 		$child->paste($source);
 		if($child->type eq 'ELT'){
@@ -445,6 +444,13 @@ sub _process_inline {
 	#indicating some kind of ITS usage
 	if(!$el->att('mtype')){
 		$el->set_att('mtype', 'x-its');
+	}
+
+	# recursively process children
+	for my $child($el->children){
+		if($child->type eq 'ELT'){
+			$self->_process_inline($child, $tu);
+		}
 	}
 	return;
 }
