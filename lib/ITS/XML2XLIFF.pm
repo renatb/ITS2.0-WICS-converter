@@ -9,7 +9,11 @@ use ITS qw(its_ns);
 use ITS::DOM;
 use ITS::DOM::Element qw(new_element);
 use ITS::XML2XLIFF::LogUtils qw(node_log_id log_match);
-use ITS::XML2XLIFF::ITSProcessor qw(its_requires_inline);
+use ITS::XML2XLIFF::ITSProcessor qw(
+	its_requires_inline
+	convert_atts
+	localize_rules
+);
 
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 our $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
@@ -393,10 +397,11 @@ sub _extract_convert_tu {
 	# attributes get added while localizing rules; so save the ones
 	# that need to be processed by convert_atts first
 	my @atts = $source->get_xpath('@*');
-	$self->_localize_rules($original, $source, $tu);
+	localize_rules(
+		$source, $tu, $self->{match_index}->{$original->unique_key});
 	#segmentation scheme determines withinText, so these should be removed
 	$source->remove_att('withinText', its_ns());
-	$self->_convert_atts($source, \@atts, $tu);
+	convert_atts($source, \@atts, $tu);
 
 	# process children as inline elements
 	for my $child($original->children){
@@ -437,10 +442,11 @@ sub _process_inline {
 	# attributes get added while localizing rules; so save the ones
 	# that need to be processed by convert_atts first
 	my @atts = $el->get_xpath('@*');
-	$self->_localize_rules($el, $el, $tu);
+	localize_rules(
+		$el, $tu, $self->{match_index}->{$el->unique_key});
 	#segmentation scheme determines withinText, so these should be removed
 	$el->remove_att('withinText', its_ns());
-	$self->_convert_atts($el, \@atts);
+	convert_atts($el, \@atts);
 
 	#default value for required 'mtype' attribute is 'x-its',
 	#indicating some kind of ITS usage
@@ -523,8 +529,9 @@ sub _get_new_source {
 	# attributes get added while localizing rules; so save the ones
 	# that need to be processed by convert_atts first
 	my @atts = $new_el->get_xpath('@*');
-	$self->_localize_rules($el, $new_el, $tu);
-	$self->_convert_atts($new_el, \@atts, $tu);
+	localize_rules(
+		$new_el, $tu, $self->{match_index}->{$el->unique_key});
+	convert_atts($new_el, \@atts, $tu);
 
 	return $new_el;
 }
@@ -546,8 +553,9 @@ sub _get_new_mrk {
 	# attributes get added while localizing rules; so save the ones
 	# that need to be processed by convert_atts first
 	my @atts = $mrk->get_xpath('@*');
-	$self->_localize_rules($el, $mrk, $parent);
-	$self->_convert_atts($mrk, \@atts);
+	localize_rules(
+		$mrk, $parent, $self->{match_index}->{$el->unique_key});
+	convert_atts($mrk, \@atts);
 
 	#default value for required 'mtype' attribute is 'x-its',
 	#indicating some kind of ITS usage
@@ -555,164 +563,6 @@ sub _get_new_mrk {
 		$mrk->set_att('mtype', 'x-its');
 	}
 	return $mrk;
-}
-
-#convert ITS info from global rules matching $old_el into local markup
-#on $new_el or $tu (containing trans-unit)
-sub _localize_rules {
-	my ($self, $old_el, $new_el, $tu) = @_;
-
-	my $its_info = $self->{match_index}->{$old_el->unique_key};
-	if(!$its_info){
-		return;
-	}
-
-	#TODO: there might be elements other than source and mrk someday
-	my $inline = $new_el->local_name eq 'mrk' ? 1 : 0;
-
-	#each of these is a check that 1) the category is selected in a global
-	#rule and 2) there is no local selection. TODO: clean this up?
-	while (my ($name, $value) = each %$its_info){
-		if($name eq 'locNote' &&
-				!defined $new_el->att('locNote', its_ns())){
-			my $type = $its_info->{locNoteType} || 'description';
-			_process_locNote($new_el, $value, $type, $tu, $inline)
-		}elsif($name eq 'translate' &&
-				!defined $new_el->att('translate', its_ns())){
-			_process_translate($new_el, $value, $tu, $inline);
-		}elsif($name eq 'idValue' &&
-				!defined $new_el->att('xml:id')){
-			_process_idValue($value, $tu, $inline);
-		}elsif($name eq 'term' &&
-				!defined $new_el->att('term', its_ns())){
-			my %termHash;
-			my @term_atts = qw(
-				term
-				termInfo
-				termInfoRef
-				termConfidence
-			);
-			@termHash{@term_atts} = @$its_info{@term_atts};
-			_process_term($new_el, %termHash);
-		}
-	}
-	return;
-}
-
-# handle all attribute converting for the given element.
-# $atts is array of att nodes to be processed
-# $tu is containing trans-unit (not needed if $el is inline)
-sub _convert_atts {
-	my ($self, $el, $atts, $tu) = @_;
-
-	#TODO: there might be elements other than source and mrk someday
-	my $inline = $el->local_name eq 'mrk' ? 1 : 0;
-
-	for my $att (@$atts){
-		# if not already removed while processing other atts
-		if($att->parent){
-			$self->_process_att($el, $att, $tu, $inline);
-		}
-	}
-	return;
-}
-
-# process given attribute on given element;
-# return the name of the element used to wrap the children, if any.
-# $tu is containing trans-unit (not needed if $el is inline)
-sub _process_att {
-	my ($self, $el, $att, $tu, $inline) = @_;
-	my $att_ns = $att->namespace_URI || '';
-	my $att_name = $att->local_name;
-	if($att_ns eq its_ns()){
-		if($att_name eq 'version'){
-			$att->remove;
-		}
-		# If there's a locNoteType but no locNote, then it
-		# doesn't get processed (no reason to).
-		if($att_name eq 'locNote'){
-			my $type = $el->att('locNoteType', its_ns()) || 'description';
-			_process_locNote($el, $att->value, $type, $tu, $inline);
-			$el->remove_att('locNote', its_ns());
-			$el->remove_att('locNoteType', its_ns());
-		}elsif($att_name eq 'translate'){
-			_process_translate($el, $att->value, $tu, $inline);
-			$att->remove;
-		# If there's a term* but no term, then it
-		# doesn't get processed (no reason to).
-		}elsif($att_name eq 'term'){
-			_process_term(
-				$el,
-				term => $att->value,
-				termInfoRef => $el->att('termInfoRef', its_ns()),
-				termConfidence => $el->att('termConfidence', its_ns()),
-			);
-			$att->remove;
-			$el->remove_att('termInfoRef', its_ns());
-			$el->remove_att('termConfidence', its_ns());
-		}
-		#default for ITS atts: leave them there
-	}elsif($att->name eq 'xml:id'){
-		_process_idValue($att->value, $tu, $inline);
-		$att->remove;
-	}else{
-		$att->remove;
-	}
-	return;
-}
-
-# pass in an element to be annotated, locNote and locNoteType values,
-# and whether the element is inline or not
-sub _process_locNote {
-	my ($el, $note, $type, $tu, $inline) = @_;
-	my $priority = $type eq 'alert' ? '1' : '2';
-	if($inline){
-		$el->set_att('comment', $note);
-		$el->set_att('itsxlf:locNoteType', $type, $ITSXLF_NS);
-	}else{
-		my $note = new_element('note', {}, $note, $XLIFF_NS);
-		$note->set_att('priority', $priority);
-		$note->paste($tu);
-	}
-	return;
-}
-
-# input element and it's ITS translate value, containing TU, and whether
-# it's inline
-sub _process_translate {
-	my ($el, $translate, $tu, $inline) = @_;
-	if($inline){
-		$el->set_att('mtype',
-			$translate eq 'yes' ?
-			'x-its-translate-yes' :
-			'protected');
-	}else{
-		$tu->set_att('translate', $translate);
-	}
-	return;
-}
-
-sub _process_term {
-	my ($el, %termInfo) = @_;
-	$termInfo{term} eq 'yes' ?
-		$el->set_att('mtype', 'term') :
-		$el->set_att('mtype', 'x-its-term-no');
-
-	for my $name(qw(termInfoRef termConfidence termInfo)){
-		if (my $val = $termInfo{$name}){
-			$el->set_att("itsxlf:$name", $val, $ITSXLF_NS);
-		}
-	}
-	return;
-}
-
-sub _process_idValue {
-	my ($id, $tu, $inline) = @_;
-	#this att is ignored on inline elements
-	if(!$inline){
-		$tu->set_att('resname', $id);
-	}
-	return;
 }
 
 # Place extracted translation units into an XLIFF skeleton, and
