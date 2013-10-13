@@ -4,7 +4,7 @@ ITS::XML2XLIFF - Extract ITS-decorated XML into XLIFF
 
 # VERSION
 
-version 0.01
+version 0.02
 
 # SYNOPSIS
 
@@ -23,7 +23,7 @@ keeping the original ITS information intact.
 # CAVEATS
 
 This module is very preliminary, and there are plenty of things to
-implmement still. Only a few ITS data categories are converted, and no
+implement still. Only a few ITS data categories are converted, and no
 inherited ITS information is saved.
 
 # SEE ALSO
@@ -50,6 +50,24 @@ Extracts strings from the input ITS object containing an XML document
 into an XLIFF document, preserving ITS information.
 
 Return value is a string pointer containing the output XLIFF string.
+
+There are two segmentation schemes: the default behavior is to extract
+all strings in the document, using ITS `withinText` values (currently
+only implemented with local markup) to decide which elements are inline
+or structural.
+
+You may also passing `tu` and `group` parameters after the ITS document
+to get a different segmentation behavior. Each parameter should be an
+array ref containing names of elements to be used for extracting
+`trans-unit`s and `group`s, repsectively. Children of `trans-unit`s are
+placed inline. If no `group` element names are specified, then `trans-units`
+for the whole document are placed in one `group`.
+
+For example, the following will extract `para` elements and their children
+as `trans-units`, and place them in groups with other `trans-units` extracted
+from the same `sec` elements:
+
+	my $xliff = $XML2XLIFF->convert($ITS, group => ['sec'], tu => ['para']);
 
 # AUTHOR
 
