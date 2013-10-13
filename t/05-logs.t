@@ -74,7 +74,7 @@ Just test logs for one document.
 --- log
 match: rule=<its:locNoteRule>; selector=<xml>
 match: rule=<its:locNoteRule>; locNotePointer=@note[Note 2]; selector=<foo>
-extracting translation units from document
+Segmenting document using ITS metadata
 placing <its:provenanceRecords xml:id="prov1"> (standoff markup) as-is in XLIFF document
 Creating new trans-unit with <xml> as source
 Creating inline <mrk> from <foo>

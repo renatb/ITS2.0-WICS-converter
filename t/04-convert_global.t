@@ -1,4 +1,4 @@
-# Test conversion of global ITS;
+# Test conversion of global ITS using ITS segmentation scheme;
 # Currently only test locNote, translate, idValue and term
 use strict;
 use warnings;
@@ -112,13 +112,13 @@ This requires wrapping children of structural elements in <mrk>
         term="yes"
         termInfoRefPointer="@ref"
         termConfidence=".5"
-        selector="//x"/>
+        selector="/xml/x"/>
     <its:termRule
         term="yes"
         termInfoPointer="@info"
         termConfidence=".5"
-        selector="//x/foo"/>
-    <its:termRule term="no" selector="//y|//y/foo"/>
+        selector="/xml/x/foo"/>
+    <its:termRule term="no" selector="/xml/y|/xml/y/foo"/>
   </its:rules>
   <x ref="stuff.com">
     stuff
@@ -274,3 +274,47 @@ This requires wrapping children of structural elements in <mrk>
     </body>
   </file>
 </xliff>
+
+=== ITS in sources forced into mrks still have correct structural ITS
+--- input
+<xml xmlns:its="http://www.w3.org/2005/11/its">
+  <its:rules version="2.0">
+    <its:termRule
+        term="yes"
+        termInfoRefPointer="@ref"
+        selector="//x"/>
+  </its:rules>
+  <x
+      ref="stuff.com"
+      xml:id="id1"
+      its:locNote="whatevs"
+      its:allowedChars="[a-z]">
+    stuff
+  </x>
+</xml>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff
+    xmlns="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:its="http://www.w3.org/2005/11/its"
+    xmlns:itsxlf="http://www.w3.org/ns/its-xliff/"
+    its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <trans-unit resname="id1">
+        <source its:allowedChars="[a-z]">
+          <mrk mtype="term" itsxlf:termInfoRef="stuff.com">
+            stuff
+          </mrk>
+        </source>
+        <target state="new" its:allowedChars="[a-z]">
+          <mrk mtype="term" itsxlf:termInfoRef="stuff.com">
+            stuff
+          </mrk>
+        </target>
+        <note priority="2">whatevs</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
+
