@@ -20,11 +20,45 @@ our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 # ABSTRACT: Extract translation-units using ITS segmentation (internal use only)
 
 
+=head2 C<extract_convert_its>
+
+Arguments are the document root and the match index. Returns (as a list)
+an array ref of trans-unit elements and an array ref of standoff elements.
+
+=cut
+sub extract_convert_its {
+    my ($root, $match_index) = @_;
+    my $state = {
+        match_index => $match_index,
+        tu => [],
+        its_els => [],
+    };
+    _extract_convert_its($state, $root);
+    _copy_source_to_target($state->{tu});
+
+    return ($state->{tu}, $state->{its_els});
+}
+
+#copy the source element in each TU and rename it target; add
+#state="new" to each one.
+sub _copy_source_to_target {
+    my ($tus) = @_;
+    for my $tu(@{ $tus }){
+        my ($source) = @{ $tu->child_els('source') };
+        my $target = $source->copy(1);
+        $target->set_name('target');
+        $target->set_att('state', 'new');
+        $target->paste($tu);
+    }
+    $log->debug('Copying sources to targets');
+    return;
+}
+
 # Extract translation units from the given element, placing them in
 # the given new parent element. If newParent is undef, a new translation
 # unit is created. This extraction method uses ITS to determine segmentation.
-sub extract_convert_its {
-    my ($self, $el, $new_parent) = @_;
+sub _extract_convert_its {
+    my ($state, $el, $new_parent) = @_;
 
     #check if element should be source or mrk inside of source
     my $place_inline;
@@ -33,14 +67,14 @@ sub extract_convert_its {
         $place_inline = 0;
     }else{
         $place_inline = its_requires_inline(
-            $el, $self->{match_index}->{$el->unique_key});
+            $el, $state->{match_index}->{$el->unique_key});
     }
 
     for my $child ($el->children){
         # extract non-empty text nodes
         if($child->type eq 'TXT' && $child->text =~ /\S/){
             # create a new source element if needed
-            $new_parent ||= $self->_get_new_source($el);
+            $new_parent ||= _get_new_source($state, $el);
             $child->paste($new_parent);
         }elsif($child->type eq 'ELT'){
             #ITS standoff and rules need special processing
@@ -50,7 +84,7 @@ sub extract_convert_its {
                 #ignore its:rules and save standoff for later pasting
                 if($child->local_name ne 'rules'){
                     # save standoff markup for pasting in the head
-                    push @{ $self->{its_els} }, $child;
+                    push @{ $state->{its_els} }, $child;
                     if($log->is_debug){
                         $log->debug('placing ' . node_log_id($child) .
                             ' (standoff markup) as-is in XLIFF document');
@@ -68,21 +102,21 @@ sub extract_convert_its {
             }
             if( $within_text eq 'yes'){
                 # create a new source element if needed
-                $new_parent ||= $self->_get_new_source($el);
-                extract_convert_its($self, $child,
-                    $self->_get_new_mrk($child, $new_parent));
+                $new_parent ||= _get_new_source($state, $el);
+                _extract_convert_its($state, $child,
+                    _get_new_mrk($state, $child, $new_parent));
             }elsif($within_text eq 'nested'){
                 # create a new source element if needed
-                $new_parent ||= $self->_get_new_source($el);
+                $new_parent ||= _get_new_source($state, $el);
                 #one space to separate text on either side of nested element
                 $new_parent->append_text(' ');
                 # recursively extract
-                extract_convert_its($self, $child);
+                _extract_convert_its($state, $child);
             }else{
                 # break the text flow
                 $new_parent = undef;
                 # recursively extract
-                extract_convert_its($self, $child);
+                _extract_convert_its($state, $child);
             }
         }
     }
@@ -100,3 +134,65 @@ sub extract_convert_its {
 
     return;
 }
+
+# pass in the element which contains the text to be placed in a
+# new source element. Create the source element and paste in
+# inside a new trans-unit element.
+sub _get_new_source {
+    my ($state, $el) = @_;
+
+    if($log->is_debug){
+        $log->debug('Creating new trans-unit with ' . node_log_id($el) .
+            ' as source');
+    }
+    #create new trans-unit to hold element contents
+    my $tu = new_element('trans-unit', {});
+    $tu->set_namespace($XLIFF_NS);
+    push @{$state->{tu}}, $tu;
+
+    #copy element and atts, but not children
+    my $new_el = $el->copy(0);
+    $new_el->set_name('source');
+    $new_el->set_namespace($XLIFF_NS);
+    $new_el->paste($tu);
+
+    # attributes get added while localizing rules; so save the ones
+    # that need to be processed by convert_atts first
+    my @atts = $new_el->get_xpath('@*');
+    localize_rules(
+        $new_el, $tu, $state->{match_index}->{$el->unique_key});
+    convert_atts($new_el, \@atts, $tu);
+
+    return $new_el;
+}
+
+#create a new XLIFF mrk element to represent given element and paste
+#is last in given parent
+sub _get_new_mrk {
+    my ($state, $el, $parent) = @_;
+
+    if($log->is_debug){
+        $log->debug('Creating inline <mrk> from ' . node_log_id($el));
+    }
+    #copy element and atts, but not children
+    my $mrk = $el->copy(0);
+    $mrk->set_name('mrk');
+    $mrk->set_namespace($XLIFF_NS);
+    $mrk->paste($parent);
+
+    # attributes get added while localizing rules; so save the ones
+    # that need to be processed by convert_atts first
+    my @atts = $mrk->get_xpath('@*');
+    localize_rules(
+        $mrk, $parent, $state->{match_index}->{$el->unique_key});
+    convert_atts($mrk, \@atts);
+
+    #default value for required 'mtype' attribute is 'x-its',
+    #indicating some kind of ITS usage
+    if(!$mrk->att('mtype')){
+        $mrk->set_att('mtype', 'x-its');
+    }
+    return $mrk;
+}
+
+1;
