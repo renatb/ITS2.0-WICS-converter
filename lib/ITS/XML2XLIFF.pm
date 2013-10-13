@@ -9,6 +9,7 @@ use ITS qw(its_ns);
 use ITS::DOM;
 use ITS::DOM::Element qw(new_element);
 use ITS::XML2XLIFF::LogUtils qw(node_log_id log_match);
+use ITS::XML2XLIFF::ITSProcessor qw(its_requires_inline);
 
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 our $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
@@ -89,7 +90,6 @@ from the same C<sec> elements:
 	my $xliff = $XML2XLIFF->convert($ITS, group => ['sec'], tu => ['para']);
 
 =cut
-
 sub convert {
 	my ($self, $ITS, %seg) = @_;
 
@@ -231,7 +231,8 @@ sub _extract_convert_its {
 	if($new_parent && $new_parent->name eq 'mrk'){
 		$place_inline = 0;
 	}else{
-		$place_inline = $self->_its_requires_inline($el);
+		$place_inline = its_requires_inline(
+			$el, $self->{match_index}->{$el->unique_key});
 	}
 
 	for my $child ($el->children){
@@ -376,7 +377,8 @@ sub _extract_convert_tu {
 	}
 
 	#check if element should be source or mrk inside of source
-	my $place_inline = $self->_its_requires_inline($original);
+	my $place_inline = its_requires_inline(
+			$original, $self->{match_index}->{$original->unique_key});;
 
 	#create new trans-unit to hold element contents
 	my $tu = new_element('trans-unit', {});
@@ -455,23 +457,6 @@ sub _process_inline {
 	return;
 }
 
-# return true if converting the ITS info on the given element
-# requires that it be rendered inline (as mrk) instead of structural
-# (as its own source)
-sub _its_requires_inline {
-	my ($self, $el) = @_;
-
-	# any terminology information requires inlining
-	if($el->att('term', its_ns())){
-		return 1;
-	}
-	my $global = $self->{match_index}->{$el->unique_key};
-	return 0 unless $global;
-	if(exists $global->{term}){
-		return 1;
-	}
-	return 0;
-}
 
 # transfer ITS that is required to be on a mrk (not on a source) from $from
 # to $to
