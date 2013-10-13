@@ -12,9 +12,10 @@ use Exporter::Easy (
         its_requires_inline
         convert_atts
         localize_rules
+        transfer_inline_its
     )]);
 
-#TODO: put these and the ones used in XML2XLIFF.pm in one place
+#TODO: put all of these in one place
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 our $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
 
@@ -39,6 +40,40 @@ sub its_requires_inline {
         return 1;
     }
     return 0;
+}
+
+=head2 C<transfer_inline_its>
+
+Transfer ITS that is required to be on a mrk (not on a source) from one
+element (first argument) to the another (second argument).
+
+Arguments are the element to move the markup from and the element to move
+the markup to.
+
+=cut
+
+sub transfer_inline_its {
+    my ($from, $to) = @_;
+
+    #all of the terminology information has to be moved
+    my $mtype = $from->att('mtype');
+    if($mtype =~ /term/){
+        $to->set_att('mtype', $from->att('mtype'));
+        $from->remove_att('mtype');
+        my @term_atts = qw(
+            termInfo
+            termInfoRef
+            termConfidence
+        );
+
+        for my $att (@term_atts){
+            if (my $value = $from->att($att, $ITSXLF_NS)){
+                $from->remove_att($att, $ITSXLF_NS);
+                $to->set_att("itsxlf:$att", $value, $ITSXLF_NS);
+            }
+        }
+    }
+    return;
 }
 
 =head2 C<convert_atts>
