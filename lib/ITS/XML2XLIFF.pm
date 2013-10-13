@@ -16,6 +16,7 @@ use ITS::XML2XLIFF::ITSProcessor qw(
 	transfer_inline_its
 );
 use ITS::XML2XLIFF::ITSSegmenter qw(extract_convert_its);
+use ITS::XML2XLIFF::CustomSegmenter qw(extract_convert_custom);
 
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 our $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
@@ -110,8 +111,6 @@ sub convert {
 			'another ITS document instead.';
 	}
 
-	#TODO: obvious sign that this method should just be the constructor...
-	delete $self->{match_index};
 
 	# Check if segmentation rules were provided
 	# TODO: check input a little better
@@ -125,6 +124,7 @@ sub convert {
 		$self->{seg} = 'its';
 	}
 
+	$self->{match_index} = {};
 	#iterate all document rules and their matches, indexing each one
 	for my $rule (@{ $ITS->get_rules }){
 		my $matches = $ITS->get_matches($rule);
@@ -192,195 +192,26 @@ sub _index_match {
 # Pass in document to be the source of an XLIFF file and segmentation arguments
 # return the new XLIFF document
 sub _xlfize {
-	my ($self, $doc, %seg) = @_;
+	my ($self, $doc) = @_;
 
 	# traverse every document element, extracting text for trans-units
 	# and saving standoff/rules markup
-	$self->{its_els} = [];
-	$self->{tu} = [];
 
-	#TODO: manage groups of translation-units
-	#This will contain arrays of trans-units
-	$self->{groups} = [];
 	if($self->{seg} eq 'its'){
 		$log->debug('Segmenting document using ITS metadata');
 		($self->{tu}, $self->{its_els}) =
 			extract_convert_its($doc->get_root, $self->{match_index});
 	}else{
 		$log->debug('Segmenting document using custom rules');
-		if(@{$self->{group_els}}){
-			$self->_extract_convert_groups($doc->get_root);
-		}else{
-			$self->{current_group} = new_element('group');
-			$self->{current_group}->set_namespace($XLIFF_NS);
-			$self->_extract_convert_units($doc->get_root);
-			#if the current group has trans-units, assign an id and save it
-			if(@{$self->{current_group}->child_els}){
-				$self->{current_group}->set_att('id', ++$self->{group_num});
-				push $self->{groups}, $self->{current_group};
-			}
-		}
+		($self->{tu}, $self->{its_els}) =
+			extract_convert_custom(
+				$doc->get_root,
+				$self->{group_els},
+				$self->{tu_els},
+				$self->{match_index}
+			);
 	}
 	return $self->_xliff_structure($doc->get_source);
-}
-
-#extract groups and translation units according to elements specified as
-#group or trans-unit containers
-sub _extract_convert_groups {
-	my ($self, $el) = @_;
-	return if $self->_check_standoff($el);
-
-	my $name = $el->local_name;
-	# if this element is a group separator,
-	# then make a group out of the TUs it contains
-	if(grep {$_ eq $name} @{ $self->{group_els} }){
-		$self->{current_group} = new_element('group');
-		$self->{current_group}->set_namespace($XLIFF_NS);
-		$self->_extract_convert_units($el);
-		#if the current group has trans-units, assign an id and save it
-		if(@{$self->{current_group}->child_els}){
-			$self->{current_group}->set_att('id', ++$self->{group_num});
-			push @{$self->{groups}}, $self->{current_group};
-		}
-	#otherwise, search for groups in its children
-	}else{
-		for my $child (@{$el->child_els}){
-			$self->_extract_convert_groups($child);
-		}
-	}
-	return;
-}
-
-#return true if markup should be ignored (ITS standoff or rules)
-sub _check_standoff {
-	my ($self, $el) = @_;
-
-	my $name = $el->local_name;
-	#ignore ITS rules and save standoff;
-	#let its:span through (could possibly be used for holding segments)
-	if($el->namespace_URI eq its_ns()){
-		if($name eq 'rules'){
-			return 1;
-		}elsif($name ne 'span'){
-			push @{$self->{its_els}}, $el;
-			return 1;
-		}
-	}
-	return 0;
-}
-
-# find and return TUs in current element
-sub _extract_convert_units {
-	my ($self, $el) = @_;
-	return if $self->_check_standoff($el);
-
-	my $name = $el->local_name;
-	# if this element is contains a translation unit,
-	# then make a trans-unit element out of it and its children
-	if(grep {$_ eq $name} @{ $self->{tu_els} }){
-		#don't extract empty elements
-		if($el->text =~ /\S/){
-			$self->_extract_convert_tu($el);
-		}
-	#otherwise, search for TUs in its children
-	}else{
-		for my $child (@{$el->child_els}){
-			$self->_extract_convert_units($child);
-		}
-	}
-	return;
-}
-
-#create and a single TU from $original, pasting it in the current group
-sub _extract_convert_tu {
-	my ($self, $original) = @_;
-
-	if($log->is_debug){
-		$log->debug('Creating new trans-unit with '
-			. node_log_id($original) . ' as source');
-	}
-
-	#check if element should be source or mrk inside of source
-	my $place_inline = its_requires_inline(
-			$original, $self->{match_index}->{$original->unique_key});;
-
-	#create new trans-unit to hold element contents
-	my $tu = new_element('trans-unit', {});
-	$tu->set_namespace($XLIFF_NS);
-
-	#copy element as a new source
-	my $source = $original->copy(0);
-	$source->set_name('source');
-	$source->set_namespace($XLIFF_NS);
-	$source->paste($tu);
-
-	# attributes get added while localizing rules; so save the ones
-	# that need to be processed by convert_atts first
-	my @atts = $source->get_xpath('@*');
-	localize_rules(
-		$source, $tu, $self->{match_index}->{$original->unique_key});
-	#segmentation scheme determines withinText, so these should be removed
-	$source->remove_att('withinText', its_ns());
-	convert_atts($source, \@atts, $tu);
-
-	# process children as inline elements
-	for my $child($original->children){
-		$child->paste($source);
-		if($child->type eq 'ELT'){
-			$self->_process_inline($child, $tu);
-		}
-	}
-
-	#ITS may require wrapping children in mrk and moving markup
-	if($place_inline){
-		my $mrk = new_element('mrk');
-		$mrk->set_namespace($XLIFF_NS);
-		for my $child ($source->children){
-			$child->paste($mrk);
-		}
-		$mrk->paste($source);
-		transfer_inline_its($source, $mrk);
-	}
-
-	my $target = $source->copy(1);
-	$target->set_name('target');
-	$target->set_att('state', 'new');
-	$target->paste($source, 'after');
-
-	$tu->set_att('id', , ++$self->{tu_num});
-	$tu->paste($self->{current_group});
-	return;
-}
-
-#convert a child into an inline XLIFF element
-sub _process_inline {
-	my ($self, $el, $tu) = @_;
-
-	$el->set_name('mrk');
-	$el->set_namespace($XLIFF_NS);
-
-	# attributes get added while localizing rules; so save the ones
-	# that need to be processed by convert_atts first
-	my @atts = $el->get_xpath('@*');
-	localize_rules(
-		$el, $tu, $self->{match_index}->{$el->unique_key});
-	#segmentation scheme determines withinText, so these should be removed
-	$el->remove_att('withinText', its_ns());
-	convert_atts($el, \@atts);
-
-	#default value for required 'mtype' attribute is 'x-its',
-	#indicating some kind of ITS usage
-	if(!$el->att('mtype')){
-		$el->set_att('mtype', 'x-its');
-	}
-
-	# recursively process children
-	for my $child($el->children){
-		if($child->type eq 'ELT'){
-			$self->_process_inline($child, $tu);
-		}
-	}
-	return;
 }
 
 # Place extracted translation units into an XLIFF skeleton, and
@@ -412,9 +243,8 @@ sub _xliff_structure {
 	my $body = new_element('body');
 	$body->set_namespace($XLIFF_NS);
 	$body->paste($file);
-	# paste all trans-unit elements
+	# paste all trans-unit/group elements
 	$_->paste($body) for @{ $self->{tu} };
-	$_->paste($body) for @{ $self->{groups} };
 
 	if(@{ $self->{its_els} }){
 		my $header = new_element('header');

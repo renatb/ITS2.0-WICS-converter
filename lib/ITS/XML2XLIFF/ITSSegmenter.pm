@@ -26,11 +26,14 @@ Arguments are the document root and the match index. Returns (as a list)
 an array ref of trans-unit elements and an array ref of standoff elements.
 
 =cut
+#TODO: place trans-units in a group?
 sub extract_convert_its {
     my ($root, $match_index) = @_;
     my $state = {
         match_index => $match_index,
+        #holds all trans-units created so far
         tu => [],
+        #holds all discovered standoff markup
         its_els => [],
     };
     _extract_convert_its($state, $root);
@@ -78,20 +81,7 @@ sub _extract_convert_its {
             $child->paste($new_parent);
         }elsif($child->type eq 'ELT'){
             #ITS standoff and rules need special processing
-            if($child->namespace_URI &&
-                ($child->namespace_URI eq its_ns() ) &&
-                $child->local_name !~ 'span'){
-                #ignore its:rules and save standoff for later pasting
-                if($child->local_name ne 'rules'){
-                    # save standoff markup for pasting in the head
-                    push @{ $state->{its_els} }, $child;
-                    if($log->is_debug){
-                        $log->debug('placing ' . node_log_id($child) .
-                            ' (standoff markup) as-is in XLIFF document');
-                    }
-                }
-                next;
-            }
+            next if _check_standoff($state, $child);
 
             #TODO: check if it's translatable
             #TODO: check withinText global rules
@@ -193,6 +183,28 @@ sub _get_new_mrk {
         $mrk->set_att('mtype', 'x-its');
     }
     return $mrk;
+}
+
+#return true if markup should be ignored (ITS standoff or rules)
+sub _check_standoff {
+    my ($state, $el) = @_;
+
+    my $name = $el->local_name;
+    #ignore ITS rules and save standoff;
+    #let its:span through (could possibly be used for holding segments)
+    if($el->namespace_URI eq its_ns()){
+        if($name eq 'rules'){
+            return 1;
+        }elsif($name ne 'span'){
+            if($log->is_debug){
+                $log->debug('placing ' . node_log_id($el) .
+                    ' (standoff markup) as-is in XLIFF document');
+            }
+            push @{$state->{its_els}}, $el;
+            return 1;
+        }
+    }
+    return 0;
 }
 
 1;
