@@ -1,0 +1,7 @@
+<!-- Changed namespaces prefixes to ensure they don't matter -->
+<foo:rules xml:id="ext2container" xmlns:foo="http://www.w3.org/2005/11/its"
+    xmlns:bar="http://www.w3.org/1999/xlink"
+    version="2.0"
+    bar:href="external_rules_xml3.xml">
+      <foo:translateRule xml:id="ext2rule" selector="//trmark" translate="yes"/>
+</foo:rules>

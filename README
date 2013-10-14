@@ -1,0 +1,133 @@
+NAME
+    ITS - Work with ITS-decorated XML
+
+VERSION
+    version 0.08
+
+SYNOPSIS
+        use ITS;
+        use feature 'say';
+        my $ITS = ITS->new(file => 'myITSfile.xml');
+        my $rules = $ITS->get_rules;
+        for my $rule (@$rules){
+            say $rule->type;
+            for my $match (@{ $ITS->get_matches($rule) }){
+                say "$_ => $match->{$_}" for keys %$match;
+            }
+        }
+
+DESCRIPTION
+    This module is for working with ITS decorated XML or HTML documents. It
+    allows you to resolve all of the global and find matches for each of
+    them.
+
+EXPORTS
+    The following function may be exported:
+
+  "its_ns"
+    Returns the ITS namespace URI.
+
+  "xlink_ns"
+    Returns the xlink namespace URI ("xlink:href" is used by the "its:rules"
+    element to import external rules).
+
+METHODS
+  "new"
+    Returns an ITS object instance. Arguments: The first is either 'xml' or
+    'html' to indicate the type of document being parsed. After that, you
+    must specify 'doc' and may also optionally specify 'rules' parameters.
+    The value of these parameters should be either a string containing a
+    file path or a string reference containing actual ITS data. The 'doc'
+    argument should point to the document to which ITS data is being
+    applied, and the 'rules' argument should point to a document containing
+    the ITS rules to apply (this may only be an XML document, not an HTML
+    document).
+
+  "eval_rules"
+    This method detects any ITS rules contained or referenced by the
+    document (or the separate rules document), setting the values that can
+    be obtained via "get_containers" and "get_rules". This is always run by
+    the "new" method, but if the document (retrievable via "get_dom") is
+    edited, the ITS rules contents may have changed, making it necessary to
+    call this method.
+
+  "get_doc_type"
+    Returns either 'html' or 'xml' indicating the type of file being
+    represented.
+
+  "get_doc"
+    Returns the ITS::DOM object created from the input document.
+
+  "get_rules"
+    Returns an arrayref containing the ITS rule elements (in the form of
+    ITS::Rule objects) which are to be applied to the document, in the order
+    in which they will be applied.
+
+  "get_containers"
+    Returns an arrayref containing ITS::RuleContainer objects, one for each
+    "its:rules" element found in the document or externally. The containers
+    are returned in application order (the order that their rules should be
+    applied in).
+
+  "get_matches"
+    Argument: "ITS::Rule" object.
+
+    Returns an array ref of matches on this ITS document against the input
+    rule. Each element of the list is a hash ref containing at least one
+    key, "selector", whose value is the document node which the rule
+    selector matched. Any other keys are names of pointer attributes, and
+    their values are their matched document nodes.
+
+CAVEATS
+    In browsers, all HTML is considered to be in the
+    "http://www.w3.org/1999/xhtml" namespace, XPath but XPath expressions
+    use this as a default namespace. This is not currently possible with
+    this module, so the XHTML namespace must be used explicitly in rules for
+    HTML documents, like so:
+
+        <its:rules xmlns:its="http://www.w3.org/2005/11/its"
+            xmlns:h="http://www.w3.org/1999/xhtml"
+            version="2.0">
+              <its:translateRule selector="//h:p" translate="yes"/>
+        </its:rules>
+
+    Currently rule selection will not work for the "id()" XPath expression
+    in HTML documents.
+
+TODO
+    This module does not support querying individual elements for ITS
+    information. This would be very useful, but it would require the
+    implementation of inheritance and per-category knowledge (currently
+    there is none!). Reference
+    <http://www.w3.org/International/its/wiki/ITS_Processor_Interface> for
+    an idea of what is wanted. Note that if this functionality is added, we
+    should stop producing a warning for absence of rules from a file.
+
+    ITS allows for other types of selectors. This module, however, only
+    allows XPath selectors. CSS selectors could be implemented, for example,
+    with "HTML::Selector::XPath".
+
+    Currently this module does not check ITS version. All rules are assumed
+    to be ITS version 2.0.
+
+    Section 5.3.5 of the ITS spec mentions that implementors should provide
+    a way to set default values for parameters. This would be useful, but
+    what is the menaing of i<default> value here? Are there documents
+    without param declarations but with XPaths that contain variables? Or
+    should this just be a mechanism to allow the user to set the value of a
+    param, no matter what values are present in the document?
+
+SEE ALSO
+    The ITS 2.0 specification for XML and HTML5:
+    <http://www.w3.org/TR/its20/>.
+
+    ITS interest group mail archives:
+    <http://lists.w3.org/Archives/Public/public-i18n-its-ig/>
+
+AUTHOR
+    Nathan Glenn <garfieldnate@gmail.com>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2013 by DFKI. No license is granted to
+    other entities.
+
