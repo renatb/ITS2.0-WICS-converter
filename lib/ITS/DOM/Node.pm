@@ -79,6 +79,16 @@ sub _get_type {
     return $type;
 }
 
+=head2 C<to_string>
+
+Returns a string representation of this node.
+
+=cut
+sub to_string {
+    my ($node) = @_;
+    return $node->{node}->toString
+}
+
 =head2 C<get_xpath>
 
 Constructs an xpath query from the input arguments, and returns

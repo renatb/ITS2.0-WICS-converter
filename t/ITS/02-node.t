@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More 0.88;
-plan tests => 64;
+plan tests => 65;
 use Test::NoWarnings;
 use Test::Exception;
 use XML::LibXML;
@@ -23,6 +23,8 @@ test_node_namespaces($dom);
 test_unique_key($dom);
 test_copy($dom);
 test_family($dom);
+test_to_string($dom);
+
 
 sub test_constructor {
     my $el = XML::LibXML::Element->new( 'x' );
@@ -97,7 +99,8 @@ sub test_path {
     is($nodes[0]->path, '/xml/text()[1]', 'path to first text');
     is($nodes[1]->path, '/xml/second', 'path to "second" element');
     my ($comment) = $dom->get_root->get_xpath('//comment()');
-    is($comment->path, '/xml/comment()', 'path to comment')
+    is($comment->path, '/xml/comment()', 'path to comment');
+    return;
 }
 
 #test specifics of XPath context setting along with error handling
@@ -195,6 +198,7 @@ sub test_unique_key {
     my ($ns_2) = $dom->get_root->get_xpath('/*/namespace::*[name()="foo"]');
     ok($ns_1 != $ns_2, 'two separate objects to represent the same namespace');
     is($ns_1->unique_key, $ns_2->unique_key, '...have the same unique key');
+    return;
 }
 
 sub test_copy {
@@ -217,6 +221,7 @@ sub test_copy {
     ok($third->unique_key != $copy->unique_key, 'new node created');
     ok($copy->name eq 'third', 'new node has correct name');
     ok($copy->children != 0, 'children also copied');
+    return;
 }
 
 sub test_family {
@@ -240,4 +245,14 @@ sub test_family {
     my $el = XML::LibXML::Element->new( 'x' );
     my $node = ITS::DOM::Node->new($el);
     ok(!defined $node->doc_node, 'no doc node returned for orphan');
+    return;
+}
+
+sub test_to_string {
+    my ($doc) = @_;
+    my $third = ($doc->get_root->get_xpath('//third'))[0];
+    is($third->to_string,
+        '<third>some <i>italic</i> text</third>',
+        'correct node serialization');
+    return;
 }
