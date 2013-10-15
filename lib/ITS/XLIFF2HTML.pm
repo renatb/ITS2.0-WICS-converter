@@ -961,6 +961,9 @@ are created to reset ITS information to defaults where possible
 (`langInfo`, `domain` and `provenance`), the newly pasted elements may be
 assigned incorrect ITS information.
 
+The ITS XLIFF mapping is still in a state of flux, so some ITS conversion
+performed by this software may soon become incorrect.
+
 =head1 C<TODO>
 
 It would be nice if the ITS rules placed in script elements were printed XML style
