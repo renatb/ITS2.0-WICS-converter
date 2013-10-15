@@ -372,7 +372,7 @@ sub _convert_files {
                 "\n----------\n$path\n----------\n");
             my $html = $transformer->($path);
             my $new_path = _get_new_path($path, $output_ext);
-            my $fh = $new_path->filehandle('>:utf8');
+            my $fh = $new_path->openw_utf8;
             print $fh ${ $html };
             $text->SetDefaultStyle($done_style);
             $text->AppendText("\nwrote $new_path\n");
