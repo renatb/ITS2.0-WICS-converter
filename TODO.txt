@@ -1,7 +1,5 @@
 XLIFF to HTML converter
 
-Current/next: Account for <its:locNote> in <its:locNoteRule> in _deep_its_eq
-
 Engineering Tasks:
     - do some HTML post-processing to fine-tune tests:
         - convert_local.t shouldn't have to also check that default global rules to prevent inheritance have been added
@@ -10,5 +8,3 @@ Engineering Tasks:
 
 Later To Do:
     - change the way xpaths are generated for comments, text, etc.; XML::LibXML sometimes gives a path with asterisks, sometimes gives one with element names. This makes testing fragile.
-    - pass ITS object to converter, instead of data
-        - better dependency injection will make it more flexible

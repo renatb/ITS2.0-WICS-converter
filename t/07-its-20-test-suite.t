@@ -34,7 +34,10 @@ my $converter = ITS::XLIFF2HTML->new();
 my $xml_dir = path($ENV{ITS_20_TESTSUITE_PATH},
     'its2.0', 'xliffsamples', 'inputdata');
 
-bail_out("couldn't find $xml_dir") unless $xml_dir->exists;
+if(!$xml_dir->exists){
+    warn "couldn't find $xml_dir";
+    exit -1;
+}
 
 my $validator_url = $ENV{HTML5_VALIDATOR_URL} ||
     'http://validator.w3.org/nu/';
@@ -49,7 +52,7 @@ mkdir $html_dir;
 # convert all XML files into HTML;
 # count them so a plan can be formed
 my $file_count = 0;
-note "Generating HTML files from inpudata folder\n";
+note "Generating HTML files from inputdata folder\n";
 find(\&convert, $xml_dir);
 
 plan tests => $file_count;

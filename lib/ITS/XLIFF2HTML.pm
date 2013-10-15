@@ -11,7 +11,12 @@ use ITS::Rule;
 use ITS::DOM;
 use ITS::DOM::Element qw(new_element);
 use ITS::XLIFF2HTML::FutureNodeManager qw(new_manager);
-use ITS::XLIFF2HTML::LogUtils qw(node_log_id log_match log_new_rule);
+use ITS::XLIFF2HTML::LogUtils qw(
+	node_log_id
+	log_match
+	log_new_rule
+	get_or_set_id
+);
 
 use feature 'state';
 our $HTML_NS = 'http://www.w3.org/1999/xhtml';
@@ -110,9 +115,9 @@ sub convert {
 		croak 'Cannot process document of type ' . $ITS->get_doc_type;
 	}
 
-	my $dom = $ITS->get_doc;
+	my $doc = $ITS->get_doc;
 
-	if(_is_rules_dom($dom)){
+	if(_is_rules_dom($doc)){
 		croak 'Cannot process a file containing only rules. ' .
 			'Convert the file which references this file ' .
 			'(via xlink:href) instead.';
@@ -120,12 +125,13 @@ sub convert {
 
 	#create a futureNodeManager associated with the input document
 	$self->{futureNodeManager} =
-		new_manager($dom);
+		new_manager($doc);
 	#reset other state
 	#TODO: obvious sign that this method should just be the constructor...
 	delete $self->{reverse_match_index};
 	delete $self->{label_futures};
 	delete $self->{matches_index};
+	$self->{doc} = $doc;
 
 	#iterate all document rules and their matches, indexing each one
 	for my $rule (@{ $ITS->get_rules }){
@@ -141,7 +147,7 @@ sub convert {
 
 	# convert $ITS into an HTML document; rename elements, process atts,
 	# and paste the root in an HTML body.
-	my $html_doc = $self->_htmlize($dom, $add_labels);
+	my $html_doc = $self->_htmlize($add_labels);
 
 	#cause all DOM changes to occur
 	$self->{futureNodeManager}->realize_all;
@@ -162,8 +168,8 @@ sub convert {
 
 # returns true if the root of the given document is an its:rules element
 sub _is_rules_dom {
-	my ($dom) = @_;
-	my $root = $dom->get_root;
+	my ($doc) = @_;
+	my $root = $doc->get_root;
 	if($root->namespace_URI eq its_ns() &&
 		$root->local_name eq 'rules'){
 		return 1;
@@ -205,17 +211,17 @@ sub _index_match {
 # Pass in document to be htmlized and a boolean indicating
 # if labels should be applied
 sub _htmlize {
-	my ($self, $doc) = @_;
+	my ($self) = @_;
 
 	$log->debug('converting document elements into HTML')
 		if $log->is_debug;
 	# traverse every document element, converting into HTML
 	# save standoff or rules elements in its_els
 	$self->{its_els} = [];
-	$self->_traverse_convert($doc->get_root);
+	$self->_traverse_convert($self->{doc}->get_root);
 
 	# return an HTML doc with the current doc as its body contents
-	return $self->_html_structure($doc);
+	return $self->_html_structure($self->{doc});
 }
 
 
@@ -420,6 +426,15 @@ sub _process_att {
 		}elsif($name eq 'externalResourceRef'){
 			$self->_add_new_rule_match('externalResourceRef',
 				{selector => $el, externalResourceRefPointer => $att});
+			$att->remove;
+		# there is no termInfo in ITS, so put it in a new el and reference it
+		}elsif($name eq 'termInfo'){
+			my $termInfo = new_element(
+				'div', {title => 'termInfo'}, $att->value);
+			$termInfo->set_namespace($HTML_NS);
+			$termInfo->paste(($el->doc_node->children)[0]);
+			my $id = get_or_set_id($termInfo, $self->{doc}, $log);
+			$el->set_att('its-term-info-ref', "#$id");
 			$att->remove;
 		#all other known itsxlf atts translate directly into HTML ITS atts
 		}else{

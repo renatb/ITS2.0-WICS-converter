@@ -175,6 +175,7 @@ mtype value of 'term' sets its-term='yes'
   <mrk mtype="term" itsxlf:termConfidence="5">foo</mrk>
   <mrk mtype="x-its-term-no">bar</mrk>
   <mrk itsxlf:termInfoRef="www.qux.com">qux</mrk>
+  <mrk itsxlf:termInfo="Metasyntactic sugar">qux</mrk>
 </xliff>
 --- output
 <!DOCTYPE html>
@@ -193,6 +194,8 @@ mtype value of 'term' sets its-term='yes'
       <span title="mrk" its-term="yes" its-term-confidence="5">foo</span>
       <span title="mrk" its-term="no">bar</span>
       <span title="mrk" its-term-info-ref="www.qux.com">qux</span>
+      <span title="mrk" its-term-info-ref="#ITS_1">qux</span>
+      <div id="ITS_1" title="termInfo">Metasyntactic sugar</div>
     </div>
 
 === xml:lang
