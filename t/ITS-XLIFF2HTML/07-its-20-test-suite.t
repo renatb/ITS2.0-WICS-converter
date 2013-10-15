@@ -91,11 +91,11 @@ sub convert {
 
     # convert the XML (adding labels) and print it
     # into the new directory
-    my $html_fh = path($html_dir, $sub_dir, $html_file)->filehandle('>:utf8');
+    my $html_fh = path($html_dir, $sub_dir, $html_file)->openw_utf8;
     my $ITS = ITS->new('xml', doc => $File::Find::name);
     print $html_fh ${$converter->convert($ITS, 1)};
 
-    my $log_fh = path($html_dir, $sub_dir, $log_file)->filehandle('>:utf8');
+    my $log_fh = path($html_dir, $sub_dir, $log_file)->openw_utf8;
     print $log_fh "$_->{message}\n"
         for @{ $log->msgs() };
 }

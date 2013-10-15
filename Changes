@@ -1,26 +1,9 @@
-Revision history for ITS
+Revision history for ITS-WICS
 
 {{$NEXT}}
-
-0.04      2013-10-03 16:27:07 America/Los_Angeles
-    value_atts method in ITS::Rule
-    ITS::Node::copy copies shallowly by default
-    ITS::Node::doc_node returns null for orphans
-    Improved documentation
-
-0.03      2013-09-18 11:50:09 America/Los_Angeles
-    renamed from XML-ITS to just ITS
-    get_type method for ITS::DOM
-    temporary workaround for RT #88636
-    name and namespace arguments now accepted in child_els method of ITS::DOM::Element
-    ITS::RuleContainer class, and ITS method for getting containers
-    ITS eval_rules method
-    HTML supported equally with XML (rule extraction implemented)
-    removed rules setter
-    removed iterate_matches
-
-0.02      2013-08-29 14:05:44 America/Los_Angeles
-    XML::ITS::DOM now accepts filehandles
-
-0.01      2013-08-28 00:13:17 America/Los_Angeles
-	initial release
+    Initial release, combining the following smaller distributions:
+        ITS
+        ITS-XML2HTML
+        ITS-XLIFF2HTML
+        ITS-XML2XLIFF
+        ITS-WICS
