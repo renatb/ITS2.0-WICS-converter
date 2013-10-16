@@ -1,8 +1,15 @@
-#auto-generated cruft
-perl-module.sublime-workspace
+# ignore everything
+*
+# except these:
+bin/
+docs/
+lib/
+t/
+releases/
+dist.ini
+Changes
 perl-module.sublime-project
-_Inline
-.build
-./ITS-*
-./*.tar.gz
-*.tar.gz
+TODO.txt
+README.mkdn
+
+
