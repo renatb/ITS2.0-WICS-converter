@@ -31,7 +31,7 @@ Nathan Glenn <garfieldnate@gmail.com>
 ##Overview
 <a id="its"></a>
 ###ITS
-ITS, or the Internationalization Tag Set, is a standard for adding internalization-related information to XML, XLIFF, and HTML5 documents. For example, using this tag set you can mark parts of a document as untranslatable, as needing special treatment for a given local, or as being related to a given media resource.
+ITS, or the Internationalization Tag Set, is a standard for adding internalization-related information to XML, XLIFF, and HTML5 documents. For example, using this tag set you can mark parts of a document as untranslatable, as needing special treatment for a given locale, or as being related to a given media resource.
 
 ITS provides for two methods of annotating documents. The first is through local attributes. The second is through global rules, which use a query language (XPath for now) to select nodes to be annotated.
 
