@@ -1,14 +1,16 @@
 # ignore everything
-*
+/*
+/*/
 # except these:
-bin/
-docs/
-lib/
-t/
-releases/
-dist.ini
-Changes
-TODO.txt
-README.mkdn
+!/bin/
+!/docs/
+!/lib/
+!/t/
+!/releases/*
+!/scripts/
+!/dist.ini
+!/Changes
+!/TODO.txt
+!/README.mkdn
 
 
