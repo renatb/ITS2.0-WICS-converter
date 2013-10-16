@@ -26,7 +26,8 @@ the file name to make it unique.
 =head1 STANDALONE EXECUTABLE
 
 To create a standalone executable of this script, you will need
-to install the following modules:
+to install the following modules (besides the dependencies
+required to run this script in the first place):
 
 =over
 
@@ -64,40 +65,23 @@ Strawberry Perl, they are all located in C<C:/strawberry/c/bin>. Notice that
 I have replaced all backslashes with forward slashes in the path. This is
 essential, as C<pp> will fail if paths have backslashes in them.
 
-Finally, you'll need to make the various ITS Perl module distributions
-available to these tools, either by installing them on your computer,
-or by adding the C<lib> folders of these distributions to the include path
-via the C<-I> option. The required distributions are:
-
-=over
-
-=item ITS
-
-=item ITS-WICS (this one)
-
-=item ITS-XML2HTML
-
-=item ITS-XML2XLIFF
-
-=item ITS-Reduce
-
-=back
+Finally, you'll need to make the ITS-WICS distribution available to C<pp>
+and C<wxpar>, either by installing it or by adding the C<lib> folder to the
+include path via the C<-I> option.
 
 Here's a sample command to make the standalone executable. We use C<-l>
-to make C<pp> include the DLL files in the executable file. The working
-directory contains the ITS and ITS::WICS distributions, and we
-use -I to include their C<lib> folders (remember that this is unnecessary
-if these distributions have been installed). We use C<-o> to specify the
-name of the created executable. We pass the path to this script as the
-final argument. Run in a Windows CMD, this should all be one line; I have
-broken it into several lines for display purposes.
+to make C<wxpar> include the DLL files in the executable file. The working
+directory contains the ITS-WICS distribution, and we use -I to include its
+C<lib> folders (remember that this is unnecessary if this distribution
+has been installed). We use C<-o> to specify the name of the created
+executable. We pass the path to this script as the final argument. Run
+in a Windows CMD, this should all be one line; I have broken it into several
+lines for display purposes.
 
   wxpar -o WICS-GUI.exe -l C:/strawberry/c/bin/libxml2-2__.dll
   -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/zlib1__.dll
-  -l C:/strawberry/c/bin/liblzma-5__.dll -I ITS-0.04/lib
-  -I ITS-XML2HTML-0.05/lib -I ITS-XLIFF2HTML-0.02/lib
-  -I ITS-XML2XLIFF-0.01/lib -I ITS-Reduce-0.02/lib -I ITS-WICS-0.02/lib
-  XML-ITS-WICS-0.02/bin/WICS-GUI.pl
+  -l C:/strawberry/c/bin/liblzma-5__.dll -I ITS-WICS/lib
+  ITS-WICS/bin/WICS-GUI.pl
 
 =head1 TODO
 
@@ -443,7 +427,7 @@ sub new {
           output_ext => 'html',
         },
         { name => 'XML2XLIFF',
-          description => 'Create an XLIFF file with translation units extracted from XML',
+          description => 'Create an XLIFF file with translation units extracted from XML.',
           colour => [ 255, 255, 0 ],
           transformer => \&ITS::WICS::xml2xliff,
           output_ext => 'xlf',

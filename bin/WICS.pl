@@ -16,9 +16,7 @@ use Getopt::Lucid qw( :all );
 
 =head1 DESCRIPTION
 
-This is a command-line application for altering ITS-decorated
-data. The currently supported operations are XML->HTML5 conversion
-and HTML5 file consolidation.
+This is a command-line application for altering ITS-decorated data.
 
 =head1 USAGE
 
@@ -38,7 +36,8 @@ Specifies which operation is to be carried out on the input file. The first
 converts an ITS-decorated XML file into an HTML5 file for displaying the
 contents. The second converts an XLIFF file into HTML5, with the goal of
 displaying ITS information on C<source> and C<target> elements. The third
-extracts translation units with ITS information and creates an XLIFF file.
+extracts translation units with ITS information and creates an XLIFF file
+(using C<sec> elements for groups and C<para> elements for trans-units).
 The last one consolidates an ITS-decorated HTML5 file and its external
 resources into one HTML5 file.
 
@@ -65,16 +64,17 @@ This script will never write over the input file.
 
 To create a standalone executable of this script, you will follow the same
 procedure as described in WICS-GUI.pl, but since this is not a GUI
-application you will not have to install C<Wx::Perl::Packager> or use C<wxpar>.
+application you will not have to install C<Wx::Perl::Packager>, and you will
+use C<pp> instead of C<wxpar>.
 
 Here is an example command used to create a standalone executable. Run in a
 Windows CMD, this should all be one line; I have broken it into several
 lines for display purposes.
 
-  pp -o WICS.exe -l C:/strawberry/c/bin/libxml2-2__.dll
-  -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/libz__.dll
-  -I ITS-0.04/lib -I ITS-WICS-0.01/lib ITS-XML2HTML-0.05/bin/WICS.pl
-  -I ITS-XLIFF2HTML-0.02/lib -I ITS-XML2XLIFF-0.01/lib -I ITS-Reduce-0.01/lib
+   pp -o WICS.exe -l C:/strawberry/c/bin/libxml2-2__.dll
+  -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/zlib1__.dll
+  -l C:/strawberry/c/bin/liblzma-5__.dll -I ITS-WICS/lib
+  ITS-WICS/bin/WICS.pl
 
 =cut
 
