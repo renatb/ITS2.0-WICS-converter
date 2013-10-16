@@ -1,141 +1,90 @@
 # NAME
 
-ITS - Work with ITS-decorated XML
+ITS::WICS - Work with ITS-decorated documents
 
 # VERSION
 
-version 0.08
+version 0.01
 
 # SYNOPSIS
 
-    use ITS;
-    use feature 'say';
-    my $ITS = ITS->new(file => 'myITSfile.xml');
-    my $rules = $ITS->get_rules;
-    for my $rule (@$rules){
-        say $rule->type;
-        for my $match (@{ $ITS->get_matches($rule) }){
-            say "$_ => $match->{$_}" for keys %$match;
-        }
-    }
+    use ITS::WICS qw(xml2html);
+    my $html = xml2html('path/to/file.xml');
+    print $$html;
 
 # DESCRIPTION
 
-This module is for working with ITS decorated XML or HTML documents.
-It allows you to resolve all of the global and find matches for each
-of them.
+WICS stands for Work In Context System. As a project, it is meant to make
+Internationalization Tag Set (ITS) metadata contained in a document more
+accessible to end-users via extraction and visualization.
+
+This module provides access to the four WICS conversion tasks
+(see the ["EXPORTS"](#EXPORTS) section). Two standalone applications, a GUI and a CLI,
+are also provided in this distribution (see WICS-GUI.pl and WICS.pl).
 
 # EXPORTS
 
-The following function may be exported:
+The following subroutines may be exported:
 
-## `its_ns`
+## `xml2html`
 
-Returns the ITS namespace URI.
+Converts input XML data into HTML5 while keeping the ITS information
+intact. See `ITS::WICS::XML2HTML` for more details.
 
-## `xlink_ns`
+Argument is either a string containing an XML file name, a string pointer
+containing actual XML data, or a filehandle for a file containing the data.
 
-Returns the xlink namespace URI (`xlink:href` is used by the `its:rules`
-element to import external rules).
+Return value is a pointer to a string containing the output HTML5 text.
 
-# METHODS
+## `xliff2html`
 
-## `new`
+Converts input XLIFF data into HTML5 while keeping the ITS information
+for `source` and `target` elements intact.
 
-Returns an ITS object instance.
-Arguments: The first is either 'xml' or 'html' to indicate the type of
-document being parsed. After that, you must specify 'doc' and
-may also optionally specify 'rules' parameters. The value of these parameters
-should be either a string containing a file path or a string reference
-containing actual ITS data. The 'doc' argument should point to the
-document to which ITS data is being applied, and the 'rules' argument
-should point to a document containing the ITS rules to apply (this may only
-be an XML document, not an HTML document).
+The first argument is either a string containing an XLIFF file name,
+a string pointer containing actual XLIFF data, or a filehandle for a
+file containing the data. The second argument is a boolean indicating whether
+informative labels should be added (for empty or duplicate targets).
 
-## `eval_rules`
+Return value is a pointer to a string containing the output HTML5 text.
 
-This method detects any ITS rules contained or referenced by the document (or
-the separate rules document), setting the values that can be obtained via
-`get_containers` and `get_rules`. This is always run by the `new` method,
-but if the document (retrievable via `get_dom`) is edited, the ITS rules contents
-may have changed, making it necessary to call this method.
+## `xml2xliff`
 
-## `get_doc_type`
+Extracts translation units and ITS information from input XML data and
+creates an XLIFF file. This function uses `sec` elements to create
+`group`s, and `para` elements to make `trans-unit`s. Keep in mind that
+this functionality is still highly immature.
 
-Returns either 'html' or 'xml' indicating the type of file being represented.
+The first argument is either a string containing an XML file name,
+a string pointer containing actual XML data, or a filehandle for a
+file containing the data.
 
-## `get_doc`
+Return value is a pointer to a string containing the output XLIFF text.
 
-Returns the ITS::DOM object created from the input
-document.
+## `reduceHtml`
 
-## `get_rules`
+Consolidates ITS-decorated HTML5 by placing all external rules
+in the head element.
 
-Returns an arrayref containing the ITS rule elements
-(in the form of ITS::Rule objects) which are to be
-applied to the document, in the order in which they will
-be applied.
-
-## `get_containers`
-
-Returns an arrayref containing ITS::RuleContainer objects, one for
-each `its:rules` element found in the document or externally. The
-containers are returned in application order (the order that their
-rules should be applied in).
-
-## `get_matches`
-
-Argument: `ITS::Rule` object.
-
-Returns an array ref of matches on this ITS document against the input
-rule. Each element of the list is a hash ref containing at least one
-key, `selector`, whose value is the document node which the rule
-selector matched.
-Any other keys are names of pointer attributes, and their values are
-their matched document nodes.
-
-# CAVEATS
-
-In browsers, all HTML is considered to be in the `http://www.w3.org/1999/xhtml`
-namespace, XPath but XPath expressions use this as a default namespace. This is
-not currently possible with this module, so the XHTML namespace must be used
-explicitly in rules for HTML documents, like so:
-
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its"
-        xmlns:h="http://www.w3.org/1999/xhtml"
-        version="2.0">
-          <its:translateRule selector="//h:p" translate="yes"/>
-    </its:rules>
-
-Currently rule selection will not work for the `id()` XPath expression
-in HTML documents.
-
-# TODO
-
-This module does not support querying individual elements for ITS information.
-This would be very useful, but it would require the implementation of
-inheritance and per-category knowledge (currently there is none!). Reference
-[http://www.w3.org/International/its/wiki/ITS\_Processor\_Interface](http://www.w3.org/International/its/wiki/ITS\_Processor\_Interface) for an
-idea of what is wanted. Note that if this functionality is added,
-we should stop producing a warning for absence of rules from a file.
-
-ITS allows for other types of selectors. This module, however,
-only allows XPath selectors. CSS selectors could be implemented,
-for example, with `HTML::Selector::XPath`.
-
-Currently this module does not check ITS version. All rules
-are assumed to be ITS version 2.0.
-
-Section 5.3.5 of the ITS spec mentions that implementors should provide
-a way to set default values for parameters. This would be useful, but what
-is the menaing of i<default> value here? Are there documents without param
-declarations but with XPaths that contain variables? Or should this just be
-a mechanism to allow the user to set the value of a param, no matter what
-values are present in the document?
+The input and return values are the same as for `xml2HTML`, except that
+the input should refer to HTML5 data instead of XML.
 
 # SEE ALSO
 
+This module relies on the [ITS](http://search.cpan.org/perldoc?ITS) module for processing ITS markup and rules.
+
+The modules for the various ITS data conversion are included in this
+distribution:
+
+- [ITS::WICS::XML2HTML](http://search.cpan.org/perldoc?ITS::WICS::XML2HTML)
+- [ITS::WICS::XLIFF2HTML](http://search.cpan.org/perldoc?ITS::WICS::XLIFF2HTML)
+- [ITS::WICS::XML2XLIFF](http://search.cpan.org/perldoc?ITS::WICS::XML2XLIFF)
+- [ITS::WICS::Reduce](http://search.cpan.org/perldoc?ITS::WICS::Reduce)
+
 The ITS 2.0 specification for XML and HTML5: [http://www.w3.org/TR/its20/](http://www.w3.org/TR/its20/).
+
+The spec for representing ITS in XLIFF:
+[http://www.w3.org/International/its/wiki/XLIFF\_1.2\_Mapping](http://www.w3.org/International/its/wiki/XLIFF\_1.2\_Mapping).
 
 ITS interest group mail archives:
 [http://lists.w3.org/Archives/Public/public-i18n-its-ig/](http://lists.w3.org/Archives/Public/public-i18n-its-ig/)
@@ -146,5 +95,7 @@ Nathan Glenn <garfieldnate@gmail.com>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by DFKI.  No
-license is granted to other entities.
+This software is copyright (c) 2013 by DFKI.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
