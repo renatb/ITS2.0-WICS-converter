@@ -83,7 +83,7 @@ all strings in the document, using ITS C<withinText> values (currently
 only implemented with local markup) to decide which elements are inline
 or structural.
 
-You may also passing C<tu> and C<group> parameters after the ITS document
+You may also pass in C<tu> and C<group> parameters after the ITS document
 to get a different segmentation behavior. Each parameter should be an
 array ref containing names of elements to be used for extracting
 C<trans-unit>s and C<group>s, repsectively. Children of C<trans-unit>s are

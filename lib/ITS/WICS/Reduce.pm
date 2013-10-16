@@ -29,7 +29,7 @@ do {
 =head1 DESCRIPTION
 
 This module is for making single-file ITS documents. Currently
-it only works with HTML. C<reduce>, it's only method, simply follows links
+it only works with HTML. C<reduce>, its only method, simply follows links
 to external rules files and places each of them, in order, into the main
 document.
 

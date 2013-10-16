@@ -182,7 +182,7 @@ sub get_rules {
 
 Returns an arrayref containing ITS::RuleContainer objects, one for
 each C<its:rules> element found in the document or externally. The
-containers are returned in application order (the order that their
+containers are returned in order of application (the order that their
 rules should be applied in).
 
 =cut
@@ -328,7 +328,7 @@ sub _pointer_match {
 =head1 CAVEATS
 
 In browsers, all HTML is considered to be in the C<http://www.w3.org/1999/xhtml>
-namespace, XPath but XPath expressions use this as a default namespace. This is
+namespace, but XPath expressions use this as a default namespace. This is
 not currently possible with this module, so the XHTML namespace must be used
 explicitly in rules for HTML documents, like so:
 

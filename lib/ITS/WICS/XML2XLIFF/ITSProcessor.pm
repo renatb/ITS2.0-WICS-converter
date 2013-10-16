@@ -150,7 +150,7 @@ Arguments are: first the element to have its ITS metadata localized; second
 the translation unit containing the element; and finally the match index
 containing the global ITS info for the element.
 
-This functions converts ITS info contained in global rules matching the
+This function converts ITS info contained in global rules matching the
 element into equivalent local markup on either the element itself or the
 trans-unit.
 =cut

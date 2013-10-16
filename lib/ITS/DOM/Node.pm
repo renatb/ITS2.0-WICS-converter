@@ -218,8 +218,9 @@ sub set_name {
 
 =head2 C<remove>
 
-Unbinds this node from it's siblings and parents (but not
-the document, though it invisible).
+Unbinds this node from its siblings and parents (but not
+the document, though it becomes hidden and will be lost unless
+pasted somewhere in the document).
 
 =cut
 sub remove {

@@ -8,7 +8,8 @@ Nathan Glenn <garfieldnate@gmail.com>
 1. [Overview](#overview)
     1. [ITS](#its)
     2. [WICS](#wics)
-2. [Language and tools](#language)
+2. [Preserving ITS Information During Conversion](#preserving)
+3. [Language and tools](#language)
     1. [Dependencies](#dependencies)
     2. [Working with the Code](#working)
         1. [Running the Applications](#running-apps)
@@ -17,9 +18,8 @@ Nathan Glenn <garfieldnate@gmail.com>
         4. [Viewing Documentation](#viewing)
         5. [Building a Release](#building)
         6. [Building the Executables](#executables)
-            1. [WICS CLI](#build-cli)
             1. [WICS GUI](#build-gui)
-3. [Preserving ITS Information During Conversion](#preserving)
+            2. [WICS CLI](#build-cli)
 4. [Known Issues and Limitations](#known)
     1. [ITS](#known-ITS)
     2. [ITS-WICS-XML2HTML](#known-ITS-XML2HTML)
@@ -56,7 +56,7 @@ This document describes the converters. They accomplish four file conversion tas
 1. Convert ITS-decorated XML into HTML5 for displaying contents, with ITS
 2. Reduce ITS-decorated HTML5 documents to be usable as a single file
 3. Convert ITS-decorated XLIFF into HTML5 for displaying the contents of `<source>` and and `target` elements, with ITS
-4. Created ITS-decorated XLIFF from XML. This application is of limited functionality and is demonstrated through only one sample.
+4. Create ITS-decorated XLIFF from XML. This application is of limited functionality and is demonstrated through only one sample.
 
 <a id="preserving"></a>
 ##Preserving ITS Information During Conversion
@@ -64,15 +64,15 @@ This document describes the converters. They accomplish four file conversion tas
 Preserving ITS information in a document while converting it to a different format is rather tricky. The four-step process, employed in ITS-XML2HTML and ITS-XLIFF2HTML, is as follows:
 
 1. Index all global rules and their matched nodes.
-2. Traverse and edit the document, converting local ITS markup for each element. Allowed types of editing are limited by indexing method; here, element deletion is disallowed.
+2. Traverse and edit the document, converting local ITS markup for each element. Allowed types of editing are limited by the indexing method; here, element deletion is disallowed.
 3. Paste new nodes where needed to guarantee that all original ITS information is still found in the document.
 4. Rewrite global rules to apply the same information to the same text as in the original document.
 
-This method has strengths and weaknesses. The strength is that the structure of the original document is preserved fairly well, and the output is a readable.
+This method has strengths and weaknesses. The strength is that the structure of the original document is preserved fairly well, and the output is readable.
 
 The weakness is that there are a few cases where ITS information is applied to nodes that it should not be. This occurs when an ITS category passes information to children via inheritance, and also does not have a default value. In the course of conversion, non-element nodes (like attributes) are pasted as elements so as to be both visible and legal HTML, and new attributes are also added (`title` and `id`). This unfortunately causes them to inherit ITS information that does not belong to them. Global rules are created to reset ITS information to defaults where possible (`translate`, `direction`, and `localeFilter`). Where there are no defaults (`langInfo`, `domain` and `provenance`), the newly pasted elements may be assigned incorrect ITS information. This weakness is listed in the `CAVEAT` documentation section of the relevant modules.
 
-TODO: list another possible approach and it's strengths and weaknesses.
+TODO: list another possible approach and its strengths and weaknesses.
 
 <a id="language"></a>
 ##Language and Tools
@@ -89,7 +89,7 @@ Additionally, WICS.pl and WICS-GUI.pl (in the `bin` directory) are applications 
 
 <a id="dependencies"></a>
 ###Dependencies
-Perl 5.14 or higher (released May, 2011) is required. The software has only been tested on Windows 7 with Strawberry Perl thus far; I expect it to work on other platforms, but don't expect the test suite to pass just yet, as EOL differences tend to cause failures during porting.
+Perl 5.14 or higher (released May 2011) is required. The software has only been tested on Windows 7 with Strawberry Perl thus far; I expect it to work on other platforms, but don't expect the test suite to pass just yet, as EOL differences tend to cause failures during porting.
 
 There are also plenty of CPAN dependencies (CPAN is an archive that contains open source Perl packages). The easy way to install all of the dependencies is to use [cpanm](https://metacpan.org/module/cpanm). After installing it (using the command `cpan App::cpanminus`), `cd` into the project directory and do `cpanm --installdeps .`.
 
@@ -102,7 +102,7 @@ Finally, to create the standalone executables, you need to install [Par::Packer]
 The project contains the following:
 
 * `lib`- contains code for performing conversions and processing ITS
-* `bin`- contains 2 applications for performing the WICS tasks: a command line interface (`WICS.pl`) and a graphical interface (`WICS-GUI.pl`).
+* `bin`- contains two applications for performing the WICS tasks: a command line interface (`WICS.pl`) and a graphical interface (`WICS-GUI.pl`).
 * `t`- contains the unit tests for verifying the functionality of the converters
 * `TODO.txt`- Contains some TODO notes for future maintenance
 * `README.mkdn`- a generated file that describes the functionality of `ITS::WICS`.
@@ -119,32 +119,33 @@ Each application is meant to be self-documenting; `WICS.pl` prints a USAGE state
 
 <a id="running"></a>
 ####Running Tests
-When you run the test scripts, you have to add the `lib` folder to Perl's include path. There are two ways to run the tests:
+When you run the test scripts, you must add the `lib` folder to Perl's include path. There are two ways to run the tests:
 
 1. One at a time: `perl -Ilib t/name-of-test.t`. The `-I` option adds the `lib` folder to the include path.
-2. All at once: `prove -lrv`, or if you're less patient then `prove -lr -j4`. The options do the following:
+2. All at once: `prove -lrv` or if you're less patient, `prove -lr -j4`. The options do the following:
 
     - `-l` (required) adds the `lib` folder to the include path
     - `-r` (required) searches for `*.t` (test) files recursively in the `t` directory
-    - `-v` (optional) uses verbose mode, which prints the name and result of every single tests
-    - `-j4` runs 4 tests at a time in different threads. You can increase or decrease this number to suit the number of processors in your CPU.
+    - `-v` (optional) uses verbose mode, which prints the name and result of every single test
+    - `-j4` runs 4 tests at a time in different threads.
+    You can increase or decrease this number to suit the number of processors in your CPU.
 
 Some test files are only run if the location of the ITS 2.0 test suite is made available to them via the `ITS_20_TESTSUITE_PATH` environment variable. You can do this in Windows by typing `set ITS_20_TESTSUITE_PATH=C:\path\to\test\suite` at the command line (this variable will be lost when you close the CMD window). The path should be the location of a copy of the ITS 2.0 test suite, retrieved from its [GitHub repository](https://github.com/w3c/its-2.0-testsuite).
 
-These tests run the converters on files in the test suite, and then send them to [validator.w3c/nu](validator.w3c/nu) for a validity check. Because these tests are rather long and require an internet connection, I do not reccommend that you run them all of the time during development. Once in a while is fine. Also, some of these might fail. See the caveat for [`ITS-XLIFF2HTML`](#known-ITS-XLIFF2HTML).
+These tests run the converters on files in the test suite, and then send them to [validator.w3c/nu](validator.w3c/nu) for a validity check. Because these tests are rather long and require an internet connection, I recommend that you run them only once in a while during complete testing, while using the rest of the tests often during normal development. Also, some of these tests might fail. See the caveat for [`ITS-XLIFF2HTML`](#known-ITS-XLIFF2HTML).
 
 <a id="installing"></a>
 ####Installing
 Installing the distribution is simple. Just `cd` into the project directory and do `cpan .` (or `cpanm .` if you have `cpanm` installed). This will check that all of the tests pass before installing.
 
-Once you've installed the distribution, you can use the WICS CLI and the WICS GUI from the command line any time using `WICS` and `WICS-GUI` (add `.pl` to those if not on Windows). You can also use any of the included modules in your own Perl scripts
+Once you've installed the distribution, you can use the WICS CLI and the WICS GUI from the command line any time using `WICS` and `WICS-GUI` (add `.pl` to those if not on Windows). You can also use any of the included modules in your own Perl scripts.
 
 <a id="viewing"></a>
 ####Viewing Library Documentation
 
 `TODO: Should also be contained in the docs directory in HTML format`
 
-The latest documentation on each of the modules is located in their files in POD format, and also in the `docs` directory in HTML. Once a module is installed, you can view the documentation from the command line by doing `perldoc ITS::WICS::XML2HTML` (or substitute the name of the desired module).
+The latest documentation on each of the modules is located in their files in POD format, and also in the `docs` directory in HTML. Once a module is installed, you can view the documentation from the command line with `perldoc ITS::WICS::XML2HTML` (or substitute the name of the desired module).
 
 <a id="building"></a>
 ####Building a Release
@@ -166,7 +167,7 @@ Remember that since PAR unpacks the Perl interpreter and required libraries into
 To create a standalone executable of `WICS-GUI.pl`, you will need to install the following modules (besides the dependencies required to run it in the first place):
 
 - `PAR::Packer`- This provides the `pp` command, which creates standalone executables out of Perl scripts, packaging the Perl interpreter and most required scripts and native libraries automatically.
-- `Wx::Perl::Packager`- This provides `wxpar`, a wrapper around the pp command which adds all of the required DLLs for running a program that uses the Wx GUI framework.
+- `Wx::Perl::Packager`- This provides `wxpar`, a wrapper around the `pp` command which adds all of the required DLLs for running a program that uses the Wx GUI framework.
 
 Next, you'll need to locate the following libraries (DLLs on Windows) required by `XML::LibXML` (they should be on your computer if you've installed the required dependencies):
 
@@ -178,7 +179,7 @@ It's possible that the names of these libraries could be slightly different on y
 
 Finally, you'll need to make the ITS-WICS distribution available to `pp` and `wxpar`, either by installing it or by adding the `lib` folder to the include path via the `-I` option.
 
-Here's a sample command to make the standalone executable. We use `-l` to make `wxpar` include the DLL files in the executable file. The working directory contains the ITS-WICS distribution, and we use -I to include its `lib` folders (remember that this is unnecessary if this distribution has been installed). We use `-o` to specify the name of the created executable. We pass the path to this script as the final argument. Run in a Windows CMD, this should all be one line; I have broken it into several lines for display purposes.
+Here's a sample command to make the standalone executable. We use `-l` to make `wxpar` include the DLL files in the executable file. The working directory contains the ITS-WICS distribution, and we use `-I` to include its `lib` folders (remember that this is unnecessary if this distribution has been installed). We use `-o` to specify the name of the created executable. We pass the path to this script as the final argument. Run in a Windows CMD, this should all be one line; I have broken it into several lines for display purposes.
 
     wxpar -o WICS-GUI.exe -l C:/strawberry/c/bin/libxml2-2__.dll
     -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/zlib1__.dll
@@ -189,7 +190,7 @@ Here's a sample command to make the standalone executable. We use `-l` to make `
 #####WICS CLI
 To create a standalone executable of `WICS.pl`, you will follow the same procedure as described above for `WICS-GUI.pl`, but since this is not a GUI application you will not have to install `Wx::Perl::Packager`, and you will use `pp` instead of `wxpar`.
 
-Here is an example command used to create a standalon executable. Run in a Windows CMD, this should all be one line; I have broken it into several lines for display purposes.
+Here is an example command used to create a standalone executable. Run in a Windows CMD, this should all be one line; I have broken it into several lines for display purposes.
 
     pp -o WICS.exe -l C:/strawberry/c/bin/libxml2-2__.dll
     -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/zlib1__.dll
@@ -201,13 +202,13 @@ Here is an example command used to create a standalon executable. Run in a Windo
 
 <a id="known-ITS"></a>
 ###`ITS`
-This module only deals with global ITS rules, not with local markup. It would be nice to make this into a more general ITS processor. It does not currently support querying individual elements for ITS information, nor does it implement inheritance. Reference L<http://www.w3.org/International/its/wiki/ITS_Processor_Interface> for an idea of what is wanted. Note that if this functionality is added, we should stop producing a warning for absence of rules from a file.
+This module only deals with global ITS rules, not with local markup. It would be nice to make this into a more general ITS processor. It does not currently support querying individual elements for ITS information, nor does it implement inheritance. Reference [this document](http://www.w3.org/International/its/wiki/ITS_Processor_Interface) for an idea of what is wanted. Note that if this functionality is added, we should stop producing a warning for absence of rules from a file.
 
 The ITS specification allows for other types of selectors. This module, however, only allows XPath selectors. CSS selectors could be implemented, for example, with [`HTML::Selector::XPath`](https://metacpan.org/module/HTML::Selector::XPath).
 
-Currently this module does not check ITS version. All rules are assumed to be ITS version 2.0.
+Currently this module does not check the ITS version. All rules are assumed to be ITS version 2.0.
 
-It would be useful to allow the calling code to provide default ITS parameter values, as specified in section 5.3.5 of the ITS spec.
+It would be useful to allow the calling code to provide default ITS parameter values, as specified in Section 5.3.5 of the ITS spec.
 
 No attempt is made at recovering from errors caused by invalid XML. Invalid input causes parsing to halt and an error to be thrown.
 
@@ -228,7 +229,7 @@ The limitations of `ITS-XML2HTML` also apply to this module.
 
 <a id="known-ITS-XML2XLIFF"></a>
 ###`ITS-XML2XLIFF`
-This task is unfinished, as only the conversion of a single sample file was required for project completion. There are 3 areas that need attention to make the converter generalizable to other XML files:
+This task is unfinished, as only the conversion of a single sample file was required for project completion. There are three areas that need attention to make the converter generalizable to other XML files:
 
 1. Inherited ITS information is not transferred to the XLIFF file. See also the known limitations on the `ITS` module.
 2. The segmentation method is hard coded to treat `<seg>` elements as segments (`<group>` in XLIFF) and `<para>` elements as translation units (`<trans-unit>` in XLIFF). To generalize, this should be parameterized.
