@@ -1,16 +1,29 @@
-ITS
+##TODO notes for the ITS/WICS packages:
 
-Next:
-    - submit pull request to XML::LibXML to add unique_key method to Namespace class.
-        - once that's released, switch to using the unique_key method.
+###General TODOs for all parts of the distribution:
+    * check test coverage and fill it in!
 
-Engineering Tasks:
 
-To Do on current task:
+###ITS
 
-Later To Do:
-    - use Log::Any
-    - check test coverage and fill it in!
-    - Implement ITS inheritance
-    - Create a way to specify elements that are inline (INI file? constructor args?)
+    * submit pull request to XML::LibXML to add unique_key method to Namespace class, then use it in ITS::DOM::Node.
+    * use Log::Any
+    * Implement ITS inheritance
+    * Create a way to specify elements that are inline (INI file? constructor args?)
+        - currently the ITS::DOM::Element::is_inline method just checks for a newline before and after.
 
+###ITS-XML2XLIFF
+This thing only converts a single sample file provided for the WICS project. There's plenty more work to do:
+
+    * Implement conversion for all of the other metadata categories
+    * handle its:span (non-namespaced ITS atts)
+    * Implement inheritance in the ITS module and then also transfer inherited ITS to XLIFF trans-units
+    * Use withinTextRule to help delineate trans-units in ITS segmentation scheme
+    * Put elements matched by targetPointerRule in the same trans-unit, using ITS on the source to annotate the trans-unit where applicable
+    * Put its:annotatorsRef somewhere useful
+    * Extract translatable attributes
+        * how to treat ones marked with withinText=yes?
+    * In the custom segmentation scheme, only put inline untranslatable elements in <ph> tags. Use <bpt> and <ept> for inline translatable ones.
+    - use Test::XML::Ordered instead of Test::XML, after proper comparison of other types of nodes are added to that distribution.
+        - See RT #89262, 89263, 89264
+        - this way we only have to install one XML processor (XML::LibXML)
