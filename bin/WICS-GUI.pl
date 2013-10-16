@@ -52,13 +52,14 @@ required by XML::LibXML:
 
 =item libiconv-2
 
-=item libz
+=item zlib and lzma (or libz if you don't have those)
 
 =back
 
 It's possible that if you're running a different version of XML::LibXML
 that the names of these libraries could be different. On my Windows 7 machine,
-they are all DLL files, and they all have a __ suffix. Since I'm using
+they are all DLL files, and they all have a __ suffix. zlib and lzma are
+C<zlib1__.dll> and C<liblzma-5__.dll>, respectively. Since I'm using
 Strawberry Perl, they are all located in C<C:/strawberry/c/bin>. Notice that
 I have replaced all backslashes with forward slashes in the path. This is
 essential, as C<pp> will fail if paths have backslashes in them.
@@ -92,8 +93,9 @@ final argument. Run in a Windows CMD, this should all be one line; I have
 broken it into several lines for display purposes.
 
   wxpar -o WICS-GUI.exe -l C:/strawberry/c/bin/libxml2-2__.dll
-  -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/libz__.dll
-  -I ITS-0.04/lib -I ITS-XML2HTML-0.05/lib -I ITS-XLIFF2HTML-0.02/lib
+  -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/zlib1__.dll
+  -l C:/strawberry/c/bin/liblzma-5__.dll -I ITS-0.04/lib
+  -I ITS-XML2HTML-0.05/lib -I ITS-XLIFF2HTML-0.02/lib
   -I ITS-XML2XLIFF-0.01/lib -I ITS-Reduce-0.02/lib -I ITS-WICS-0.02/lib
   XML-ITS-WICS-0.02/bin/WICS-GUI.pl
 
