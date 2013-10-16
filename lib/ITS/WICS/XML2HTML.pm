@@ -1,4 +1,4 @@
-package ITS::XML2HTML;
+package ITS::WICS::XML2HTML;
 use strict;
 use warnings;
 use Carp;
@@ -23,8 +23,8 @@ print ${ __PACKAGE__->new()->convert($ARGV[0]) } unless caller;
 =head1 SYNOPSIS
 
     use ITS;
-    use ITS::XML2HTML;
-    my $converter = ITS::XML2HTML->new('Page Title');
+    use ITS::WICS::XML2HTML;
+    my $converter = ITS::WICS::XML2HTML->new('Page Title');
     my $ITS = ITS->new('xml', doc => \'<xml>some text</xml>');
     my $result = $converter->convert($ITS);
     print $$result;

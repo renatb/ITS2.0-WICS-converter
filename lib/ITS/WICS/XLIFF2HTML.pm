@@ -1,4 +1,4 @@
-package ITS::XLIFF2HTML;
+package ITS::WICS::XLIFF2HTML;
 use strict;
 use warnings;
 use Carp;
@@ -10,7 +10,7 @@ use ITS qw(its_ns);
 use ITS::Rule;
 use ITS::DOM;
 use ITS::DOM::Element qw(new_element);
-use ITS::XLIFF2HTML::FutureNodeManager qw(new_manager);
+use ITS::WICS::FutureNodeManager qw(new_manager);
 use ITS::WICS::LogUtils qw(
 	node_log_id
 	log_match
@@ -29,8 +29,8 @@ my @inline_els = qw(g x bx ex bpt ept sub it ph mrk);
 
 =head1 SYNOPSIS
     use ITS;
-    use ITS::XLIFF2HTML;
-    my $converter = ITS::XLIFF2HTML->new('Page Title');
+    use ITS::WICS::XLIFF2HTML;
+    my $converter = ITS::WICS::XLIFF2HTML->new('Page Title');
     my $ITS = ITS->new('xml', doc => \'<xml>some text</xml>');
     my $result = $converter->convert($ITS);
 

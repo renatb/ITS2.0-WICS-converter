@@ -11,12 +11,12 @@ use warnings;
 use Log::Any::Test;
 use Log::Any qw($log);
 use ITS::DOM;
-use ITS::XML2HTML;
+use ITS::WICS::XML2HTML;
 
 #convert the input XML into html and return the html string
 sub htmlize {
     my ($self, $xml) = @_;
-    my $converter = ITS::XML2HTML->new();
+    my $converter = ITS::WICS::XML2HTML->new();
     my $ITS = ITS->new('xml', doc => \$xml);
     my $converted = ${ $converter->convert($ITS) };
     $converted = $self->normalize_html($converted);
@@ -28,7 +28,7 @@ sub htmlize {
 sub html_log {
     my ($self, $xml) = @_;
     $log->clear();
-    my $converter = ITS::XML2HTML->new();
+    my $converter = ITS::WICS::XML2HTML->new();
     my $ITS = ITS->new('xml', doc => \$xml);
     my $converted = ${ $converter->convert($ITS) };
     $converted = $self->normalize_html($converted);

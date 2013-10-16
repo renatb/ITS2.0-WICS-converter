@@ -7,7 +7,7 @@ use Path::Tiny;
 use FindBin qw($Bin);
 use Test::HTML::Differences;
 use ITS;
-use ITS::XLIFF2HTML;
+use ITS::WICS::XLIFF2HTML;
 use t::TestXLIFF2HTML;
 
 use Data::Section::Simple qw(get_data_section);
@@ -15,7 +15,7 @@ my $all_data = get_data_section();
 
 my $file = path($Bin, 'corpus', 'test_external_internal.xml');
 
-my $wics = ITS::XLIFF2HTML->new();
+my $wics = ITS::WICS::XLIFF2HTML->new();
 my $ITS = ITS->new('xml', doc => "$file");
 my $converted = ${ $wics->convert($ITS) };
 $converted = t::TestXLIFF2HTML::Filter->normalize_html($converted);

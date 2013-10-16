@@ -1,9 +1,9 @@
-package ITS::XML2XLIFF::CustomSegmenter;
+package ITS::WICS::XML2XLIFF::CustomSegmenter;
 use strict;
 use warnings;
 use Log::Any qw($log);
 use ITS qw(its_ns);
-use ITS::XML2XLIFF::ITSProcessor qw(
+use ITS::WICS::XML2XLIFF::ITSProcessor qw(
     its_requires_inline
     convert_atts
     localize_rules

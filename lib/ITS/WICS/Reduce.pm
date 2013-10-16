@@ -1,4 +1,4 @@
-package ITS::Reduce;
+package ITS::WICS::Reduce;
 use strict;
 use warnings;
 use ITS qw(its_ns);
@@ -21,7 +21,7 @@ do {
 
 =head1 SYNOPSIS
 
-	use ITS::Reduce qw(reduce);
+	use ITS::WICS::Reduce qw(reduce);
 	my $ITS = ITS->new('html', doc => '/path/to/html');
 	reduce($ITS);
 	print $ITS->get_doc->string;

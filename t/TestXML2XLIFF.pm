@@ -11,12 +11,12 @@ use warnings;
 use Log::Any::Test;
 use Log::Any qw($log);
 use ITS::DOM;
-use ITS::XML2XLIFF;
+use ITS::WICS::XML2XLIFF;
 
 #convert the input XML into xlf and return the xlf string
 sub xlfize {
     my ($self, $xml) = @_;
-    my $converter = ITS::XML2XLIFF->new();
+    my $converter = ITS::WICS::XML2XLIFF->new();
     my $ITS = ITS->new('xml', doc => \$xml);
     my $converted = ${ $converter->convert($ITS) };
     return $converted;
@@ -33,7 +33,7 @@ sub xlfize_custom {
     $group = [split ',', $group];
     $tu = [split ',', $tu];
 
-    my $converter = ITS::XML2XLIFF->new();
+    my $converter = ITS::WICS::XML2XLIFF->new();
     my $ITS = ITS->new('xml', doc => \$xml);
     my $converted = ${ $converter->convert(
         $ITS, group => $group, tu => $tu) };
@@ -44,7 +44,7 @@ sub xlfize_custom {
 sub xlf_log {
     my ($self, $xml) = @_;
     $log->clear();
-    my $converter = ITS::XML2XLIFF->new();
+    my $converter = ITS::WICS::XML2XLIFF->new();
     my $ITS = ITS->new('xml', doc => \$xml);
     my $converted = ${ $converter->convert($ITS) };
     return ($converted, _get_messages($log->msgs()) );

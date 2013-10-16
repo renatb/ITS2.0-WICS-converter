@@ -4,10 +4,10 @@ use warnings;
 use autodie;
 use Carp;
 use ITS;
-use ITS::XML2HTML;
-use ITS::Reduce qw(reduce);
-use ITS::XLIFF2HTML;
-use ITS::XML2XLIFF;
+use ITS::WICS::XML2HTML;
+use ITS::WICS::Reduce qw(reduce);
+use ITS::WICS::XLIFF2HTML;
+use ITS::WICS::XML2XLIFF;
 
 use Exporter::Easy (
 	OK => [qw(xml2html xliff2html reduceHtml xml2xliff)]
@@ -38,7 +38,7 @@ The following subroutines may be exported:
 =head2 C<xml2html>
 
 Converts input XML data into HTML5 while keeping the ITS information
-intact. See C<ITS::XML2HTML> for more details.
+intact. See C<ITS::WICS::XML2HTML> for more details.
 
 Argument is either a string containing an XML file name, a string pointer
 containing actual XML data, or a filehandle for a file containing the data.
@@ -48,7 +48,7 @@ Return value is a pointer to a string containing the output HTML5 text.
 =cut
 sub xml2html {
     my ($doc) = @_;
-    my $converter = ITS::XML2HTML->new();
+    my $converter = ITS::WICS::XML2HTML->new();
     my $ITS = ITS->new('xml', doc => $doc);
     return $converter->convert($ITS);
 }
@@ -68,7 +68,7 @@ Return value is a pointer to a string containing the output HTML5 text.
 =cut
 sub xliff2html {
     my ($doc, $add_labels) = @_;
-    my $converter = ITS::XLIFF2HTML->new();
+    my $converter = ITS::WICS::XLIFF2HTML->new();
     my $ITS = ITS->new('xml', doc => $doc);
     return $converter->convert($ITS, $add_labels);
 }
@@ -88,7 +88,7 @@ Return value is a pointer to a string containing the output XLIFF text.
 =cut
 sub xml2xliff {
     my ($doc, $add_labels) = @_;
-    my $converter = ITS::XML2XLIFF->new();
+    my $converter = ITS::WICS::XML2XLIFF->new();
     my $ITS = ITS->new('xml', doc => $doc);
     return $converter->convert(
         $ITS, group => ['sec'], tu => ['para']);

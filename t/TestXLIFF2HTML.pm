@@ -11,12 +11,12 @@ use warnings;
 use Log::Any::Test;
 use Log::Any qw($log);
 use ITS::DOM;
-use ITS::XLIFF2HTML;
+use ITS::WICS::XLIFF2HTML;
 
 #convert the input XML into html and return the html string
 sub htmlize {
     my ($self, $xml) = @_;
-    my $converter = ITS::XLIFF2HTML->new();
+    my $converter = ITS::WICS::XLIFF2HTML->new();
     my $ITS = ITS->new('xml', doc => \$xml);
     my $converted = ${ $converter->convert($ITS) };
     $converted = $self->normalize_html($converted);
@@ -27,7 +27,7 @@ sub htmlize {
 #return the html string
 sub htmlize_with_labels {
     my ($self, $xml) = @_;
-    my $converter = ITS::XLIFF2HTML->new();
+    my $converter = ITS::WICS::XLIFF2HTML->new();
     my $ITS = ITS->new('xml', doc => \$xml);
     my $converted = ${ $converter->convert($ITS, 1) };
     $converted = $self->normalize_html($converted);
@@ -39,7 +39,7 @@ sub html_log {
     my ($self, $xml) = @_;
     $log->clear();
 
-    my $converter = ITS::XLIFF2HTML->new();
+    my $converter = ITS::WICS::XLIFF2HTML->new();
     my $ITS = ITS->new('xml', doc => \$xml);
     my $converted = ${ $converter->convert($ITS) };
     $converted = $self->normalize_html($converted);
@@ -53,7 +53,7 @@ sub html_log_with_labels {
     my ($self, $xml) = @_;
     $log->clear();
 
-    my $converter = ITS::XLIFF2HTML->new();
+    my $converter = ITS::WICS::XLIFF2HTML->new();
     my $ITS = ITS->new('xml', doc => \$xml);
     my $converted = ${ $converter->convert($ITS, 1) };
     $converted = $self->normalize_html($converted);

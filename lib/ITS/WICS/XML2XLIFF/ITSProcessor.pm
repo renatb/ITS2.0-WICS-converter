@@ -1,4 +1,4 @@
-package ITS::XML2XLIFF::ITSProcessor;
+package ITS::WICS::XML2XLIFF::ITSProcessor;
 use strict;
 use warnings;
 

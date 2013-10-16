@@ -1,4 +1,4 @@
-package ITS::XML2XLIFF;
+package ITS::WICS::XML2XLIFF;
 use strict;
 use warnings;
 use Carp;
@@ -9,14 +9,14 @@ use ITS qw(its_ns);
 use ITS::DOM;
 use ITS::DOM::Element qw(new_element);
 use ITS::WICS::LogUtils qw(node_log_id log_match);
-use ITS::XML2XLIFF::ITSProcessor qw(
+use ITS::WICS::XML2XLIFF::ITSProcessor qw(
 	its_requires_inline
 	convert_atts
 	localize_rules
 	transfer_inline_its
 );
-use ITS::XML2XLIFF::ITSSegmenter qw(extract_convert_its);
-use ITS::XML2XLIFF::CustomSegmenter qw(extract_convert_custom);
+use ITS::WICS::XML2XLIFF::ITSSegmenter qw(extract_convert_its);
+use ITS::WICS::XML2XLIFF::CustomSegmenter qw(extract_convert_custom);
 
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 our $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
@@ -30,8 +30,8 @@ print ${ __PACKAGE__->new()->convert($ARGV[0]) } unless caller;
 =head1 SYNOPSIS
 
     use ITS;
-    use ITS::XML2XLIFF;
-    my $converter = ITS::XML2XLIFF->new('Page Title');
+    use ITS::WICS::XML2XLIFF;
+    my $converter = ITS::WICS::XML2XLIFF->new('Page Title');
     my $ITS = ITS->new('xml', doc => \'<xml>some text</xml>');
     my $result = $converter->convert($ITS);
     print $$result;

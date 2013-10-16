@@ -122,7 +122,7 @@ Installing the libraries is simple. Just use cd into the project directory and d
 
 `TODO: Should also be contained in the docs directory in HTML format`
 
-The latest documentation on each of the modules is located in their files in POD format. Once a module is installed, you can view the documentation from the command line by doing `perldoc ITS::XML2HTML` (or substitute the name of the desired module). There is a pod2html utility included with Perl. Also, if you release to CPAN then you can just view the documentation online at [metacpan](https://metacpan.org).
+The latest documentation on each of the modules is located in their files in POD format. Once a module is installed, you can view the documentation from the command line by doing `perldoc ITS::WICS::XML2HTML` (or substitute the name of the desired module). There is a pod2html utility included with Perl. Also, if you release to CPAN then you can just view the documentation online at [metacpan](https://metacpan.org).
 
 <a id="building"></a>
 ####Building a Release

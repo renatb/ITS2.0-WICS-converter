@@ -6,14 +6,14 @@ plan tests => 1;
 use Path::Tiny;
 use FindBin qw($Bin);
 use Test::HTML::Differences;
-use ITS::XML2HTML;
+use ITS::WICS::XML2HTML;
 
 use Data::Section::Simple qw(get_data_section);
 my $all_data = get_data_section();
 
 my $file = path($Bin, 'corpus', 'test_external_internal.xml');
 
-my $wics = ITS::XML2HTML->new();
+my $wics = ITS::WICS::XML2HTML->new();
 my $ITS = ITS->new('xml', doc => $file);
 my $converted = ${ $wics->convert($ITS) };
 $converted = t::TestXML2HTML::Filter->normalize_html($converted);
