@@ -1,3 +1,14 @@
+# This file uses all four WICS converters to process the samples
+# provided by Logrus. To run:
+#   first install the dependencies required by the converters
+#     (explained in Wics_Overview). You should be able to successfully run
+#     the test suite (also explained in the overview).
+#   Copy the sample files to somewhere on your computer.
+#   Run this script, adding the lib folder to the include path, and also
+#     providing the location of the sample files as an argument, like so:
+#     perl -Ilib scripts/ProcessSamples.pl "C:\users\Nate\workspace\samples"
+#   The output will be generated in gen_output inside of the samples directory.
+
 use strict;
 use warnings;
 use Test::More 0.88;
