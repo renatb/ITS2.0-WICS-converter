@@ -1,8 +1,11 @@
 ##TODO notes for the ITS/WICS packages:
 
-###General TODOs for all parts of the distribution:
+###General TODOs:
     * check test coverage and fill it in!
-
+    * Reformat with perltidy
+        * but then we would lose the utility of `git blame`!
+    * test on platforms besides Windows 7
+        * just release on CPAN and that's taken care of...
 
 ###ITS
 
@@ -11,6 +14,14 @@
     * Implement ITS inheritance
     * Create a way to specify elements that are inline (INI file? constructor args?)
         - currently the ITS::DOM::Element::is_inline method just checks for a newline before and after.
+
+###ITS-XML2HTML and ITS-XLIFF2HTML
+    * do some HTML post-processing to fine-tune tests:
+        - Tests for local conversion shouldn't have to also check that default global rules to prevent inheritance have been added
+        - should be able to check XML equality of script elements instead of text equality
+    * Test::HTML::Differences is not very good. Would like a module that handles HTML5, properly normalizes all of it and then takes a diff. Even better would be a structural test instead of line-by-line comparison. Also, need to be able to tell it how to compare contents of <script> elements, which tend to vary in non-semantic whitespace, causing test failures.
+        * Maybe HTML::HTML5::Parser + Test::XML::Ordered (after some bugs are resolved there)?
+    * change the way xpaths are generated for comments, text, etc.; XML::LibXML sometimes gives a path with asterisks, sometimes gives one with element names. This makes testing fragile.
 
 ###ITS-XML2XLIFF
 This thing only converts a single sample file provided for the WICS project. There's plenty more work to do:
@@ -27,3 +38,19 @@ This thing only converts a single sample file provided for the WICS project. The
     - use Test::XML::Ordered instead of Test::XML, after proper comparison of other types of nodes are added to that distribution.
         - See RT #89262, 89263, 89264
         - this way we only have to install one XML processor (XML::LibXML)
+
+###ITS-Reduce
+* Maybe someday support reducing XML instead of only HTML.
+
+###ITS-WICS
+
+* Write some tests (!)
+* rewrite GUI in XRC for better organization
+* make the applications more localizable (po/mo files, share/locale directory, etc.)
+* make 'WICS-GUI.pl' and 'WICS.pl' into links in WICS.pm (don't know how to link them properly)
+* Add a checkbox to indicate if it's okay to overwrite files
+* Add a way to specify group and trans-unit elements for XML2XLIFF
+* Sometimes fonts change in the display box. Figure out the whole RTF thing and maybe do some escaping so that everything stays consistent.
+* Real icons instead of colored boxes would be less cheesy.
+* It would be useful to be able to add and remove files from a list for conversion, instead of just selecting all of the files for processing at once.
+* Somewhere along the way, someone might look for a help button in WICS-GUI and they will find nothing.
