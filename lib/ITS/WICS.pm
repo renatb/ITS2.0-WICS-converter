@@ -76,7 +76,8 @@ sub xliff2html {
 =head2 C<xml2xliff>
 
 Extracts translation units and ITS information from input XML data and
-creates an XLIFF file.
+creates an XLIFF file. This function uses C<sec> elements to create
+C<group>s, and C<para> elements to make C<trans-unit>s.
 
 The first argument is either a string containing an XML file name,
 a string pointer containing actual XML data, or a filehandle for a
@@ -89,7 +90,8 @@ sub xml2xliff {
     my ($doc, $add_labels) = @_;
     my $converter = ITS::XML2XLIFF->new();
     my $ITS = ITS->new('xml', doc => $doc);
-    return $converter->convert($ITS);
+    return $converter->convert(
+        $ITS, group => ['sec'], tu => ['para']);
 }
 
 =head2 C<reduceHtml>
