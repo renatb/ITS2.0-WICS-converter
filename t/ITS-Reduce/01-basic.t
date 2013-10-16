@@ -5,7 +5,7 @@ plan tests => 2;
 use Log::Any::Test;
 use Log::Any qw($log);
 use ITS;
-use ITS::Reduce qw(reduce);
+use ITS::WICS::Reduce qw(reduce);
 use FindBin qw($Bin);
 use Path::Tiny;
 use Test::HTML::Differences;

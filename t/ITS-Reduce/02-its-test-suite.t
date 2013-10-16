@@ -22,7 +22,7 @@ use HTML::HTML5::Parser;
 use Log::Any::Test;
 use Log::Any qw($log);
 use ITS;
-use ITS::Reduce qw(reduce);
+use ITS::WICS::Reduce qw(reduce);
 
 if ( not $ENV{ITS_20_TESTSUITE_PATH}) {
     plan skip_all => 'Requires ITS 2.0 test suite. ' .
@@ -81,13 +81,13 @@ sub convert {
     $log_file =~ s/\.html$/.log/;
 
     # convert the XML and print it into the new directory
-    my $output_fh = path($output_dir, $sub_dir, $output_file)->filehandle('>:utf8');
+    my $output_fh = path($output_dir, $sub_dir, $output_file)->openw_utf8;
 
     my $ITS = ITS->new('html', doc => $File::Find::name);
     reduce($ITS);
     print $output_fh $ITS->get_doc->string;
 
-    my $log_fh = path($output_dir, $sub_dir, $log_file)->filehandle('>:utf8');
+    my $log_fh = path($output_dir, $sub_dir, $log_file)->openw_utf8;
     print $log_fh "$_->{message}\n"
         for @{ $log->msgs() };
 }

@@ -1,0 +1,368 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+
+body{
+  color:#444;
+  font-family:Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman',
+              "Hiragino Sans GB", "STXihei", "微软雅黑", serif;
+  font-size:12px;
+  line-height:1.5em;
+  background:#fefefe;
+  width: 45em;
+  margin: 10px auto;
+  padding: 1em;
+  outline: 1300px solid #FAFAFA;
+}
+
+a{ color: #0645ad; text-decoration:none;}
+a:visited{ color: #0b0080; }
+a:hover{ color: #06e; }
+a:active{ color:#faa700; }
+a:focus{ outline: thin dotted; }
+a:hover, a:active{ outline: 0; }
+
+span.backtick {
+  border:1px solid #EAEAEA;
+  border-radius:3px;
+  background:#F8F8F8;
+  padding:0 3px 0 3px;
+}
+
+::-moz-selection{background:rgba(255,255,0,0.3);color:#000}
+::selection{background:rgba(255,255,0,0.3);color:#000}
+
+a::-moz-selection{background:rgba(255,255,0,0.3);color:#0645ad}
+a::selection{background:rgba(255,255,0,0.3);color:#0645ad}
+
+p{
+margin:1em 0;
+}
+
+img{
+max-width:100%;
+}
+
+h1,h2,h3,h4,h5,h6{
+font-weight:normal;
+color:#111;
+line-height:1em;
+}
+h4,h5,h6{ font-weight: bold; }
+h1{ font-size:2.5em; }
+h2{ font-size:2em; border-bottom:1px solid silver; padding-bottom: 5px; }
+h3{ font-size:1.5em; }
+h4{ font-size:1.2em; }
+h5{ font-size:1em; }
+h6{ font-size:0.9em; }
+
+blockquote{
+color:#666666;
+margin:0;
+padding-left: 3em;
+border-left: 0.5em #EEE solid;
+}
+hr { display: block; height: 2px; border: 0; border-top: 1px solid #aaa;border-bottom: 1px solid #eee; margin: 1em 0; padding: 0; }
+
+
+pre , code, kbd, samp { 
+  color: #000; 
+  font-family: monospace; 
+  font-size: 0.88em; 
+  border-radius:3px;
+  background-color: #F8F8F8;
+  border: 1px solid #CCC; 
+}
+pre { white-space: pre; white-space: pre-wrap; word-wrap: break-word; padding: 5px 12px;}
+pre code { border: 0px !important; padding: 0;}
+code { padding: 0 3px 0 3px; }
+
+b, strong { font-weight: bold; }
+
+dfn { font-style: italic; }
+
+ins { background: #ff9; color: #000; text-decoration: none; }
+
+mark { background: #ff0; color: #000; font-style: italic; font-weight: bold; }
+
+sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
+sup { top: -0.5em; }
+sub { bottom: -0.25em; }
+
+ul, ol { margin: 1em 0; padding: 0 0 0 2em; }
+li p:last-child { margin:0 }
+dd { margin: 0 0 0 2em; }
+
+img { border: 0; -ms-interpolation-mode: bicubic; vertical-align: middle; }
+
+table { border-collapse: collapse; border-spacing: 0; }
+td { vertical-align: top; }
+
+@media only screen and (min-width: 480px) {
+body{font-size:14px;}
+}
+
+@media only screen and (min-width: 768px) {
+body{font-size:16px;}
+}
+
+@media print {
+  * { background: transparent !important; color: black !important; filter:none !important; -ms-filter: none !important; }
+  body{font-size:12pt; max-width:100%; outline:none;}
+  a, a:visited { text-decoration: underline; }
+  hr { height: 1px; border:0; border-bottom:1px solid black; }
+  a[href]:after { content: " (" attr(href) ")"; }
+  abbr[title]:after { content: " (" attr(title) ")"; }
+  .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }
+  pre, blockquote { border: 1px solid #999; padding-right: 1em; page-break-inside: avoid; }
+  tr, img { page-break-inside: avoid; }
+  img { max-width: 100% !important; }
+  @page :left { margin: 15mm 20mm 15mm 10mm; }
+  @page :right { margin: 15mm 10mm 15mm 20mm; }
+  p, h2, h3 { orphans: 3; widows: 3; }
+  h2, h3 { page-break-after: avoid; }
+}
+</style><title>WICS_Overview</title></head><body><p><a id="top"></a></p>
+<h1 id="programming-guide-for-the-wics-converters">Programming Guide for the WICS Converters</h1>
+<p>Nathan Glenn <a href="file://C:\Users\Nate Glenn\Desktop\logrus_workspace\ITS2.0-WICS-converter\docs/&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#103;&#97;&#114;&#102;&#105;&#101;&#108;&#100;&#110;&#97;&#116;&#101;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#103;&#97;&#114;&#102;&#105;&#101;&#108;&#100;&#110;&#97;&#116;&#101;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a></p>
+<p><a id="toc"></a></p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#overview">Overview</a><ol>
+<li><a href="#its">ITS</a></li>
+<li><a href="#wics">WICS</a></li>
+</ol>
+</li>
+<li><a href="#language">Language and tools</a><ol>
+<li><a href="#dependencies">Dependencies</a></li>
+<li><a href="#working">Working with the Code</a><ol>
+<li><a href="#running">Running Tests</a></li>
+<li><a href="#installing">Installing</a></li>
+<li><a href="#viewing">Viewing Documentation</a></li>
+<li><a href="#building">Building a Release</a></li>
+<li><a href="#executables">Building the Executables</a><ol>
+<li><a href="#build-cli">WICS CLI</a></li>
+<li><a href="#build-gui">WICS GUI</a></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><a href="#preserving">Preserving ITS Information During Conversion</a></li>
+<li><a href="#known">Known Issues and Limitations</a><ol>
+<li><a href="#known-ITS">ITS</a></li>
+<li><a href="#known-ITS-XML2HTML">ITS-WICS-XML2HTML</a></li>
+<li><a href="#known-ITS-XLIFF2HTML">ITS-WICS-XLIFF2HTML</a></li>
+<li><a href="#known-ITS-XML2XLIFF">ITS-WICS-XML2XLIFF</a></li>
+</ol>
+</li>
+<li><a href="#contributions">Contributions</a><ol>
+<li><a href="#bugs">Bug Reports</a></li>
+<li><a href="#interest">ITS Interest Group Discussions</a></li>
+</ol>
+</li>
+</ol>
+<p><a id="overview"></a></p>
+<h2 id="overview">Overview</h2>
+<p><a id="its"></a></p>
+<h3 id="its">ITS</h3>
+<p>ITS, or the Internationalization Tag Set, is a standard for adding internalization-related information to XML, XLIFF, and HTML5 documents. For example, using this tag set you can mark parts of a document as untranslatable, as needing special treatment for a given locale, or as being related to a given media resource.</p>
+<p>ITS provides for two methods of annotating documents. The first is through local attributes. The second is through global rules, which use a query language (XPath for now) to select nodes to be annotated.</p>
+<p>In XML, ITS information is added to the document via markup in the <code>http://www.w3.org/2005/11/its</code> namespace.</p>
+<p>In HTML5, most ITS attributes begin with <code>its-</code>, but the ITS standard also strives to re-use attributes already available in HTML5, such as <code>translate</code>. Elements in the ITS namespace can be used, if contained in a <code>&lt;script type="application/its+xml"&gt;</code> element. ITS-decorated HTML5 files can be validated with an online tool <a href="http://validator.w3.org/nu/">here</a>.</p>
+<p>XLIFF documents can use XML ITS, but can additionally use markup from the <code>http://www.w3.org/ns/its-xliff/</code> namespace, which was created to allow all ITS information to be localizable.</p>
+<p><a id="wics"></a></p>
+<h3 id="wics">WICS</h3>
+<p>WICS stands for "Work In Context System". It is a project which seeks to make ITS markup more useful by displaying it in a more user-friendly manner within a web browser. It has two components:</p>
+<ul>
+<li>A converter for generating HTML5 or XLIFF from original documents (this project)</li>
+<li>JavaScript to display ITS data in Web browsers</li>
+</ul>
+<p>This document describes the converters. They accomplish four file conversion tasks:</p>
+<ol>
+<li>Convert ITS-decorated XML into HTML5 for displaying contents, with ITS</li>
+<li>Reduce ITS-decorated HTML5 documents to be usable as a single file</li>
+<li>Convert ITS-decorated XLIFF into HTML5 for displaying the contents of <code>&lt;source&gt;</code> and and <code>target</code> elements, with ITS</li>
+<li>Created ITS-decorated XLIFF from XML. This application is of limited functionality and is demonstrated through only one sample.</li>
+</ol>
+<p><a id="preserving"></a></p>
+<h2 id="preserving-its-information-during-conversion">Preserving ITS Information During Conversion</h2>
+<p>Preserving ITS information in a document while converting it to a different format is rather tricky. The four-step process, employed in ITS-XML2HTML and ITS-XLIFF2HTML, is as follows:</p>
+<ol>
+<li>Index all global rules and their matched nodes.</li>
+<li>Traverse and edit the document, converting local ITS markup for each element. Allowed types of editing are limited by indexing method; here, element deletion is disallowed.</li>
+<li>Paste new nodes where needed to guarantee that all original ITS information is still found in the document.</li>
+<li>Rewrite global rules to apply the same information to the same text as in the original document.</li>
+</ol>
+<p>This method has strengths and weaknesses. The strength is that the structure of the original document is preserved fairly well, and the output is a readable.</p>
+<p>The weakness is that there are a few cases where ITS information is applied to nodes that it should not be. This occurs when an ITS category passes information to children via inheritance, and also does not have a default value. In the course of conversion, non-element nodes (like attributes) are pasted as elements so as to be both visible and legal HTML, and new attributes are also added (<code>title</code> and <code>id</code>). This unfortunately causes them to inherit ITS information that does not belong to them. Global rules are created to reset ITS information to defaults where possible (<code>translate</code>, <code>direction</code>, and <code>localeFilter</code>). Where there are no defaults (<code>langInfo</code>, <code>domain</code> and <code>provenance</code>), the newly pasted elements may be assigned incorrect ITS information. This weakness is listed in the <code>CAVEAT</code> documentation section of the relevant modules.</p>
+<p>TODO: list another possible approach and it's strengths and weaknesses.</p>
+<p><a id="language"></a></p>
+<h2 id="language-and-tools">Language and Tools</h2>
+<p>The WICS converters are written in Perl. The following packages are included in this distribution:</p>
+<ul>
+<li><code>ITS</code>- an ITS document processor. It extracts ITS rules from XML and HTML documents, and resolves their matches. It also contains a DOM implementation which wraps LibXML and provides extra functionality required by the converter apps. It does not yet have any implementation of inheritance or of querying individual elements for ITS information.</li>
+<li><code>ITS::WICS::XML2HTML</code>- accomplishes file conversion task 1.</li>
+<li><code>ITS::WICS::Reduce</code>- accomplishes file conversion task 2.</li>
+<li><code>ITS::WICS::XLIFF2HTML</code>- accomplishes file conversion task 3.</li>
+<li><code>ITS::WICS::XML2XLIFF</code>- accomplishes file conversion task 4.</li>
+<li><code>ITS::WICS</code>- Bundles the functionality of all of the converters into one package.</li>
+</ul>
+<p>Additionally, WICS.pl and WICS-GUI.pl (in the <code>bin</code> directory) are applications which give access to the functionality of all of the converters. The first is a command-line interface and the second is a graphical interface.</p>
+<p><a id="dependencies"></a></p>
+<h3 id="dependencies">Dependencies</h3>
+<p>Perl 5.14 or higher (released May, 2011) is required. The software has only been tested on Windows 7 with Strawberry Perl thus far; I expect it to work on other platforms, but don't expect the test suite to pass just yet, as EOL differences tend to cause failures during porting.</p>
+<p>There are also plenty of CPAN dependencies (CPAN is an archive that contains open source Perl packages). The easy way to install all of the dependencies is to use <a href="https://metacpan.org/module/cpanm">cpanm</a>. After installing it (using the command <code>cpan App::cpanminus</code>), <code>cd</code> into the project directory and do <code>cpanm --installdeps .</code>.</p>
+<p><a href="http://dzil.org/">Dist::Zilla</a> and many plugins are required for the release cycle. After installing cpanm and then Dist::Zilla (via <code>cpanm Dist::Zilla</code>), you can install all of the release dependencies using <code>dzil authordeps | cpanm</code>.</p>
+<p>Finally, to create the standalone executables, you need to install <a href="https://metacpan.org/module/PAR::Packer">Par::Packer</a> (via <code>cpanm Par::Packer</code>) and <a href="https://metacpan.org/module/Wx::Perl::Packager">Wx::Perl::Packager</a> (via <code>cpanm Wx::Perl::Packager</code>).</p>
+<p><a id="working"></a></p>
+<h3 id="working-with-the-code">Working with the Code</h3>
+<p>The project contains the following:</p>
+<ul>
+<li><code>lib</code>- contains the application code</li>
+<li><code>t</code>- contains the unit tests for verifying the functionality of the converters</li>
+<li><code>TODO.txt</code>- Contains some TODO notes for future maintenance</li>
+<li><code>README.mkdn</code>- a generated file that describes the functionality of <code>ITS::WICS</code>.</li>
+<li><code>dist.ini</code>- a settings file for Dist::Zilla. More on this later.</li>
+</ul>
+<p><a id="running"></a></p>
+<h4 id="running-tests">Running Tests</h4>
+<p>When you run the test scripts, you have to add the <code>lib</code> folder to Perl's include path. There are two ways to run the tests:</p>
+<ol>
+<li>One at a time: <code>perl -Ilib t/name-of-test.t</code>. The <code>-I</code> option adds the <code>lib</code> folder to the include path.</li>
+<li>
+<p>All at once: <code>prove -lrv</code>, or if you're less patient then <code>prove -lr -j 4</code>. The options do the following:</p>
+<ul>
+<li><code>-l</code> (required) adds the <code>lib</code> folder to the include path</li>
+<li><code>-r</code> (required) searches for <code>*.t</code> (test) files recursively in the <code>t</code> directory</li>
+<li><code>-v</code> (optional) uses verbose mode, which prints the name and result of every single tests</li>
+<li><code>-j 4</code> runs 4 tests at a time in different threads. You can increase or decrease this number to suit the number of processor in your CPU.</li>
+</ul>
+</li>
+</ol>
+<p>Some test files are only run if the location of the ITS 2.0 test suite is made available to them via the <code>ITS_20_TESTSUITE_PATH</code> environment variable. You can do this in Windows by typing <code>set ITS_20_TESTSUITE_PATH=C:\path\to\test\suite</code> at the command line (this variable will be lost when you close the CMD window). The path should be the location of a copy of the ITS 2.0 test suite, retrieved from its <a href="https://github.com/w3c/its-2.0-testsuite">GitHub repository</a>.</p>
+<p>These tests run the converters on files in the test suite, and then send them to <a href="file://C:\Users\Nate Glenn\Desktop\logrus_workspace\ITS2.0-WICS-converter\docs/validator.w3c/nu">validator.w3c/nu</a> for a validity check. Because these tests are rather long and require an internet connection, I do not reccommend that you run them all of the time during development. Once in a while is fine. Also, some of these might fail. See the caveat for <a href="#known-ITS-XLIFF2HTML"><code>ITS-XLIFF2HTML</code></a>.</p>
+<p><a id="installing"></a></p>
+<h4 id="installing">Installing</h4>
+<p>Installing the distribution is simple. Just <code>cd</code> into the project directory and do <code>cpan .</code> (or <code>cpanm .</code> if you have <code>cpanm</code> installed). This will check that all of the tests pass before installing.</p>
+<p>Once you've installed the distribution, you can use the WICS CLI and the WICS GUI from the command line any time using <code>WICS</code> and <code>WICS-GUI</code> (add <code>.pl</code> to those if not on Windows). You can also use any of the included modules in your own Perl scripts</p>
+<p><a id="viewing"></a></p>
+<h4 id="viewing-library-documentation">Viewing Library Documentation</h4>
+<p><code>TODO: Should also be contained in the docs directory in HTML format</code></p>
+<p>The latest documentation on each of the modules is located in their files in POD format, and also in the <code>docs</code> directory in HTML. Once a module is installed, you can view the documentation from the command line by doing <code>perldoc ITS::WICS::XML2HTML</code> (or substitute the name of the desired module).</p>
+<p><a id="building"></a></p>
+<h4 id="building-a-release">Building a Release</h4>
+<p>The code is usable as it exists, but it doesn't have some essential distribution information, like a version number. We use Dist::Zilla (see the <a href="#dependencies">Dependencies</a> section) to build the release of a distribution. Besides adding a version number, it also creates authoring tests (spelling, copyright, documentation coverage, etc.) and metadata and bundles them into the distribution. Here are some useful commands:</p>
+<ul>
+<li><code>dzil build</code>: builds the distribution in a subdirectory</li>
+<li><code>dzil test --release</code>: runs all of the project unit tests and all of the generated author tests</li>
+<li><code>dzil release</code>: creates a new release of the project. With the current settings, this runs all of the unit- and author-tests, builds the release, saves it in the <code>releases</code> directory, regenerates the <code>README</code> file, and commits and pushes changes in Git.</li>
+</ul>
+<p><a id="executables"></a></p>
+<h4 id="building-the-executables">Building the Executables</h4>
+<p>The ITS-WICS distribution comes with two scripts that can be converted into standalone executables. These are <code>bin/WICS-GUI.pl</code> and <code>bin/WICS.pl</code>. Each file contains specific directions on creating the executables, which is also available via <code>perldoc WICS(-GUI).pl</code> if you installed the distribution (see <a href="#viewing">Viewing the Documentation</a>). For convenience, however, we include the directions again below.</p>
+<p>Remember that since PAR unpacks the Perl interpreter and required libraries into your temp folder the first time you run the generated executable, there is a considerable startup time for the first use. After that it is much quicker to start up.</p>
+<p><a id="build-gui"></a></p>
+<h5 id="wics-gui">WICS GUI</h5>
+<p>To create a standalone executable of <code>WICS-GUI.pl</code>, you will need to install the following modules (besides the dependencies required to run it in the first place):</p>
+<pre><code>* `PAR::Packer`- This provides the `pp` command, which creates standalone executables out of Perl scripts, packaging the Perl interpreter and most required scripts and native libraries automatically.
+* `Wx::Perl::Packager`- This provides `wxpar`, a wrapper around the pp command which adds all of the required DLLs for running a program that uses the Wx GUI framework.
+</code></pre>
+<p>Next, you'll need to locate the following libraries (DLLs on Windows) required by <code>XML::LibXML</code> (they should be on your computer if you've installed the required dependencies):</p>
+<pre><code>* `libxml2-2`
+* `libiconv-2`
+* `zlib` and `lzma` (or `libz` if you don't have those)
+</code></pre>
+<p>It's possible that the names of these libraries could be slightly different on your machine. On my Windows 7 machine, they are .dll files with a __ suffix, and some have numbers. <code>zlib</code> and <code>lzma</code> are <code>zlib1__.dll</code> and <code>liblzma-5__.dll</code> on my machine, respectively. Since I'm using Strawberry Perl, they are all located in <code>C:/strawberry/c/bin</code>. Notice that I have replaced all backslashes with forward slashes in the path. This is essential, as <code>pp</code> will fail if paths have backslashes in them.</p>
+<p>Finally, you'll need to make the ITS-WICS distribution available to <code>pp</code>
+and <code>wxpar</code>, either by installing it or by adding the <code>lib</code> folder to the
+include path via the <code>-I</code> option.</p>
+<p>Here's a sample command to make the standalone executable. We use <code>-l</code>
+to make <code>wxpar</code> include the DLL files in the executable file. The working
+directory contains the ITS-WICS distribution, and we use -I to include its <code>lib</code> folders (remember that this is unnecessary if this distribution
+has been installed). We use <code>-o</code> to specify the name of the created
+executable. We pass the path to this script as the final argument. Run
+in a Windows CMD, this should all be one line; I have broken it into several
+lines for display purposes.</p>
+<pre><code>wxpar -o WICS-GUI.exe -l C:/strawberry/c/bin/libxml2-2__.dll
+-l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/zlib1__.dll
+-l C:/strawberry/c/bin/liblzma-5__.dll -I ITS-WICS/lib
+ITS-WICS/bin/WICS-GUI.pl
+</code></pre>
+<p><a id="build-cli"></a></p>
+<h5 id="wics-cli">WICS CLI</h5>
+<p>To create a standalone executable of <code>WICS.pl</code>, you will follow the same procedure as described above for <code>WICS-GUI.pl</code>, but since this is not a GUI application you will not have to install <code>Wx::Perl::Packager</code>, and you will use <code>pp</code> instead of <code>wxpar</code>.</p>
+<p>Here is an example command used to create a standalon executable. Run in a Windows CMD, this should all be one line; I have broken it into several lines for display purposes.</p>
+<pre><code>pp -o WICS.exe -l C:/strawberry/c/bin/libxml2-2__.dll
+-l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/zlib1__.dll
+-l C:/strawberry/c/bin/liblzma-5__.dll -I ITS-WICS/lib
+ITS-WICS/bin/WICS.pl
+</code></pre>
+<p><a id="known"></a></p>
+<h2 id="known-issues-and-limitations">Known Issues and Limitations</h2>
+<p><a id="known-ITS"></a></p>
+<h3 id="its_1"><code>ITS</code></h3>
+<p>This module only deals with global ITS rules, not with local markup. It would be nice to make this into a more general ITS processor. It does not currently support querying individual elements for ITS information, nor does it implement inheritance. Reference L<a href="http://www.w3.org/International/its/wiki/ITS_Processor_Interface">http://www.w3.org/International/its/wiki/ITS_Processor_Interface</a> for an idea of what is wanted. Note that if this functionality is added, we should stop producing a warning for absence of rules from a file.</p>
+<p>The ITS specification allows for other types of selectors. This module, however, only allows XPath selectors. CSS selectors could be implemented, for example, with <a href="https://metacpan.org/module/HTML::Selector::XPath"><code>HTML::Selector::XPath</code></a>.</p>
+<p>Currently this module does not check ITS version. All rules are assumed to be ITS version 2.0.</p>
+<p>It would be useful to allow the calling code to provide default ITS parameter values, as specified in section 5.3.5 of the ITS spec.</p>
+<p>No attempt is made at recovering from errors caused by invalid XML. Invalid input causes parsing to halt and an error to be thrown.</p>
+<p>No external schemas/DTDs are used to validate the XML input.</p>
+<p><a id="known-ITS-XML2HTML"></a></p>
+<h3 id="its-xml2html"><code>ITS-XML2HTML</code></h3>
+<p>See the section on preserving ITS information for instances where ITS is not preserved faithfully.
+Also, as no external schema or DTD are used, only the <code>xml:id</code> attribute is treated as a unique ID, and only it is converted to the <code>id</code> attribute in the output HTML.</p>
+<p><a id="known-ITS-XLIFF2HTML"></a></p>
+<h3 id="its-xliff2html"><code>ITS-XLIFF2HTML</code></h3>
+<p>In XLIFF, it is common to copy the <code>source</code> element and rename it <code>target</code> before beginning translation. If the <code>source</code> element happened to have an <code>xml:id</code> attribute (which would be unnecessary since XLIFF defines the <code>id</code> attribute), then such a copy would generate invalid XML. As previously mentioned, invalid XML cannot be processed. Therefore, the originator of the XLIFF file should take care not to produce invalid output.</p>
+<p>Because the XLIFF ITS mapping is still in a state of flux, it is possible to produce invalid output with this module. See also a discussion <a href="https://github.com/w3c/its-2.0-testsuite/issues/2">here</a>.</p>
+<p>The limitations of <code>ITS-XML2HTML</code> also apply to this module.</p>
+<p><a id="known-ITS-XML2XLIFF"></a></p>
+<h3 id="its-xml2xliff"><code>ITS-XML2XLIFF</code></h3>
+<p>This task is unfinished, as only the conversion of a single sample file was required for project completion. There are 3 areas that need attention to make the converter generalizable to other XML files:</p>
+<pre><code>1- Inherited ITS information is not transferred to the XLIFF file. See also the known limitations on the `ITS` module.
+2- The segmentation method is hard coded to treat `&lt;seg&gt;` elements as segments (`&lt;group&gt;` in XLIFF) and `&lt;para&gt;` elements as translation units (`&lt;trans-unit&gt;` in XLIFF). To generalize, this should be parameterized.
+3- Only a few ITS categories are converted (`idValue`, `locNote`, `translate` and `term`).
+</code></pre>
+<p>Doubtless there will be more improvements once released to the community, including bug fixes, code cleanups and new features. Newer releases to utilized libraries such as XML::LibXML would also yield improvement.</p>
+<p><a id="contributions"></a></p>
+<h2 id="community-contributions-during-project-development">Community Contributions During Project Development</h2>
+<p><a id="bug"></a></p>
+<h3 id="bug-reports">Bug Reports</h3>
+<ul>
+<li><a href="https://rt.cpan.org/Ticket/Display.html?id=83773">allow specification of directory in DZP::Sharedir</a></li>
+<li><a href="https://rt.cpan.org/Ticket/Display.html?id=83773">change running order of DZP::Sharedir</a></li>
+<li><a href="https://code.google.com/p/chromium/issues/detail?id=179453&amp;thanks=179453&amp;ts=1362167145">XPath requires lower-casing to query attributes in Chromium</a></li>
+<li><a href="https://github.com/mirod/xmltwig/issues/8">Process variables in XML::Twig</a></li>
+<li><a href="https://rt.cpan.org/Ticket/Display.html?id=87089">printing wrong doctype in XML::LibXML</a></li>
+<li><a href="https://rt.cpan.org/Ticket/Display.html?87425">unique_key method in XML::LibXML::node</a> (<a href="https://bitbucket.org/shlomif/perl-xml-libxml/pull-request/20/unique_key-method-for-nodes/diff">pull request</a>)</li>
+<li><a href="https://rt.cpan.org/Ticket/Display.html?88297">-M crashes pp if option contains backslashes</a></li>
+<li><a href="https://rt.cpan.org/Ticket/Display.html?88315">IPC-Cmd blocks if command reads <STDIN> (on Win32)</a></li>
+<li><a href="https://rt.cpan.org/Ticket/Display.html?88304">MBP:CPANfile Crashes perl on Windows during install</a></li>
+<li><a href="https://github.com/dagolden/capture-tiny/issues/12">Capture::Tiny Crashes with fork on Windows</a></li>
+<li><a href="https://github.com/tokuhirom/Module-Build-Pluggable/issues/2">Module::Build::Pluggable uses fork</a></li>
+<li><a href="https://github.com/dagolden/metabase-fact/pull/2">Use IO::Prompt::Tiny in Metabase::Fact</a></li>
+<li><a href="https://github.com/xaicron/p5-win32-unicode/issues/3">Win32::Unicode test failure</a></li>
+<li><a href="https://rt.cpan.org/Ticket/Display.html?id=88621">Null namespace crashes HTML::HTML5::Writer</a></li>
+<li><a href="https://rt.cpan.org/Ticket/Display.html?id=88636">Space required to Parse File with HTML::HTML5::Parser</a></li>
+<li><a href="https://rt.cpan.org/Ticket/Display.html?id=88994">Compare all types of nodes with Test::XML::Ordered</a></li>
+<li><a href="https://github.com/finnle/ITS-2.0-Testsuite/pull/22">xml:id and provenanceRecordsRef switched in ITS test suite</a></li>
+<li><a href="https://github.com/finnle/ITS-2.0-Testsuite/pull/23">Illegal itemprops in ITS test suite</a></li>
+<li><a href="https://github.com/w3c/its-2.0-testsuite/issues/2#issuecomment-25061424">Incorrect ITS in XLIFF files in ITS test suite</a></li>
+<li><a href="https://github.com/dagolden/Log-Any/pull/2">Log::Any- don't <code>require</code> loaded packages</a></li>
+</ul>
+<p><a id="interest"></a></p>
+<h3 id="its-interest-group-discussions">ITS Interest Group Discussions</h3>
+<ul>
+<li><a href="http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Jul/0035.html">XPath Context for Relative Selectors</a></li>
+<li><a href="http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Jul/0037.html">XPath Context for idValue Evaluation</a></li>
+<li><a href="http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Aug/0007.html">Separating Precedence of 2 Types of Inheritance</a></li>
+<li><a href="http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Aug/0001.html">ITS Reset for Inherited Metadata</a></li>
+<li><a href="http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Aug/0021.html">ITS-Version in HTML</a></li>
+<li><a href="http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Aug/0027.html">Namespace-less Atts in ITS standard</a></li>
+<li><a href="http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Sep/0006.html">Differentiate Source and Target Notes in XLIFF Mapping</a></li>
+<li><a href="http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Sep/0005.html">Typos in XLIFF Mapping</a></li>
+<li><a href="http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Sep/0017.html">"nel" Value for its:lineBreakType</a></li>
+<li><a href="http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Sep/0029.html">ITS Rules in XLIFF</a></li>
+<li><a href="http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Oct/0005.html">Is <code>mtype="x-its"</code> required?</a></li>
+<li><a href="http://lists.w3.org/Archives/Public/public-i18n-its-ig/2013Oct/0006.html">Exclusivity and atomicity of local and global ITS</a></li>
+</ul></body></html>

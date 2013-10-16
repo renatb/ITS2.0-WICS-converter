@@ -1,13 +1,15 @@
 #
-# This file is part of ITS
+# This file is part of ITS-WICS
 #
-# This software is copyright (c) 2013 by DFKI.  No
-# license is granted to other entities.
+# This software is copyright (c) 2013 by DFKI.
+#
+# This is free software; you can redistribute it and/or modify it under
+# the same terms as the Perl 5 programming language system itself.
 #
 package ITS::HTMLRuleExtractor;
 use strict;
 use warnings;
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.01'; # VERSION
 # ABSTRACT: Extract ITS rules from an HTML document
 use Carp;
 our @CARP_NOT = qw(ITS);
@@ -122,7 +124,7 @@ ITS::HTMLRuleExtractor - Extract ITS rules from an HTML document
 
 =head1 VERSION
 
-version 0.08
+version 0.01
 
 =head1 AUTHOR
 
@@ -130,7 +132,9 @@ Nathan Glenn <garfieldnate@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by DFKI.  No
-license is granted to other entities.
+This software is copyright (c) 2013 by DFKI.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut

@@ -1,8 +1,10 @@
 #
-# This file is part of ITS
+# This file is part of ITS-WICS
 #
-# This software is copyright (c) 2013 by DFKI.  No
-# license is granted to other entities.
+# This software is copyright (c) 2013 by DFKI.
+#
+# This is free software; you can redistribute it and/or modify it under
+# the same terms as the Perl 5 programming language system itself.
 #
 #some test::base filters for HTML conversion
 package t::TestXML2HTML;
@@ -17,12 +19,12 @@ use warnings;
 use Log::Any::Test;
 use Log::Any qw($log);
 use ITS::DOM;
-use ITS::XML2HTML;
+use ITS::WICS::XML2HTML;
 
 #convert the input XML into html and return the html string
 sub htmlize {
     my ($self, $xml) = @_;
-    my $converter = ITS::XML2HTML->new();
+    my $converter = ITS::WICS::XML2HTML->new();
     my $ITS = ITS->new('xml', doc => \$xml);
     my $converted = ${ $converter->convert($ITS) };
     $converted = $self->normalize_html($converted);
@@ -34,7 +36,7 @@ sub htmlize {
 sub html_log {
     my ($self, $xml) = @_;
     $log->clear();
-    my $converter = ITS::XML2HTML->new();
+    my $converter = ITS::WICS::XML2HTML->new();
     my $ITS = ITS->new('xml', doc => \$xml);
     my $converted = ${ $converter->convert($ITS) };
     $converted = $self->normalize_html($converted);

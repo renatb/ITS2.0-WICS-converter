@@ -21,17 +21,23 @@ use IO::Compress::Gzip qw(gzip $GzipError) ;
 use HTML::HTML5::Parser;
 use Log::Any::Test;
 use Log::Any qw($log);
-use ITS::XML2HTML;
+use ITS;
+use ITS::WICS::XLIFF2HTML;
 
 if ( not $ENV{ITS_20_TESTSUITE_PATH}) {
     plan skip_all => 'Requires ITS 2.0 test suite. ' .
     'Set $ENV{ITS_20_TESTSUITE_PATH} to run.';
 }
 
-my $converter = ITS::XML2HTML->new();
+my $converter = ITS::WICS::XLIFF2HTML->new();
 
 my $xml_dir = path($ENV{ITS_20_TESTSUITE_PATH},
-    'its2.0', 'inputdata');
+    'its2.0', 'xliffsamples', 'inputdata');
+
+if(!$xml_dir->exists){
+    warn "couldn't find $xml_dir";
+    exit -1;
+}
 
 my $validator_url = $ENV{HTML5_VALIDATOR_URL} ||
     'http://validator.w3.org/nu/';
@@ -46,7 +52,7 @@ mkdir $html_dir;
 # convert all XML files into HTML;
 # count them so a plan can be formed
 my $file_count = 0;
-note "Generating HTML files from inpudata folder\n";
+note "Generating HTML files from inputdata folder\n";
 find(\&convert, $xml_dir);
 
 plan tests => $file_count;
@@ -59,18 +65,19 @@ push @{ $ua->requests_redirectable }, 'POST';
 my $can_accept = HTTP::Message::decodable;
 my $parser = HTML::HTML5::Parser->new;
 # check all of the files with the validator service
-note "Validating all produced HTML with $validator_url";
+note "Validating all produced HTML with $validator_url;\nsome tests will
+probably fail (see https://github.com/w3c/its-2.0-testsuite/issues/2)";
 find(\&validate, $html_dir);
 
 # convert the XML file and store it in $html_dir, along with the
 # conversion log
 sub convert {
-    return unless $File::Find::name =~ m!/xml/[^/.]+xml\.xml$!;
+    return unless $File::Find::name =~ m!\.xlf$!;
     $file_count++;
     $log->clear();
 
     # create destination sub-directory
-    $File::Find::dir =~ m!/([^/]+)/xml!;
+    $File::Find::dir =~ m!/([^/]+)$!;
     my $sub_dir = $1;
     mkdir path($html_dir, $sub_dir)
         unless -d path($html_dir, $sub_dir);
@@ -78,16 +85,17 @@ sub convert {
     # output files will have the same names as XML originals,
     # but with html or log extensions
     my $html_file = $_;
-    $html_file =~ s/\.xml$/.html/;
+    $html_file =~ s/\.xlf$/.html/;
     my $log_file = $_;
-    $log_file =~ s/\.xml$/.log/;
+    $log_file =~ s/\.xlf$/.log/;
 
-    # convert the XML and print it into the new directory
-    my $html_fh = path($html_dir, $sub_dir, $html_file)->filehandle('>:utf8');
+    # convert the XML (adding labels) and print it
+    # into the new directory
+    my $html_fh = path($html_dir, $sub_dir, $html_file)->openw_utf8;
     my $ITS = ITS->new('xml', doc => $File::Find::name);
-    print $html_fh ${$converter->convert($ITS)};
+    print $html_fh ${$converter->convert($ITS, 1)};
 
-    my $log_fh = path($html_dir, $sub_dir, $log_file)->filehandle('>:utf8');
+    my $log_fh = path($html_dir, $sub_dir, $log_file)->openw_utf8;
     print $log_fh "$_->{message}\n"
         for @{ $log->msgs() };
 }

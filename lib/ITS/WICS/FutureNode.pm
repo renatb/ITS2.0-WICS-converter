@@ -1,19 +1,21 @@
 #
-# This file is part of ITS
+# This file is part of ITS-WICS
 #
-# This software is copyright (c) 2013 by DFKI.  No
-# license is granted to other entities.
+# This software is copyright (c) 2013 by DFKI.
 #
-package ITS::XML2HTML::FutureNode;
+# This is free software; you can redistribute it and/or modify it under
+# the same terms as the Perl 5 programming language system itself.
+#
+package ITS::WICS::FutureNode;
 use strict;
 use warnings;
 use Exporter::Easy (OK => [qw(new_future)]);
 use ITS::DOM::Element qw(new_element);
-use ITS::XML2HTML::LogUtils qw(get_or_set_id);
+use ITS::WICS::LogUtils qw(get_or_set_id);
 use Carp;
 use Log::Any qw($log);
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.01'; # VERSION
 # ABSTRACT: Save a single node during DOM transformation.
 
 sub new_future {
@@ -26,21 +28,19 @@ sub new {
 
     #store the state required to paste a representative node later
     my $type = $node->type;
-    my $state = {type => $type, dom => $doc};
+    my $state = {type => $type, dom => $doc, name => $node->name};
     if($type eq 'ELT'){
         $state->{node} = $node;
     }elsif($type eq 'ATT' or $type eq 'PI'){
         # maintainer note: don't try to store the actual attribute node;
         # It causes perl to crash!
         $state->{parent} = $manager->create_future($node->parent);
-        $state->{name} = $node->name;
         $state->{value} = $node->value;
         $state->{creates_element} = 1;
     }elsif($type eq 'COM' or $type eq 'TXT'){
         $state->{node} = $node;
     }elsif($type eq 'NS'){
         # save document root for pasting
-        $state->{name} = $node->name;
         $state->{value} = $node->value;
         $state->{parent} = $manager->create_future($doc->get_root);
         $state->{creates_element} = 1;
@@ -154,6 +154,11 @@ sub new_node {
     return $self->{element};
 }
 
+sub name {
+    my ($self) = @_;
+    return $self->{name};
+}
+
 sub new_path {
     my ($self) = @_;
     my $node = $self->new_node;
@@ -184,17 +189,17 @@ __END__
 
 =head1 NAME
 
-ITS::XML2HTML::FutureNode - Save a single node during DOM transformation.
+ITS::WICS::FutureNode - Save a single node during DOM transformation.
 
 =head1 VERSION
 
-version 0.08
+version 0.01
 
 =head1 SYNOPSIS
 
-    use ITS::XML2HTML::FutureNodeManager;
+    use ITS::WICS::FutureNodeManager;
     use ITS;
-    my $f_manager = ITS::XML2HTML::FutureNodeManager->new();
+    my $f_manager = ITS::WICS::FutureNodeManager->new();
     my $ITS = ITS->new('xml', doc => 'myITSfile.xml');
     my ($ns) = $ITS->get_root->get_xpath('namespace::*');
     my $f_ns = create_future($ns);
@@ -260,6 +265,11 @@ only changes the DOM once and always returns the same node.
 Returns an ITS::DOM::Node object corresponding to the original Node
 (which might or might not be the same Node object).
 
+=head2 C<name>
+
+Returns the name of the original node that this FutureNode represents.
+This is provided for sorting purposes.
+
 =head2 C<new_path>
 
 Returns an XPath uniquely identifying the new node returned by
@@ -271,7 +281,9 @@ Nathan Glenn <garfieldnate@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by DFKI.  No
-license is granted to other entities.
+This software is copyright (c) 2013 by DFKI.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut

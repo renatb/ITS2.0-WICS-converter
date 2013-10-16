@@ -1,0 +1,283 @@
+#
+# This file is part of ITS-WICS
+#
+# This software is copyright (c) 2013 by DFKI.
+#
+# This is free software; you can redistribute it and/or modify it under
+# the same terms as the Perl 5 programming language system itself.
+#
+package ITS::WICS::XML2XLIFF::ITSProcessor;
+use strict;
+use warnings;
+
+our $VERSION = '0.01'; # VERSION
+# ABSTRACT: Process and convert XML and XLIFF ITS (internal use only).
+
+use ITS qw(its_ns);
+use ITS::DOM::Element qw(new_element);
+use Exporter::Easy (
+    OK => [qw(
+        its_requires_inline
+        convert_atts
+        localize_rules
+        transfer_inline_its
+    )]);
+
+#TODO: put all of these in one place
+our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
+our $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
+
+sub its_requires_inline {
+    my ($el, $global) = @_;
+
+    # any terminology information requires inlining
+    if($el->att('term', its_ns())){
+        return 1;
+    }
+    return 0 unless $global;
+    if(exists $global->{term}){
+        return 1;
+    }
+    return 0;
+}
+
+
+sub transfer_inline_its {
+    my ($from, $to) = @_;
+
+    #all of the terminology information has to be moved
+    my $mtype = $from->att('mtype');
+    if($mtype =~ /term/){
+        $to->set_att('mtype', $from->att('mtype'));
+        $from->remove_att('mtype');
+        my @term_atts = qw(
+            termInfo
+            termInfoRef
+            termConfidence
+        );
+
+        for my $att (@term_atts){
+            if (my $value = $from->att($att, $ITSXLF_NS)){
+                $from->remove_att($att, $ITSXLF_NS);
+                $to->set_att("itsxlf:$att", $value, $ITSXLF_NS);
+            }
+        }
+    }
+    return;
+}
+
+sub convert_atts {
+    my ($el, $atts, $tu) = @_;
+
+    #TODO: there might be elements other than source and mrk someday
+    my $inline = $el->local_name eq 'mrk' ? 1 : 0;
+
+    for my $att (@$atts){
+        # if not already removed while processing other atts
+        if($att->parent){
+            _process_att($el, $att, $tu, $inline);
+        }
+    }
+    return;
+}
+
+# process given attribute on given element;
+# return the name of the element used to wrap the children, if any.
+# $tu is containing trans-unit (not needed if $el is inline)
+sub _process_att {
+    my ($el, $att, $tu, $inline) = @_;
+    my $att_ns = $att->namespace_URI || '';
+    my $att_name = $att->local_name;
+    if($att_ns eq its_ns()){
+        if($att_name eq 'version'){
+            $att->remove;
+        }
+        # If there's a locNoteType but no locNote, then it
+        # doesn't get processed (no reason to).
+        if($att_name eq 'locNote'){
+            my $type = $el->att('locNoteType', its_ns()) || 'description';
+            _process_locNote($el, $att->value, $type, $tu, $inline);
+            $el->remove_att('locNote', its_ns());
+            $el->remove_att('locNoteType', its_ns());
+        }elsif($att_name eq 'translate'){
+            _process_translate($el, $att->value, $tu, $inline);
+            $att->remove;
+        # If there's a term* but no term, then it
+        # doesn't get processed (no reason to).
+        }elsif($att_name eq 'term'){
+            _process_term(
+                $el,
+                term => $att->value,
+                termInfoRef => $el->att('termInfoRef', its_ns()),
+                termConfidence => $el->att('termConfidence', its_ns()),
+            );
+            $att->remove;
+            $el->remove_att('termInfoRef', its_ns());
+            $el->remove_att('termConfidence', its_ns());
+        }
+        #default for ITS atts: leave them there
+    }elsif($att->name eq 'xml:id'){
+        _process_idValue($att->value, $tu, $inline);
+        $att->remove;
+    }else{
+        $att->remove;
+    }
+    return;
+}
+
+
+sub localize_rules {
+    my ($el, $tu, $its_info) = @_;
+
+    if(!$its_info){
+        return;
+    }
+
+    #TODO: there might be elements other than source and mrk someday
+    my $inline = $el->local_name eq 'mrk' ? 1 : 0;
+
+    #each of these is a check that 1) the category is selected in a global
+    #rule and 2) there is no local selection. TODO: clean this up?
+    while (my ($name, $value) = each %$its_info){
+        if($name eq 'locNote' &&
+                !defined $el->att('locNote', its_ns())){
+            my $type = $its_info->{locNoteType} || 'description';
+            _process_locNote($el, $value, $type, $tu, $inline)
+        }elsif($name eq 'translate' &&
+                !defined $el->att('translate', its_ns())){
+            _process_translate($el, $value, $tu, $inline);
+        }elsif($name eq 'idValue' &&
+                !defined $el->att('xml:id')){
+            _process_idValue($value, $tu, $inline);
+        }elsif($name eq 'term' &&
+                !defined $el->att('term', its_ns())){
+            my %termHash;
+            my @term_atts = qw(
+                term
+                termInfo
+                termInfoRef
+                termConfidence
+            );
+            @termHash{@term_atts} = @$its_info{@term_atts};
+            _process_term($el, %termHash);
+        }
+    }
+    return;
+}
+
+# pass in an element to be annotated, locNote and locNoteType values,
+# and whether the element is inline or not
+# TODO: too many params; use named ones.
+sub _process_locNote {
+    my ($el, $note, $type, $tu, $inline) = @_;
+    my $priority = $type eq 'alert' ? '1' : '2';
+    if($inline){
+        $el->set_att('comment', $note);
+        $el->set_att('itsxlf:locNoteType', $type, $ITSXLF_NS);
+    }else{
+        my $note = new_element('note', {}, $note, $XLIFF_NS);
+        $note->set_att('priority', $priority);
+        $note->paste($tu);
+    }
+    return;
+}
+
+# input element and it's ITS translate value, containing TU, and whether
+# it's inline
+# TODO: too many params; use named ones.
+sub _process_translate {
+    my ($el, $translate, $tu, $inline) = @_;
+    if($inline){
+        $el->set_att('mtype',
+            $translate eq 'yes' ?
+            'x-its-translate-yes' :
+            'protected');
+    }else{
+        $tu->set_att('translate', $translate);
+    }
+    return;
+}
+
+sub _process_term {
+    my ($el, %termInfo) = @_;
+    $termInfo{term} eq 'yes' ?
+        $el->set_att('mtype', 'term') :
+        $el->set_att('mtype', 'x-its-term-no');
+
+    for my $name(qw(termInfoRef termConfidence termInfo)){
+        if (my $val = $termInfo{$name}){
+            $el->set_att("itsxlf:$name", $val, $ITSXLF_NS);
+        }
+    }
+    return;
+}
+
+sub _process_idValue {
+    my ($id, $tu, $inline) = @_;
+    #this att is ignored on inline elements
+    if(!$inline){
+        $tu->set_att('resname', $id);
+    }
+    return;
+}
+
+1;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+ITS::WICS::XML2XLIFF::ITSProcessor - Process and convert XML and XLIFF ITS (internal use only).
+
+=head1 VERSION
+
+version 0.01
+
+=head2 C<its_requires_inline>
+Return true if converting the ITS info on the given element
+requires that it be rendered inline (as mrk) instead of structural
+(as its own source). Currently the only information tested for is terminology
+information.
+
+The arguments are the element being tested and the hash reference containing the global
+information pertaining to it.
+
+=head2 C<transfer_inline_its>
+
+Transfer ITS that is required to be on a mrk (not on a source) from one
+element (first argument) to the another (second argument).
+
+Arguments are the element to move the markup from and the element to move
+the markup to.
+
+=head2 C<convert_atts>
+
+Convert all XML ITS attributes into XLIFF ITS for the given element.
+The arguments are: first the element being processed; second an
+array ref containing the attribute nodes to be converted; and third
+the C<trans-unit> element currently being created. This is not necessary
+if the element in question is inline.
+
+=head2 C<localize_rules>
+Arguments are: first the element to have its ITS metadata localized; second
+the translation unit containing the element; and finally the match index
+containing the global ITS info for the element.
+
+This functions converts ITS info contained in global rules matching the
+element into equivalent local markup on either the element itself or the
+trans-unit.
+
+=head1 AUTHOR
+
+Nathan Glenn <garfieldnate@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by DFKI.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

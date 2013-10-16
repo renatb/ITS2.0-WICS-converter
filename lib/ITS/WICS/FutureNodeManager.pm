@@ -1,17 +1,19 @@
 #
-# This file is part of ITS
+# This file is part of ITS-WICS
 #
-# This software is copyright (c) 2013 by DFKI.  No
-# license is granted to other entities.
+# This software is copyright (c) 2013 by DFKI.
 #
-package ITS::XML2HTML::FutureNodeManager;
+# This is free software; you can redistribute it and/or modify it under
+# the same terms as the Perl 5 programming language system itself.
+#
+package ITS::WICS::FutureNodeManager;
 use strict;
 use warnings;
-use ITS::XML2HTML::FutureNode qw(new_future);
+use ITS::WICS::FutureNode qw(new_future);
 use Exporter::Easy (OK => [qw(new_manager)]);
 use Carp;
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.01'; # VERSION
 # ABSTRACT: Track and replace FutureNodes
 
 sub new_manager {
@@ -38,6 +40,7 @@ sub new {
 
 sub create_future {
     my ($self, $node) = @_;
+    # print $node->name . ': ' . $node->unique_key . $node->text . "\n";
 
     # if this node has been saved in a FutureNode before,
     # return the pointer to that
@@ -77,7 +80,8 @@ sub elementals {
 
 sub realize_all {
     my ($self) = @_;
-    for my $future_pointer (values %{ $self->{future_cache} }){
+    for my $future_pointer (
+        sort {$a->name cmp $b->name} values %{ $self->{future_cache} }){
         $future_pointer->new_node;
     }
     return;
@@ -96,19 +100,19 @@ __END__
 
 =head1 NAME
 
-ITS::XML2HTML::FutureNodeManager - Track and replace FutureNodes
+ITS::WICS::FutureNodeManager - Track and replace FutureNodes
 
 =head1 VERSION
 
-version 0.08
+version 0.01
 
 =head1 SYNOPSIS
 
-    use ITS::XML2HTML::FutureNodeManager;
+    use ITS::WICS::FutureNodeManager;
     use ITS;
     my $ITS = ITS->new('xml', doc => 'myITSfile.xml');
     my $f_manager =
-        ITS::XML2HTML::FutureNodeManager->new($ITS->get_doc);
+        ITS::WICS::FutureNodeManager->new($ITS->get_doc);
 
     #create one or more FutureNodes through this manager instance
     my ($ns) = $ITS->get_root->get_xpath('namespace::*');
@@ -188,7 +192,9 @@ Nathan Glenn <garfieldnate@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by DFKI.  No
-license is granted to other entities.
+This software is copyright (c) 2013 by DFKI.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut

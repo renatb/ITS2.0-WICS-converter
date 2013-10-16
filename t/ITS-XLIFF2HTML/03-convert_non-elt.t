@@ -1,8 +1,7 @@
 # Test matching non-elements, which requires the usage of FutureNodes
 use strict;
 use warnings;
-use t::TestXML2HTML;
-use Test::More 0.88;
+use t::TestXLIFF2HTML;
 plan tests => 1*blocks();
 use Test::HTML::Differences;
 
@@ -45,10 +44,12 @@ Elements are all renamed, so XPaths change accordingly.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule xmlns:foo="www.foo.com" selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">Some text</div>
@@ -78,11 +79,13 @@ match here). This also triggers anti-inheritance rules.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -121,12 +124,14 @@ Multiple matches of one attribute should only create one new element.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -164,11 +169,13 @@ Multiple matches of one attribute should only create one new element.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
       <its:translateRule selector="id('ITS_1')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:translateRule selector="id('ITS_1')" translate="yes"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="foo:para">
@@ -206,11 +213,13 @@ Nothing is done to comments. Just need a new XPath for the new document.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="/*/*[2]/*/*[2]/comment()"/>
       <its:domainRule selector="id('ITS_2')" domainPointer="/*/*[2]/*/*[3]/comment()"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -248,13 +257,15 @@ into child elements, which also triggers anti-inheritance rules.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
       <its:dirRule selector="id('ITS_2')" dir="ltr"/>
       <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -294,14 +305,16 @@ Multiple matches for one node should only create one new element.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
       <its:dirRule selector="id('ITS_2')" dir="ltr"/>
       <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -339,13 +352,15 @@ Multiple matches for one node should only create one new element.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
       <its:dirRule selector="id('ITS_2')" dir="ltr"/>
       <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">
@@ -381,10 +396,12 @@ Nothing is done to these. Just need a new XPath.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="/*/*[2]/*/*[2]/text()"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
@@ -417,13 +434,15 @@ triggers anti-inheritance rules.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
       <its:dirRule selector="id('ITS_2')" dir="ltr"/>
       <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <span
           title="xmlns:foo"
@@ -462,14 +481,16 @@ Multiple matches of same namespace should only create one new element.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
       <its:dirRule selector="id('ITS_2')" dir="ltr"/>
       <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <span
           title="xmlns:foo"
@@ -505,13 +526,15 @@ test it.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
       <its:dirRule selector="id('ITS_2')" dir="ltr"/>
       <its:localeFilterRule localeFilterList="*" selector="id('ITS_2')" localeFilterType="include"/>
       <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="id('ITS_2')"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="bar:xml">
         <span
           title="xmlns:foo"
@@ -544,10 +567,12 @@ Document match stays the same ("/").
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="/"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="foo:para" id="ITS_1">
@@ -577,45 +602,15 @@ Namespacing probably doesn't make a difference here; just covering the bases.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:domainRule selector="id('ITS_1')" domainPointer="/"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="foo:xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">
-          Some text
-        </div>
-    </div>
-
-=== non-ITS, non-xmlns attributes are saved
-All document attributes are saved as elements, which also
-triggers anti-inheritance rules.
---- input
-<?xml version="1.0"?>
-<xml>
-  <para foo="bar" xmlns="blah">Some text</para>
-</xml>
---- output
-<!DOCTYPE html>
-    <meta charset="utf-8">
-    <title>WICS</title>
-    <script type="application/its+xml">
-    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
-      <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
-      <its:dirRule selector="//@*" dir="ltr"/>
-      <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
-      <its:translateRule selector="id('ITS_1')" translate="no"/>
-      </its:rules>
-    </script>
-    <div title="xml">
-        <div title="para">
-          <span
-            id="ITS_1"
-            class="_ITS_ATT"
-            its-within-text="no"
-            title="foo">bar</span>
           Some text
         </div>
     </div>
@@ -643,10 +638,12 @@ it should just be copied to the final rule.
       <its:localeFilterRule localeFilterList="*" selector="//@*" localeFilterType="include"/>
       <its:dirRule selector="//@*" dir="ltr"/>
       <its:translateRule selector="//@*" translate="no"/>
-      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
       <its:idValueRule selector="id('ITS_1')" idValue="'p1'"/>
     </its:rules>
     </script>
+
+    <style>body {visibility:hidden} p {visibility: visible}</style>
     <div title="xml">
         <div title="head"></div>
         <div title="para" id="ITS_1">Some text</div>

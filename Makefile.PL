@@ -9,7 +9,7 @@ use ExtUtils::MakeMaker 6.30;
 
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "Work with ITS-decorated XML\r",
+  "ABSTRACT" => "Work with ITS-decorated documents",
   "AUTHOR" => "Nathan Glenn <garfieldnate\@gmail.com>",
   "BUILD_REQUIRES" => {
     "Module::Build" => "0.3601"
@@ -17,22 +17,38 @@ my %WriteMakefileArgs = (
   "CONFIGURE_REQUIRES" => {
     "Module::Build" => "0.3601"
   },
-  "DISTNAME" => "ITS",
-  "EXE_FILES" => [],
-  "LICENSE" => "restrictive",
-  "NAME" => "ITS",
+  "DISTNAME" => "ITS-WICS",
+  "EXE_FILES" => [
+    "bin/WICS-GUI.pl",
+    "bin/WICS.pl"
+  ],
+  "LICENSE" => "perl",
+  "NAME" => "ITS::WICS",
   "PREREQ_PM" => {
     "Carp" => 0,
     "Data::Dumper" => 0,
     "Encode" => 0,
     "Exporter::Easy" => 0,
+    "Getopt::Lucid" => 0,
     "HTML::HTML5::Parser" => 0,
     "HTML::HTML5::Writer" => 0,
+    "List::MoreUtils" => 0,
     "Log::Any" => 0,
+    "Log::Any::Adapter" => 0,
+    "Log::Any::Adapter::Base" => 0,
+    "Log::Any::Adapter::Util" => 0,
     "Path::Tiny" => 0,
     "Try::Tiny" => 0,
     "URI" => 0,
+    "Wx" => 0,
+    "Wx::App" => 0,
+    "Wx::DND" => 0,
+    "Wx::Event" => 0,
+    "Wx::Perl::Packager" => 0,
+    "Wx::PlVListBox" => 0,
     "XML::LibXML" => 0,
+    "autodie" => 0,
+    "base" => 0,
     "feature" => 0,
     "parent" => 0,
     "strict" => 0,
@@ -56,11 +72,12 @@ my %WriteMakefileArgs = (
     "Test::More" => "0.88",
     "Test::NoWarnings" => 0,
     "Test::Warn" => 0,
+    "Test::XML" => 0,
     "utf8" => 0
   },
-  "VERSION" => "0.08",
+  "VERSION" => "0.01",
   "test" => {
-    "TESTS" => "t/*.t t/ITS-Reduce/*.t t/ITS-XML2HTML/*.t t/ITS/*.t"
+    "TESTS" => "t/*.t t/ITS-Reduce/*.t t/ITS-XLIFF2HTML/*.t t/ITS-XML2HTML/*.t t/ITS-XML2XLIFF/*.t t/ITS/*.t"
   }
 );
 

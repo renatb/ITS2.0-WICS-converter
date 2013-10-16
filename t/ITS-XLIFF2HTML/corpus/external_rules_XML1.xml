@@ -1,0 +1,6 @@
+<its:rules xml:id='ext1container' xmlns:its="http://www.w3.org/2005/11/its"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="2.0"
+    xlink:href="external_rules_xml2.xml">
+      <its:translateRule xml:id="ext1rule" selector="//par" translate="yes"/>
+</its:rules>

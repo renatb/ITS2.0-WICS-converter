@@ -2,7 +2,6 @@
 use strict;
 use warnings;
 use t::TestXML2HTML;
-use Test::More 0.88;
 plan tests => 1*blocks();
 use Test::HTML::Differences;
 

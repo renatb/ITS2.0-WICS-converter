@@ -1,14 +1,16 @@
 #
-# This file is part of ITS
+# This file is part of ITS-WICS
 #
-# This software is copyright (c) 2013 by DFKI.  No
-# license is granted to other entities.
+# This software is copyright (c) 2013 by DFKI.
+#
+# This is free software; you can redistribute it and/or modify it under
+# the same terms as the Perl 5 programming language system itself.
 #
 package ITS;
 use strict;
 use warnings;
 # ABSTRACT: Work with ITS-decorated XML
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.01'; # VERSION
 use ITS::XMLRuleExtractor;
 use ITS::HTMLRuleExtractor;
 use ITS::DOM;
@@ -244,7 +246,7 @@ ITS - Work with ITS-decorated XML
 
 =head1 VERSION
 
-version 0.08
+version 0.01
 
 =head1 SYNOPSIS
 
@@ -386,7 +388,9 @@ Nathan Glenn <garfieldnate@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by DFKI.  No
-license is granted to other entities.
+This software is copyright (c) 2013 by DFKI.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut

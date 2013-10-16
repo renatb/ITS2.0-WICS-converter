@@ -1,18 +1,18 @@
 {
-   "abstract" : "Work with ITS-decorated XML\r",
+   "abstract" : "Work with ITS-decorated documents",
    "author" : [
       "Nathan Glenn <garfieldnate@gmail.com>"
    ],
    "dynamic_config" : 0,
    "generated_by" : "Dist::Zilla version 4.300036, CPAN::Meta::Converter version 2.120921",
    "license" : [
-      "restricted"
+      "perl_5"
    ],
    "meta-spec" : {
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
       "version" : "2"
    },
-   "name" : "ITS",
+   "name" : "ITS-WICS",
    "no_index" : {
       "directory" : [
          "inc t xt examples share eg mylib"
@@ -44,13 +44,26 @@
             "Data::Dumper" : "0",
             "Encode" : "0",
             "Exporter::Easy" : "0",
+            "Getopt::Lucid" : "0",
             "HTML::HTML5::Parser" : "0",
             "HTML::HTML5::Writer" : "0",
+            "List::MoreUtils" : "0",
             "Log::Any" : "0",
+            "Log::Any::Adapter" : "0",
+            "Log::Any::Adapter::Base" : "0",
+            "Log::Any::Adapter::Util" : "0",
             "Path::Tiny" : "0",
             "Try::Tiny" : "0",
             "URI" : "0",
+            "Wx" : "0",
+            "Wx::App" : "0",
+            "Wx::DND" : "0",
+            "Wx::Event" : "0",
+            "Wx::Perl::Packager" : "0",
+            "Wx::PlVListBox" : "0",
             "XML::LibXML" : "0",
+            "autodie" : "0",
+            "base" : "0",
             "feature" : "0",
             "parent" : "0",
             "perl" : "5.014",
@@ -77,6 +90,7 @@
             "Test::More" : "0.88",
             "Test::NoWarnings" : "0",
             "Test::Warn" : "0",
+            "Test::XML" : "0",
             "utf8" : "0"
          }
       }
@@ -84,63 +98,91 @@
    "provides" : {
       "ITS" : {
          "file" : "lib/ITS.pm",
-         "version" : "0.08"
+         "version" : "0.01"
       },
       "ITS::DOM" : {
          "file" : "lib/ITS/DOM.pm",
-         "version" : "0.08"
+         "version" : "0.01"
       },
       "ITS::DOM::Element" : {
          "file" : "lib/ITS/DOM/Element.pm",
-         "version" : "0.08"
+         "version" : "0.01"
       },
       "ITS::DOM::Node" : {
          "file" : "lib/ITS/DOM/Node.pm",
-         "version" : "0.08"
+         "version" : "0.01"
       },
       "ITS::DOM::Value" : {
          "file" : "lib/ITS/DOM/Value.pm",
-         "version" : "0.08"
+         "version" : "0.01"
       },
       "ITS::HTMLRuleExtractor" : {
          "file" : "lib/ITS/HTMLRuleExtractor.pm",
-         "version" : "0.08"
-      },
-      "ITS::Reduce" : {
-         "file" : "lib/ITS/Reduce.pm",
-         "version" : "0.08"
+         "version" : "0.01"
       },
       "ITS::Rule" : {
          "file" : "lib/ITS/Rule.pm",
-         "version" : "0.08"
+         "version" : "0.01"
       },
       "ITS::RuleContainer" : {
          "file" : "lib/ITS/RuleContainer.pm",
-         "version" : "0.08"
+         "version" : "0.01"
       },
-      "ITS::XML2HTML" : {
-         "file" : "lib/ITS/XML2HTML.pm",
-         "version" : "0.08"
+      "ITS::WICS" : {
+         "file" : "lib/ITS/WICS.pm",
+         "version" : "0.01"
       },
-      "ITS::XML2HTML::FutureNode" : {
-         "file" : "lib/ITS/XML2HTML/FutureNode.pm",
-         "version" : "0.08"
+      "ITS::WICS::FutureNode" : {
+         "file" : "lib/ITS/WICS/FutureNode.pm",
+         "version" : "0.01"
       },
-      "ITS::XML2HTML::FutureNodeManager" : {
-         "file" : "lib/ITS/XML2HTML/FutureNodeManager.pm",
-         "version" : "0.08"
+      "ITS::WICS::FutureNodeManager" : {
+         "file" : "lib/ITS/WICS/FutureNodeManager.pm",
+         "version" : "0.01"
       },
-      "ITS::XML2HTML::LogUtils" : {
-         "file" : "lib/ITS/XML2HTML/LogUtils.pm",
-         "version" : "0.08"
+      "ITS::WICS::GuiLogger" : {
+         "file" : "lib/ITS/WICS/GuiLogger.pm",
+         "version" : "0.01"
+      },
+      "ITS::WICS::LogUtils" : {
+         "file" : "lib/ITS/WICS/LogUtils.pm",
+         "version" : "0.01"
+      },
+      "ITS::WICS::Reduce" : {
+         "file" : "lib/ITS/WICS/Reduce.pm",
+         "version" : "0.01"
+      },
+      "ITS::WICS::XLIFF2HTML" : {
+         "file" : "lib/ITS/WICS/XLIFF2HTML.pm",
+         "version" : "0.01"
+      },
+      "ITS::WICS::XML2HTML" : {
+         "file" : "lib/ITS/WICS/XML2HTML.pm",
+         "version" : "0.01"
+      },
+      "ITS::WICS::XML2XLIFF" : {
+         "file" : "lib/ITS/WICS/XML2XLIFF.pm",
+         "version" : "0.01"
+      },
+      "ITS::WICS::XML2XLIFF::CustomSegmenter" : {
+         "file" : "lib/ITS/WICS/XML2XLIFF/CustomSegmenter.pm",
+         "version" : "0.01"
+      },
+      "ITS::WICS::XML2XLIFF::ITSProcessor" : {
+         "file" : "lib/ITS/WICS/XML2XLIFF/ITSProcessor.pm",
+         "version" : "0.01"
+      },
+      "ITS::WICS::XML2XLIFF::ITSSegmenter" : {
+         "file" : "lib/ITS/WICS/XML2XLIFF/ITSSegmenter.pm",
+         "version" : "0.01"
       },
       "ITS::XMLRuleExtractor" : {
          "file" : "lib/ITS/XMLRuleExtractor.pm",
-         "version" : "0.08"
+         "version" : "0.01"
       }
    },
    "release_status" : "stable",
-   "version" : "0.08",
+   "version" : "0.01",
    "x_BuiltWith" : {
       "modules" : {
          "Carp" : "1.26",
@@ -153,15 +195,20 @@
          "File::Slurp" : "9999.19",
          "File::Temp" : "0.2301",
          "FindBin" : "1.51",
+         "Getopt::Lucid" : "1.05",
          "HTML::HTML5::Parser" : "0.301",
          "HTML::HTML5::Writer" : "0.201",
          "HTTP::Message" : "6.03",
          "IO::Compress::Gzip" : "2.062",
          "LWP::UserAgent" : "6.04",
+         "List::MoreUtils" : "0.33",
          "Log::Any" : "0.15",
+         "Log::Any::Adapter" : "0.11",
+         "Log::Any::Adapter::Base" : "0.11",
+         "Log::Any::Adapter::Util" : "0.11",
          "Log::Any::Test" : "0.15",
          "Module::Build" : "0.4005",
-         "Path::Tiny" : "0.031",
+         "Path::Tiny" : "0.043",
          "Pod::Coverage::TrustPod" : "0.100002",
          "Test::Base" : "0.60",
          "Test::Base::Filter" : "NA(undef)",
@@ -173,9 +220,18 @@
          "Test::Pod" : "1.45",
          "Test::Pod::Coverage" : "1.08",
          "Test::Warn" : "0.24",
+         "Test::XML" : "0.08",
          "Try::Tiny" : "0.12",
          "URI" : "1.60",
+         "Wx" : "0.9922",
+         "Wx::App" : "NA(undef)",
+         "Wx::DND" : "0.01",
+         "Wx::Event" : "NA(undef)",
+         "Wx::Perl::Packager" : "0.27",
+         "Wx::PlVListBox" : "NA(undef)",
          "XML::LibXML" : "2.0100",
+         "autodie" : "2.16",
+         "base" : "2.18",
          "feature" : "1.27",
          "parent" : "0.225",
          "perl" : "NA(skipped: perl)",

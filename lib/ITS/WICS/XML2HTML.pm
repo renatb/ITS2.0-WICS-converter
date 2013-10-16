@@ -1,10 +1,12 @@
 #
-# This file is part of ITS
+# This file is part of ITS-WICS
 #
-# This software is copyright (c) 2013 by DFKI.  No
-# license is granted to other entities.
+# This software is copyright (c) 2013 by DFKI.
 #
-package ITS::XML2HTML;
+# This is free software; you can redistribute it and/or modify it under
+# the same terms as the Perl 5 programming language system itself.
+#
+package ITS::WICS::XML2HTML;
 use strict;
 use warnings;
 use Carp;
@@ -14,14 +16,14 @@ use Log::Any qw($log);
 use ITS qw(its_ns);
 use ITS::DOM;
 use ITS::DOM::Element qw(new_element);
-use ITS::XML2HTML::FutureNodeManager qw(new_manager);
-use ITS::XML2HTML::LogUtils qw(node_log_id log_match log_new_rule);
+use ITS::WICS::FutureNodeManager qw(new_manager);
+use ITS::WICS::LogUtils qw(node_log_id log_match log_new_rule);
 
 use feature 'state';
 our $HTML_NS = 'http://www.w3.org/1999/xhtml';
 
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.01'; # VERSION
 
 #default: convert and print input
 print ${ __PACKAGE__->new()->convert($ARGV[0]) } unless caller;
@@ -633,17 +635,17 @@ __END__
 
 =head1 NAME
 
-ITS::XML2HTML - Convert ITS-decorated XML into HTML with equivalent markup
+ITS::WICS::XML2HTML - Convert ITS-decorated XML into HTML with equivalent markup
 
 =head1 VERSION
 
-version 0.08
+version 0.01
 
 =head1 SYNOPSIS
 
     use ITS;
-    use ITS::XML2HTML;
-    my $converter = ITS::XML2HTML->new('Page Title');
+    use ITS::WICS::XML2HTML;
+    my $converter = ITS::WICS::XML2HTML->new('Page Title');
     my $ITS = ITS->new('xml', doc => \'<xml>some text</xml>');
     my $result = $converter->convert($ITS);
     print $$result;
@@ -721,7 +723,9 @@ Nathan Glenn <garfieldnate@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by DFKI.  No
-license is granted to other entities.
+This software is copyright (c) 2013 by DFKI.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
