@@ -1,7 +1,7 @@
-package ITS::XML2HTML::FutureNodeManager;
+package ITS::WICS::FutureNodeManager;
 use strict;
 use warnings;
-use ITS::XML2HTML::FutureNode qw(new_future);
+use ITS::WICS::FutureNode qw(new_future);
 use Exporter::Easy (OK => [qw(new_manager)]);
 use Carp;
 
@@ -10,11 +10,11 @@ use Carp;
 
 =head1 SYNOPSIS
 
-    use ITS::XML2HTML::FutureNodeManager;
+    use ITS::WICS::FutureNodeManager;
     use ITS;
     my $ITS = ITS->new('xml', doc => 'myITSfile.xml');
     my $f_manager =
-        ITS::XML2HTML::FutureNodeManager->new($ITS->get_doc);
+        ITS::WICS::FutureNodeManager->new($ITS->get_doc);
 
     #create one or more FutureNodes through this manager instance
     my ($ns) = $ITS->get_root->get_xpath('namespace::*');
@@ -87,6 +87,7 @@ No changes are made to the owning DOM in this method.
 =cut
 sub create_future {
     my ($self, $node) = @_;
+    # print $node->name . ': ' . $node->unique_key . $node->text . "\n";
 
     # if this node has been saved in a FutureNode before,
     # return the pointer to that
@@ -153,7 +154,8 @@ causing all DOM changes to occur.
 =cut
 sub realize_all {
     my ($self) = @_;
-    for my $future_pointer (values %{ $self->{future_cache} }){
+    for my $future_pointer (
+        sort {$a->name cmp $b->name} values %{ $self->{future_cache} }){
         $future_pointer->new_node;
     }
     return;

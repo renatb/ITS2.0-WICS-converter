@@ -8,7 +8,7 @@ use Log::Any qw($log);
 use ITS qw(its_ns);
 use ITS::DOM;
 use ITS::DOM::Element qw(new_element);
-use ITS::XML2HTML::FutureNodeManager qw(new_manager);
+use ITS::WICS::FutureNodeManager qw(new_manager);
 use ITS::WICS::LogUtils qw(node_log_id log_match log_new_rule);
 
 use feature 'state';

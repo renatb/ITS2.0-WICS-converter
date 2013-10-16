@@ -1,4 +1,4 @@
-package ITS::XLIFF2HTML::FutureNode;
+package ITS::WICS::FutureNode;
 use strict;
 use warnings;
 use Exporter::Easy (OK => [qw(new_future)]);
@@ -12,9 +12,9 @@ use Log::Any qw($log);
 
 =head1 SYNOPSIS
 
-    use ITS::XLIFF2HTML::FutureNodeManager;
+    use ITS::WICS::FutureNodeManager;
     use ITS;
-    my $f_manager = ITS::XLIFF2HTML::FutureNodeManager->new();
+    my $f_manager = ITS::WICS::FutureNodeManager->new();
     my $ITS = ITS->new('xml', doc => 'myITSfile.xml');
     my ($ns) = $ITS->get_root->get_xpath('namespace::*');
     my $f_ns = create_future($ns);
