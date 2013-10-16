@@ -1,4 +1,4 @@
-package ITS::XML2XLIFF::LogUtils;
+package ITS::WICS::LogUtils;
 use strict;
 use warnings;
 use ITS::DOM::Node;
@@ -32,7 +32,7 @@ sub node_log_id {
     }
     my $type = $node->type;
     if($type eq 'ELT'){
-        # take XML ID if possible; otherwise, id
+        # take XML ID if possible; otherwise, HTML id
         my $id;
         if($id = $node->att('xml:id')){
             $id = qq{ xml:id="$id"};

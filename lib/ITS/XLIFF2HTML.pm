@@ -11,7 +11,7 @@ use ITS::Rule;
 use ITS::DOM;
 use ITS::DOM::Element qw(new_element);
 use ITS::XLIFF2HTML::FutureNodeManager qw(new_manager);
-use ITS::XLIFF2HTML::LogUtils qw(
+use ITS::WICS::LogUtils qw(
 	node_log_id
 	log_match
 	log_new_rule

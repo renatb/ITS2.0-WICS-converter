@@ -8,7 +8,7 @@ use Log::Any qw($log);
 use ITS qw(its_ns);
 use ITS::DOM;
 use ITS::DOM::Element qw(new_element);
-use ITS::XML2XLIFF::LogUtils qw(node_log_id log_match);
+use ITS::WICS::LogUtils qw(node_log_id log_match);
 use ITS::XML2XLIFF::ITSProcessor qw(
 	its_requires_inline
 	convert_atts

@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Exporter::Easy (OK => [qw(new_future)]);
 use ITS::DOM::Element qw(new_element);
-use ITS::XML2HTML::LogUtils qw(get_or_set_id);
+use ITS::WICS::LogUtils qw(get_or_set_id);
 use Carp;
 use Log::Any qw($log);
 

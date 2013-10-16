@@ -1,5 +1,5 @@
 #small logging class to forward Log::Any logs to Wx logging
-package WicsGui::Logger;
+package ITS::WICS::GuiLogger;
 use strict;
 use warnings;
 # VERSION

@@ -11,7 +11,7 @@ use ITS::XML2XLIFF::ITSProcessor qw(
 );
 use ITS::DOM::Element qw(new_element);
 use Exporter::Easy (OK => ['extract_convert_its']);
-use ITS::XML2XLIFF::LogUtils qw(node_log_id);
+use ITS::WICS::LogUtils qw(node_log_id);
 
 #TODO: put all of these in one place
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
