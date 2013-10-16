@@ -1,0 +1,13 @@
+This thing only converts a single furnished sample file. There's plenty more work to do:
+
+* Implement all of the other metadata categories
+* handle its:span (non-namespaced ITS atts)
+* Implement inheritance in the ITS module and then also transfer inherited ITS to XLIFF trans-units
+* Use withinTextRule to help delineate trans-units
+* Put elements matched by targetPointerRule in the same trans-unit, using ITS on the source to annotate the trans-unit where applicable
+* Put its:annotatorsRef somewhere useful
+* Extract translatable attributes
+    * how to treat ones marked with withinText=yes?
+
+- use Test::XML::Ordered instead of Test::XML, after proper comparison of other types of nodes are added.
+    - this way we only have to install one XML processor (XML::LibXML)
