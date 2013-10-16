@@ -8,13 +8,9 @@ META.json
 META.yml
 Makefile.PL
 README
-README.md
 bin/WICS-GUI.pl
 bin/WICS.pl
 dist.ini
-docs/Third_Party.mkdn
-docs/WICS_Overview.html
-docs/WICS_Overview.mkdn
 lib/ITS.pm
 lib/ITS/DOM.pm
 lib/ITS/DOM/Element.pm

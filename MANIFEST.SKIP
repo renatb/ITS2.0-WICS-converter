@@ -72,5 +72,6 @@
 \.tar\.gz$
 ^releases/
 ^TODO\.txt
+^docs/
 
 \b_Inline
