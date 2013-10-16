@@ -4,7 +4,6 @@
 use strict;
 use warnings;
 use t::TestXML2XLIFF;
-use Test::More 0.88;
 use Test::NoWarnings;
 plan tests => 1 + blocks();
 use Test::XML;
