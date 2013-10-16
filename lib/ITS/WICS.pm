@@ -24,12 +24,12 @@ use Exporter::Easy (
 =head1 DESCRIPTION
 
 WICS stands for Work In Context System. As a project, it is meant to make
-the Internationalization Tag Set (ITS) information more accessible to end-users
-via extraction and visualization.
+Internationalization Tag Set (ITS) metadata contained in a document more
+accessible to end-users via extraction and visualization.
 
-This module wraps up the functionality of several others into one package.
-Two standalone applications, a GUI and a CLI, are also provided in this
-distribution (see WICS-GUI.pl and WICS.pl).
+This module provides access to the four WICS conversion tasks
+(see the L</EXPORTS> section). Two standalone applications, a GUI and a CLI,
+are also provided in this distribution (see WICS-GUI.pl and WICS.pl).
 
 =head1 EXPORTS
 
@@ -77,7 +77,8 @@ sub xliff2html {
 
 Extracts translation units and ITS information from input XML data and
 creates an XLIFF file. This function uses C<sec> elements to create
-C<group>s, and C<para> elements to make C<trans-unit>s.
+C<group>s, and C<para> elements to make C<trans-unit>s. Keep in mind that
+this functionality is still highly immature.
 
 The first argument is either a string containing an XML file name,
 a string pointer containing actual XML data, or a filehandle for a
@@ -115,6 +116,21 @@ sub reduceHtml {
 =head1 SEE ALSO
 
 This module relies on the L<ITS> module for processing ITS markup and rules.
+
+The modules for the various ITS data conversion are included in this
+distribution:
+
+=over
+
+=item L<ITS::WICS::XML2HTML>
+
+=item L<ITS::WICS::XLIFF2HTML>
+
+=item L<ITS::WICS::XML2XLIFF>
+
+=item L<ITS::WICS::Reduce>
+
+=back
 
 The ITS 2.0 specification for XML and HTML5: L<http://www.w3.org/TR/its20/>.
 
