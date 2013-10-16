@@ -1,0 +1,89 @@
+# NAME
+
+ITS::WICS - Work with ITS-decorated documents
+
+# VERSION
+
+version 0.01
+
+# SYNOPSIS
+
+    use ITS::WICS qw(xml2html);
+    my $html = xml2html('path/to/file.xml');
+    print $$html;
+
+# DESCRIPTION
+
+WICS stands for Work In Context System. As a project, it is meant to make
+the Internationalization Tag Set (ITS) information more accessible to end-users
+via extraction and visualization.
+
+This module wraps up the functionality of several others into one package.
+Two standalone applications, a GUI and a CLI, are also provided in this
+distribution (see WICS-GUI.pl and WICS.pl).
+
+# EXPORTS
+
+The following subroutines may be exported:
+
+## `xml2html`
+
+Converts input XML data into HTML5 while keeping the ITS information
+intact. See `ITS::XML2HTML` for more details.
+
+Argument is either a string containing an XML file name, a string pointer
+containing actual XML data, or a filehandle for a file containing the data.
+
+Return value is a pointer to a string containing the output HTML5 text.
+
+## `xliff2html`
+
+Converts input XLIFF data into HTML5 while keeping the ITS information
+for `source` and `target` elements intact.
+
+The first argument is either a string containing an XLIFF file name,
+a string pointer containing actual XLIFF data, or a filehandle for a
+file containing the data. The second argument is a boolean indicating whether
+informative labels should be added (for empty or duplicate targets).
+
+Return value is a pointer to a string containing the output HTML5 text.
+
+## `xml2xliff`
+
+Extracts translation units and ITS information from input XML data and
+creates an XLIFF file.
+
+The first argument is either a string containing an XML file name,
+a string pointer containing actual XML data, or a filehandle for a
+file containing the data.
+
+Return value is a pointer to a string containing the output XLIFF text.
+
+## `reduceHtml`
+
+Consolidates ITS-decorated HTML5 by placing all external rules
+in the head element.
+
+The input and return values are the same as for `xml2HTML`, except that
+the input should refer to HTML5 data instead of XML.
+
+# SEE ALSO
+
+This module relies on the [ITS](http://search.cpan.org/perldoc?ITS) module for processing ITS markup and rules.
+
+The ITS 2.0 specification for XML and HTML5: [http://www.w3.org/TR/its20/](http://www.w3.org/TR/its20/).
+
+The spec for representing ITS in XLIFF:
+[http://www.w3.org/International/its/wiki/XLIFF\_1.2\_Mapping](http://www.w3.org/International/its/wiki/XLIFF\_1.2\_Mapping).
+
+ITS interest group mail archives:
+[http://lists.w3.org/Archives/Public/public-i18n-its-ig/](http://lists.w3.org/Archives/Public/public-i18n-its-ig/)
+
+# AUTHOR
+
+Nathan Glenn <garfieldnate@gmail.com>
+
+# COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by DFKI.  No
+license is granted to other entities.

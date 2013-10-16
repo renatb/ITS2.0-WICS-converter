@@ -1,0 +1,8 @@
+
+Most obviously, tests would be really nice.
+
+
+Future TODO:
+    - rewrite GUI in XRC for better organization
+    - make the applications more localizable (po/mo files, share/locale directory, etc.)
+    - make 'WICS-GUI.pl' and 'WICS.pl' into links in WICS.pm (don't know how to link them properly)
