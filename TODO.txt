@@ -15,7 +15,7 @@
     * Create a way to specify elements that are inline (INI file? constructor args?)
         - currently the ITS::DOM::Element::is_inline method just checks for a newline before and after.
 
-###ITS-XML2HTML and ITS-XLIFF2HTML
+###ITS-WICS-XML2HTML and ITS-WICS-XLIFF2HTML
     * do some HTML post-processing to fine-tune tests:
         - Tests for local conversion shouldn't have to also check that default global rules to prevent inheritance have been added
         - should be able to check XML equality of script elements instead of text equality
@@ -23,7 +23,9 @@
         * Maybe HTML::HTML5::Parser + Test::XML::Ordered (after some bugs are resolved there)?
     * change the way xpaths are generated for comments, text, etc.; XML::LibXML sometimes gives a path with asterisks, sometimes gives one with element names. This makes testing fragile.
 
-###ITS-XML2XLIFF
+###ITS-WICS-XLIFF2HTML
+
+###ITS-WICS-XML2XLIFF
 This thing only converts a single sample file provided for the WICS project. There's plenty more work to do:
 
     * Implement conversion for all of the other metadata categories
@@ -39,7 +41,9 @@ This thing only converts a single sample file provided for the WICS project. The
         - See RT #89262, 89263, 89264
         - this way we only have to install one XML processor (XML::LibXML)
 
-###ITS-Reduce
+The test which validates the conversion of the files in the ITS 2.0 test suite still has several failures in it, due to the state of flux of the XLIFF ITS mapping. See [here](https://github.com/w3c/its-2.0-testsuite/issues/2) for more details.
+
+###ITS-WICS-Reduce
 * Maybe someday support reducing XML instead of only HTML.
 
 ###ITS-WICS
