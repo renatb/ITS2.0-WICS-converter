@@ -172,11 +172,10 @@ The code is usable as it exists, but it doesn't have some essential distribution
 
 The ITS-WICS distribution comes with two scripts that can be converted into standalone executables. These are `bin/WICS-GUI.pl` and `bin/WICS.pl`. Each file contains specific directions on creating the executables, which is also available via `perldoc WICS(-GUI).pl` if you installed the distribution (see [Viewing the Documentation](#viewing)). For convenience, however, we include the directions again below.
 
-First, a couple things to keep in mind. Using 64-bit Perl will generate a 64-bit binary, which is not usable on 32-bit machines. If you normally use 64-bit Perl, you may want to [download](http://strawberryperl.com/releases.html) the 32-bit portable version of Strawberry Perl, which requires no installation but will allow your to create a 32-bit binary. Also, the resulting executables have a certain startup cost. The startup time is longest the first time you use them, as many files are unpacked and stored for later use. After that the startup time is much shorter.
+First, a couple things to keep in mind. Using 64-bit Perl will generate a 64-bit binary, which is not usable on 32-bit machines. If you normally use 64-bit Perl, you may want to [download](http://strawberryperl.com/releases.html) the 32-bit portable version of Strawberry Perl, which requires no installation but will allow you to create a 32-bit binary. Also, the resulting executables have a certain startup cost. The startup time is longest the first time you use them, as many files are unpacked and stored for later use. After that the startup time is much shorter.
 
 <a id="build-gui"></a>
 #####WICS GUI
-Before getting started, keep in mind that if you build an executable on
 To create a standalone executable of `WICS-GUI.pl`, you will need to install the following modules (besides the dependencies required to run it in the first place):
 
 - `PAR::Packer`- This provides the `pp` command, which creates standalone executables out of Perl scripts, packaging the Perl interpreter and most required scripts and native libraries automatically.
@@ -199,7 +198,7 @@ Here's a sample command to make the standalone executable. We use `-l` to make `
     -l C:/strawberry/c/bin/liblzma-5__.dll -I ITS-WICS/lib
     ITS-WICS/bin/WICS-GUI.pl
 
-Ignore any warnings emitted by Module::ScanDeps (this is an unknown issue that does not affect the functionality of the executables).
+Ignore any warnings emitted by Module::ScanDeps (This is an unknown issue that does not affect the functionality of the executables.).
 
 <a id="build-cli"></a>
 #####WICS CLI
