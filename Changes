@@ -1,6 +1,6 @@
 Revision history for ITS-WICS
 
-0.03      2013-10-17 13:38:20 America/Los_Angeles
+0.03      2013-10-17 13:43:53 America/Los_Angeles
     Inline elements are now properly rendered as escaped text inside <ph> elements
 0.02      2013-10-16 19:06:44 America/Los_Angeles
     Removed the Wx::* prerequisites that aren't their own modules
