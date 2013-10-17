@@ -159,20 +159,27 @@ sub _extract_convert_tu {
     $source->set_namespace($XLIFF_NS);
     $source->paste($tu);
 
+    #segmentation scheme determines withinText, so these should be removed
+    $source->remove_att('withinText', its_ns());
+
     # attributes get added while localizing rules; so save the ones
     # that need to be processed by convert_atts first
     my @atts = $source->get_xpath('@*');
-    localize_rules(
-        $source, $tu, $state->{match_index}->{$original->unique_key});
-    #segmentation scheme determines withinText, so these should be removed
-    $source->remove_att('withinText', its_ns());
-    convert_atts($source, \@atts, $tu);
+    if(exists $state->{match_index}->{$original->unique_key}){
+        localize_rules(
+            $source, $tu, $state->{match_index}->{$original->unique_key});
+    }
+
+    if(@atts){
+        convert_atts($source, \@atts, $tu);
+    }
 
     # process children as inline elements
     for my $child($original->children){
-        $child->paste($source);
         if($child->type eq 'ELT'){
-            _process_inline($state, $child, $tu);
+            _process_inline($state, $child, $tu)->paste($source);
+        }else{
+            $child->paste($source);
         }
     }
 
@@ -197,21 +204,27 @@ sub _extract_convert_tu {
     return;
 }
 
-#convert a child into an inline XLIFF element
+#convert a child into an inline XLIFF element;
+#return the element to be pasted in the XLIFF document
 sub _process_inline {
     my ($state, $el, $tu) = @_;
 
     $el->set_name('mrk');
     $el->set_namespace($XLIFF_NS);
 
+    #segmentation scheme determines withinText, so these should be removed
+    $el->remove_att('withinText', its_ns());
+
     # attributes get added while localizing rules; so save the ones
     # that need to be processed by convert_atts first
     my @atts = $el->get_xpath('@*');
-    localize_rules(
-        $el, $tu, $state->{match_index}->{$el->unique_key});
-    #segmentation scheme determines withinText, so these should be removed
-    $el->remove_att('withinText', its_ns());
-    convert_atts($el, \@atts);
+    if(exists $state->{match_index}->{$el->unique_key}){
+        localize_rules(
+            $el, $tu, $state->{match_index}->{$el->unique_key});
+    }
+    if(@atts){
+        convert_atts($el, \@atts);
+    }
 
     #default value for required 'mtype' attribute is 'x-its',
     #indicating some kind of ITS usage
@@ -225,7 +238,7 @@ sub _process_inline {
             _process_inline($state, $child, $tu);
         }
     }
-    return;
+    return $el;
 }
 
 1;
