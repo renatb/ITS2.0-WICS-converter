@@ -59,7 +59,7 @@ conversion still happens when using a custom segmentation scheme.
                 mtype="x-its"
                 comment="note2"
                 itsxlf:locNoteType="description">
-              starf
+              <ph id="1">&lt;foo&gt;starf&lt;/foo&gt;</ph>
             </mrk>
           </source>
           <target state="new">stuff
@@ -67,7 +67,7 @@ conversion still happens when using a custom segmentation scheme.
                 mtype="x-its"
                 comment="note2"
                 itsxlf:locNoteType="description">
-              starf
+              <ph id="1">&lt;foo&gt;starf&lt;/foo&gt;</ph>
             </mrk>
           </target>
           <note priority="1">note1</note>
@@ -78,7 +78,7 @@ conversion still happens when using a custom segmentation scheme.
                 mtype="x-its"
                 comment="note2"
                 itsxlf:locNoteType="alert">
-              starf
+              <ph id="1">&lt;foo&gt;starf&lt;/foo&gt;</ph>
             </mrk>
           </source>
           <target state="new">stuff
@@ -86,7 +86,7 @@ conversion still happens when using a custom segmentation scheme.
                 mtype="x-its"
                 comment="note2"
                 itsxlf:locNoteType="alert">
-              starf
+              <ph id="1">&lt;foo&gt;starf&lt;/foo&gt;</ph>
             </mrk>
           </target>
           <note priority="2">note1</note>
@@ -100,7 +100,7 @@ conversion still happens when using a custom segmentation scheme.
 withinText values are determined by the segmentation scheme, so delete these.
 --- input
 <sec xmlns:its="http://www.w3.org/2005/11/its">
-  <para its:withinText="yes">stuff<wtv its:withinText="yes">starf</wtv></para>
+  <para its:withinText="yes">stuff<foo its:withinText="yes">starf</foo></para>
 </sec>
 --- output
 <?xml version="1.0" encoding="utf-8"?>
@@ -113,8 +113,8 @@ withinText values are determined by the segmentation scheme, so delete these.
     <body>
       <group id="1">
         <trans-unit id="1">
-          <source>stuff<mrk mtype="x-its">starf</mrk></source>
-          <target state="new">stuff<mrk mtype="x-its">starf</mrk></target>
+          <source>stuff<ph id="1">&lt;foo&gt;starf&lt;/foo&gt;</ph></source>
+          <target state="new">stuff<ph id="1">&lt;foo&gt;starf&lt;/foo&gt;</ph></target>
         </trans-unit>
       </group>
     </body>

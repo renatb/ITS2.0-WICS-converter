@@ -151,7 +151,11 @@ sub _get_new_source {
     my @atts = $new_el->get_xpath('@*');
     if(exists $state->{match_index}->{$el->unique_key}){
         localize_rules(
-            $new_el, $tu, $state->{match_index}->{$el->unique_key});
+            $new_el,
+            $tu,
+            $state->{match_index}->{$el->unique_key},
+            \@atts
+        );
     }
     if(@atts){
         convert_atts($new_el, \@atts, $tu);
@@ -179,7 +183,11 @@ sub _get_new_mrk {
     my @atts = $mrk->get_xpath('@*');
     if(exists $state->{match_index}->{$el->unique_key}){
         localize_rules(
-            $mrk, $parent, $state->{match_index}->{$el->unique_key});
+            $mrk,
+            $parent,
+            $state->{match_index}->{$el->unique_key},
+            \@atts
+        );
     }
     if(@atts){
         convert_atts($mrk, \@atts);

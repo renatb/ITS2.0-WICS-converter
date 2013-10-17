@@ -46,12 +46,12 @@ conversion still happens when using a custom segmentation scheme.
     <body>
       <group id="1">
         <trans-unit id="1" resname="id1">
-        <source>stuff
-          <mrk mtype="x-its">starf</mrk>
-        </source>
-        <target state="new">stuff
-          <mrk mtype="x-its">starf</mrk>
-        </target>
+          <source>stuff
+            <ph id="1">&lt;foo&gt;starf&lt;/foo&gt;</ph>
+          </source>
+          <target state="new">stuff
+            <ph id="1">&lt;foo&gt;starf&lt;/foo&gt;</ph>
+          </target>
         </trans-unit>
       </group>
     </body>
@@ -78,14 +78,11 @@ This requires wrapping children of structural elements in <mrk>
   <sec>
     <para ref="stuff.com">
       stuff
-      <foo info="nonce">
-        starf</foo>
+      <foo info="nonce">starf</foo>
       </para>
     <para>
       stuff
-      <foo>
-        starf
-      </foo>
+      <foo>starf</foo>
     </para>
   </sec>
 </xml>
@@ -109,7 +106,7 @@ This requires wrapping children of structural elements in <mrk>
             <mrk
                 mtype="term"
                 itsxlf:termInfo="nonce"
-                itsxlf:termConfidence=".5">starf</mrk>
+                itsxlf:termConfidence=".5"><ph id="1">&lt;foo&gt;starf&lt;/foo&gt;</ph></mrk>
             </mrk>
           </source>
           <target state="new">
@@ -121,7 +118,7 @@ This requires wrapping children of structural elements in <mrk>
             <mrk
                 mtype="term"
                 itsxlf:termInfo="nonce"
-                itsxlf:termConfidence=".5">starf</mrk>
+                itsxlf:termConfidence=".5"><ph id="1">&lt;foo&gt;starf&lt;/foo&gt;</ph></mrk>
             </mrk>
           </target>
         </trans-unit>
@@ -129,13 +126,13 @@ This requires wrapping children of structural elements in <mrk>
           <source>
             <mrk mtype="x-its-term-no">
             stuff
-            <mrk mtype="x-its-term-no">starf</mrk>
+            <mrk mtype="x-its-term-no"><ph id="1">&lt;foo&gt;starf&lt;/foo&gt;</ph></mrk>
             </mrk>
           </source>
           <target state="new">
             <mrk mtype="x-its-term-no">
             stuff
-            <mrk mtype="x-its-term-no">starf</mrk>
+            <mrk mtype="x-its-term-no"><ph id="1">&lt;foo&gt;starf&lt;/foo&gt;</ph></mrk>
             </mrk>
           </target>
         </trans-unit>
