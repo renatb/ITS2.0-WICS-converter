@@ -6,10 +6,10 @@
 # This is free software; you can redistribute it and/or modify it under
 # the same terms as the Perl 5 programming language system itself.
 #
-#small logging class to forward Log::Any logs to Wx logging
 package ITS::WICS::GuiLogger;
 use strict;
 use warnings;
+# ABSTRACT: forward Log::Any logs to Wx loggers
 our $VERSION = '0.02'; # VERSION
 use base qw(Log::Any::Adapter::Base);
 use Log::Any::Adapter::Util qw(make_method);
@@ -35,7 +35,7 @@ __END__
 
 =head1 NAME
 
-ITS::WICS::GuiLogger
+ITS::WICS::GuiLogger - forward Log::Any logs to Wx loggers
 
 =head1 VERSION
 
