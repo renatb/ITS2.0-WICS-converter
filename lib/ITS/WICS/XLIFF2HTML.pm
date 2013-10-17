@@ -931,8 +931,8 @@ Title to give output HTML document (default is "WICS").
 
 =head2 C<convert>
 
-Converts the input XML document into an HTML document equivalent, and
-displayable, HTML.
+Converts the input XML document into an HTML document designed for displaying
+the C<source> and C<target> element contents.
 
 The first argument is an ITS object containing an XML document.
 

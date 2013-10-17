@@ -211,7 +211,7 @@ version 0.01
 This class saves nodes during DOM transformation so that they will
 still be in the document later.
 If you create a FutureNode for an attribute node, for example, it
-will remember it's spot and create an element representing that
+will remember its spot and create an element representing that
 attribute after you call the C<new_node> method. This means
 that you can delete the original attribute without losing information.
 The document is not changed at all until you call C<new_node>,

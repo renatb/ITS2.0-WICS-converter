@@ -372,8 +372,9 @@ Sets the node's name to the given string. Is namespace aware.
 
 =head2 C<remove>
 
-Unbinds this node from it's siblings and parents (but not
-the document, though it invisible).
+Unbinds this node from its siblings and parents (but not
+the document, though it becomes hidden and will be lost unless
+pasted somewhere in the document).
 
 =head2 C<namespace_URI>
 
