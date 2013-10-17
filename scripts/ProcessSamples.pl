@@ -16,7 +16,6 @@ use File::Find;
 use Path::Tiny;
 use File::Spec;
 use FindBin qw($Bin);
-use File::Path qw(remove_tree);
 use Log::Any::Test;
 use Log::Any qw($log);
 use ITS::WICS qw(
@@ -36,7 +35,7 @@ if(!path($input_dir)->is_dir){
 my $output_dir = path($samples_dir, 'gen_output');
 # make sure the directories are clean every time
 if($output_dir->is_dir){
-    remove_tree $output_dir;
+    $output_dir->remove_tree;
 }
 
 # the current input tree is like so:
