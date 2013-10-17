@@ -12,8 +12,7 @@ filters {
 
 for my $block(blocks()){
     #use either of input or input_special; just different filters
-    my $xliff = $block->input
-      || $block->input_special;
+    my $xliff = $block->input || $block->input_special;
     # print $xliff;
     is_xml($xliff, $block->output, $block->name);
 }
@@ -158,12 +157,12 @@ nothin' here
   </file>
 </xliff>
 
-=== inline elements
-Everything inside the TUs is inlined
+=== inline element
+Every child element inside the TUs is escaped and inlined
 --- input
 <sec>
   stuff
-  <para>starf<foo>guff<bar>buff</bar>duff</foo>poof</para>
+  <para>starf<foo>guff</foo>poof</para>
   stoof
 </sec>
 --- output
@@ -178,22 +177,63 @@ Everything inside the TUs is inlined
         <trans-unit id="1">
           <source>
             starf
-            <mrk mtype="x-its">
-              guff
-              <mrk mtype="x-its">buff</mrk>
-              duff
-            </mrk>
+            <ph id="1">
+              &lt;foo&gt;guff&lt;/foo&gt;
+            </ph>
             poof
           </source>
           <target state="new">
             starf
-            <mrk mtype="x-its">
-              guff
-              <mrk mtype="x-its">buff</mrk>
-              duff
-            </mrk>
+            <ph id="1">
+              &lt;foo&gt;guff&lt;/foo&gt;
+            </ph>
             poof
           </target>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+
+=== multiple inline elements
+ph element id's should be incremented
+--- input
+<sec>
+  stuff
+  <para>starf<foo>guff</foo><foo>duff</foo>poof</para>
+  stoof
+</sec>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:itsxlf="http://www.w3.org/ns/its-xliff/" xmlns:its="http://www.w3.org/2005/11/its" its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <group id="1">
+        <trans-unit id="1">
+          <source>starf<ph id="1">&lt;foo&gt;guff&lt;/foo&gt;</ph><ph id="2">&lt;foo&gt;duff&lt;/foo&gt;</ph>poof</source>
+          <target state="new">starf<ph id="1">&lt;foo&gt;guff&lt;/foo&gt;</ph><ph id="2">&lt;foo&gt;duff&lt;/foo&gt;</ph>poof</target>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
+
+=== Children of ph are escaped and printed
+--- input
+<sec>
+  stuff
+  <para>starf<foo>guff<bar>duff</bar></foo></para>
+  stoof
+</sec>
+--- output
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:itsxlf="http://www.w3.org/ns/its-xliff/" xmlns:its="http://www.w3.org/2005/11/its" its:version="2.0">
+  <file original="STRING" source-language="en" datatype="plaintext">
+    <body>
+      <group id="1">
+        <trans-unit id="1">
+          <source>starf<ph id="1">&lt;foo&gt;guff&lt;bar&gt;duff&lt;/bar&gt;&lt;/foo&gt;</ph></source>
+          <target state="new">starf<ph id="1">&lt;foo&gt;guff&lt;bar&gt;duff&lt;/bar&gt;&lt;/foo&gt;</ph></target>
         </trans-unit>
       </group>
     </body>
@@ -218,8 +258,8 @@ Everything goes in one group
     <body>
       <group id="1">
         <trans-unit id="1">
-          <source>starf<mrk mtype="x-its">guff</mrk>poof</source>
-          <target state="new">starf<mrk mtype="x-its">guff</mrk>poof</target>
+          <source>starf<ph id="1">&lt;foo&gt;guff&lt;/foo&gt;</ph>poof</source>
+          <target state="new">starf<ph id="1">&lt;foo&gt;guff&lt;/foo&gt;</ph>poof</target>
         </trans-unit>
       </group>
     </body>

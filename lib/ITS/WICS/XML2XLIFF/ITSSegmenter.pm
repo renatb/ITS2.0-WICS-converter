@@ -24,7 +24,7 @@ use ITS::WICS::LogUtils qw(node_log_id);
 #TODO: put all of these in one place
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 # ABSTRACT: Extract translation-units using ITS segmentation (internal use only)
 
 
@@ -151,9 +151,17 @@ sub _get_new_source {
     # attributes get added while localizing rules; so save the ones
     # that need to be processed by convert_atts first
     my @atts = $new_el->get_xpath('@*');
-    localize_rules(
-        $new_el, $tu, $state->{match_index}->{$el->unique_key});
-    convert_atts($new_el, \@atts, $tu);
+    if(exists $state->{match_index}->{$el->unique_key}){
+        localize_rules(
+            $new_el,
+            $tu,
+            $state->{match_index}->{$el->unique_key},
+            \@atts
+        );
+    }
+    if(@atts){
+        convert_atts($new_el, \@atts, $tu);
+    }
 
     return $new_el;
 }
@@ -175,9 +183,17 @@ sub _get_new_mrk {
     # attributes get added while localizing rules; so save the ones
     # that need to be processed by convert_atts first
     my @atts = $mrk->get_xpath('@*');
-    localize_rules(
-        $mrk, $parent, $state->{match_index}->{$el->unique_key});
-    convert_atts($mrk, \@atts);
+    if(exists $state->{match_index}->{$el->unique_key}){
+        localize_rules(
+            $mrk,
+            $parent,
+            $state->{match_index}->{$el->unique_key},
+            \@atts
+        );
+    }
+    if(@atts){
+        convert_atts($mrk, \@atts);
+    }
 
     #default value for required 'mtype' attribute is 'x-its',
     #indicating some kind of ITS usage
@@ -221,7 +237,7 @@ ITS::WICS::XML2XLIFF::ITSSegmenter - Extract translation-units using ITS segment
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head2 C<extract_convert_its>
 

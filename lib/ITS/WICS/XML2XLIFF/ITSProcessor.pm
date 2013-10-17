@@ -10,7 +10,7 @@ package ITS::WICS::XML2XLIFF::ITSProcessor;
 use strict;
 use warnings;
 
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 # ABSTRACT: Process and convert XML and XLIFF ITS (internal use only).
 
 use ITS qw(its_ns);
@@ -21,6 +21,7 @@ use Exporter::Easy (
         convert_atts
         localize_rules
         transfer_inline_its
+        has_localizable_inline
     )]);
 
 #TODO: put all of these in one place
@@ -66,71 +67,93 @@ sub transfer_inline_its {
     return;
 }
 
+sub has_localizable_inline {
+    my ($atts, $index) = @_;
+    if($index){
+        for my $key (keys %$index){
+            #everything except idValue generates local atts on <mrk>
+            return 1 if ($key ne 'idValue');
+        }
+    }
+    for my $att(@$atts){
+        return 1 if($att->name ne 'xml:id');
+    }
+    return 0;
+}
+
 sub convert_atts {
     my ($el, $atts, $tu) = @_;
+
+    my %atts;
+    for (@$atts){
+        $atts{'{' . $_->namespace_URI . '}' . $_->local_name} = $_
+    }
 
     #TODO: there might be elements other than source and mrk someday
     my $inline = $el->local_name eq 'mrk' ? 1 : 0;
 
     for my $att (@$atts){
-        # if not already removed while processing other atts
-        if($att->parent){
-            _process_att($el, $att, $tu, $inline);
-        }
-    }
-    return;
-}
+        # ignore if already removed while processing other atts
+        next if !$att->parent;
 
-# process given attribute on given element;
-# return the name of the element used to wrap the children, if any.
-# $tu is containing trans-unit (not needed if $el is inline)
-sub _process_att {
-    my ($el, $att, $tu, $inline) = @_;
-    my $att_ns = $att->namespace_URI || '';
-    my $att_name = $att->local_name;
-    if($att_ns eq its_ns()){
-        if($att_name eq 'version'){
-            $att->remove;
-        }
-        # If there's a locNoteType but no locNote, then it
-        # doesn't get processed (no reason to).
-        if($att_name eq 'locNote'){
-            my $type = $el->att('locNoteType', its_ns()) || 'description';
-            _process_locNote($el, $att->value, $type, $tu, $inline);
-            $el->remove_att('locNote', its_ns());
-            $el->remove_att('locNoteType', its_ns());
-        }elsif($att_name eq 'translate'){
-            _process_translate($el, $att->value, $tu, $inline);
-            $att->remove;
-        # If there's a term* but no term, then it
-        # doesn't get processed (no reason to).
-        }elsif($att_name eq 'term'){
-            _process_term(
-                $el,
-                term => $att->value,
-                termInfoRef => $el->att('termInfoRef', its_ns()),
-                termConfidence => $el->att('termConfidence', its_ns()),
-            );
-            $att->remove;
-            $el->remove_att('termInfoRef', its_ns());
-            $el->remove_att('termConfidence', its_ns());
-        }
+        my $att_ns = $att->namespace_URI || '';
+        my $att_name = $att->local_name;
+        if($att_ns eq its_ns()){
+            if($att_name eq 'version'){
+                $att->remove;
+            }
+            # If there's a locNoteType but no locNote, then it
+            # doesn't get processed (no reason to).
+            if($att_name eq 'locNote'){
+                my $type = 'description';
+                if(my $typeNode = $atts{'{'.its_ns().'}'.'locNoteType'}){
+                    $type = $typeNode->value;
+                    $typeNode->remove;
+                }
+                _process_locNote($el, $att->value, $type, $tu, $inline);
+                $att->remove;
+            }elsif($att_name eq 'translate'){
+                _process_translate($el, $att->value, $tu, $inline);
+                $att->remove;
+            # If there's a term* but no term, then it
+            # doesn't get processed (no reason to).
+            }elsif($att_name eq 'term'){
+                my ($infoRef, $conf) = (undef, undef);
+                # default is undef
+                if(my $infoRefNode = $atts{'{'.its_ns().'}'.'termInfoRef'}){
+                    $infoRef = $infoRefNode->value;
+                    $infoRefNode->remove;
+                }
+                if(my $confNode = $atts{'{'.its_ns().'}'.'termConfidence'}){
+                    $conf = $confNode->value;
+                    $confNode->remove;
+                }
+                _process_term(
+                    $el,
+                    term => $att->value,
+                    termInfoRef => $infoRef,
+                    termConfidence => $conf,
+                );
+                $att->remove;
+            }
         #default for ITS atts: leave them there
-    }elsif($att->name eq 'xml:id'){
-        _process_idValue($att->value, $tu, $inline);
-        $att->remove;
-    }else{
-        $att->remove;
+        }elsif($att->name eq 'xml:id'){
+            _process_idValue($att->value, $tu, $inline);
+            $att->remove;
+        # just remove any other attributes for now
+        }else{
+            $att->remove;
+        }
     }
     return;
 }
-
 
 sub localize_rules {
-    my ($el, $tu, $its_info) = @_;
+    my ($el, $tu, $its_info, $atts) = @_;
 
-    if(!$its_info){
-        return;
+    my %atts;
+    for (@$atts){
+        $atts{'{' . $_->namespace_URI . '}' . $_->local_name} = $_
     }
 
     #TODO: there might be elements other than source and mrk someday
@@ -140,17 +163,21 @@ sub localize_rules {
     #rule and 2) there is no local selection. TODO: clean this up?
     while (my ($name, $value) = each %$its_info){
         if($name eq 'locNote' &&
-                !defined $el->att('locNote', its_ns())){
+                # its:locNote
+                !exists $atts{'{'.its_ns().'}'.'locNote'}){
             my $type = $its_info->{locNoteType} || 'description';
             _process_locNote($el, $value, $type, $tu, $inline)
         }elsif($name eq 'translate' &&
-                !defined $el->att('translate', its_ns())){
+                # its:translate
+                !exists $atts{'{'.its_ns().'}'.'translate'}){
             _process_translate($el, $value, $tu, $inline);
         }elsif($name eq 'idValue' &&
-                !defined $el->att('xml:id')){
+                # xml:id
+                !exists $atts{'{http://www.w3.org/XML/1998/namespace}id'}){
             _process_idValue($value, $tu, $inline);
         }elsif($name eq 'term' &&
-                !defined $el->att('term', its_ns())){
+                # its:term
+                !exists $atts{'{'.its_ns().'}'.'term'}){
             my %termHash;
             my @term_atts = qw(
                 term
@@ -233,7 +260,7 @@ ITS::WICS::XML2XLIFF::ITSProcessor - Process and convert XML and XLIFF ITS (inte
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head2 C<its_requires_inline>
 Return true if converting the ITS info on the given element
@@ -252,18 +279,29 @@ element (first argument) to the another (second argument).
 Arguments are the element to move the markup from and the element to move
 the markup to.
 
+=head2 C<has_localizable>
+
+Arguments: an array ref containing attribute nodes, and the match index
+containing the global ITS info for an element.
+
+Returns true if there is any ITS information which must be placed as an
+attribute on the element which it applies to, if the element is inline.
+
 =head2 C<convert_atts>
 
 Convert all XML ITS attributes into XLIFF ITS for the given element.
-The arguments are: first the element being processed; second an
-array ref containing the attribute nodes to be converted; and third
+The arguments are: first the local element where any new attributes should
+be placed; second an array
+ref containing the attribute nodes to be converted; and third
 the C<trans-unit> element currently being created. This is not necessary
 if the element in question is inline.
 
 =head2 C<localize_rules>
-Arguments are: first the element to have its ITS metadata localized; second
-the translation unit containing the element; and finally the match index
-containing the global ITS info for the element.
+Arguments are: first an element to have ITS metadata applied locally; second
+the translation unit containing the element; third the match index
+containing the global ITS info for the element; and fourth an array ref
+containing the local attribute nodes assumed to exist on the element being
+processed.
 
 This function converts ITS info contained in global rules matching the
 element into equivalent local markup on either the element itself or the

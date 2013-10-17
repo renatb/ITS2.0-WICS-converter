@@ -33,7 +33,7 @@ my $XLF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 my @inline_els = qw(g x bx ex bpt ept sub it ph mrk);
 
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 
 
 #default: convert and print input file
@@ -886,7 +886,15 @@ ITS::WICS::XLIFF2HTML - Convert ITS-decorated XML into HTML with equivalent mark
 
 =head1 VERSION
 
-version 0.02
+version 0.03
+
+=head1 SYNOPSIS
+
+    use ITS;
+    use ITS::WICS::XLIFF2HTML;
+    my $converter = ITS::WICS::XLIFF2HTML->new('Page Title');
+    my $ITS = ITS->new('xml', doc => \'<xml>some text</xml>');
+    my $result = $converter->convert($ITS);
 
 =head1 DESCRIPTION
 
@@ -907,13 +915,6 @@ and HTML ITS, necessitates the creation of a few extra rules.
 
 Sometimes it is impossible to completely faithfully transfer the ITS
 information. See the L</CAVEATS> section for more information.
-
-=head1 SYNOPSIS
-    use ITS;
-    use ITS::WICS::XLIFF2HTML;
-    my $converter = ITS::WICS::XLIFF2HTML->new('Page Title');
-    my $ITS = ITS->new('xml', doc => \'<xml>some text</xml>');
-    my $result = $converter->convert($ITS);
 
 =head1 METHODS
 

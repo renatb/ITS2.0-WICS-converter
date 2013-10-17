@@ -9,7 +9,7 @@
 package ITS::DOM::Element;
 use strict;
 use warnings;
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 # ABSTRACT: Represents a DOM element
 use Exporter::Easy (
     OK => [qw(new_element)]
@@ -174,7 +174,7 @@ ITS::DOM::Element - Represents a DOM element
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 

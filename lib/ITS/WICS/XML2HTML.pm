@@ -23,7 +23,7 @@ use feature 'state';
 our $HTML_NS = 'http://www.w3.org/1999/xhtml';
 
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 
 #default: convert and print input
 print ${ __PACKAGE__->new()->convert($ARGV[0]) } unless caller;
@@ -639,7 +639,7 @@ ITS::WICS::XML2HTML - Convert ITS-decorated XML into HTML with equivalent markup
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 

@@ -10,7 +10,7 @@
 use strict;
 use warnings;
 # PODNAME: WICS-GUI.pl
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 # ABSTRACT: GUI frontent for converting ITS-decorated data
 
 
@@ -434,7 +434,7 @@ WICS-GUI.pl - GUI frontent for converting ITS-decorated data
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 DESCRIPTION
 

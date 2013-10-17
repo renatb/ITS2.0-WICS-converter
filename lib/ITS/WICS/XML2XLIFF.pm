@@ -30,7 +30,7 @@ our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 our $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
 
 # ABSTRACT: Extract ITS-decorated XML into XLIFF
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 
 #default: convert and print input
 print ${ __PACKAGE__->new()->convert($ARGV[0]) } unless caller;
@@ -212,7 +212,7 @@ ITS::WICS::XML2XLIFF - Extract ITS-decorated XML into XLIFF
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
@@ -220,7 +220,8 @@ version 0.02
     use ITS::WICS::XML2XLIFF;
     my $converter = ITS::WICS::XML2XLIFF->new('Page Title');
     my $ITS = ITS->new('xml', doc => \'<xml>some text</xml>');
-    my $result = $converter->convert($ITS);
+    my $result = $converter->convert(
+    	$ITS, group => ['sec'], tu => ['para']);
     print $$result;
 
 =head1 DESCRIPTION
@@ -232,7 +233,8 @@ keeping the original ITS information intact.
 
 This module is very preliminary, and there are plenty of things to
 implement still. Only a few ITS data categories are converted, and no
-inherited ITS information is saved.
+inherited ITS information is saved. Also, the ITS segmentation scheme
+is currently not very developed and may produce invalid XLIFF.
 
 =head1 SEE ALSO
 
@@ -268,8 +270,9 @@ You may also pass in C<tu> and C<group> parameters after the ITS document
 to get a different segmentation behavior. Each parameter should be an
 array ref containing names of elements to be used for extracting
 C<trans-unit>s and C<group>s, repsectively. Children of C<trans-unit>s are
-placed inline. If no C<group> element names are specified, then C<trans-units>
-for the whole document are placed in one C<group>.
+placed escaped and placed as-is (tags and all) in C<ph> tags. If no C<group>
+element names are specified, then C<trans-units> for the whole document are
+placed in one C<group>.
 
 For example, the following will extract C<para> elements and their children
 as C<trans-units>, and place them in groups with other C<trans-units> extracted

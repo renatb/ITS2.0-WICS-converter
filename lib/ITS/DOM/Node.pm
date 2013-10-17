@@ -9,7 +9,7 @@
 package ITS::DOM::Node;
 use strict;
 use warnings;
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 # ABSTRACT: thin wrapper around underlying XML engine node objects
 use ITS::DOM::Value;
 our @CARP_NOT = qw(ITS::DOM);
@@ -293,7 +293,7 @@ ITS::DOM::Node - thin wrapper around underlying XML engine node objects
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 

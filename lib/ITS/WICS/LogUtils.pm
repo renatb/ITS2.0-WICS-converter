@@ -21,7 +21,7 @@ use Exporter::Easy (
 use Carp;
 
 # ABSTRACT: Log utility functions for WICS
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 
 sub node_log_id {
     my ($node) = @_;
@@ -120,7 +120,7 @@ ITS::WICS::LogUtils - Log utility functions for WICS
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 METHODS
 

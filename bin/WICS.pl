@@ -19,7 +19,7 @@ use Try::Tiny;
 use ITS::WICS qw(xml2html xliff2html reduceHtml xml2xliff);
 use Getopt::Lucid qw( :all );
 # PODNAME: WICS.pl
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 # ABSTRACT: Convert ITS-decorated data
 
 
@@ -124,7 +124,7 @@ WICS.pl - Convert ITS-decorated data
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 DESCRIPTION
 

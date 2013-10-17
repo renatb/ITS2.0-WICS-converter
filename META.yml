@@ -38,67 +38,67 @@ no_index:
 provides:
   ITS:
     file: lib/ITS.pm
-    version: 0.02
+    version: 0.03
   ITS::DOM:
     file: lib/ITS/DOM.pm
-    version: 0.02
+    version: 0.03
   ITS::DOM::Element:
     file: lib/ITS/DOM/Element.pm
-    version: 0.02
+    version: 0.03
   ITS::DOM::Node:
     file: lib/ITS/DOM/Node.pm
-    version: 0.02
+    version: 0.03
   ITS::DOM::Value:
     file: lib/ITS/DOM/Value.pm
-    version: 0.02
+    version: 0.03
   ITS::HTMLRuleExtractor:
     file: lib/ITS/HTMLRuleExtractor.pm
-    version: 0.02
+    version: 0.03
   ITS::Rule:
     file: lib/ITS/Rule.pm
-    version: 0.02
+    version: 0.03
   ITS::RuleContainer:
     file: lib/ITS/RuleContainer.pm
-    version: 0.02
+    version: 0.03
   ITS::WICS:
     file: lib/ITS/WICS.pm
-    version: 0.02
+    version: 0.03
   ITS::WICS::FutureNode:
     file: lib/ITS/WICS/FutureNode.pm
-    version: 0.02
+    version: 0.03
   ITS::WICS::FutureNodeManager:
     file: lib/ITS/WICS/FutureNodeManager.pm
-    version: 0.02
+    version: 0.03
   ITS::WICS::GuiLogger:
     file: lib/ITS/WICS/GuiLogger.pm
-    version: 0.02
+    version: 0.03
   ITS::WICS::LogUtils:
     file: lib/ITS/WICS/LogUtils.pm
-    version: 0.02
+    version: 0.03
   ITS::WICS::Reduce:
     file: lib/ITS/WICS/Reduce.pm
-    version: 0.02
+    version: 0.03
   ITS::WICS::XLIFF2HTML:
     file: lib/ITS/WICS/XLIFF2HTML.pm
-    version: 0.02
+    version: 0.03
   ITS::WICS::XML2HTML:
     file: lib/ITS/WICS/XML2HTML.pm
-    version: 0.02
+    version: 0.03
   ITS::WICS::XML2XLIFF:
     file: lib/ITS/WICS/XML2XLIFF.pm
-    version: 0.02
+    version: 0.03
   ITS::WICS::XML2XLIFF::CustomSegmenter:
     file: lib/ITS/WICS/XML2XLIFF/CustomSegmenter.pm
-    version: 0.02
+    version: 0.03
   ITS::WICS::XML2XLIFF::ITSProcessor:
     file: lib/ITS/WICS/XML2XLIFF/ITSProcessor.pm
-    version: 0.02
+    version: 0.03
   ITS::WICS::XML2XLIFF::ITSSegmenter:
     file: lib/ITS/WICS/XML2XLIFF/ITSSegmenter.pm
-    version: 0.02
+    version: 0.03
   ITS::XMLRuleExtractor:
     file: lib/ITS/XMLRuleExtractor.pm
-    version: 0.02
+    version: 0.03
 requires:
   Carp: 0
   Data::Dumper: 0
@@ -125,7 +125,7 @@ requires:
   perl: 5.014
   strict: 0
   warnings: 0
-version: 0.02
+version: 0.03
 x_BuiltWith:
   modules:
     Carp: 1.26

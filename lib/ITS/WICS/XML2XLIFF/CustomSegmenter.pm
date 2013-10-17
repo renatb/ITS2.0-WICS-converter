@@ -16,6 +16,7 @@ use ITS::WICS::XML2XLIFF::ITSProcessor qw(
     convert_atts
     localize_rules
     transfer_inline_its
+    has_localizable_inline
 );
 use ITS::DOM::Element qw(new_element);
 use Exporter::Easy (OK => ['extract_convert_custom']);
@@ -24,7 +25,7 @@ use ITS::WICS::LogUtils qw(node_log_id);
 #TODO: put all of these in one place
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 # ABSTRACT: Extract trans-units using custom segmentation (internal use only)
 
 
@@ -154,20 +155,33 @@ sub _extract_convert_tu {
     $source->set_namespace($XLIFF_NS);
     $source->paste($tu);
 
+    #segmentation scheme determines withinText, so these should be removed
+    $source->remove_att('withinText', its_ns());
+
     # attributes get added while localizing rules; so save the ones
     # that need to be processed by convert_atts first
     my @atts = $source->get_xpath('@*');
-    localize_rules(
-        $source, $tu, $state->{match_index}->{$original->unique_key});
-    #segmentation scheme determines withinText, so these should be removed
-    $source->remove_att('withinText', its_ns());
-    convert_atts($source, \@atts, $tu);
+    if(exists $state->{match_index}->{$original->unique_key}){
+        localize_rules(
+            $source,
+            $tu,
+            $state->{match_index}->{$original->unique_key},
+            \@atts
+        );
+    }
+
+    if(@atts){
+        convert_atts($source, \@atts, $tu);
+    }
 
     # process children as inline elements
+    # reset ID counter for <ph> elements
+    $state->{phid} = 0;
     for my $child($original->children){
-        $child->paste($source);
         if($child->type eq 'ELT'){
-            _process_inline($state, $child, $tu);
+            _process_inline($state, $child, $tu)->paste($source);
+        }else{
+            $child->paste($source);
         }
     }
 
@@ -192,35 +206,64 @@ sub _extract_convert_tu {
     return;
 }
 
-#convert a child into an inline XLIFF element
+#convert a child into an inline XLIFF element;
+#return the element to be pasted in the XLIFF document
 sub _process_inline {
     my ($state, $el, $tu) = @_;
 
-    $el->set_name('mrk');
-    $el->set_namespace($XLIFF_NS);
+    #segmentation scheme determines withinText, so these should be removed
+    $el->remove_att('withinText', its_ns());
 
     # attributes get added while localizing rules; so save the ones
     # that need to be processed by convert_atts first
     my @atts = $el->get_xpath('@*');
-    localize_rules(
-        $el, $tu, $state->{match_index}->{$el->unique_key});
-    #segmentation scheme determines withinText, so these should be removed
-    $el->remove_att('withinText', its_ns());
-    convert_atts($el, \@atts);
+    my $match_index = $state->{match_index}->{$el->unique_key};
 
-    #default value for required 'mtype' attribute is 'x-its',
-    #indicating some kind of ITS usage
-    if(!$el->att('mtype')){
-        $el->set_att('mtype', 'x-its');
-    }
+    # TODO: If translatable, the element should be <bpt> and <ept>
+    # and the children should be recursively processed. Otherwise,
+    # <ph> and children rendered as text (as is always done now).
+    my $ph = new_element('ph');
+    $ph->set_namespace($XLIFF_NS);
+    $ph->set_att('id', ++$state->{phid});
 
-    # recursively process children
-    for my $child($el->children){
-        if($child->type eq 'ELT'){
-            _process_inline($state, $child, $tu);
+    # the element to be pasted in the XLIFF document will be either
+    # <ph> or <mrk>
+    my $return_el = $ph;
+    #if there's any ITS, we need a mrk element
+    if(has_localizable_inline(
+        \@atts, $match_index)){
+
+        #put atts on a wrapping <mrk> element
+        my $mrk = new_element('mrk');
+        $mrk->set_namespace($XLIFF_NS);
+
+        if($match_index){
+            localize_rules(
+                $mrk,
+                $tu,
+                $match_index,
+                \@atts
+            );
         }
+        if(@atts){
+            convert_atts($mrk, \@atts);
+        }
+
+        # default value for required 'mtype' attribute is 'x-its',
+        # indicating any kind of ITS usage
+        if(!$mrk->att('mtype')){
+            $mrk->set_att('mtype', 'x-its');
+        }
+        $ph->paste($mrk);
+        $return_el = $mrk;
     }
-    return;
+
+    # TODO: if $el is translatable, then element and children should be
+    # recursively processed instead of just being serialized and pasted
+    $ph->append_text($el->to_string);
+    $el->remove;
+
+    return $return_el;
 }
 
 1;
@@ -235,7 +278,7 @@ ITS::WICS::XML2XLIFF::CustomSegmenter - Extract trans-units using custom segment
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head2 C<extract_convert_custom>
 
