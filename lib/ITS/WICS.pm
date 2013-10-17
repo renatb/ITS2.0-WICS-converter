@@ -38,7 +38,7 @@ sub xliff2html {
 }
 
 sub xml2xliff {
-    my ($doc, $add_labels) = @_;
+    my ($doc) = @_;
     my $converter = ITS::WICS::XML2XLIFF->new();
     my $ITS = ITS->new('xml', doc => $doc);
     return $converter->convert(
