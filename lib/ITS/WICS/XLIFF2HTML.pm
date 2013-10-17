@@ -28,6 +28,7 @@ my @inline_els = qw(g x bx ex bpt ept sub it ph mrk);
 # VERSION
 
 =head1 SYNOPSIS
+
     use ITS;
     use ITS::WICS::XLIFF2HTML;
     my $converter = ITS::WICS::XLIFF2HTML->new('Page Title');

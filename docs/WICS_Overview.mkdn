@@ -91,16 +91,21 @@ Additionally, WICS.pl and WICS-GUI.pl (in the `bin` directory) are applications 
 ###Dependencies
 Perl 5.14 or higher (released May 2011) is required. The software has only been tested on Windows 7 with Strawberry Perl thus far; I expect it to work on other platforms, but don't expect the test suite to pass just yet, as EOL differences tend to cause failures during porting.
 
-There are also plenty of CPAN dependencies (CPAN is an archive that contains open source Perl packages). The easy way to install all of the dependencies is to use [cpanm](https://metacpan.org/module/cpanm). After installing it (using the command `cpan App::cpanminus`), `cd` into the project directory and do `cpanm --installdeps .`.
+There are also plenty of CPAN dependencies (CPAN is an archive that contains open source Perl packages). The easy way to install all of the dependencies is to use [`cpanm`](https://metacpan.org/module/cpanm) and the latest release archive (the files inside the `releases` directory). After installing `cpanm` (using the command `cpan App::cpanminus`), pass the path to the latest release to `cpanm` like so: `cpanm --installdeps releases/ITS-WICS-0.0x`.
 
 [Dist::Zilla](http://dzil.org/) and many plugins are required for the release cycle. After installing cpanm and then Dist::Zilla (via `cpanm Dist::Zilla`), you can install all of the release dependencies using `dzil authordeps | cpanm`.
 
-Finally, to create the standalone executables, you need to install [Par::Packer](https://metacpan.org/module/PAR::Packer) (via `cpanm Par::Packer`) and [Wx::Perl::Packager](https://metacpan.org/module/Wx::Perl::Packager) (via `cpanm Wx::Perl::Packager`).
+To run `scripts/GenerateDocs.pl` you must have [Pod::Simple::HTMLBatch](https://metacpan.org/module/PAR::Packer) installed.
+
+Finally, to create the standalone executables, you need to install [PAR::Packer](https://metacpan.org/module/PAR::Packer) (via `cpanm Par::Packer`).
 
 <a id="working"></a>
 ###Working with the Code
 The project contains the following:
 
+* `releases`- contains release archives for installing the application code on your computer or releasing to CPAN. Each archive is marked with a version number (`ITS-WICS-0.01`, etc.).
+* `docs`- contains overall WICS documentation and generated HTML documentation for the application code
+* `scripts`- contains scripts that aren't directly part of the WICS applications; these perform related functions like generating documentation and sample files
 * `lib`- contains code for performing conversions and processing ITS
 * `bin`- contains two applications for performing the WICS tasks: a command line interface (`WICS.pl`) and a graphical interface (`WICS-GUI.pl`).
 * `t`- contains the unit tests for verifying the functionality of the converters
@@ -136,16 +141,21 @@ These tests run the converters on files in the test suite, and then send them to
 
 <a id="installing"></a>
 ####Installing
-Installing the distribution is simple. Just `cd` into the project directory and do `cpan .` (or `cpanm .` if you have `cpanm` installed). This will check that all of the tests pass before installing.
+Installing the distribution is simple. Look inside of the `releases` directory for the file with the highest version number. Then pass the name of this file to `cpan` or `cpanm`; for example, if the highest-numbered release is `ITS-WICS-0.0x`, then you would run the command `cpanm releases/ITS-WICS-0.0x`. This will check that all of the tests pass before installing.
+
+If you would rather install the latest development version as contained in the lib directory, then use the command `dzil install` (see also [Building a Release](#building)).
 
 Once you've installed the distribution, you can use the WICS CLI and the WICS GUI from the command line any time using `WICS` and `WICS-GUI` (add `.pl` to those if not on Windows). You can also use any of the included modules in your own Perl scripts.
 
 <a id="viewing"></a>
-####Viewing Library Documentation
+####Generating and Viewing Library Documentation
 
-`TODO: Should also be contained in the docs directory in HTML format`
+The latest documentation on each of the modules is located in their files in POD format, and also in the `docs` directory in HTML format.
 
-The latest documentation on each of the modules is located in their files in POD format, and also in the `docs` directory in HTML. Once a module is installed, you can view the documentation from the command line with `perldoc ITS::WICS::XML2HTML` (or substitute the name of the desired module).
+Once you [install](#installing) the application , you can view the documentation in the command line with `perldoc ITS::WICS::XML2HTML` (or substitute the name of the desired module).
+
+The documentation contained in the `docs` directory is generated from the POD embedded in the application source code.
+To regenerate it, simply run `GenerateDocs.pl`, located in the `scripts` directory.
 
 <a id="building"></a>
 ####Building a Release
@@ -153,6 +163,7 @@ The latest documentation on each of the modules is located in their files in POD
 The code is usable as it exists, but it doesn't have some essential distribution information, like a version number. We use Dist::Zilla (see the [Dependencies](#dependencies) section) to build the release of a distribution. Besides adding a version number, it also creates authoring tests (spelling, copyright, documentation coverage, etc.) and metadata and bundles them into the distribution. Here are some useful commands:
 
 * `dzil build`: builds the distribution in a subdirectory
+* `dzil install`: installs the current codebase on your computer
 * `dzil test --release`: runs all of the project unit tests and all of the generated author tests
 * `dzil release`: creates a new release of the project. With the current settings, this runs all of the unit- and author-tests, builds the release, saves it in the `releases` directory, regenerates the `README` file, and commits and pushes changes in Git.
 
