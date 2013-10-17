@@ -77,7 +77,7 @@ sub transfer_inline_its {
     return;
 }
 
-=head2 C<has_localizable>
+=head2 C<has_localizable_inline>
 
 Arguments: an array ref containing attribute nodes, and the match index
 containing the global ITS info for an element.
