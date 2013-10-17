@@ -15,7 +15,7 @@ Nathan Glenn <garfieldnate@gmail.com>
         1. [Running the Applications](#running-apps)
         2. [Running Tests](#running)
         3. [Installing](#installing)
-        4. [Viewing Documentation](#viewing)
+        4. [Viewing and Generating Documentation](#viewing)
         5. [Building a Release](#building)
         6. [Building the Executables](#executables)
             1. [WICS GUI](#build-gui)
@@ -145,10 +145,10 @@ Installing the distribution is simple. Look inside of the `releases` directory f
 
 If you would rather install the latest development version as contained in the lib directory, then use the command `dzil install` (see also [Building a Release](#building)).
 
-Once you've installed the distribution, you can use the WICS CLI and the WICS GUI from the command line any time using `WICS` and `WICS-GUI` (add `.pl` to those if not on Windows). You can also use any of the included modules in your own Perl scripts.
+Once you've installed the distribution, you can use the WICS CLI and the WICS GUI from the command line any time using `WICS` and `WICS-GUI` (add `.pl` to those if not on Windows). You can also use any of the included modules in your own Perl scripts, as well as view their documentation from the command line via `perldoc`.
 
 <a id="viewing"></a>
-####Generating and Viewing Library Documentation
+####Viewing and Generating Documentation
 
 The latest documentation on each of the modules is located in their files in POD format, and also in the `docs` directory in HTML format.
 
