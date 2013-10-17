@@ -10,7 +10,7 @@ package ITS;
 use strict;
 use warnings;
 # ABSTRACT: Work with ITS-decorated XML
-our $VERSION = '0.01'; # VERSION
+our $VERSION = '0.02'; # VERSION
 use ITS::XMLRuleExtractor;
 use ITS::HTMLRuleExtractor;
 use ITS::DOM;
@@ -246,7 +246,7 @@ ITS - Work with ITS-decorated XML
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 

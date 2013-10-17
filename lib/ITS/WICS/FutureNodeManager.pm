@@ -13,7 +13,7 @@ use ITS::WICS::FutureNode qw(new_future);
 use Exporter::Easy (OK => [qw(new_manager)]);
 use Carp;
 
-our $VERSION = '0.01'; # VERSION
+our $VERSION = '0.02'; # VERSION
 # ABSTRACT: Track and replace FutureNodes
 
 sub new_manager {
@@ -104,7 +104,7 @@ ITS::WICS::FutureNodeManager - Track and replace FutureNodes
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 

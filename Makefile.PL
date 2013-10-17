@@ -41,11 +41,7 @@ my %WriteMakefileArgs = (
     "Try::Tiny" => 0,
     "URI" => 0,
     "Wx" => 0,
-    "Wx::App" => 0,
-    "Wx::DND" => 0,
-    "Wx::Event" => 0,
     "Wx::Perl::Packager" => 0,
-    "Wx::PlVListBox" => 0,
     "XML::LibXML" => 0,
     "autodie" => 0,
     "base" => 0,
@@ -75,7 +71,7 @@ my %WriteMakefileArgs = (
     "Test::XML" => 0,
     "utf8" => 0
   },
-  "VERSION" => "0.01",
+  "VERSION" => "0.02",
   "test" => {
     "TESTS" => "t/*.t t/ITS-Reduce/*.t t/ITS-XLIFF2HTML/*.t t/ITS-XML2HTML/*.t t/ITS-XML2XLIFF/*.t t/ITS/*.t"
   }

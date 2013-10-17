@@ -9,7 +9,7 @@
 package ITS::DOM;
 use strict;
 use warnings;
-our $VERSION = '0.01'; # VERSION
+our $VERSION = '0.02'; # VERSION
 # ABSTRACT: Work with XML and HTML documents
 use ITS::DOM::Element;
 use Carp;
@@ -179,7 +179,7 @@ ITS::DOM - Work with XML and HTML documents
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 

@@ -10,7 +10,7 @@ package ITS::RuleContainer;
 use strict;
 use warnings;
 use ITS::Rule;
-our $VERSION = '0.01'; # VERSION
+our $VERSION = '0.02'; # VERSION
 # ABSTRACT: Store one its:rules element worth of information
 
 sub new {
@@ -73,7 +73,7 @@ ITS::RuleContainer - Store one its:rules element worth of information
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 

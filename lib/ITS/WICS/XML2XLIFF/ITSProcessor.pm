@@ -10,7 +10,7 @@ package ITS::WICS::XML2XLIFF::ITSProcessor;
 use strict;
 use warnings;
 
-our $VERSION = '0.01'; # VERSION
+our $VERSION = '0.02'; # VERSION
 # ABSTRACT: Process and convert XML and XLIFF ITS (internal use only).
 
 use ITS qw(its_ns);
@@ -233,7 +233,7 @@ ITS::WICS::XML2XLIFF::ITSProcessor - Process and convert XML and XLIFF ITS (inte
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head2 C<its_requires_inline>
 Return true if converting the ITS info on the given element

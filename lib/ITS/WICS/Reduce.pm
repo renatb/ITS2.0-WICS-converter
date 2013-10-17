@@ -16,7 +16,7 @@ use Exporter::Easy (
 	OK => [qw(reduce)]
 );
 use Log::Any qw($log);
-our $VERSION = '0.01'; # VERSION
+our $VERSION = '0.02'; # VERSION
 # ABSTRACT: Reduce and consolidate ITS-decorated HTML documents
 my $indent = '  ';#two spaces
 
@@ -146,7 +146,7 @@ ITS::WICS::Reduce - Reduce and consolidate ITS-decorated HTML documents
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
