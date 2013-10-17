@@ -97,7 +97,7 @@ There are also plenty of CPAN dependencies (CPAN is an archive that contains ope
 
 To run `scripts/GenerateDocs.pl` you must have [Pod::Simple::HTMLBatch](https://metacpan.org/module/PAR::Packer) installed.
 
-Finally, to create the standalone executables, you need to install [PAR::Packer](https://metacpan.org/module/PAR::Packer) (via `cpanm Par::Packer`).
+Finally, to create the standalone executables, you need to install [PAR::Packer](https://metacpan.org/module/PAR::Packer) (via `cpanm PAR::Packer`).
 
 <a id="working"></a>
 ###Working with the Code
@@ -152,7 +152,7 @@ Once you've installed the distribution, you can use the WICS CLI and the WICS GU
 
 The latest documentation on each of the modules is located in their files in POD format, and also in the `docs` directory in HTML format.
 
-Once you [install](#installing) the application , you can view the documentation in the command line with `perldoc ITS::WICS::XML2HTML` (or substitute the name of the desired module).
+Once you [install](#installing) the application, you can view the documentation in the command line with `perldoc ITS::WICS::XML2HTML` (or substitute the name of the desired module).
 
 The documentation contained in the `docs` directory is generated from the POD embedded in the application source code.
 To regenerate it, simply run `GenerateDocs.pl`, located in the `scripts` directory.
