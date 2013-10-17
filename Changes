@@ -1,6 +1,8 @@
 Revision history for ITS-WICS
 
 {{$NEXT}}
+
+0.01      2013-10-16 17:33:53 America/Los_Angeles
     Initial release, combining the following smaller distributions:
         ITS
         ITS-XML2HTML
