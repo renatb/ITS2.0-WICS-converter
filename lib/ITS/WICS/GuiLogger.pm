@@ -1,7 +1,7 @@
-#small logging class to forward Log::Any logs to Wx logging
 package ITS::WICS::GuiLogger;
 use strict;
 use warnings;
+# ABSTRACT: forward Log::Any logs to Wx loggers
 # VERSION
 use base qw(Log::Any::Adapter::Base);
 use Log::Any::Adapter::Util qw(make_method);
