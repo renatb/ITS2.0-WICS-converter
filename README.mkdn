@@ -4,7 +4,7 @@ ITS::WICS - Work with ITS-decorated documents
 
 # VERSION
 
-version 0.01
+version 0.02
 
 # SYNOPSIS
 
