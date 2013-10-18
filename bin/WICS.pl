@@ -20,7 +20,7 @@ This is a command-line application for altering ITS-decorated data.
 
 =head1 USAGE
 
-  WICS.pl [options] -[i|input] <file>
+  WICS.pl [-w] --[task] -[i|input] <file>
 
 =head1 REQUIRED ARGUMENTS
 
@@ -28,7 +28,9 @@ This is a command-line application for altering ITS-decorated data.
 
 =item -i | --input <file>...
 
-Specify the XML file or files to be converted into HTML.
+This argument is required. It provides the path to the input file to
+convert. This option may be provided multiple times to convert multiple
+files.
 
 =item --xml2html, --xliff2html, --xml2xliff or --reduceHtml
 
