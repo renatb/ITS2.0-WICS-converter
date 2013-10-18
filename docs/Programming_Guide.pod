@@ -200,7 +200,7 @@ One at a time: C<perl -Ilib t/name-of-test.t>. The C<-I> option adds the C<lib> 
 
 =item 2.
 
-All at once using: C<prove -lrv> or if you're less patient, C<prove -lr -j4>. The options do the following:
+All at once using the C<prove> utility included with Perl: C<prove -lrv> or if you're less patient, C<prove -lr -j4>. The options do the following:
 
 =over
 

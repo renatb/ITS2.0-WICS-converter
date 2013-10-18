@@ -21,6 +21,7 @@ our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 our $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
 
 =head2 C<its_requires_inline>
+
 Return true if converting the ITS info on the given element
 requires that it be rendered inline (as mrk) instead of structural
 (as its own source). Currently the only information tested for is terminology
@@ -178,6 +179,7 @@ sub convert_atts {
 }
 
 =head2 C<localize_rules>
+
 Arguments are: first an element to have ITS metadata applied locally; second
 the translation unit containing the element; third the match index
 containing the global ITS info for the element; and fourth an array ref
