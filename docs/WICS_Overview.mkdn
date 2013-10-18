@@ -29,7 +29,6 @@ Nathan Glenn <garfieldnate@gmail.com>
     1. [Bug Reports](#bugs)
     2. [ITS Interest Group Discussions](#interest)
 
-
 <a id="overview"></a>
 ##Overview
 <a id="its"></a>
@@ -53,10 +52,10 @@ WICS stands for "Work In Context System". It is a project which seeks to make IT
 
 This document describes the converters. They accomplish four file conversion tasks:
 
-1. Convert ITS-decorated XML into HTML5 for displaying contents, with ITS
+1. Convert ITS-decorated XML into HTML5 for displaying the contents and ITS metadata
 2. Reduce ITS-decorated HTML5 documents to be usable as a single file
-3. Convert ITS-decorated XLIFF into HTML5 for displaying the contents of `<source>` and and `target` elements, with ITS
-4. Create ITS-decorated XLIFF from XML. This application is of limited functionality and is demonstrated through only one sample.
+3. Convert ITS-decorated XLIFF into HTML5 for displaying the contents of `<source>` and and `target` elements and ITS metadata
+4. Extract text segments and their associated ITS metadata and create an XLIFF file with equivalent ITS decorating the translation units. This application is of limited functionality and is demonstrated through only one sample conversion.
 
 <a id="preserving"></a>
 ##Preserving ITS Information During Conversion
@@ -150,12 +149,11 @@ Once you've installed the distribution, you can use the WICS CLI and the WICS GU
 <a id="viewing"></a>
 ####Viewing and Generating Documentation
 
-The latest documentation on each of the modules is located in their files in POD format, and also in the `docs` directory in HTML format.
+The latest documentation on each of the modules is located in their files in POD format, and browsable version of all project documentation is contained in the `docs/html` directory.
 
 Once you [install](#installing) the application, you can view the documentation in the command line with `perldoc ITS::WICS::XML2HTML` (or substitute the name of the desired module).
 
-The documentation contained in the `docs` directory is generated from the POD embedded in the application source code.
-To regenerate it, simply run `GenerateDocs.pl`, located in the `scripts` directory.
+The documentation contained in the `docs/html` directory is generated from the POD embedded in the application source code and in a few documents in the `docs` directory. To regenerate it, simply run `GenerateDocs.pl`, located in the `scripts` directory.
 
 <a id="building"></a>
 ####Building a Release

@@ -12,8 +12,8 @@ my $lib = path($proj, 'lib');
 my $bin = path($proj, 'bin');
 my $docs = path($proj, 'docs');
 
-#output in docs/modules
-my $out = path($docs, 'modules');
+#output in docs/html
+my $out = path($docs, 'html');
 # make sure output directory is clean
 if($out->is_dir){
     $out->remove_tree;
