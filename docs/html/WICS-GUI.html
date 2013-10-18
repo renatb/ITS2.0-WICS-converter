@@ -44,11 +44,14 @@ Execute the conversion process by clicking &#34;Convert&#34;.
 A frame with the log messages will pop up.
 Errors are shown in red.</p>
 
-<p>Converted files are written to the directory that the source files exist in.
-They keep the name of their source file,
-but with a different extension.
-If the &#34;overwrite existing files&#34; box is not checked and a file with the given name and extension already exists,
-then a number will be appended to the end of the file name to make it unique.</p>
+<p>Converted files are written to the same directory as the source file.
+Filenames are created by stripping the extension from the input file and replacing it with the extension for the target format (html,
+xliff,
+etc.).
+If a file with that name already exists,
+additional numbers (-1,
+-2,
+etc.) will be appended to the filename to ensure uniqueness.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="STANDALONE_EXECUTABLE"

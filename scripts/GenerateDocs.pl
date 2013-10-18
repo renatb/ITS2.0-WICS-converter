@@ -1,3 +1,4 @@
+#TODO: preprocess files with Pod::Weaver
 use strict;
 use warnings;
 use Pod::Simple::HTMLBatch;

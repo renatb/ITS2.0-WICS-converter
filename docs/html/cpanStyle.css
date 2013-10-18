@@ -1,3 +1,18 @@
+/*These two are edits to the actual CPAN style. Just need to display the page
+title because Pod::Simple::HTML doesn't do that for whatever reason.*/
+head, title {
+  display: block;
+  display: none\9; /* IE 6, 7 and 8 don’t fully support this technique — hide the elements in these browsers */
+ }
+
+title {
+  background: transparent;
+  color: #006699;
+  font-size: x-large;
+  font-weight: bold;
+  font-family: arial, sans-serif;
+}
+
 BODY, .logo { background: white; }
 
 BODY {
@@ -42,7 +57,7 @@ input { margin: 2px; }
   background: #006699;
   margin: 1ex 0;
   padding: 1px;
-} 
+}
 
 .menubar A {
   padding: 0.8ex;

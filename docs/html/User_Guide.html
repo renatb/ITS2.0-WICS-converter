@@ -97,16 +97,24 @@ name="WICS"
 It is a project which seeks to make ITS markup more useful by displaying it in a more user-friendly manner within a web browser.
 It has two components:</p>
 
-<p>* A converter for generating HTML5 or XLIFF from original documents (this project) * JavaScript to display ITS data in Web browsers</p>
+<ul>
+<li>A converter for generating HTML5 or XLIFF from original documents (this project)</li>
+
+<li>JavaScript to display ITS data in Web browsers</li>
+</ul>
 
 <p>The applications described in this document accomplish four file conversion tasks:</p>
 
-<p>1.
-Convert ITS-decorated XML into HTML5 for displaying the contents and ITS metadata (XML2HTML) 2.
-Reduce ITS-decorated HTML5 documents to be usable as a single file (HTML reducer) 3.
-Convert ITS-decorated XLIFF into HTML5 for displaying the contents of <code>&#60;source&#62;</code> and and <code>&#60;target&#62;</code> elements with associated ITS metadata (XLIFF2HTML) 4.
-Extract text segments and their associated ITS metadata and create an XLIFF file with equivalent ITS decorating the translation units (XML2XLIFF).
-This application is of limited functionality and is demonstrated through only one sample conversion.</p>
+<ol>
+<li>Convert ITS-decorated XML into HTML5 for displaying the contents and ITS metadata (XML2HTML)</li>
+
+<li>Reduce ITS-decorated HTML5 documents to be usable as a single file (HTML reducer)</li>
+
+<li>Convert ITS-decorated XLIFF into HTML5 for displaying the contents of <code>&#60;source&#62;</code> and and <code>&#60;target&#62;</code> elements with associated ITS metadata (XLIFF2HTML)</li>
+
+<li>Extract text segments and their associated ITS metadata and create an XLIFF file with equivalent ITS decorating the translation units (XML2XLIFF).
+This application is of limited functionality and is demonstrated through only one sample conversion.</li>
+</ol>
 
 <p>Both the WICS and WICS-GUI application can accomplish all four tasks,
 but WICS requires the use of a command line.</p>
@@ -149,8 +157,8 @@ It takes longer the first time you use it.</p>
 </center>
 
 
-<p>Upon double-clicking on the task that you wish to perform,
-you are given another window like that shown below:</p>
+<p>Upon double-clicking the task that you wish to perform,
+you are given another window:</p>
 
 <center>
     <img
@@ -163,7 +171,7 @@ you are given another window like that shown below:</p>
 <p>Click on <code>Choose file...</code> to choose one or more files that you would like to process with the chosen task.
 If you have chosen <code>XML2HTML</code>,
 for example,
-then you should choose one more more ITS-decorated XML files that you would like to convert to HTML for viewing in your web browser.</p>
+then you should choose one or more ITS-decorated XML files that you would like to convert to HTML for viewing in your web browser.</p>
 
 <p>After you have chosen the files you would like to process,
 they are listed in the white box.
@@ -190,7 +198,7 @@ but in general there are two possible problems:</p>
 <li>The input file you provided is not well-formed.
 For example,
 your XML file might have a mismatched tag (like <code>&#60;xml&#62;&#60;a&#62;&#60;/b&#62;&#60;/xml&#62;</code>),
-or your might have two separate elements with the same <code>xml:id</code> attribute value.</li>
+or you might have two separate elements with the same <code>xml:id</code> attribute value.</li>
 
 <li>The input file you provided should not be processed by the given converter.
 For example,
@@ -218,7 +226,7 @@ The options are described below:</p>
 
 <dd>
 <p>This argument is required.
-It pecifies which operation is to be carried out on the input file.
+It specifies which operation is to be carried out on the input file.
 Each name corresponds to a WICS conversion task.</p>
 
 <dt><a name="-i_file_or_-input_file"
@@ -227,20 +235,20 @@ Each name corresponds to a WICS conversion task.</p>
 <dd>
 <p>This argument is required.
 It provides the path to the input file to convert.
-This option may be provided multiple times to convert multiple files.</p>
+This option may be provided multiple times (<code>-i file1 -i file2 etc.</code>) to convert multiple files.</p>
 
 <dt><a name="-w_or_--overwrite"
 ><code>-w</code> or <code>--overwrite</code></a></dt>
 
 <dd>
-<p>This option Specifies that the script may overwrite existing files when printing the conversion results.
+<p>This option specifies that the script may overwrite existing files when printing the conversion results.
 Filenames are created by stripping the extension from the input file and replacing it with the extension for the target format (html,
 xliff,
 etc.).
 If overwriting existing files is not permitted,
 additional numbers (-1,
 -2,
-etc.) will be appended to the filename to insure uniqueness.</p>
+etc.) will be appended to the filename to ensure uniqueness.</p>
 
 <p>This script will never write over the input file.</p>
 </dd>

@@ -30,7 +30,7 @@
   <ul   class='indexList indexList2'>
     <li class='indexItem indexItem2'><a href='#Overview'>Overview</a>
     <ul   class='indexList indexList3'>
-      <li class='indexItem indexItem3'><a href='#ITS'>ITS</a>
+      <li class='indexItem indexItem3'><a href='#Internationalization_Tag_Set'>Internationalization Tag Set</a>
       <li class='indexItem indexItem3'><a href='#WICS'>WICS</a>
     </ul>
     <li class='indexItem indexItem2'><a href='#Preserving_ITS_Information_During_Conversion'>Preserving ITS Information During Conversion</a>
@@ -76,11 +76,11 @@ name="Overview"
 >Overview</a></h2>
 
 <h3><a class='u' href='#___top' title='click to go to top of document'
-name="ITS"
->ITS</a></h3>
+name="Internationalization_Tag_Set"
+>Internationalization Tag Set</a></h3>
 
-<p>ITS,
-or the Internationalization Tag Set,
+<p>The Internationalization Tag Set,
+or ITS,
 is a standard for adding internalization-related information to XML,
 XLIFF,
 and HTML5 documents.
@@ -217,7 +217,7 @@ The software has only been tested on Windows 7 with Strawberry Perl thus far; I 
 but don&#39;t expect the test suite to pass just yet,
 as EOL differences tend to cause failures during porting.</p>
 
-<p>There are also plenty of CPAN dependencies (CPAN is an archive that contains open source Perl packages).
+<p>There are also plenty of CPAN dependencies (CPAN is an archive that contains open source Perl packages.).
 The easy way to install all of the dependencies is to use <a href="https://metacpan.org/module/cpanm" class="podlinkurl"
 ><code>cpanm</code></a> and the latest release archive (the files inside the <code>releases</code> directory).
 After installing <code>cpanm</code> (using the command <code>cpan App::cpanminus</code>),
@@ -249,7 +249,7 @@ name="Working_with_the_Code"
 ><code>releases</code></a></dt>
 
 <dd>
-<p>contains release archives for installing the application code on your computer or releasing to CPAN.
+<p>Contains release archives for installing the application code on your computer or releasing to CPAN.
 Each archive is marked with a version number (<code>ITS-WICS-0.01</code>,
 etc.).</p>
 
@@ -257,49 +257,49 @@ etc.).</p>
 ><code>docs</code></a></dt>
 
 <dd>
-<p>contains overall WICS documentation and generated HTML documentation for the application code</p>
+<p>Contains overall WICS documentation and generated HTML documentation for the application code.</p>
 
 <dt><a name="scripts"
 ><code>scripts</code></a></dt>
 
 <dd>
-<p>contains scripts that aren&#39;t directly part of the WICS applications; these perform related functions like generating documentation and sample files</p>
+<p>Contains scripts that aren&#39;t directly part of the WICS applications; these perform related functions like generating documentation and sample files.</p>
 
 <dt><a name="lib"
 ><code>lib</code></a></dt>
 
 <dd>
-<p>contains code for performing conversions and processing ITS</p>
+<p>contains code for performing conversions and processing ITS.</p>
 
 <dt><a name="bin"
 ><code>bin</code></a></dt>
 
 <dd>
-<p>contains two applications for performing the WICS tasks: a command line interface (<code>WICS.pl</code>) and a graphical interface (<code>WICS-GUI.pl</code>).</p>
+<p>Contains two applications for performing the WICS tasks: a command line interface (<code>WICS.pl</code>) and a graphical interface (<code>WICS-GUI.pl</code>).</p>
 
 <dt><a name="t"
 ><code>t</code></a></dt>
 
 <dd>
-<p>contains the unit tests for verifying the functionality of the converters</p>
+<p>Contains the unit tests for verifying the functionality of the converters.</p>
 
 <dt><a name="TODO.txt"
 ><code>TODO.txt</code></a></dt>
 
 <dd>
-<p>Contains some TODO notes for future maintenance</p>
+<p>Contains some TODO notes for future maintenance.</p>
 
 <dt><a name="README.mkdn"
 ><code>README.mkdn</code></a></dt>
 
 <dd>
-<p>a generated file that describes the functionality of <code>ITS::WICS</code>.</p>
+<p>A generated file that describes the functionality of <code>ITS::WICS</code>.</p>
 
 <dt><a name="dist.ini"
 ><code>dist.ini</code></a></dt>
 
 <dd>
-<p>a settings file for Dist::Zilla.
+<p>A settings file for Dist::Zilla.
 More on this later.</p>
 </dd>
 </dl>
@@ -334,7 +334,7 @@ There are two ways to run the tests:</p>
 <li>One at a time: <code>perl -Ilib t/name-of-test.t</code>.
 The <code>-I</code> option adds the <code>lib</code> folder to the include path.</li>
 
-<li>All at once: <code>prove -lrv</code> or if you&#39;re less patient,
+<li>All at once using: <code>prove -lrv</code> or if you&#39;re less patient,
 <code>prove -lr -j4</code>.
 The options do the following:
 <dl>
@@ -408,7 +408,8 @@ then use the command <code>dzil install</code> (see also <a href="#Building_a_Re
 >&#34;Building a Release&#34;</a>).</p>
 
 <p>Once you&#39;ve installed the distribution,
-you can use the WICS CLI and the WICS GUI from the command line any time using <code>WICS</code> and <code>WICS-GUI</code> (add <code>.pl</code> to those if not on Windows).
+you can use the WICS CLI and the WICS GUI from the command line using <code>WICS</code> and <code>WICS-GUI</code>,
+respectively (add <code>.pl</code> to those if not on Windows).
 You can also use any of the included modules in your own Perl scripts,
 as well as view their documentation from the command line via <code>perldoc</code>.</p>
 
@@ -552,7 +553,7 @@ either by installing it or by adding the <code>lib</code> folder to the include 
 <p>Here&#39;s a sample command to make the standalone executable.
 We use <code>-l</code> to make <code>wxpar</code> include the DLL files in the executable file.
 The working directory contains the ITS-WICS distribution,
-and we use <code>-I</code> to include its <code>lib</code> folders (remember that this is unnecessary if this distribution has been installed).
+and we use <code>-I</code> to include its <code>lib</code> folders (This is unnecessary if this distribution has been installed.).
 We use <code>-o</code> to specify the name of the created executable.
 We pass the path to this script as the final argument.
 Run in a Windows CMD,
@@ -596,7 +597,7 @@ name="ITS"
 
 <p>It would be useful to allow the calling code to provide default ITS parameter values, as specified in Section 5.3.5 of the ITS spec.</p>
 
-<p>No attempt is made at recovering from errors caused by invalid XML. Invalid input causes parsing to halt and an error to be thrown.</p>
+<p>No attempt is made to recover from errors caused by invalid XML. Invalid input causes parsing to halt and an error to be thrown.</p>
 
 <p>No external schemas/DTDs are used to validate the XML input.</p>
 

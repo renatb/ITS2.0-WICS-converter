@@ -4,9 +4,9 @@ Nathan Glenn <garfieldnate@gmail.com>
 
 =head2 Overview
 
-=head3 ITS
+=head3 Internationalization Tag Set
 
-ITS, or the Internationalization Tag Set, is a standard for adding internalization-related information to XML, XLIFF, and HTML5 documents. For example, using this tag set you can mark parts of a document as untranslatable, as needing special treatment for a given locale, or as being related to a given media resource.
+The Internationalization Tag Set, or ITS, is a standard for adding internalization-related information to XML, XLIFF, and HTML5 documents. For example, using this tag set you can mark parts of a document as untranslatable, as needing special treatment for a given locale, or as being related to a given media resource.
 
 ITS provides for two methods of annotating documents. The first is through local attributes. The second is through global rules, which use a query language (XPath for now) to select nodes to be annotated.
 
@@ -121,7 +121,7 @@ Additionally, WICS.pl and WICS-GUI.pl (in the C<bin> directory) are applications
 
 Perl 5.14 or higher (released May 2011) is required. The software has only been tested on Windows 7 with Strawberry Perl thus far; I expect it to work on other platforms, but don't expect the test suite to pass just yet, as EOL differences tend to cause failures during porting.
 
-There are also plenty of CPAN dependencies (CPAN is an archive that contains open source Perl packages). The easy way to install all of the dependencies is to use L<C<cpanm>|https://metacpan.org/module/cpanm> and the latest release archive (the files inside the C<releases> directory). After installing C<cpanm> (using the command C<cpan App::cpanminus>), pass the path to the latest release to C<cpanm> like so: C<cpanm --installdeps releases/ITS-WICS-0.0x>.
+There are also plenty of CPAN dependencies (CPAN is an archive that contains open source Perl packages.). The easy way to install all of the dependencies is to use L<C<cpanm>|https://metacpan.org/module/cpanm> and the latest release archive (the files inside the C<releases> directory). After installing C<cpanm> (using the command C<cpan App::cpanminus>), pass the path to the latest release to C<cpanm> like so: C<cpanm --installdeps releases/ITS-WICS-0.0x>.
 
 L<Dist::Zilla|http://dzil.org/> and many plugins are required for the release cycle. After installing cpanm and then Dist::Zilla (via C<cpanm Dist::Zilla>), you can install all of the release dependencies using C<dzil authordeps | cpanm>.
 
@@ -137,40 +137,40 @@ The project contains the following:
 
 =item C<releases>
 
-contains release archives for installing the application code on your computer or releasing to CPAN. Each archive is marked with a version number (C<ITS-WICS-0.01>, etc.).
+Contains release archives for installing the application code on your computer or releasing to CPAN. Each archive is marked with a version number (C<ITS-WICS-0.01>, etc.).
 
 =item C<docs>
 
-contains overall WICS documentation and generated HTML documentation for the application code
+Contains overall WICS documentation and generated HTML documentation for the application code.
 
 =item C<scripts>
 
-contains scripts that aren't directly part of the WICS applications; these perform related functions like generating documentation and sample files
+Contains scripts that aren't directly part of the WICS applications; these perform related functions like generating documentation and sample files.
 
 =item C<lib>
 
-contains code for performing conversions and processing ITS
+contains code for performing conversions and processing ITS.
 
 =item C<bin>
 
-contains two applications for performing the WICS tasks: a command line interface (C<WICS.pl>) and a graphical interface (C<WICS-GUI.pl>).
+Contains two applications for performing the WICS tasks: a command line interface (C<WICS.pl>) and a graphical interface (C<WICS-GUI.pl>).
 
 
 =item C<t>
 
-contains the unit tests for verifying the functionality of the converters
+Contains the unit tests for verifying the functionality of the converters.
 
 =item C<TODO.txt>
 
-Contains some TODO notes for future maintenance
+Contains some TODO notes for future maintenance.
 
 =item C<README.mkdn>
 
-a generated file that describes the functionality of C<ITS::WICS>.
+A generated file that describes the functionality of C<ITS::WICS>.
 
 =item C<dist.ini>
 
-a settings file for Dist::Zilla. More on this later.
+A settings file for Dist::Zilla. More on this later.
 
 =back
 
@@ -200,7 +200,7 @@ One at a time: C<perl -Ilib t/name-of-test.t>. The C<-I> option adds the C<lib> 
 
 =item 2.
 
-All at once: C<prove -lrv> or if you're less patient, C<prove -lr -j4>. The options do the following:
+All at once using: C<prove -lrv> or if you're less patient, C<prove -lr -j4>. The options do the following:
 
 =over
 
@@ -234,7 +234,7 @@ Installing the distribution is simple. Look inside of the C<releases> directory 
 
 If you would rather install the latest development version as contained in the lib directory, then use the command C<dzil install> (see also L<Building a Release>).
 
-Once you've installed the distribution, you can use the WICS CLI and the WICS GUI from the command line any time using C<WICS> and C<WICS-GUI> (add C<.pl> to those if not on Windows). You can also use any of the included modules in your own Perl scripts, as well as view their documentation from the command line via C<perldoc>.
+Once you've installed the distribution, you can use the WICS CLI and the WICS GUI from the command line using C<WICS> and C<WICS-GUI>, respectively (add C<.pl> to those if not on Windows). You can also use any of the included modules in your own Perl scripts, as well as view their documentation from the command line via C<perldoc>.
 
 =head4 Viewing and Generating Documentation
 
@@ -300,7 +300,7 @@ It's possible that the names of these libraries could be slightly different on y
 
 Finally, you'll need to make the ITS-WICS distribution available to C<pp> and C<wxpar>, either by installing it or by adding the C<lib> folder to the include path via the C<-I> option.
 
-Here's a sample command to make the standalone executable. We use C<-l> to make C<wxpar> include the DLL files in the executable file. The working directory contains the ITS-WICS distribution, and we use C<-I> to include its C<lib> folders (remember that this is unnecessary if this distribution has been installed). We use C<-o> to specify the name of the created executable. We pass the path to this script as the final argument. Run in a Windows CMD, this should all be one line; I have broken it into several lines for display purposes.
+Here's a sample command to make the standalone executable. We use C<-l> to make C<wxpar> include the DLL files in the executable file. The working directory contains the ITS-WICS distribution, and we use C<-I> to include its C<lib> folders (This is unnecessary if this distribution has been installed.). We use C<-o> to specify the name of the created executable. We pass the path to this script as the final argument. Run in a Windows CMD, this should all be one line; I have broken it into several lines for display purposes.
 
     wxpar -o WICS-GUI.exe -l C:/strawberry/c/bin/libxml2-2__.dll
     -l C:/strawberry/c/bin/libiconv-2__.dll -l C:/strawberry/c/bin/zlib1__.dll
@@ -336,7 +336,7 @@ Currently this module does not check the ITS version. All rules are assumed to b
 
 It would be useful to allow the calling code to provide default ITS parameter values, as specified in Section 5.3.5 of the ITS spec.
 
-No attempt is made at recovering from errors caused by invalid XML. Invalid input causes parsing to halt and an error to be thrown.
+No attempt is made to recover from errors caused by invalid XML. Invalid input causes parsing to halt and an error to be thrown.
 
 No external schemas/DTDs are used to validate the XML input.
 

@@ -16,12 +16,11 @@ Choose the file or files you would like to convert by clicking
 "Convert". A frame with the log messages will pop up. Errors
 are shown in red.
 
-Converted files are written to the directory that the source
-files exist in. They keep the name of their source file, but
-with a different extension. If the "overwrite existing files"
-box is not checked and a file with the given name and extension
-already exists, then a number will be appended to the end of
-the file name to make it unique.
+Converted files are written to the same directory as the source file.
+Filenames are created by stripping the extension from the input file
+and replacing it with the extension for the target format (html, xliff,
+etc.). If a file with that name already exists, additional numbers
+(-1, -2, etc.) will be appended to the filename to ensure uniqueness.
 
 =head1 STANDALONE EXECUTABLE
 
@@ -409,19 +408,19 @@ sub new {
     $self->{lbdata} = [
 
         { name => 'XML2HTML',
-          description => 'Convert XML into HTML, preserving ITS information',
+          description => 'Convert XML into HTML, preserving ITS information.',
           colour => [ 255, 0, 0 ],
           transformer => \&ITS::WICS::xml2html,
           output_ext => 'html',
         },
         { name => 'HTML5 Reduce',
-          description => 'Recude HTML5 and external ITS resources to a single file',
+          description => 'Reduce HTML5 and external ITS resources to a single file.',
           colour => [ 0, 255, 0 ],
           transformer => \&ITS::WICS::reduceHtml,
           output_ext => 'html',
         },
         { name => 'XLIFF2HTML',
-          description => 'Write HTML to display ITS data in XLIFF source and target elements',
+          description => 'Write HTML to display ITS data in XLIFF source and target elements.',
           colour => [ 0, 0, 255 ],
           transformer => \&ITS::WICS::xliff2html,
           output_ext => 'html',

@@ -29,8 +29,8 @@ This is a command-line application for altering ITS-decorated data.
 =item -i | --input <file>...
 
 This argument is required. It provides the path to the input file to
-convert. This option may be provided multiple times to convert multiple
-files.
+convert. This option may be provided multiple times (C<-i file1
+-i file2 etc.>) to convert multiple files.
 
 =item --xml2html, --xliff2html, --xml2xliff or --reduceHtml
 
@@ -56,7 +56,7 @@ converted output. Filenames are created by stripping the extension from
 the input file and replacing it with the extension for the target format
 (html, xliff, etc.). If overwriting existing files is not permitted,
 additional numbers (-1, -2, etc.) will be appended to the filename to
-insure uniqueness.
+ensure uniqueness.
 
 This script will never write over the input file.
 

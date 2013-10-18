@@ -20,15 +20,39 @@ XLIFF documents can use XML ITS, but can additionally use markup from the C<http
 
 WICS stands for "Work In Context System". It is a project which seeks to make ITS markup more useful by displaying it in a more user-friendly manner within a web browser. It has two components:
 
-* A converter for generating HTML5 or XLIFF from original documents (this project)
-* JavaScript to display ITS data in Web browsers
+=over
+
+=item *
+
+A converter for generating HTML5 or XLIFF from original documents (this project)
+
+=item *
+
+JavaScript to display ITS data in Web browsers
+
+=back
 
 The applications described in this document accomplish four file conversion tasks:
 
-1. Convert ITS-decorated XML into HTML5 for displaying the contents and ITS metadata (XML2HTML)
-2. Reduce ITS-decorated HTML5 documents to be usable as a single file (HTML reducer)
-3. Convert ITS-decorated XLIFF into HTML5 for displaying the contents of C<< <source> >> and and C<< <target> >> elements with associated ITS metadata (XLIFF2HTML)
-4. Extract text segments and their associated ITS metadata and create an XLIFF file with equivalent ITS decorating the translation units (XML2XLIFF). This application is of limited functionality and is demonstrated through only one sample conversion.
+=over
+
+=item 1.
+
+Convert ITS-decorated XML into HTML5 for displaying the contents and ITS metadata (XML2HTML)
+
+=item 2.
+
+Reduce ITS-decorated HTML5 documents to be usable as a single file (HTML reducer)
+
+=item 3.
+
+Convert ITS-decorated XLIFF into HTML5 for displaying the contents of C<< <source> >> and and C<< <target> >> elements with associated ITS metadata (XLIFF2HTML)
+
+=item 4.
+
+Extract text segments and their associated ITS metadata and create an XLIFF file with equivalent ITS decorating the translation units (XML2XLIFF). This application is of limited functionality and is demonstrated through only one sample conversion.
+
+=back
 
 Both the WICS and WICS-GUI application can accomplish all four tasks, but WICS requires the use of a command line.
 
@@ -56,7 +80,7 @@ When you open WICS-GUI, you should see a small window similar to the one shown b
 
 =end html
 
-Upon double-clicking on the task that you wish to perform, you are given another window like that shown below:
+Upon double-clicking  the task that you wish to perform, you are given another window:
 
 =begin html
 
@@ -69,7 +93,7 @@ Upon double-clicking on the task that you wish to perform, you are given another
 
 =end html
 
-Click on C<Choose file...> to choose one or more files that you would like to process with the chosen task. If you have chosen C<XML2HTML>, for example, then you should choose one more more ITS-decorated XML files that you would like to convert to HTML for viewing in your web browser.
+Click on C<Choose file...> to choose one or more files that you would like to process with the chosen task. If you have chosen C<XML2HTML>, for example, then you should choose one or more ITS-decorated XML files that you would like to convert to HTML for viewing in your web browser.
 
 After you have chosen the files you would like to process, they are listed in the white box. Upon clicking C<Convert> to process the listed files, another window containing the application logs appears:
 
@@ -92,7 +116,7 @@ If you see a red message instead, then something went wrong. You should refer to
 
 =item 1
 
-The input file you provided is not well-formed. For example, your XML file might have a mismatched tag (like C<< <xml><a></b></xml> >>), or your might have two separate elements with the same C<xml:id> attribute value.
+The input file you provided is not well-formed. For example, your XML file might have a mismatched tag (like C<< <xml><a></b></xml> >>), or you might have two separate elements with the same C<xml:id> attribute value.
 
 =item 2
 
@@ -110,15 +134,15 @@ This application runs from the command line. The usage is C<< WICS [-w] --[task]
 
 =item C<--xml2html>, C<--xliff2html>, C<--xml2xliff> or C<--reduceHtml>
 
-This argument is required. It pecifies which operation is to be carried out on the input file. Each name corresponds to a WICS conversion task.
+This argument is required. It specifies which operation is to be carried out on the input file. Each name corresponds to a WICS conversion task.
 
 =item C<-i file> or C<-input file>
 
-This argument is required. It provides the path to the input file to convert. This option may be provided multiple times to convert multiple files.
+This argument is required. It provides the path to the input file to convert. This option may be provided multiple times (C<-i file1 -i file2 etc.>) to convert multiple files.
 
 =item C<-w> or C<--overwrite>
 
-This option Specifies that the script may overwrite existing files when printing the conversion results. Filenames are created by stripping the extension from the input file and replacing it with the extension for the target format (html, xliff, etc.). If overwriting existing files is not permitted, additional numbers (-1, -2, etc.) will be appended to the filename to insure uniqueness.
+This option specifies that the script may overwrite existing files when printing the conversion results. Filenames are created by stripping the extension from the input file and replacing it with the extension for the target format (html, xliff, etc.). If overwriting existing files is not permitted, additional numbers (-1, -2, etc.) will be appended to the filename to ensure uniqueness.
 
 This script will never write over the input file.
 
