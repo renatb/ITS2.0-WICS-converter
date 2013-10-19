@@ -27,17 +27,21 @@
 <div class='indexgroup'>
 <ul   class='indexList indexList1'>
   <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#its_requires_inline'>its_requires_inline</a>
     <li class='indexItem indexItem2'><a href='#transfer_inline_its'>transfer_inline_its</a>
     <li class='indexItem indexItem2'><a href='#has_localizable_inline'>has_localizable_inline</a>
     <li class='indexItem indexItem2'><a href='#convert_atts'>convert_atts</a>
+    <li class='indexItem indexItem2'><a href='#localize_rules'>localize_rules</a>
   </ul>
 </ul>
 </div>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
+name="its_requires_inline"
+><code>its_requires_inline</code></a></h2>
 
-><code>its_requires_inline</code> Return true if converting the ITS info on the given element requires that it be rendered inline (as mrk) instead of structural (as its own source).
-Currently the only information tested for is terminology information.</a></h2>
+<p>Return true if converting the ITS info on the given element requires that it be rendered inline (as mrk) instead of structural (as its own source).
+Currently the only information tested for is terminology information.</p>
 
 <p>The arguments are the element being tested and the hash reference containing the global information pertaining to it.</p>
 
@@ -68,8 +72,10 @@ The arguments are: first the local element where any new attributes should be pl
 This is not necessary if the element in question is inline.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
+name="localize_rules"
+><code>localize_rules</code></a></h2>
 
-><code>localize_rules</code> Arguments are: first an element to have ITS metadata applied locally; second the translation unit containing the element; third the match index containing the global ITS info for the element; and fourth an array ref containing the local attribute nodes assumed to exist on the element being processed.</a></h2>
+<p>Arguments are: first an element to have ITS metadata applied locally; second the translation unit containing the element; third the match index containing the global ITS info for the element; and fourth an array ref containing the local attribute nodes assumed to exist on the element being processed.</p>
 
 <p>This function converts ITS info contained in global rules matching the element into equivalent local markup on either the element itself or the trans-unit.</p>
 <p class="backlinkbottom"><b><a name="___bottom" href="../../../index.html" title="All Documents">&lt;&lt;</a></b></p>
