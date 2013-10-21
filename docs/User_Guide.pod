@@ -1,6 +1,6 @@
-=head1 WICS Converter User Guide
-
-This guide explains how to use the WICS converters, WICS and WICS-GUI.
+# PODNAME: User Guide
+# VERSION
+# ABSTRACT: Guide to using the WICS converters
 
 =head2 Overview
 

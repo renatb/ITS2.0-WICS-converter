@@ -20,6 +20,10 @@ use Exporter::Easy (
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 our $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
 
+=head1 EXPORTS
+
+The following function may be exported:
+
 =head2 C<its_requires_inline>
 
 Return true if converting the ITS info on the given element

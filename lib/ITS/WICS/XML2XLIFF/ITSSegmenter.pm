@@ -19,6 +19,9 @@ our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 # VERSION
 # ABSTRACT: Extract translation-units using ITS segmentation (internal use only)
 
+=head1 EXPORTS
+
+The following function may be exported:
 
 =head2 C<extract_convert_its>
 

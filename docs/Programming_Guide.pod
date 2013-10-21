@@ -1,6 +1,6 @@
-=head1 Programming Guide for the WICS Converters
-
-Nathan Glenn <garfieldnate@gmail.com>
+# PODNAME: Programming Guide
+# VERSION
+# ABSTRACT: Programming Guide for the WICS Converters
 
 =head2 Overview
 
