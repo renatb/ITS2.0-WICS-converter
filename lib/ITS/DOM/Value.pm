@@ -84,17 +84,10 @@ sub as_xpath {
 sub _get_type {
     my ($value) = @_;
     #get the type from the XML::LibXML::* class name
-    given(ref $value){
-        when(/Literal/){
-            return 'LIT';
-        }
-        when(/Boolean/){
-            return 'BOOL';
-        }
-        when(/Number/){
-            return 'NUM';
-        }
-    }
+    my $class = ref $value;
+    if($class =~ /Literal/)     {return 'LIT';}
+    elsif($class =~ /Boolean/)  {return 'BOOL';}
+    elsif($class =~ /Number/)   {return 'NUM';}
     croak "Unkown value type $value";
 }
 

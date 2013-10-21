@@ -65,16 +65,15 @@ sub _get_type {
         }
     }
     else{
-        given($node->nodeType){
-            when(1){$type = 'ELT'; break;}
-            when(2){$type = 'ATT'; break;}
-            when(3){$type = 'TXT'; break;}
-            when(18){$type = 'NS'; break;}
-            when(7){$type = 'PI'; break;}
-            when(8){$type = 'COM'; break;}
-            when(9){$type = 'DOC'; break;}
-            default{croak "unknown node type for $node";}
-        }
+        my $node_type = $node->nodeType;
+        if($node_type == 1){$type = 'ELT';}
+        elsif($node_type == 2){$type = 'ATT';}
+        elsif($node_type == 3){$type = 'TXT';}
+        elsif($node_type == 18){$type = 'NS';}
+        elsif($node_type == 7){$type = 'PI';}
+        elsif($node_type == 8){$type = 'COM';}
+        elsif($node_type == 9){$type = 'DOC';}
+        else{croak "unknown node type for $node";}
     }
     return $type;
 }
