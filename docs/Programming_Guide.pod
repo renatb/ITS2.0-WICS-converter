@@ -125,7 +125,7 @@ There are also plenty of CPAN dependencies (CPAN is an archive that contains ope
 
 L<Dist::Zilla|http://dzil.org/> and many plugins are required for the release cycle. After installing cpanm and then Dist::Zilla (via C<cpanm Dist::Zilla>), you can install all of the release dependencies using C<dzil authordeps | cpanm>.
 
-To run C<scripts/GenerateDocs.pl> (see L</Viewing and Generating Documentation>), you must have L<Pod::Simple::HTMLBatch|https://metacpan.org/module/PAR::Packer> installed.
+To run C<scripts/GenerateDocs.pl> (see L</Viewing and Generating Documentation>), you must have L<Pod::Simple::HTMLBatch|https://metacpan.org/module/PAR::Packer> installed, along with several of the dependencies required to run C<dzil>.
 
 Finally, to create the standalone executables, you need to install L<PAR::Packer|https://metacpan.org/module/PAR::Packer> (via C<cpanm PAR::Packer>).
 
