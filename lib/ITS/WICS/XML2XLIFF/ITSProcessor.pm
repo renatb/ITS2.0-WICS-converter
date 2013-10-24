@@ -34,6 +34,9 @@ information.
 The arguments are the element being tested and the hash reference containing the global
 information pertaining to it.
 =cut
+# TODO: how about returning null if none is required, and returning a <mrk> element
+# when it is? That way we could copy the term info and remove it from the original
+# element here. It would save logic elsewhere.
 sub its_requires_inline {
     my ($el, $global) = @_;
 

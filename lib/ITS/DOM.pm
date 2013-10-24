@@ -79,8 +79,8 @@ sub new {
 
 =head2 C<get_root>
 
-Returns the root document element, or undef if there is none (this
-node is not associated with a document).
+Returns the root document element, or undef if there is none (This
+node is not associated with a document.).
 
 =cut
 sub get_root {
@@ -218,7 +218,7 @@ sub _carp_parse_errors {
 =head2 C<next_id>
 
 Returns a unique number each time it is called with a given
-DOM instance. This can be used to created unique id values.
+DOM instance. This can be used to create unique id values.
 
 =cut
 sub next_id {

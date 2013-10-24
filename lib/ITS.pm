@@ -357,7 +357,7 @@ for example, with C<HTML::Selector::XPath>.
 Currently this module does not check ITS version. All rules
 are assumed to be ITS version 2.0.
 
-Section 5.3.5 of the ITS spec mentions that implementors should provide
+Section 5.3.5 of the ITS spec mentions that implementers should provide
 a way to set default values for parameters. This would be useful, but what
 is the menaing of i<default> value here? Are there documents without param
 declarations but with XPaths that contain variables? Or should this just be

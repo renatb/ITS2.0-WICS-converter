@@ -80,7 +80,7 @@ name="EXPORTS"
 name="new_element"
 ><code>new_element</code></a></h2>
 
-<p>Arguments: a tag name and optionally a hash of attribute name-value pairs and text to store in the element</p>
+<p>Arguments: a tag name and optionally a hash of attribute name-value pairs and text to store in the element.</p>
 
 <p>Creates and returns a new ITS::DOM::Node object representing an element with the given name and attributes.</p>
 
@@ -156,7 +156,7 @@ name="get_ns_declarations"
 name="strip_ns"
 ><code>strip_ns</code></a></h2>
 
-<p>Replaces an entire element with an identical node which is in the null namespace, and whose attributes are also in the null namespace. Also removes all namespace declarations. Any child elements who use the namespace will have the namespace declared on them, instead. If the input element had any namespacing to remove, the newly created element returned. Otherwise, the original element is returned.</p>
+<p>Replaces an entire element with an identical node which is in the null namespace, and whose attributes are also in the null namespace. Also removes all namespace declarations. Any child elements who use the namespace will have the namespace declared on them, instead. If the input element had any namespacing to remove, the newly created element is returned. Otherwise, the original element is returned.</p>
 
 <p>Creating a new element in order to remove namespacing is a requirement of LibXML&#39;s design.</p>
 
@@ -164,7 +164,7 @@ name="strip_ns"
 name="child_els"
 ><code>child_els</code></a></h2>
 
-<p>Returns an array pointer containing the child elements of this element. You may optionally provide name and namespace parameters (<code>$el-</code>child_els($name, $ns)&#62;) to restrict the list of children that is returned to those with the given name or name and namespace.</p>
+<p>Returns an array pointer containing the child elements of this element. You may optionally provide name and namespace parameters (<code>$el-&#62;child_els($name, $ns)</code>) to restrict the list of children that is returned to those with the given name or name and namespace.</p>
 
 <p>If both a name and a namespace are provided, the name should be the local name (without a prefix). &#39;*&#39; can be provided as the namespace to match any namespace and only filter returned elements by local name.</p>
 

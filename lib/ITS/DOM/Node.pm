@@ -93,30 +93,30 @@ sub to_string {
 Constructs an xpath query from the input arguments, and returns
 a list of nodes matching the query.
 
-The xpath context node will be the calling node, and the first argument should be
-the XPath string. The rest of the parameters are named and optional:
+The xpath context node will be the calling node, and the first argument should
+be the XPath string. The rest of the parameters are named and optional:
 
 =over 3
 
-=item position
+=item C<position>
 
 An integer indicating the context position. Default is -1.
 
-=item size
+=item C<size>
 
 An integer indicating the context size. Default is -1.
 
-=item params
+=item C<params>
 
-A hash ref containing variable names and strings values. No other
+A hash ref containing variable names and string values. No other
 types of values are allowed. There are no default parameters.
 
-=item namespaces
+=item C<namespaces>
 
 A hash ref of namespace prefix keys and namespace URI values to be
 made available to the XPath expression. Any previously scoped namespaces
-are removed (by default, all namespaces in the scope of the context node
-are available, but providing a namespaces value removes these).
+are removed (By default, all namespaces in the scope of the context node
+are available, but providing a namespaces value removes these.).
 
 =back
 
@@ -218,7 +218,7 @@ sub set_name {
 =head2 C<remove>
 
 Unbinds this node from its siblings and parents (but not
-the document, though it becomes hidden and will be lost unless
+the document; though it becomes hidden and will be lost unless
 pasted somewhere in the document).
 
 =cut
@@ -330,7 +330,7 @@ sub doc_node {
 
 =head2 C<path>
 
-Returns an XPath uniquely identifying this node in the current document
+Returns an XPath uniquely identifying this node in the current document.
 
 =cut
 sub path {

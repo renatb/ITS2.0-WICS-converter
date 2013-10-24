@@ -15,6 +15,7 @@
     * Implement ITS inheritance
     * Create a way to specify elements that are inline (INI file? constructor args?)
         - currently the ITS::DOM::Element::is_inline method just checks for a newline before and after.
+    * Fix TODO tests (simulate a namespace unregister by reregistering it as '_ITS_UNREGISTERED' or something).
 
 ###ITS-WICS-XML2HTML and ITS-WICS-XLIFF2HTML
     * do some HTML post-processing to fine-tune tests:
@@ -50,6 +51,7 @@ The test which validates the conversion of the files in the ITS 2.0 test suite s
 ###ITS-WICS
 
 * Write some tests (!)
+* Put WICS-GUI and WICS in the same script so that we can make just one executable.
 * rewrite GUI in XRC for better organization
 * make the applications more localizable (po/mo files, share/locale directory, etc.)
 * make 'WICS-GUI.pl' and 'WICS.pl' into links in WICS.pm (don't know how to link them properly)
