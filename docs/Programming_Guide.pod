@@ -525,6 +525,11 @@ Here are a list of the third-party libraries used directly in the WICS converter
 <td align="left"><a href="https://metacpan.org/module/URI">https://metacpan.org/module/URI</a></td>
 <td align="left"><a href="http://dev.perl.org/licenses/artistic.html" title="Perl 5 Artistic License">Perl 5 Artistic</a></td>
 </tr>
+<tr>
+<td align="left">Pod::Simple::HTMLBatch</td>
+<td align="left"><a href="https://metacpan.org/module/Pod::Simple::HTMLBatch">https://metacpan.org/module/Pod::Simple::HTMLBatch</a></td>
+<td align="left"><a href="http://dev.perl.org/licenses/artistic.html" title="Perl 5 Artistic License">Perl 5 Artistic</a></td>
+</tr>
 </tbody>
 </table>
 
