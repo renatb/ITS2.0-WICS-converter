@@ -9,7 +9,7 @@
 package ITS::DOM;
 use strict;
 use warnings;
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 # ABSTRACT: Work with XML and HTML documents
 use ITS::DOM::Element;
 use Carp;
@@ -179,7 +179,7 @@ ITS::DOM - Work with XML and HTML documents
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 
@@ -208,8 +208,8 @@ Parses the input document, creating a queryable DOM structure.
 
 =head2 C<get_root>
 
-Returns the root document element, or undef if there is none (this
-node is not associated with a document).
+Returns the root document element, or undef if there is none (This
+node is not associated with a document.).
 
 =head2 C<string>
 
@@ -238,7 +238,7 @@ document.
 =head2 C<next_id>
 
 Returns a unique number each time it is called with a given
-DOM instance. This can be used to created unique id values.
+DOM instance. This can be used to create unique id values.
 
 =head1 AUTHOR
 

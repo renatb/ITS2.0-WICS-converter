@@ -9,7 +9,7 @@
 package ITS::DOM::Node;
 use strict;
 use warnings;
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 # ABSTRACT: thin wrapper around underlying XML engine node objects
 use ITS::DOM::Value;
 our @CARP_NOT = qw(ITS::DOM);
@@ -47,16 +47,15 @@ sub _get_type {
         }
     }
     else{
-        given($node->nodeType){
-            when(1){$type = 'ELT'; break;}
-            when(2){$type = 'ATT'; break;}
-            when(3){$type = 'TXT'; break;}
-            when(18){$type = 'NS'; break;}
-            when(7){$type = 'PI'; break;}
-            when(8){$type = 'COM'; break;}
-            when(9){$type = 'DOC'; break;}
-            default{croak "unknown node type for $node";}
-        }
+        my $node_type = $node->nodeType;
+        if($node_type == 1){$type = 'ELT';}
+        elsif($node_type == 2){$type = 'ATT';}
+        elsif($node_type == 3){$type = 'TXT';}
+        elsif($node_type == 18){$type = 'NS';}
+        elsif($node_type == 7){$type = 'PI';}
+        elsif($node_type == 8){$type = 'COM';}
+        elsif($node_type == 9){$type = 'DOC';}
+        else{croak "unknown node type for $node";}
     }
     return $type;
 }
@@ -293,7 +292,7 @@ ITS::DOM::Node - thin wrapper around underlying XML engine node objects
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 
@@ -329,30 +328,30 @@ Returns a string representation of this node.
 Constructs an xpath query from the input arguments, and returns
 a list of nodes matching the query.
 
-The xpath context node will be the calling node, and the first argument should be
-the XPath string. The rest of the parameters are named and optional:
+The xpath context node will be the calling node, and the first argument should
+be the XPath string. The rest of the parameters are named and optional:
 
 =over 3
 
-=item position
+=item C<position>
 
 An integer indicating the context position. Default is -1.
 
-=item size
+=item C<size>
 
 An integer indicating the context size. Default is -1.
 
-=item params
+=item C<params>
 
-A hash ref containing variable names and strings values. No other
+A hash ref containing variable names and string values. No other
 types of values are allowed. There are no default parameters.
 
-=item namespaces
+=item C<namespaces>
 
 A hash ref of namespace prefix keys and namespace URI values to be
 made available to the XPath expression. Any previously scoped namespaces
-are removed (by default, all namespaces in the scope of the context node
-are available, but providing a namespaces value removes these).
+are removed (By default, all namespaces in the scope of the context node
+are available, but providing a namespaces value removes these.).
 
 =back
 
@@ -373,7 +372,7 @@ Sets the node's name to the given string. Is namespace aware.
 =head2 C<remove>
 
 Unbinds this node from its siblings and parents (but not
-the document, though it becomes hidden and will be lost unless
+the document; though it becomes hidden and will be lost unless
 pasted somewhere in the document).
 
 =head2 C<namespace_URI>
@@ -415,7 +414,7 @@ or undef if there is no owner.
 
 =head2 C<path>
 
-Returns an XPath uniquely identifying this node in the current document
+Returns an XPath uniquely identifying this node in the current document.
 
 =head2 C<next_sibling>
 

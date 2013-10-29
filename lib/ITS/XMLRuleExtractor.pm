@@ -9,7 +9,7 @@
 package ITS::XMLRuleExtractor;
 use strict;
 use warnings;
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 # ABSTRACT: Extract ITS rules from an XML document
 use Carp;
 our @CARP_NOT = qw(ITS);
@@ -122,7 +122,7 @@ ITS::XMLRuleExtractor - Extract ITS rules from an XML document
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 AUTHOR
 

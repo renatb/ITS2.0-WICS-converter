@@ -71,7 +71,7 @@ my %WriteMakefileArgs = (
     "Test::XML" => 0,
     "utf8" => 0
   },
-  "VERSION" => "0.03",
+  "VERSION" => "0.04",
   "test" => {
     "TESTS" => "t/*.t t/ITS-Reduce/*.t t/ITS-XLIFF2HTML/*.t t/ITS-XML2HTML/*.t t/ITS-XML2XLIFF/*.t t/ITS/*.t"
   }

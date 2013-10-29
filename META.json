@@ -4,7 +4,7 @@
       "Nathan Glenn <garfieldnate@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300036, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Dist::Zilla version 4.300039, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -94,91 +94,100 @@
    "provides" : {
       "ITS" : {
          "file" : "lib/ITS.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::DOM" : {
          "file" : "lib/ITS/DOM.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::DOM::Element" : {
          "file" : "lib/ITS/DOM/Element.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::DOM::Node" : {
          "file" : "lib/ITS/DOM/Node.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::DOM::Value" : {
          "file" : "lib/ITS/DOM/Value.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::HTMLRuleExtractor" : {
          "file" : "lib/ITS/HTMLRuleExtractor.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::Rule" : {
          "file" : "lib/ITS/Rule.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::RuleContainer" : {
          "file" : "lib/ITS/RuleContainer.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::WICS" : {
          "file" : "lib/ITS/WICS.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::WICS::FutureNode" : {
          "file" : "lib/ITS/WICS/FutureNode.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::WICS::FutureNodeManager" : {
          "file" : "lib/ITS/WICS/FutureNodeManager.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::WICS::GuiLogger" : {
          "file" : "lib/ITS/WICS/GuiLogger.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::WICS::LogUtils" : {
          "file" : "lib/ITS/WICS/LogUtils.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::WICS::Reduce" : {
          "file" : "lib/ITS/WICS/Reduce.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::WICS::XLIFF2HTML" : {
          "file" : "lib/ITS/WICS/XLIFF2HTML.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::WICS::XML2HTML" : {
          "file" : "lib/ITS/WICS/XML2HTML.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::WICS::XML2XLIFF" : {
          "file" : "lib/ITS/WICS/XML2XLIFF.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::WICS::XML2XLIFF::CustomSegmenter" : {
          "file" : "lib/ITS/WICS/XML2XLIFF/CustomSegmenter.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::WICS::XML2XLIFF::ITSProcessor" : {
          "file" : "lib/ITS/WICS/XML2XLIFF/ITSProcessor.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::WICS::XML2XLIFF::ITSSegmenter" : {
          "file" : "lib/ITS/WICS/XML2XLIFF/ITSSegmenter.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       },
       "ITS::XMLRuleExtractor" : {
          "file" : "lib/ITS/XMLRuleExtractor.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       }
    },
    "release_status" : "stable",
-   "version" : "0.03",
+   "resources" : {
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ],
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/renatb/ITS2.0-WICS-converter"
+      }
+   },
+   "version" : "0.04",
    "x_BuiltWith" : {
       "modules" : {
          "Carp" : "1.26",
@@ -261,27 +270,27 @@
          {
             "class" : "Dist::Zilla::Plugin::GatherDir",
             "name" : "GatherDir",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::PruneCruft",
             "name" : "PruneCruft",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::AutoPrereqs",
             "name" : "AutoPrereqs",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::GenerateFile",
             "name" : "MANIFEST.SKIP",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::ManifestSkip",
             "name" : "ManifestSkip",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::ReportVersions::Tiny",
@@ -311,7 +320,7 @@
          {
             "class" : "Dist::Zilla::Plugin::MetaTests",
             "name" : "MetaTests",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::Test::CPAN::Meta::JSON",
@@ -331,12 +340,12 @@
          {
             "class" : "Dist::Zilla::Plugin::PodCoverageTests",
             "name" : "PodCoverageTests",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::PodSyntaxTests",
             "name" : "PodSyntaxTests",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::Test::Portability",
@@ -386,17 +395,17 @@
          {
             "class" : "Dist::Zilla::Plugin::NextRelease",
             "name" : "NextRelease",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::ExecDir",
             "name" : "ExecDir",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::ShareDir",
             "name" : "ShareDir",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::MinimumPerl",
@@ -406,7 +415,7 @@
          {
             "class" : "Dist::Zilla::Plugin::MetaConfig",
             "name" : "MetaConfig",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::MetaData::BuiltWith",
@@ -421,9 +430,19 @@
             "version" : "0.03000100"
          },
          {
+            "class" : "Dist::Zilla::Plugin::Repository",
+            "name" : "Repository",
+            "version" : "0.19"
+         },
+         {
+            "class" : "Dist::Zilla::Plugin::MetaResources",
+            "name" : "MetaResources",
+            "version" : "4.300039"
+         },
+         {
             "class" : "Dist::Zilla::Plugin::MetaNoIndex",
             "name" : "MetaNoIndex",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::MetaProvides::Package",
@@ -433,17 +452,17 @@
          {
             "class" : "Dist::Zilla::Plugin::License",
             "name" : "License",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::MakeMaker",
             "name" : "MakeMaker",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::ModuleBuild",
             "name" : "ModuleBuild",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::DualBuilders",
@@ -453,12 +472,12 @@
          {
             "class" : "Dist::Zilla::Plugin::MetaYAML",
             "name" : "MetaYAML",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::MetaJSON",
             "name" : "MetaJSON",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::ReadmeFromPod",
@@ -478,7 +497,7 @@
          {
             "class" : "Dist::Zilla::Plugin::Manifest",
             "name" : "Manifest",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::CheckChangesHasContent",
@@ -488,12 +507,12 @@
          {
             "class" : "Dist::Zilla::Plugin::TestRelease",
             "name" : "TestRelease",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::ConfirmRelease",
             "name" : "ConfirmRelease",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::RunExtraTests",
@@ -538,32 +557,32 @@
          {
             "class" : "Dist::Zilla::Plugin::FinderCode",
             "name" : ":InstallModules",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::FinderCode",
             "name" : ":IncModules",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::FinderCode",
             "name" : ":TestFiles",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::FinderCode",
             "name" : ":ExecFiles",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::FinderCode",
             "name" : ":ShareFiles",
-            "version" : "4.300036"
+            "version" : "4.300039"
          },
          {
             "class" : "Dist::Zilla::Plugin::FinderCode",
             "name" : ":MainModule",
-            "version" : "4.300036"
+            "version" : "4.300039"
          }
       ],
       "zilla" : {
@@ -571,7 +590,7 @@
          "config" : {
             "is_trial" : "0"
          },
-         "version" : "4.300036"
+         "version" : "4.300039"
       }
    }
 }

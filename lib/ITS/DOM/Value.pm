@@ -10,7 +10,7 @@ package ITS::DOM::Value;
 
 use strict;
 use warnings;
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 # ABSTRACT: thin wrapper around underlying XML engine value objects
 use Carp;
 use feature 'switch';
@@ -51,17 +51,10 @@ sub as_xpath {
 sub _get_type {
     my ($value) = @_;
     #get the type from the XML::LibXML::* class name
-    given(ref $value){
-        when(/Literal/){
-            return 'LIT';
-        }
-        when(/Boolean/){
-            return 'BOOL';
-        }
-        when(/Number/){
-            return 'NUM';
-        }
-    }
+    my $class = ref $value;
+    if($class =~ /Literal/)     {return 'LIT';}
+    elsif($class =~ /Boolean/)  {return 'BOOL';}
+    elsif($class =~ /Number/)   {return 'NUM';}
     croak "Unkown value type $value";
 }
 
@@ -77,7 +70,7 @@ ITS::DOM::Value - thin wrapper around underlying XML engine value objects
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 

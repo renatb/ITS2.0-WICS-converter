@@ -15,7 +15,7 @@ use ITS::WICS::LogUtils qw(get_or_set_id);
 use Carp;
 use Log::Any qw($log);
 
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 # ABSTRACT: Save a single node during DOM transformation.
 
 sub new_future {
@@ -193,7 +193,7 @@ ITS::WICS::FutureNode - Save a single node during DOM transformation.
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 

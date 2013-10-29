@@ -30,7 +30,7 @@ our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 our $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
 
 # ABSTRACT: Extract ITS-decorated XML into XLIFF
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 
 #default: convert and print input
 print ${ __PACKAGE__->new()->convert($ARGV[0]) } unless caller;
@@ -212,7 +212,7 @@ ITS::WICS::XML2XLIFF - Extract ITS-decorated XML into XLIFF
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 

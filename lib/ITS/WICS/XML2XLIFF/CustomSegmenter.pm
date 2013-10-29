@@ -25,9 +25,8 @@ use ITS::WICS::LogUtils qw(node_log_id);
 #TODO: put all of these in one place
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 # ABSTRACT: Extract trans-units using custom segmentation (internal use only)
-
 
 sub extract_convert_custom {
     my ($root, $group_els, $tu_els, $match_index) = @_;
@@ -278,7 +277,11 @@ ITS::WICS::XML2XLIFF::CustomSegmenter - Extract trans-units using custom segment
 
 =head1 VERSION
 
-version 0.03
+version 0.04
+
+=head1 EXPORTS
+
+The following function may be exported:
 
 =head2 C<extract_convert_custom>
 

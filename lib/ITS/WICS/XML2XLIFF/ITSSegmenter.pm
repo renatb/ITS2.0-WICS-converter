@@ -24,9 +24,8 @@ use ITS::WICS::LogUtils qw(node_log_id);
 #TODO: put all of these in one place
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 # ABSTRACT: Extract translation-units using ITS segmentation (internal use only)
-
 
 #TODO: place trans-units in a group?
 sub extract_convert_its {
@@ -237,7 +236,11 @@ ITS::WICS::XML2XLIFF::ITSSegmenter - Extract translation-units using ITS segment
 
 =head1 VERSION
 
-version 0.03
+version 0.04
+
+=head1 EXPORTS
+
+The following function may be exported:
 
 =head2 C<extract_convert_its>
 

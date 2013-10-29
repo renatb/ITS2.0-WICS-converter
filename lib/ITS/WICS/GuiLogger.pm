@@ -10,7 +10,7 @@ package ITS::WICS::GuiLogger;
 use strict;
 use warnings;
 # ABSTRACT: forward Log::Any logs to Wx loggers
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 use base qw(Log::Any::Adapter::Base);
 use Log::Any::Adapter::Util qw(make_method);
 use Wx;
@@ -39,7 +39,7 @@ ITS::WICS::GuiLogger - forward Log::Any logs to Wx loggers
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 AUTHOR
 

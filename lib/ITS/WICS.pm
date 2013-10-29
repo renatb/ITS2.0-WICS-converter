@@ -20,7 +20,7 @@ use ITS::WICS::XML2XLIFF;
 use Exporter::Easy (
 	OK => [qw(xml2html xliff2html reduceHtml xml2xliff)]
 );
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 # ABSTRACT: Work with ITS-decorated documents
 
 sub xml2html {
@@ -64,7 +64,7 @@ ITS::WICS - Work with ITS-decorated documents
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 

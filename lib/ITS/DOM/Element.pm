@@ -9,7 +9,7 @@
 package ITS::DOM::Element;
 use strict;
 use warnings;
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 # ABSTRACT: Represents a DOM element
 use Exporter::Easy (
     OK => [qw(new_element)]
@@ -174,7 +174,7 @@ ITS::DOM::Element - Represents a DOM element
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 
@@ -195,7 +195,7 @@ The following function may be exported from ITS::DOM::Element.
 =head2 C<new_element>
 
 Arguments: a tag name and optionally a hash of attribute name-value pairs
-and text to store in the element
+and text to store in the element.
 
 Creates and returns a new ITS::DOM::Node object representing an element with
 the given name and attributes.
@@ -269,9 +269,9 @@ declared on this element.
 
 Replaces an entire element with an identical node which is in the null
 namespace, and whose attributes are also in the null namespace.
-Also removes all namespace declarations. Any child elements who use the namespace
-will have the namespace declared on them, instead.
-If the input element had any namespacing to remove, the newly created element returned.
+Also removes all namespace declarations. Any child elements who use the
+namespace will have the namespace declared on them, instead. If the input
+element had any namespacing to remove, the newly created element is returned.
 Otherwise, the original element is returned.
 
 Creating a new element in order to remove namespacing is a requirement
@@ -281,7 +281,7 @@ of LibXML's design.
 
 Returns an array pointer containing the child elements of
 this element. You may optionally provide name and namespace parameters
-(C<$el->child_els($name, $ns)>) to restrict the list of children that
+(C<< $el->child_els($name, $ns) >>) to restrict the list of children that
 is returned to those with the given name or name and namespace.
 
 If both a name and a namespace are provided, the name should be the local

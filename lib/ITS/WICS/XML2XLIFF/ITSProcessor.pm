@@ -10,7 +10,7 @@ package ITS::WICS::XML2XLIFF::ITSProcessor;
 use strict;
 use warnings;
 
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 # ABSTRACT: Process and convert XML and XLIFF ITS (internal use only).
 
 use ITS qw(its_ns);
@@ -28,6 +28,9 @@ use Exporter::Easy (
 our $XLIFF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 our $ITSXLF_NS = 'http://www.w3.org/ns/its-xliff/';
 
+# TODO: how about returning null if none is required, and returning a <mrk> element
+# when it is? That way we could copy the term info and remove it from the original
+# element here. It would save logic elsewhere.
 sub its_requires_inline {
     my ($el, $global) = @_;
 
@@ -260,9 +263,14 @@ ITS::WICS::XML2XLIFF::ITSProcessor - Process and convert XML and XLIFF ITS (inte
 
 =head1 VERSION
 
-version 0.03
+version 0.04
+
+=head1 EXPORTS
+
+The following function may be exported:
 
 =head2 C<its_requires_inline>
+
 Return true if converting the ITS info on the given element
 requires that it be rendered inline (as mrk) instead of structural
 (as its own source). Currently the only information tested for is terminology
@@ -297,6 +305,7 @@ the C<trans-unit> element currently being created. This is not necessary
 if the element in question is inline.
 
 =head2 C<localize_rules>
+
 Arguments are: first an element to have ITS metadata applied locally; second
 the translation unit containing the element; third the match index
 containing the global ITS info for the element; and fourth an array ref

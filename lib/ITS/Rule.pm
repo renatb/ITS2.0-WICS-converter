@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Carp;
 # ABSTRACT: Wrapper around ITS:*Rule elements
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 
 sub new {
     my ($class, $el, $container) = @_;
@@ -92,7 +92,7 @@ ITS::Rule - Wrapper around ITS:*Rule elements
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 

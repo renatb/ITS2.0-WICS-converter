@@ -33,7 +33,7 @@ my $XLF_NS = 'urn:oasis:names:tc:xliff:document:1.2';
 my @inline_els = qw(g x bx ex bpt ept sub it ph mrk);
 
 # ABSTRACT: Convert ITS-decorated XML into HTML with equivalent markup
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 
 
 #default: convert and print input file
@@ -886,7 +886,7 @@ ITS::WICS::XLIFF2HTML - Convert ITS-decorated XML into HTML with equivalent mark
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 

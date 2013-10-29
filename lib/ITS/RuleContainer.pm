@@ -10,8 +10,8 @@ package ITS::RuleContainer;
 use strict;
 use warnings;
 use ITS::Rule;
-our $VERSION = '0.03'; # VERSION
-# ABSTRACT: Store one its:rules element worth of information
+our $VERSION = '0.04'; # VERSION
+# ABSTRACT: Store one C<< <its:rules> >> element worth of information
 
 sub new {
     my ($class, $el, %args) = @_;
@@ -69,11 +69,11 @@ __END__
 
 =head1 NAME
 
-ITS::RuleContainer - Store one its:rules element worth of information
+ITS::RuleContainer - Store one C<< <its:rules> >> element worth of information
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 
@@ -102,31 +102,31 @@ this information and make it available to the ITS C<*Rule>s contained.
 
 Creates a new RuleContainer object. The first argument should
 be the original element which this container is representing
-(C<its:rules>). The others are named arguments:
+(C<< <its:rules> >>). The others are named arguments:
 
 =over
 
-=item version
+=item C<version>
 
 The version of ITS used in the container.
 
-=item query_language
+=item C<query_language>
 
 The query language used by the rules in the container. This defaults to 'xpath',
 which indicates the use of XPath 2.0 in ITS.
 
-=item params
+=item C<params>
 
 A hashref containing all params available to the rules in the container
 (both those declared in the container and those declared in the container
 that included this one via C<xlink:href>).
 
-=item script
+=item C<script>
 
 The script element containing this RuleContainer as text. This is applicable only
 to HTML documents.
 
-=item rules
+=item C<rules>
 
 An arrayref of C<ITS::DOM::Element>s representing the rules inside this
 container.
@@ -135,7 +135,7 @@ container.
 
 =head2 C<element>
 
-Returns the original ITS::DOM::Element represented by this container
+Returns the original C<ITS::DOM::Element> represented by this container.
 
 =head2 C<version>
 
