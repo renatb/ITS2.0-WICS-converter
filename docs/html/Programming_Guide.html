@@ -34,6 +34,7 @@
       <li class='indexItem indexItem3'><a href='#WICS'>WICS</a>
     </ul>
     <li class='indexItem indexItem2'><a href='#Preserving_ITS_Information_During_Conversion'>Preserving ITS Information During Conversion</a>
+    <li class='indexItem indexItem2'><a href='#Working_with_the_DOM'>Working with the DOM</a>
     <li class='indexItem indexItem2'><a href='#Language_and_Tools'>Language and Tools</a>
     <ul   class='indexList indexList3'>
       <li class='indexItem indexItem3'><a href='#Dependencies'>Dependencies</a>
@@ -176,6 +177,40 @@ Where there are no defaults (<code>langInfo</code>,
 <code>domain</code> and <code>provenance</code>),
 the newly pasted elements may be assigned incorrect ITS information.
 This weakness is listed in the <code>CAVEAT</code> documentation section of the relevant modules.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="Working_with_the_DOM"
+>Working with the DOM</a></h2>
+
+<p>Each of the tasks requires DOM manipulation,
+some XML and some HTML5.
+All such manipulation is done through the <a href="./ITS/DOM.html" class="podlinkpod"
+>ITS::DOM</a> package and its sub packages (<a href="./ITS/DOM/Node.html" class="podlinkpod"
+>Node</a>,
+<a href="./ITS/DOM/Element.html" class="podlinkpod"
+>Element</a>,
+and <a href="./ITS/DOM/Value.html" class="podlinkpod"
+>Value</a>).
+Obviously there are some drawbacks to rolling our own DOM implementation.
+The API must necessarily expand to allow all of the operations employed in the converters,
+and it is always possible that we will find a needed operation missing.
+Creating a comprehrensive DOM API is surely too much work since the API is meant for internal use only.</p>
+
+<p>The reason for the creation of an internal DOM processing package was to allow future maintainers to switch to new underlying XML engines more easily.
+The first XML engine used was <a href="./XML/Twig.html" class="podlinkpod"
+>XML::Twig</a>,
+which turned out to be inadequate.
+During the transition from XML::Twig to <a href="./XML/LibXML.html" class="podlinkpod"
+>XML::LibXML</a>,
+I created a wrapper around all of the DOM manipulation performed by the converters so that I would only have to change designated areas of the code.
+Although XML::LibXML is very advanced,
+and the XML DOM interface is conveniently unified with the HTML5 DOM interface via <a href="./HTML/HTML5/Parser.html" class="podlinkpod"
+>HTML::HTML5::Parser</a>,
+it is not perfect.
+Its main problems are 1) its automatic registering of namespaces during XPath querying (see the TODO test in <code>t/ITS/02-node.t</code>) and 2) its inability to strip namespaces from nodes.
+The latter was more problematic than the former,
+as it required me to write special methods for replacing indexed nodes with new,
+namespace-less ones.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="Language_and_Tools"

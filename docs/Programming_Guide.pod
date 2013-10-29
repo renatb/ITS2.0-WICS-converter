@@ -82,6 +82,31 @@ This method has strengths and weaknesses. The strength is that the structure of 
 
 The weakness is that there are a few cases where ITS information is applied to nodes that it should not be. This occurs when an ITS category passes information to children via inheritance, and also does not have a default value. In the course of conversion, non-element nodes (like attributes) are pasted as elements so as to be both visible and legal HTML, and new attributes are also added (C<title> and C<id>). This unfortunately causes them to inherit ITS information that does not belong to them. Global rules are created to reset ITS information to defaults where possible (C<translate>, C<direction>, and C<localeFilter>). Where there are no defaults (C<langInfo>, C<domain> and C<provenance>), the newly pasted elements may be assigned incorrect ITS information. This weakness is listed in the C<CAVEAT> documentation section of the relevant modules.
 
+=head2 Working with the DOM
+
+Each of the tasks requires DOM manipulation, some XML and some HTML5.
+All such manipulation is done through the L<ITS::DOM> package and its sub
+packages (L<Node|ITS::DOM::Node>, L<Element|ITS::DOM::Element>, and
+L<Value|ITS::DOM::Value>). Obviously there are some drawbacks to rolling our
+own DOM implementation. The API must necessarily expand to allow all of the
+operations employed in the converters, and it is always possible that we will
+find a needed operation missing. Creating a comprehrensive DOM API is surely
+too much work since the API is meant for internal use only.
+
+The reason for the creation of an internal DOM processing package was to allow
+future maintainers to switch to new underlying XML engines more easily. The
+first XML engine used was L<XML::Twig>, which turned out to be inadequate.
+During the transition from XML::Twig to L<XML::LibXML>, I created a wrapper
+around all of the DOM manipulation performed by the converters so that I would
+only have to change designated areas of the code. Although XML::LibXML is very
+advanced, and the XML DOM interface is conveniently unified with the HTML5 DOM
+interface via L<HTML::HTML5::Parser>, it is not perfect. Its main problems are
+1) its automatic registering of namespaces during XPath querying (see the TODO
+test in C<t/ITS/02-node.t>) and 2) its inability to strip namespaces from
+nodes. The latter was more problematic than the former, as it required me to
+write special methods for replacing indexed nodes with new, namespace-less
+ones.
+
 =head2 Language and Tools
 
 The WICS converters are written in Perl. The following packages are included in this distribution:
