@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+ <html>
+  <head>
+
+   <script type="application/its+xml">  
+   <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+   <its:translateRule selector="//h:section/h:p" translate="no"/>
+   <its:locNoteRule locNoteType="description" selector="//h:div/h:span" locNotePointer="../h:p"/>
+   </its:rules>
+   </script>
+
+   <meta charset=utf-8>
+   <title>Example</title>
+  </head>
+  <body>
+  <div>
+The following message appears: <span id="InvalidParameter">Invalid parameter</span>.
+  <p>
+Date and time should be in YYYY-DD-MM HH:MM format.
+  </p>
+  </div>
+  <div>
+And here is some text added for the <span id="webNote">purposes of testing</span>.
+  <p>
+The note added by Alex S
+  </p>
+  </div>
+  </body>
+ </html>

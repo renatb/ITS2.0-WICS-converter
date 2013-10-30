@@ -1,0 +1,30 @@
+converting document elements into HTML
+processing <messages>
+removing @its:version[2.0] from <messages>
+setting @title of <messages> to 'messages'
+stripping namespaces from <messages>
+processing <its:span>
+Replacing @storageSize of <its:span> with its-storage-size
+Replacing @storageEncoding of <its:span> with its-storage-encoding
+Replacing @lineBreakType of <its:span> with its-line-break-type
+setting @title of <its:span> to 'its:span'
+stripping namespaces from <its:span>
+processing <its:span>
+Replacing @storageSize of <its:span> with its-storage-size
+Replacing @storageEncoding of <its:span> with its-storage-encoding
+Replacing @lineBreakType of <its:span> with its-line-break-type
+setting @title of <its:span> to 'its:span'
+stripping namespaces from <its:span>
+processing <its:span>
+Replacing @storageSize of <its:span> with its-storage-size
+Replacing @storageEncoding of <its:span> with its-storage-encoding
+Replacing @lineBreakType of <its:span> with its-line-break-type
+setting @title of <its:span> to 'its:span'
+stripping namespaces from <its:span>
+renaming <messages> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

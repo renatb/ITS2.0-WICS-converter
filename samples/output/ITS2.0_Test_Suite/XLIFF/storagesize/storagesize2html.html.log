@@ -1,0 +1,69 @@
+converting document elements into HTML
+processing <xliff>
+setting @title of <xliff> to 'xliff'
+stripping namespaces from <xliff>
+processing <file>
+setting @title of <file> to 'file'
+stripping namespaces from <file>
+processing <body>
+setting @title of <body> to 'body'
+stripping namespaces from <body>
+processing <trans-unit id="1">
+setting @title of <trans-unit> to 'trans-unit'
+stripping namespaces from <trans-unit>
+processing <source>
+renaming @xml:lang[en] of <source> to @lang
+setting @title of <source> to 'source'
+stripping namespaces from <source>
+renaming <source> to <p>
+renaming <trans-unit> to <div>
+processing <trans-unit id="2">
+setting @title of <trans-unit> to 'trans-unit'
+stripping namespaces from <trans-unit>
+processing <source>
+renaming @xml:lang[en] of <source> to @lang
+setting @title of <source> to 'source'
+stripping namespaces from <source>
+processing <g id="1">
+setting @title of <g> to 'g'
+stripping namespaces from <g>
+renaming <g> to <span>
+renaming <source> to <p>
+renaming <trans-unit> to <div>
+processing <trans-unit id="3">
+match: rule=<its:idValueRule>; idValue=123; selector=<trans-unit>
+setting @title of <trans-unit> to 'trans-unit'
+stripping namespaces from <trans-unit>
+processing <source>
+renaming @xml:lang[en] of <source> to @lang
+Replacing @its:storageSize of <source> with its-storage-size
+Replacing @its:storageEncoding of <source> with its-storage-encoding
+setting @title of <source> to 'source'
+stripping namespaces from <source>
+renaming <source> to <p>
+renaming <trans-unit> to <div>
+processing <trans-unit id="4">
+match: rule=<its:idValueRule>; selector=<trans-unit>; idValue=139
+setting @title of <trans-unit> to 'trans-unit'
+stripping namespaces from <trans-unit>
+processing <source>
+renaming @xml:lang[en] of <source> to @lang
+Replacing @its:storageSize of <source> with its-storage-size
+Replacing @its:storageEncoding of <source> with its-storage-encoding
+setting @title of <source> to 'source'
+stripping namespaces from <source>
+renaming <source> to <p>
+renaming <trans-unit> to <div>
+renaming <body> to <div>
+renaming <file> to <div>
+renaming <xliff> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Creating new rule <its:idValueRule> to match [idValue='123'; selector=<div id="ITS_1">]
+Setting id of <div> to ITS_2
+Creating new rule <its:idValueRule> to match [idValue='139'; selector=<div id="ITS_2">]
+Creating new rule <its:targetPointerRule> to match convert <source> and <target> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

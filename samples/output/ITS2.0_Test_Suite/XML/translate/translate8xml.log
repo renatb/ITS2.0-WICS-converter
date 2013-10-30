@@ -1,0 +1,129 @@
+match: rule=<its:translateRule>; selector=<topic id="myTopic">
+match: rule=<its:translateRule>; selector=<title>
+match: rule=<its:translateRule>; selector=<prolog>
+match: rule=<its:translateRule>; selector=<its:rules>
+match: rule=<its:translateRule>; selector=<its:translateRule>
+match: rule=<its:translateRule>; selector=<its:translateRule>
+match: rule=<its:translateRule>; selector=<body>
+match: rule=<its:translateRule>; selector=<dl>
+match: rule=<its:translateRule>; selector=<dlentry id="tDataCat">
+match: rule=<its:translateRule>; selector=<dt>
+match: rule=<its:translateRule>; selector=<dd>
+match: rule=<its:translateRule>; selector=<term>
+match: rule=<its:translateRule>; selector=<p>
+match: rule=<its:translateRule>; selector=<ul>
+match: rule=<its:translateRule>; selector=<li>
+match: rule=<its:translateRule>; selector=<li>
+match: rule=<its:translateRule>; selector=<li>
+match: rule=<its:translateRule>; selector=<li>
+match: rule=<its:translateRule>; selector=<p>
+match: rule=<its:translateRule>; selector=<ph>
+match: rule=<its:translateRule>; selector=<p>
+match: rule=<its:translateRule>; selector=<p>
+converting document elements into HTML
+processing <topic id="myTopic">
+setting @title of <topic> to 'topic'
+processing <title>
+setting @title of <title> to 'title'
+renaming <title> to <div>
+processing <prolog>
+setting @title of <prolog> to 'prolog'
+removing <its:rules>
+renaming <prolog> to <div>
+processing <body>
+setting @title of <body> to 'body'
+processing <dl>
+setting @title of <dl> to 'dl'
+processing <dlentry id="tDataCat">
+setting @title of <dlentry> to 'dlentry'
+processing <dt>
+setting @title of <dt> to 'dt'
+renaming <dt> to <div>
+processing <dd>
+setting @title of <dd> to 'dd'
+processing <term>
+setting @title of <term> to 'term'
+renaming <term> to <span>
+renaming <dd> to <div>
+renaming <dlentry> to <div>
+renaming <dl> to <div>
+processing <p>
+setting @title of <p> to 'p'
+renaming <p> to <div>
+processing <ul>
+setting @title of <ul> to 'ul'
+processing <li>
+setting @title of <li> to 'li'
+renaming <li> to <div>
+processing <li>
+setting @title of <li> to 'li'
+renaming <li> to <div>
+processing <li>
+setting @title of <li> to 'li'
+renaming <li> to <div>
+processing <li>
+setting @title of <li> to 'li'
+renaming <li> to <div>
+renaming <ul> to <div>
+processing <p>
+setting @title of <p> to 'p'
+processing <ph>
+renaming @xml:lang[fr] of <ph> to @lang
+setting @title of <ph> to 'ph'
+renaming <ph> to <span>
+renaming <p> to <div>
+renaming <body> to <div>
+renaming <topic> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Creating new rule <its:translateRule> to match [selector=<div id="ITS_1">]
+Setting id of <div> to ITS_2
+Creating new rule <its:translateRule> to match [selector=<div id="ITS_2">]
+Setting id of <div> to ITS_3
+Creating new rule <its:translateRule> to match [selector=<div id="ITS_3">]
+Setting id of <its:rules> to ITS_4
+Creating new rule <its:translateRule> to match [selector=<its:rules id="ITS_4">]
+Setting id of <its:translateRule> to ITS_5
+Creating new rule <its:translateRule> to match [selector=<its:translateRule id="ITS_5">]
+Setting id of <its:translateRule> to ITS_6
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<its:translateRule id="ITS_6">]
+Setting id of <div> to ITS_7
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<div id="ITS_7">]
+Setting id of <div> to ITS_8
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<div id="ITS_8">]
+Setting id of <div> to ITS_9
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<div id="ITS_9">]
+Setting id of <div> to ITS_10
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<div id="ITS_10">]
+Setting id of <div> to ITS_11
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<div id="ITS_11">]
+Setting id of <span> to ITS_12
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<span id="ITS_12">]
+Setting id of <div> to ITS_13
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<div id="ITS_13">]
+Setting id of <div> to ITS_14
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<div id="ITS_14">]
+Setting id of <div> to ITS_15
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<div id="ITS_15">]
+Setting id of <div> to ITS_16
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<div id="ITS_16">]
+Setting id of <div> to ITS_17
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<div id="ITS_17">]
+Setting id of <div> to ITS_18
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<div id="ITS_18">]
+Setting id of <div> to ITS_19
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<div id="ITS_19">]
+Setting id of <span> to ITS_20
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<span id="ITS_20">]
+Creating new rule <its:translateRule id="ITS_6"> to match [selector=<div id="ITS_13">]
+Creating new rule <its:translateRule id="ITS_6"> to match [selector=<div id="ITS_19">]
+Setting id of <span> to ITS_21
+Setting id of <span> to ITS_22
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

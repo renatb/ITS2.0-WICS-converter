@@ -1,0 +1,25 @@
+match: rule=<its:domainRule>; domainPointer=<?foo_pi?>; selector=<para>
+converting document elements into HTML
+processing <xml>
+setting @title of <xml> to 'xml'
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <para>
+setting @title of <para> to 'para'
+renaming <para> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type PI (foo_pi)
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Setting id of <span> to ITS_2
+Creating new rule <its:domainRule> to match [selector=<div id="ITS_1">; domainPointer=<span id="ITS_2">]
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:dirRule> to prevent false inheritance
+Creating new rule <its:localeFilterRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

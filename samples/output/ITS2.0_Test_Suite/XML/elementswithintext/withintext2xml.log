@@ -1,0 +1,112 @@
+match: rule=<its:withinTextRule>; selector=<kw>
+match: rule=<its:withinTextRule>; selector=<kw>
+match: rule=<its:withinTextRule>; selector=<kw>
+match: rule=<its:withinTextRule>; selector=<img>
+match: rule=<its:withinTextRule>; selector=<em>
+match: rule=<its:withinTextRule>; selector=<fnote>
+match: rule=<its:withinTextRule>; selector=<kw>
+match: rule=<its:withinTextRule>; selector=<kw>
+converting document elements into HTML
+processing <myDocument>
+renaming @xml:lang[en] of <myDocument> to @lang
+setting @title of <myDocument> to 'myDocument'
+stripping namespaces from <myDocument>
+processing <prolog>
+setting @title of <prolog> to 'prolog'
+stripping namespaces from <prolog>
+removing <its:rules>
+processing <author>
+setting @title of <author> to 'author'
+stripping namespaces from <author>
+renaming <author> to <div>
+processing <version>
+setting @title of <version> to 'version'
+stripping namespaces from <version>
+renaming <version> to <div>
+processing <keywords>
+setting @title of <keywords> to 'keywords'
+stripping namespaces from <keywords>
+processing <kw>
+setting @title of <kw> to 'kw'
+stripping namespaces from <kw>
+renaming <kw> to <span>
+processing <kw>
+setting @title of <kw> to 'kw'
+stripping namespaces from <kw>
+renaming <kw> to <span>
+renaming <keywords> to <div>
+processing <storageKey>
+setting @title of <storageKey> to 'storageKey'
+stripping namespaces from <storageKey>
+renaming <storageKey> to <div>
+renaming <prolog> to <div>
+processing <content>
+setting @title of <content> to 'content'
+stripping namespaces from <content>
+processing <section>
+setting @title of <section> to 'section'
+stripping namespaces from <section>
+processing <title>
+setting @title of <title> to 'title'
+stripping namespaces from <title>
+renaming <title> to <div>
+processing <p>
+setting @title of <p> to 'p'
+stripping namespaces from <p>
+processing <fnote>
+setting @title of <fnote> to 'fnote'
+stripping namespaces from <fnote>
+renaming <fnote> to <span>
+processing <kw>
+setting @title of <kw> to 'kw'
+stripping namespaces from <kw>
+renaming <kw> to <span>
+renaming <p> to <div>
+processing <p>
+setting @title of <p> to 'p'
+stripping namespaces from <p>
+processing <img>
+setting @title of <img> to 'img'
+stripping namespaces from <img>
+renaming <img> to <span>
+renaming <p> to <div>
+renaming <section> to <div>
+processing <footer>
+setting @title of <footer> to 'footer'
+stripping namespaces from <footer>
+processing <p>
+setting @title of <p> to 'p'
+stripping namespaces from <p>
+processing <em>
+setting @title of <em> to 'em'
+stripping namespaces from <em>
+renaming <em> to <span>
+renaming <p> to <span>
+renaming <footer> to <div>
+renaming <content> to <div>
+renaming <myDocument> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (alt)
+Creating new <span> element to represent node of type ATT (src)
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_1">]
+Setting id of <span> to ITS_2
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_2">]
+Setting id of <span> to ITS_3
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_3">]
+Setting id of <span> to ITS_4
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_4">]
+Setting id of <span> to ITS_5
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_5">]
+Setting id of <span> to ITS_6
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_6">]
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_1">]
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_2">]
+Setting id of <span> to ITS_7
+Setting id of <span> to ITS_8
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

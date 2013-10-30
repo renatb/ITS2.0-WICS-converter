@@ -1,0 +1,18 @@
+<!DOCTYPE html><head>
+    <meta charset=utf-8>
+    <title>Test</title>
+    <script id=lq1 type="application/its+xml">
+      <its:locQualityIssues xml:id="lq1" xmlns:its="http://www.w3.org/2005/11/its">
+        <its:locQualityIssue
+          locQualityIssueType="misspelling"
+          locQualityIssueComment="'c'es' is unknown. Could be 'c'est'"
+          locQualityIssueSeverity="50"/>
+      </its:locQualityIssues>
+    </script>
+    <style type="text/css">.qaissue { background-color: yellow; } </style>
+  </head>
+  <body>
+    <p>
+      <span its-loc-quality-issues-ref="#lq1">c'es</span> pourquoi il n'�tait pas coupable</p>
+  
+

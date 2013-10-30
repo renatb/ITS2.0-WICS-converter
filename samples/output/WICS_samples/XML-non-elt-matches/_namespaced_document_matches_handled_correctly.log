@@ -1,0 +1,22 @@
+match: rule=<its:domainRule>; selector=<para>; domainPointer=[DOCUMENT]
+converting document elements into HTML
+processing <foo:xml>
+setting @title of <foo:xml> to 'foo:xml'
+stripping namespaces from <foo:xml>
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <para>
+setting @title of <para> to 'para'
+stripping namespaces from <para>
+renaming <para> to <div>
+renaming <xml> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Creating new rule <its:domainRule> to match [domainPointer=[DOCUMENT]; selector=<div id="ITS_1">]
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

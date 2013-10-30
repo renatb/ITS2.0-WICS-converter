@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+ <doc id="XLIFF_Comby_samples" revisionNumber="2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:its="http://www.w3.org/2005/11/its" its:version="2.0">
+
+<!-- See http://www.w3.org/International/its/wiki/XLIFF_1.2_Mapping for reference -->
+
+<!-- SEC tag to combine PARA items into XLIFF group in this example only -->
+<sec>
+<para>The PRODUCT command prompt appears.</para>
+<para>Enter Date and Time in the following format:</para>
+<para>YYYY-MM-DD HH:MM</para>
+</sec>
+
+<sec>
+<!-- LOCALIZATION NOTE -->
+<!-- LOCALIZATION NOTE: The example of local localization note -->
+<para>The following message appears: <msg its:locNoteType="alert" its:locNote="Date and time should be in YYYY-DD-MM HH:MM format." xml:id="InvalidParameter">Invalid parameter</msg></para>
+<!-- End of example -->
+
+<!-- TRANSLATE -->
+<!-- TRANSLATE: The example #1-1 of local rule -->
+<para>SysPack includes drivers for many devices, such as printers, keyboards, and <trmark its:translate="no">USB</trmark></para>
+<!-- End of example -->
+
+<!-- TRANSLATE: The example #1-2 of customer's source XML markup only, no ITS rules apply -->
+<!-- NoLoc tags are parsed here as XLIFF protected inlines as per customer's INI settings -->
+<para><NoLoc>SysPack</NoLoc> includes drivers for many hardware devices.</para>
+<!-- End of example -->
+
+<!-- TRANSLATE: The example #1-3 of local rule with customer's source XML markup enriched with ITS markup -->
+<para><trmark its:translate="no">&lt;NoLoc&gt;SysPack&lt;/NoLoc&gt;</trmark> includes drivers for printers, keyboards, and USB.</para>
+<!-- End of example -->
+
+<!-- TERMINOLOGY -->
+<!-- TERMINOLOGY: The example of local ITS markup with external terminology comments -->
+<para>In the left pane, select <msg its:term="yes" its:termInfoRef="Terminology_global_UI_Tools.html">Tools</msg> menu, and then select <msg its:term="yes"  its:termInfoRef="Terminology_global_UI_Customize.html">Customize</msg>.</para>
+<!-- End of example -->
+</sec>
+
+</doc>

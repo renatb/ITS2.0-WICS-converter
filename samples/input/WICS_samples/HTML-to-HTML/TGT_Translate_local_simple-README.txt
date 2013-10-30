@@ -1,0 +1,1 @@
+The sample uses native TRANSLATE attribute of SPAN element to indicate the translation status of content

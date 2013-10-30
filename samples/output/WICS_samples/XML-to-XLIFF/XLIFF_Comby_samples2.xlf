@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:itsxlf="http://www.w3.org/ns/its-xliff/" xmlns:its="http://www.w3.org/2005/11/its" its:version="2.0">
+  <file original="D:/_tmp/20131018/!!!XML-to-XLIFF/XLIFF_Comby_samples2.xml" source-language="en" datatype="plaintext">
+    <body>
+      <group id="1">
+        <trans-unit id="1">
+          <source>The PRODUCT command prompt appears.</source>
+          <target state="new">The PRODUCT command prompt appears.</target>
+        </trans-unit>
+        <trans-unit id="2">
+          <source>Enter Date and Time in the following format:</source>
+          <target state="new">Enter Date and Time in the following format:</target>
+        </trans-unit>
+        <trans-unit id="3">
+          <source>YYYY-MM-DD HH:MM</source>
+          <target state="new">YYYY-MM-DD HH:MM</target>
+        </trans-unit>
+      </group>
+      <group id="2">
+        <trans-unit id="4">
+          <source>The following message appears: <mrk comment="Date and time should be in YYYY-DD-MM HH:MM format." itsxlf:locNoteType="alert" mtype="x-its"><ph id="1">&lt;msg&gt;Invalid parameter&lt;/msg&gt;</ph></mrk></source>
+          <target state="new">The following message appears: <mrk comment="Date and time should be in YYYY-DD-MM HH:MM format." itsxlf:locNoteType="alert" mtype="x-its"><ph id="1">&lt;msg&gt;Invalid parameter&lt;/msg&gt;</ph></mrk></target>
+        </trans-unit>
+        <trans-unit id="5">
+          <source>SysPack includes drivers for many devices, such as printers, keyboards, and <mrk mtype="protected"><ph id="1">&lt;trmark&gt;USB&lt;/trmark&gt;</ph></mrk></source>
+          <target state="new">SysPack includes drivers for many devices, such as printers, keyboards, and <mrk mtype="protected"><ph id="1">&lt;trmark&gt;USB&lt;/trmark&gt;</ph></mrk></target>
+        </trans-unit>
+        <trans-unit id="6">
+          <source><ph id="1">&lt;NoLoc&gt;SysPack&lt;/NoLoc&gt;</ph> includes drivers for many hardware devices.</source>
+          <target state="new"><ph id="1">&lt;NoLoc&gt;SysPack&lt;/NoLoc&gt;</ph> includes drivers for many hardware devices.</target>
+        </trans-unit>
+        <trans-unit id="7">
+          <source><mrk mtype="protected"><ph id="1">&lt;trmark&gt;&amp;lt;NoLoc&amp;gt;SysPack&amp;lt;/NoLoc&amp;gt;&lt;/trmark&gt;</ph></mrk> includes drivers for printers, keyboards, and USB.</source>
+          <target state="new"><mrk mtype="protected"><ph id="1">&lt;trmark&gt;&amp;lt;NoLoc&amp;gt;SysPack&amp;lt;/NoLoc&amp;gt;&lt;/trmark&gt;</ph></mrk> includes drivers for printers, keyboards, and USB.</target>
+        </trans-unit>
+        <trans-unit id="8">
+          <source>In the left pane, select <mrk mtype="term" itsxlf:termInfoRef="Terminology_global_UI_Tools.html"><ph id="1">&lt;msg&gt;Tools&lt;/msg&gt;</ph></mrk> menu, and then select <mrk mtype="term" itsxlf:termInfoRef="Terminology_global_UI_Customize.html"><ph id="2">&lt;msg&gt;Customize&lt;/msg&gt;</ph></mrk>.</source>
+          <target state="new">In the left pane, select <mrk mtype="term" itsxlf:termInfoRef="Terminology_global_UI_Tools.html"><ph id="1">&lt;msg&gt;Tools&lt;/msg&gt;</ph></mrk> menu, and then select <mrk mtype="term" itsxlf:termInfoRef="Terminology_global_UI_Customize.html"><ph id="2">&lt;msg&gt;Customize&lt;/msg&gt;</ph></mrk>.</target>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>

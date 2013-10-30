@@ -1,0 +1,1 @@
+﻿The sample uses termInfoRef attribute that contains a reference to external HTML file containing terminology info for given term

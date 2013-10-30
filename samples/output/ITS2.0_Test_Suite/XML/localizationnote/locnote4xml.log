@@ -1,0 +1,44 @@
+match: rule=<its:locNoteRule>; selector=<data>; locNoteRefPointer=@noteFile[Comments.html#FileNotFound]
+match: rule=<its:locNoteRule>; locNoteRefPointer=@noteFile[Comments.html#DivByZero]; selector=<data>
+converting document elements into HTML
+processing <dataFile>
+setting @title of <dataFile> to 'dataFile'
+processing <prolog>
+setting @title of <prolog> to 'prolog'
+removing <its:rules>
+renaming <prolog> to <div>
+processing <body>
+setting @title of <body> to 'body'
+processing <string id="FileNotFound">
+setting @title of <string> to 'string'
+processing <data>
+setting @title of <data> to 'data'
+renaming <data> to <div>
+renaming <string> to <div>
+processing <string id="DivByZero">
+setting @title of <string> to 'string'
+processing <data>
+setting @title of <data> to 'data'
+renaming <data> to <div>
+renaming <string> to <div>
+renaming <body> to <div>
+renaming <dataFile> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (noteFile)
+Creating new <span> element to represent node of type ATT (noteFile)
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Setting id of <div> to ITS_2
+Creating new rule <its:locNoteRule> to match [locNoteRefPointer=<span id="ITS_1">; selector=<div id="ITS_2">]
+Setting id of <div> to ITS_3
+Setting id of <span> to ITS_4
+Creating new rule <its:locNoteRule> to match [selector=<div id="ITS_3">; locNoteRefPointer=<span id="ITS_4">]
+Setting id of <span> to ITS_5
+Setting id of <span> to ITS_6
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

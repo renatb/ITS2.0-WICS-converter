@@ -1,0 +1,25 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script id=lqi1 type="application/its+xml">
+    <its:locQualityIssues xmlns:its="http://www.w3.org/2005/11/its" version="2.0" xml:id="lqi1">
+<its:locQualityIssue xmlns:okp="okapi-framework:xliff-extensions" locQualityIssueComment="'c'es' is unknown. Could be 'c'est'" locQualityIssueSeverity="50" locQualityIssueType="misspelling" okp:lqiPos="9 13 0 -1"/>
+<its:locQualityIssue xmlns:okp="okapi-framework:xliff-extensions" locQualityIssueComment="Missing capital on the first word of a sentence." locQualityIssueSeverity="30" locQualityIssueType="grammar" okp:lqiPos="9 13 0 -1"/>
+</its:locQualityIssues>
+</script><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterType="include" localeFilterList="*" selector="//@*"/>
+      <its:dirRule dir="ltr" selector="//@*"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+      </its:rules>
+</script><style>body {visibility:hidden} p {visibility: visible}</style><div title=xliff>
+<div title=file>
+<div title=body>
+<div title=trans-unit>
+<p lang=en title=source>Test</p>
+</div>
+<div title=trans-unit>
+<p its-loc-quality-issues-ref="#lqi1" lang=en title=source> <span title=g>c'es</span> pourquoi il n'était pas coupable</p>
+
+</div>
+</div>
+</div>
+</div>

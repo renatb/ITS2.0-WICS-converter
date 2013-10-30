@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<xml>
+  <head>
+    <its:rules version="2.0" xmlns:its="http://www.w3.org/2005/11/its">
+      <its:idValueRule selector="//para"
+        idValue="'p1'"/>
+    </its:rules>
+  </head>
+  <para>Some text</para>
+</xml>

@@ -1,0 +1,31 @@
+converting document elements into HTML
+processing <text>
+removing @its:version[2.0] from <text>
+Replacing @its:annotatorsRef of <text> with its-annotators-ref
+setting @title of <text> to 'text'
+stripping namespaces from <text>
+processing <body>
+setting @title of <body> to 'body'
+processing <p>
+setting @title of <p> to 'p'
+processing <its:span>
+Replacing @taClassRef of <its:span> with its-ta-class-ref
+Replacing @taIdentRef of <its:span> with its-ta-ident-ref
+Replacing @taConfidence of <its:span> with its-ta-confidence
+setting @title of <its:span> to 'its:span'
+stripping namespaces from <its:span>
+processing <its:span>
+Replacing @taSource of <its:span> with its-ta-source
+Replacing @taIdent of <its:span> with its-ta-ident
+Replacing @taConfidence of <its:span> with its-ta-confidence
+setting @title of <its:span> to 'its:span'
+stripping namespaces from <its:span>
+renaming <p> to <div>
+renaming <body> to <div>
+renaming <text> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

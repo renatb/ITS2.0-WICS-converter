@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<myDoc its:version="2.0" xmlns:its="http://www.w3.org/2005/11/its">
+  <body>
+  <par id="100" title="Text">The <trmark its:translate="no">World Wide Web <term its:translate="yes">Consortium</term></trmark> is making the World Wide Web worldwide!</par>
+ </body>
+</myDoc>

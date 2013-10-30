@@ -1,0 +1,35 @@
+converting document elements into HTML
+processing <doc>
+removing @its:version[2.0] from <doc>
+setting @title of <doc> to 'doc'
+stripping namespaces from <doc>
+processing <section xml:id="S001">
+renaming @xml:id[S001] of <section xml:id="S001"> to @id
+setting @title of <section id="S001"> to 'section'
+processing <par>
+setting @title of <par> to 'par'
+processing <kw>
+Replacing @its:term of <kw> with its-term
+Replacing @its:termInfoRef of <kw> with its-term-info-ref
+setting @title of <kw> to 'kw'
+stripping namespaces from <kw>
+renaming <kw> to <span>
+processing <kw>
+Replacing @its:term of <kw> with its-term
+setting @title of <kw> to 'kw'
+stripping namespaces from <kw>
+processing <span>
+Replacing @its:term of <span> with its-term
+setting @title of <span> to 'span'
+stripping namespaces from <span>
+renaming <span> to <span>
+renaming <kw> to <span>
+renaming <par> to <div>
+renaming <section id="S001"> to <div>
+renaming <doc> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

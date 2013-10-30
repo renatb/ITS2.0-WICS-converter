@@ -1,0 +1,28 @@
+converting document elements into HTML
+processing <text>
+renaming @xml:lang[en] of <text> to @lang
+removing @its:version[2.0] from <text>
+setting @title of <text> to 'text'
+stripping namespaces from <text>
+processing <body>
+setting @title of <body> to 'body'
+processing <par>
+setting @title of <par> to 'par'
+processing <quote>
+renaming @xml:lang[ar] of <quote> to @lang
+renaming @its:dir[rtl] of <quote> to @dir
+setting @title of <quote> to 'quote'
+stripping namespaces from <quote>
+renaming <quote> to <span>
+processing <quote>
+setting @title of <quote> to 'quote'
+renaming <quote> to <span>
+renaming <par> to <div>
+renaming <body> to <div>
+renaming <text> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

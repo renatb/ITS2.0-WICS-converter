@@ -1,0 +1,1 @@
+The sample uses its:translate attribute to indicate translation status of tagged text

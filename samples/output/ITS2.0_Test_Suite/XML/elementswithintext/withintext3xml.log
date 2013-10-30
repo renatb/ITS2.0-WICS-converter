@@ -1,0 +1,46 @@
+converting document elements into HTML
+processing <text>
+removing @its:version[2.0] from <text>
+setting @title of <text> to 'text'
+stripping namespaces from <text>
+processing <prolog>
+setting @title of <prolog> to 'prolog'
+processing <title>
+Replacing @its:withinText of <title> with its-within-text
+setting @title of <title> to 'title'
+stripping namespaces from <title>
+renaming <title> to <div>
+processing <author>
+Replacing @its:withinText of <author> with its-within-text
+setting @title of <author> to 'author'
+stripping namespaces from <author>
+renaming <author> to <div>
+processing <keywords>
+Replacing @its:withinText of <keywords> with its-within-text
+setting @title of <keywords> to 'keywords'
+stripping namespaces from <keywords>
+renaming <keywords> to <div>
+renaming <prolog> to <div>
+processing <body>
+setting @title of <body> to 'body'
+processing <p>
+setting @title of <p> to 'p'
+processing <title>
+Replacing @its:withinText of <title> with its-within-text
+setting @title of <title> to 'title'
+stripping namespaces from <title>
+renaming <title> to <span>
+processing <author>
+Replacing @its:withinText of <author> with its-within-text
+setting @title of <author> to 'author'
+stripping namespaces from <author>
+renaming <author> to <span>
+renaming <p> to <div>
+renaming <body> to <div>
+renaming <text> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

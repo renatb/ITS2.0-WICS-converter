@@ -1,0 +1,27 @@
+<!DOCTYPE html><head>
+   <meta charset=utf-8> 
+   <title>EXAMPLE</title>
+   
+  
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+<its:translateRule selector="//h:*" translate="no"/>
+<its:translateRule selector="//h:p" translate="yes"/>
+</its:rules>
+    </script></head>
+  <body>
+   <span translate=yes>The Life of a Simple Man</span>
+   <!--
+   Note that the contents of <b> and <span> should end up *not* translatable with these settings
+   -->
+   <section title="section one">
+    <p>
+    Everything started when Zebulon discovered that he had a
+     <span>doppelg�nger</span>
+    who was a serious baseball
+     <span>aficionado</span>
+    .
+    </p>
+   </section>
+  
+ 

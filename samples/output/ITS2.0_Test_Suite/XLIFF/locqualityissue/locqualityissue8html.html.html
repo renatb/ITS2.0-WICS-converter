@@ -1,0 +1,25 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script id=lqi3 type="application/its+xml">
+    <its:locQualityIssues xmlns:its="http://www.w3.org/2005/11/its" version="2.0" xml:id="lqi3">
+<its:locQualityIssue xmlns:okp="okapi-framework:xliff-extensions" locQualityIssueComment="Sentence without capitalization" locQualityIssueProfileRef="http://example.org/qaMovel/v1" locQualityIssueSeverity="50" locQualityIssueType="typographical" okp:lqiPos="8 14 0 -1"/>
+<its:locQualityIssue xmlns:okp="okapi-framework:xliff-extensions" locQualityIssueComment="should be 'Music can'" locQualityIssueProfileRef="http://example.org/qaMovel/v1" locQualityIssueSeverity="75" locQualityIssueType="misspelling" okp:lqiPos="74 84 0 -1"/>
+</its:locQualityIssues>
+</script><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule selector="//@*" localeFilterList="*" localeFilterType="include"/>
+      <its:dirRule dir="ltr" selector="//@*"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:targetPointerRule targetPointer="../*[@title='target']" selector="//*[@title='source']"/>
+      </its:rules>
+</script><style>body {visibility:hidden} p {visibility: visible}</style><div title=xliff>
+<div title=file>
+<div title=body>
+<div title=trans-unit>
+<p lang=en title=source>Example</p>
+</div>
+<div title=trans-unit>
+<p its-loc-quality-issues-ref="#lqi3" lang=en title=source> <span title=g>music </span> is an art form whose medium is sound and silence. <span title=g>Musci acn </span> take many different forms and is experienced by individuals in a range of social settings ranging from being alone to attending a large concert. </p>
+
+</div>
+</div>
+</div>
+</div>

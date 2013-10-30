@@ -1,0 +1,1 @@
+The sample uses locNoteRef attribute to refer (via ITS rules) to text metadata in external file

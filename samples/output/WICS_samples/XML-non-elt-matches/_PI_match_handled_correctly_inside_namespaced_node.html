@@ -1,0 +1,17 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule selector="//@*" localeFilterList="*" localeFilterType="include"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule translate="no" selector="//@*"/>
+      <its:withinTextRule withinText="no" selector="//h:span"/>
+      <its:dirRule dir="ltr" selector="id('ITS_1')"/>
+      <its:localeFilterRule localeFilterList="*" localeFilterType="include" selector="id('ITS_1')"/>
+      <its:translateRule selector="id('ITS_1')" translate="no"/>
+      <its:domainRule selector="id('ITS_2')" domainPointer="id('ITS_1')"/>
+    </its:rules>
+</script><div title=xml>
+  <div title=head>
+    
+  </div>
+  <div id=ITS_2 title=foo:para><?foo_pi some content?><span class=_ITS_PI id=ITS_1 its-within-text=no title=foo_pi>some content</span></div>
+</div>

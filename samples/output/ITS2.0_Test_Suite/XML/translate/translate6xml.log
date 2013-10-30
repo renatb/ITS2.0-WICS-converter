@@ -1,0 +1,88 @@
+match: rule=<its:translateRule>; selector=<doc>
+match: rule=<its:translateRule>; selector=<head>
+match: rule=<its:translateRule>; selector=<its:rules>
+match: rule=<its:translateRule>; selector=<its:translateRule>
+match: rule=<its:translateRule>; selector=<its:translateRule>
+match: rule=<its:translateRule>; selector=<info>
+match: rule=<its:translateRule>; selector=<item>
+match: rule=<its:translateRule>; selector=<b>
+match: rule=<its:translateRule>; selector=<item>
+match: rule=<its:translateRule>; selector=<content>
+match: rule=<its:translateRule>; selector=<p>
+match: rule=<its:translateRule>; selector=<span>
+match: rule=<its:translateRule>; selector=<span>
+match: rule=<its:translateRule>; selector=<p>
+converting document elements into HTML
+processing <doc>
+removing @its:version[2.0] from <doc>
+setting @title of <doc> to 'doc'
+stripping namespaces from <doc>
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <info>
+setting @title of <info> to 'info'
+processing <item>
+renaming @its:translate[yes] of <item> to @translate
+setting @title of <item> to 'item'
+stripping namespaces from <item>
+processing <b>
+setting @title of <b> to 'b'
+renaming <b> to <span>
+renaming <item> to <div>
+processing <item>
+setting @title of <item> to 'item'
+renaming <item> to <div>
+renaming <info> to <div>
+processing <content>
+setting @title of <content> to 'content'
+processing <p>
+setting @title of <p> to 'p'
+processing <span>
+setting @title of <span> to 'span'
+renaming <span> to <span>
+processing <span>
+setting @title of <span> to 'span'
+renaming <span> to <span>
+renaming <p> to <div>
+renaming <content> to <div>
+renaming <doc> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (type)
+Creating new <span> element to represent node of type ATT (type)
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Creating new rule <its:translateRule> to match [selector=<div id="ITS_1">]
+Setting id of <div> to ITS_2
+Creating new rule <its:translateRule> to match [selector=<div id="ITS_2">]
+Setting id of <its:rules> to ITS_3
+Creating new rule <its:translateRule> to match [selector=<its:rules id="ITS_3">]
+Setting id of <its:translateRule> to ITS_4
+Creating new rule <its:translateRule> to match [selector=<its:translateRule id="ITS_4">]
+Setting id of <its:translateRule> to ITS_5
+Creating new rule <its:translateRule id="ITS_4"> to match [selector=<its:translateRule id="ITS_5">]
+Setting id of <div> to ITS_6
+Creating new rule <its:translateRule id="ITS_4"> to match [selector=<div id="ITS_6">]
+Setting id of <div> to ITS_7
+Creating new rule <its:translateRule id="ITS_4"> to match [selector=<div id="ITS_7">]
+Setting id of <span> to ITS_8
+Creating new rule <its:translateRule id="ITS_4"> to match [selector=<span id="ITS_8">]
+Setting id of <div> to ITS_9
+Creating new rule <its:translateRule id="ITS_4"> to match [selector=<div id="ITS_9">]
+Setting id of <div> to ITS_10
+Creating new rule <its:translateRule id="ITS_4"> to match [selector=<div id="ITS_10">]
+Setting id of <div> to ITS_11
+Creating new rule <its:translateRule id="ITS_4"> to match [selector=<div id="ITS_11">]
+Setting id of <span> to ITS_12
+Creating new rule <its:translateRule id="ITS_4"> to match [selector=<span id="ITS_12">]
+Setting id of <span> to ITS_13
+Creating new rule <its:translateRule id="ITS_4"> to match [selector=<span id="ITS_13">]
+Creating new rule <its:translateRule id="ITS_5"> to match [selector=<div id="ITS_11">]
+Setting id of <span> to ITS_14
+Setting id of <span> to ITS_15
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

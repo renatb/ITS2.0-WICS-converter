@@ -1,0 +1,56 @@
+converting document elements into HTML
+processing <Res>
+removing @its:version[2.0] from <Res>
+setting @title of <Res> to 'Res'
+stripping namespaces from <Res>
+processing <body>
+Replacing @its:locNote of <body> with its-loc-note
+setting @title of <body> to 'body'
+stripping namespaces from <body>
+processing <msg id="HostNotFound">
+setting @title of <msg> to 'msg'
+processing <data>
+setting @title of <data> to 'data'
+renaming <data> to <div>
+renaming <msg> to <div>
+processing <msg id="HostDisconnected">
+setting @title of <msg> to 'msg'
+processing <data>
+setting @title of <data> to 'data'
+renaming <data> to <div>
+renaming <msg> to <div>
+processing <msg id="FileNotFound">
+setting @title of <msg> to 'msg'
+processing <data>
+Replacing @its:locNote of <data> with its-loc-note
+Replacing @its:locNoteType of <data> with its-loc-note-type
+setting @title of <data> to 'data'
+stripping namespaces from <data>
+renaming <data> to <div>
+renaming <msg> to <div>
+processing <msg id="CannotLog">
+setting @title of <msg> to 'msg'
+processing <data>
+Replacing @its:locNoteRef of <data> with its-loc-note-ref
+Replacing @its:locNoteType of <data> with its-loc-note-type
+setting @title of <data> to 'data'
+stripping namespaces from <data>
+renaming <data> to <div>
+renaming <msg> to <div>
+renaming <body> to <div>
+renaming <Res> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Setting id of <span> to ITS_2
+Setting id of <span> to ITS_3
+Setting id of <span> to ITS_4
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

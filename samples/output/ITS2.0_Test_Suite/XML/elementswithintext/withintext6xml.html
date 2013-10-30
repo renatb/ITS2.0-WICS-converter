@@ -1,0 +1,33 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule selector="//@*" localeFilterType="include" localeFilterList="*"/>
+      <its:dirRule dir="ltr" selector="//@*"/>
+      <its:translateRule translate="no" selector="//@*"/>
+      <its:withinTextRule withinText="no" selector="//h:span"/>
+      <its:translateRule translate="no" selector="id('ITS_5')"/>
+      <its:withinTextRule withinText="yes" selector="id('ITS_1')"/>
+      <its:withinTextRule withinText="yes" selector="id('ITS_2')"/>
+      <its:withinTextRule withinText="yes" selector="id('ITS_3')"/>
+      <its:withinTextRule withinText="nested" selector="id('ITS_4')"/>
+    </its:rules>
+</script><div title=doc>
+<div title=head>
+
+</div>
+<div title=body>
+<div title=p>
+This is a paragraph with
+<div id=ITS_1 title=b>bold</div>
+,
+<div id=ITS_2 title=i>italic</div>
+, and
+<div id=ITS_3 title=u>underlined</div>
+.
+</div>
+<div title=p>
+This is a paragraph with a footnote
+<div id=ITS_4 title=fn><span class=_ITS_ATT id=ITS_5 its-within-text=no title=id>footnote</span>This is the text of the footnote</div>
+at the middle.
+</div>
+</div>
+</div>

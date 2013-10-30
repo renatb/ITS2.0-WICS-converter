@@ -1,0 +1,23 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule selector="//@*" localeFilterType="include" localeFilterList="*"/>
+      <its:dirRule dir="ltr" selector="//@*"/>
+      <its:translateRule translate="no" selector="//@*"/>
+      <its:targetPointerRule targetPointer="../*[@title='target']" selector="//*[@title='source']"/>
+      <its:idValueRule selector="id('ITS_1')" idValue="'DisableInfo'"/>
+    </its:rules>
+</script><style>body {visibility:hidden} p {visibility: visible}</style><div title=xliff>
+<div title=file>
+<div title=body>
+<div title=trans-unit>
+<p lang=en title=source>Example</p>
+</div>
+<div id=ITS_1 its-loc-note="The variable {0} has three possible values: 'printer', 
+    'stacker' and 'stapler options'." its-loc-note-type=alert title=trans-unit>
+<p lang=en title=source>The {0} has been disabled.</p>
+<div title=note>The variable {0} has three possible values: 'printer', 
+    'stacker' and 'stapler options'.</div>
+</div>
+</div>
+</div>
+</div>

@@ -1,0 +1,29 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" localeFilterType="include" selector="//@*"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule translate="no" selector="//@*"/>
+      <its:withinTextRule withinText="no" selector="//h:span"/>
+      <its:translateRule translate="no" selector="id('ITS_1')|id('ITS_3')"/>
+      <its:externalResourceRefRule selector="id('ITS_2')" externalResourceRefPointer="id('ITS_1')"/>
+    </its:rules>
+</script><div title=doc>
+ 
+ <div title=dbk:mediaobject>
+  <div title=dbk:videoobject>
+   <div title=dbk:videodata><span class=_ITS_ATT id=ITS_3 its-within-text=no title=fileref>movie.avi</span></div>
+  </div>
+  <div title=dbk:imageobject>
+   <div id=ITS_2 title=dbk:imagedata><span class=_ITS_ATT id=ITS_1 its-within-text=no title=fileref>movie-frame.gif</span></div>
+  </div>
+  <div title=dbk:textobject>
+   <div title=dbk:para>This video illustrates the proper way to assemble an inverting time distortion
+       device. </div>
+   <div title=dbk:warning>
+    <div title=dbk:para> It is imperative that the primary and secondary temporal couplings not be
+         mounted in the wrong order. Temporal catastrophe is the likely result. The
+         future you destroy may be your own. </div>
+   </div>
+  </div>
+ </div>
+</div>

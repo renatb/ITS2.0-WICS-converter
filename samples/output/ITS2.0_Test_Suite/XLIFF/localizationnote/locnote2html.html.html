@@ -1,0 +1,24 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule selector="//@*" localeFilterType="include" localeFilterList="*"/>
+      <its:dirRule dir="ltr" selector="//@*"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+      <its:idValueRule selector="id('ITS_1')" idValue="'FileNotFound'"/>
+      <its:idValueRule selector="id('ITS_2')" idValue="'DivByZero'"/>
+    </its:rules>
+</script><style>body {visibility:hidden} p {visibility: visible}</style><div title=xliff>
+<div title=file>
+<div title=body>
+<div title=trans-unit>
+<p lang=en title=source>Example</p>
+</div>
+<div id=ITS_1 title=trans-unit>
+<p lang=en title=source> <span title=g><span its-loc-note="     Indicates that the resource file {0} could not be loaded.     " its-loc-note-type=description title=mrk>Cannot find the file {0}.</span></span> </p>
+</div>
+<div id=ITS_2 title=trans-unit>
+<p lang=en title=source> <span title=g><span its-loc-note="A division by 0 was going to be computed." its-loc-note-type=description title=mrk>Invalid parameter.</span></span> </p>
+</div>
+</div>
+</div>
+</div>

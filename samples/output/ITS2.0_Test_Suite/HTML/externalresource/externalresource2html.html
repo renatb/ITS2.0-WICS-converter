@@ -1,0 +1,18 @@
+<!DOCTYPE html><html lang=en><head>
+  <meta charset=utf-8> 
+  
+  <title>Video element example</title>
+ 
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:param name="externalresourceParam">1</its:param>
+ 
+ <its:externalResourceRefRule selector="//h:p[@id=$externalresourceParam]/h:video" externalResourceRefPointer="@poster"/>
+</its:rules>
+    </script></head>
+ <body>
+  <p id=1>
+  <video height=360 poster=video-image.png src="http://www.example.com/video/v2.mp3" width=640>If your browser doesn't support the <code>video</code> element, you can <a href="http://www.example.com/video/v2.mp3">download the video</a> instead.</video>
+  </p>
+ 
+

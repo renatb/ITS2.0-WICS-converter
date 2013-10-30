@@ -1,0 +1,11 @@
+﻿Source	Target	Usage note	Comment
+Tools	[Translation: variant #1]	[Usage Note #1: - --- ----- ]	[Comment #1: ---- ----]
+Tools	[Translation: variant #2]	[Usage Note #2: - --- ----- ]	[Comment #2: ---- ----]
+Tools	[Translation: variant #3]	[Usage Note #3: - --- ----- ]	[Comment #3: ---- ----]
+Tools	[Translation: variant #4]	[Usage Note #4: - --- ----- ]	[Comment #4: ---- ----]
+Tools	[Translation: variant #5]	[Usage Note #5: - --- ----- ]	[Comment #5: ---- ----]
+Tools	[Translation: variant #6]	[Usage Note #6: - --- ----- ]	[Comment #6: ---- ----]
+Tools	[Translation: variant #7]	[Usage Note #7: - --- ----- ]	[Comment #7: ---- ----]
+Tools	[Translation: variant #8]	[Usage Note #8: - --- ----- ]	[Comment #8: ---- ----]
+Tools	[Translation: variant #9]	[Usage Note #9: - --- ----- ]	[Comment #9: ---- ----]
+Tools	[Translation: variant #10]	[Usage Note #10: - --- ----- ]	[Comment #10: ---- ----]

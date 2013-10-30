@@ -1,0 +1,1 @@
+﻿The sample uses termInfoRef attribute that contains a reference to external tab-delimeted TXT file containing a spreadsheet filled in with terminology info for given term

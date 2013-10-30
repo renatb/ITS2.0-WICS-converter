@@ -1,0 +1,35 @@
+<!DOCTYPE html><head> 
+   <meta charset=utf-8> 
+    
+   <title>EXAMPLE</title> 
+  
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:param name="termParam">keywords</its:param>
+
+<its:termRule selector="//h:p[2]/h:em" term="yes" termInfoPointer="../h:dfn"/>
+<its:termRule selector="//h:p[3]/h:em[@id=$termParam]" term="no"/>
+<its:termRule selector="//h:p[1]/h:em" term="yes" termInfoPointer="../h:dfn"/>
+</its:rules>
+    </script></head> 
+  <body> 
+   <p> 
+   We may define
+    <em id=keywords>discoursal point of view</em> 
+   as
+    <dfn id=definitions>the relationship, expressed through discourse structure, between the implied author or some other addresser, and the fiction</dfn> 
+   .
+   </p> 
+   <p> 
+   We may define
+    <em id=terms>refulgence</em> 
+   as
+    <dfn id=refdef>a radiant or resplendent quality or state</dfn> 
+   </p> 
+   <p> 
+   But I'm not sure how
+    <em id=term>quincunx</em> 
+   can be defined.
+   </p> 
+   
+  

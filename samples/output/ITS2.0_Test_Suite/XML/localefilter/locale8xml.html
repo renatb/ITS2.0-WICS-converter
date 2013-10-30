@@ -1,0 +1,23 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule selector="//@*" localeFilterType="include" localeFilterList="*"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      </its:rules>
+</script><div title=book>
+ <div title=info>
+  <div its-locale-filter-list="*-CA" its-locale-filter-type=include title=legalnotice>
+   <div title=para>Text only for Canadian locales.</div>
+  </div>
+  <div its-locale-filter-list="*-CA" its-locale-filter-type=exclude title=legalnotice>
+   <div title=para>Text for non-Canadian locales.</div>
+  </div>
+  <div its-locale-filter-list="*" its-locale-filter-type=exclude title=legalnotice>
+   <div title=para>Text for no locales.</div>
+  </div>
+  <div its-locale-filter-list="" its-locale-filter-type=exclude title=legalnotice>
+   <div title=para>Text for all locales.</div>
+  </div>
+ </div>
+</div>

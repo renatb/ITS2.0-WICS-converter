@@ -1,0 +1,38 @@
+converting document elements into HTML
+processing <text>
+removing @its:version[2.0] from <text>
+setting @title of <text> to 'text'
+stripping namespaces from <text>
+processing <title>
+setting @title of <title> to 'title'
+renaming <title> to <div>
+processing <body>
+setting @title of <body> to 'body'
+processing <par>
+Replacing @its:personRef of <par> with its-person-ref
+Replacing @its:toolRef of <par> with its-tool-ref
+Replacing @its:org of <par> with its-org
+Replacing @its:revToolRef of <par> with its-rev-tool-ref
+Replacing @its:revOrg of <par> with its-rev-org
+Replacing @its:provRef of <par> with its-prov-ref
+setting @title of <par> to 'par'
+stripping namespaces from <par>
+renaming <par> to <div>
+processing <legalnotice>
+Replacing @its:tool of <legalnotice> with its-tool
+Replacing @its:person of <legalnotice> with its-person
+Replacing @its:orgRef of <legalnotice> with its-org-ref
+Replacing @its:revPerson of <legalnotice> with its-rev-person
+Replacing @its:revOrgRef of <legalnotice> with its-rev-org-ref
+Replacing @its:provRef of <legalnotice> with its-prov-ref
+setting @title of <legalnotice> to 'legalnotice'
+stripping namespaces from <legalnotice>
+renaming <legalnotice> to <div>
+renaming <body> to <div>
+renaming <text> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

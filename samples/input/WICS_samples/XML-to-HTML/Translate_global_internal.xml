@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<myDoc>
+ <head>
+  <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="2.0">
+  <its:param name="TRID">notran</its:param>
+  <its:translateRule selector="//trmark[@id=$TRID]" translate="no"/>
+  </its:rules>
+ </head>
+ <body>
+  <par id="100" title="Text">The <trmark id="notran">World Wide Web Consortium</trmark> is making the World Wide Web worldwide!</par>
+ </body>
+</myDoc>

@@ -1,0 +1,27 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule selector="//@*" localeFilterType="include" localeFilterList="*"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:targetPointerRule selector="//*[@title='source']" targetPointer="../*[@title='target']"/>
+      </its:rules>
+</script><style>body {visibility:hidden} p {visibility: visible}</style><div title=xliff>
+<div title=file>
+<div title=body>
+<div title=trans-unit>
+<p lang=en title=source>EXAMPLE</p>
+</div>
+<div its-loc-note='Do not translate the word "Chobe"' its-loc-note-type=alert title=trans-unit>
+<p lang=en title=source>Hippo in the Chobe River</p>
+<div title=note>Do not translate the word "Chobe"</div>
+</div>
+<div its-loc-note="This text will be displayed over the image." its-loc-note-type=alert title=trans-unit>
+<p lang=en title=source>Elephants taking a mud bath</p>
+<div title=note>This text will be displayed over the image.</div>
+</div>
+<div title=trans-unit>
+<p lang=en title=source> <span title=g> This is a hippoptamus: <span title=x></span> . </span> <span title=g> This is an elephant: <span title=x></span> . </span> <span title=g><span its-loc-note=" The variable {0} has three possible values: 'printer', 'stacker' and 'stapler options'. " its-loc-note-type=alert title=mrk>The {0} has been disabled.</span></span> </p>
+</div>
+</div>
+</div>
+</div>

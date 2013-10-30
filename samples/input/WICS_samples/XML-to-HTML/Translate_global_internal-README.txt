@@ -1,0 +1,1 @@
+The sample uses ID attribute in the content elements and Selector attribute in the embedded ITS rules to indicate the translation status of content.

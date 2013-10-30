@@ -1,0 +1,19 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" localeFilterType="include" selector="//@*"/>
+      <its:dirRule dir="ltr" selector="//@*"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:targetPointerRule targetPointer="../*[@title='target']" selector="//*[@title='source']"/>
+      </its:rules>
+</script><style>body {visibility:hidden} p {visibility: visible}</style><div title=xliff>
+<div title=file>
+<div title=body>
+<div title=trans-unit>
+<p lang=en title=source>Test</p>
+</div>
+<div its-provenance-records-ref="#prov1" title=trans-unit>
+<p lang=en title=source>This paragraph was translated from the machine and subsequently revised.</p>
+</div>
+</div>
+</div>
+</div>

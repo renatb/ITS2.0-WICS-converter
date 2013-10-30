@@ -1,0 +1,56 @@
+match: rule=<its:externalResourceRefRule>; selector=<dbk:imagedata>; externalResourceRefPointer=@fileref[movie-frame.gif]
+converting document elements into HTML
+processing <doc>
+setting @title of <doc> to 'doc'
+stripping namespaces from <doc>
+removing <its:rules>
+processing <dbk:mediaobject>
+setting @title of <dbk:mediaobject> to 'dbk:mediaobject'
+stripping namespaces from <dbk:mediaobject>
+processing <dbk:videoobject>
+setting @title of <dbk:videoobject> to 'dbk:videoobject'
+stripping namespaces from <dbk:videoobject>
+processing <dbk:videodata>
+setting @title of <dbk:videodata> to 'dbk:videodata'
+stripping namespaces from <dbk:videodata>
+renaming <videodata> to <div>
+renaming <videoobject> to <div>
+processing <dbk:imageobject>
+setting @title of <dbk:imageobject> to 'dbk:imageobject'
+stripping namespaces from <dbk:imageobject>
+processing <dbk:imagedata>
+setting @title of <dbk:imagedata> to 'dbk:imagedata'
+stripping namespaces from <dbk:imagedata>
+renaming <imagedata> to <div>
+renaming <imageobject> to <div>
+processing <dbk:textobject>
+setting @title of <dbk:textobject> to 'dbk:textobject'
+stripping namespaces from <dbk:textobject>
+processing <dbk:para>
+setting @title of <dbk:para> to 'dbk:para'
+stripping namespaces from <dbk:para>
+renaming <para> to <div>
+processing <dbk:warning>
+setting @title of <dbk:warning> to 'dbk:warning'
+stripping namespaces from <dbk:warning>
+processing <dbk:para>
+setting @title of <dbk:para> to 'dbk:para'
+stripping namespaces from <dbk:para>
+renaming <para> to <div>
+renaming <warning> to <div>
+renaming <textobject> to <div>
+renaming <mediaobject> to <div>
+renaming <doc> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (fileref)
+Creating new <span> element to represent node of type ATT (fileref)
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Setting id of <div> to ITS_2
+Creating new rule <its:externalResourceRefRule> to match [externalResourceRefPointer=<span id="ITS_1">; selector=<div id="ITS_2">]
+Setting id of <span> to ITS_3
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

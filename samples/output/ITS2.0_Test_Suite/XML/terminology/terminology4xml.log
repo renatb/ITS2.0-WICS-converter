@@ -1,0 +1,77 @@
+match: rule=<its:termRule>; termInfoPointer=<def>; selector=<term>
+match: rule=<its:termRule>; selector=<term>
+match: rule=<its:termRule>; selector=<term>
+match: rule=<its:termRule>; selector=<kw>
+match: rule=<its:termRule>; selector=<kw>
+match: rule=<its:termRule>; selector=<kw>
+match: rule=<its:termRule>; selector=<term>; termInfoPointer=<gloss id="refdef">
+match: rule=<its:termRule>; selector=<term>
+converting document elements into HTML
+processing <text>
+setting @title of <text> to 'text'
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+processing <keywords>
+setting @title of <keywords> to 'keywords'
+processing <kw>
+setting @title of <kw> to 'kw'
+renaming <kw> to <span>
+processing <kw>
+setting @title of <kw> to 'kw'
+processing <kw>
+setting @title of <kw> to 'kw'
+renaming <kw> to <span>
+renaming <kw> to <span>
+renaming <keywords> to <div>
+renaming <head> to <div>
+processing <p>
+setting @title of <p> to 'p'
+processing <term>
+setting @title of <term> to 'term'
+renaming <term> to <span>
+processing <def>
+setting @title of <def> to 'def'
+renaming <def> to <span>
+renaming <p> to <div>
+processing <p>
+setting @title of <p> to 'p'
+processing <term>
+setting @title of <term> to 'term'
+renaming <term> to <span>
+processing <gloss id="refdef">
+setting @title of <gloss> to 'gloss'
+renaming <gloss> to <span>
+renaming <p> to <div>
+processing <p>
+setting @title of <p> to 'p'
+processing <term>
+setting @title of <term> to 'term'
+renaming <term> to <span>
+renaming <p> to <div>
+renaming <text> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (id)
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Setting id of <span> to ITS_2
+Creating new rule <its:termRule> to match [selector=<span id="ITS_1">; termInfoPointer=<span id="ITS_2">]
+Setting id of <span> to ITS_3
+Creating new rule <its:termRule> to match [selector=<span id="ITS_3">]
+Setting id of <span> to ITS_4
+Creating new rule <its:termRule> to match [selector=<span id="ITS_4">]
+Setting id of <span> to ITS_5
+Creating new rule <its:termRule> to match [selector=<span id="ITS_5">]
+Setting id of <span> to ITS_6
+Creating new rule <its:termRule> to match [selector=<span id="ITS_6">]
+Setting id of <span> to ITS_7
+Creating new rule <its:termRule> to match [selector=<span id="ITS_7">]
+Setting id of <span> to ITS_8
+Creating new rule <its:termRule> to match [termInfoPointer=<span id="ITS_8">; selector=<span id="ITS_3">]
+Creating new rule <its:termRule> to match [selector=<span id="ITS_4">]
+Setting id of <span> to ITS_9
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

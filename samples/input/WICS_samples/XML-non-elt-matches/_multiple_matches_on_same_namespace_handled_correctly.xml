@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<xml>
+  <head>
+    <its:rules version="2.0"
+        xmlns:its="http://www.w3.org/2005/11/its"
+        xmlns:foo="www.foo.com">
+      <its:domainRule selector="//foo:para"
+        domainPointer="namespace::*"/>
+      <its:domainRule selector="//foo:para"
+        domainPointer="namespace::*"/>
+    </its:rules>
+  </head>
+  <foo:para xmlns:foo="www.foo.com">Some text</foo:para>
+</xml>

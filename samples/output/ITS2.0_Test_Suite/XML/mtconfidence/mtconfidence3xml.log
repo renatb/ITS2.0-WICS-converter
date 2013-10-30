@@ -1,0 +1,42 @@
+converting document elements into HTML
+processing <text>
+removing @its:version[2.0] from <text>
+setting @title of <text> to 'text'
+stripping namespaces from <text>
+processing <body>
+setting @title of <body> to 'body'
+processing <p>
+setting @title of <p> to 'p'
+processing <span>
+Replacing @its:annotatorsRef of <span> with its-annotators-ref
+Replacing @its:mtConfidence of <span> with its-mt-confidence
+setting @title of <span> to 'span'
+stripping namespaces from <span>
+renaming <span> to <div>
+processing <span>
+Replacing @its:annotatorsRef of <span> with its-annotators-ref
+Replacing @its:mtConfidence of <span> with its-mt-confidence
+setting @title of <span> to 'span'
+stripping namespaces from <span>
+renaming <span> to <div>
+processing <span>
+Replacing @its:annotatorsRef of <span> with its-annotators-ref
+Replacing @its:mtConfidence of <span> with its-mt-confidence
+setting @title of <span> to 'span'
+stripping namespaces from <span>
+renaming <span> to <div>
+processing <span>
+Replacing @its:annotatorsRef of <span> with its-annotators-ref
+Replacing @its:mtConfidence of <span> with its-mt-confidence
+setting @title of <span> to 'span'
+stripping namespaces from <span>
+renaming <span> to <div>
+renaming <p> to <div>
+renaming <body> to <div>
+renaming <text> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

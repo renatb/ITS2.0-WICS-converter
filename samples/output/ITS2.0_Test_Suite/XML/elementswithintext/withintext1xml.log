@@ -1,0 +1,47 @@
+match: rule=<its:withinTextRule>; selector=<b>
+match: rule=<its:withinTextRule>; selector=<i>
+match: rule=<its:withinTextRule>; selector=<u>
+match: rule=<its:withinTextRule>; selector=<fn>
+converting document elements into HTML
+processing <doc>
+setting @title of <doc> to 'doc'
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <body>
+setting @title of <body> to 'body'
+processing <p>
+setting @title of <p> to 'p'
+processing <b>
+setting @title of <b> to 'b'
+renaming <b> to <span>
+processing <i>
+setting @title of <i> to 'i'
+renaming <i> to <span>
+processing <u>
+setting @title of <u> to 'u'
+renaming <u> to <span>
+renaming <p> to <div>
+processing <p>
+setting @title of <p> to 'p'
+processing <fn>
+setting @title of <fn> to 'fn'
+renaming <fn> to <span>
+renaming <p> to <div>
+renaming <body> to <div>
+renaming <doc> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_1">]
+Setting id of <span> to ITS_2
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_2">]
+Setting id of <span> to ITS_3
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_3">]
+Setting id of <span> to ITS_4
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_4">]
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

@@ -1,0 +1,108 @@
+converting document elements into HTML
+processing <xliff>
+setting @title of <xliff> to 'xliff'
+stripping namespaces from <xliff>
+processing <file>
+setting @title of <file> to 'file'
+stripping namespaces from <file>
+processing <body>
+setting @title of <body> to 'body'
+stripping namespaces from <body>
+processing <trans-unit id="1">
+setting @title of <trans-unit> to 'trans-unit'
+stripping namespaces from <trans-unit>
+processing <source>
+renaming @xml:lang[en] of <source> to @lang
+setting @title of <source> to 'source'
+stripping namespaces from <source>
+renaming <source> to <p>
+renaming <trans-unit> to <div>
+processing <trans-unit id="2">
+Replacing @its:locNote of <trans-unit> with its-loc-note
+Replacing @its:locNoteType of <trans-unit> with its-loc-note-type
+setting @title of <trans-unit> to 'trans-unit'
+stripping namespaces from <trans-unit>
+processing <source>
+renaming @xml:lang[en] of <source> to @lang
+setting @title of <source> to 'source'
+stripping namespaces from <source>
+renaming <source> to <p>
+processing <note>
+setting @title of <note> to 'note'
+stripping namespaces from <note>
+renaming <note> to <div>
+renaming <trans-unit> to <div>
+processing <trans-unit id="3">
+match: rule=<its:idValueRule>; idValue=1; selector=<trans-unit>
+setting @title of <trans-unit> to 'trans-unit'
+stripping namespaces from <trans-unit>
+processing <source>
+renaming @xml:lang[en] of <source> to @lang
+setting @title of <source> to 'source'
+stripping namespaces from <source>
+processing <x id="1">
+setting @title of <x> to 'x'
+stripping namespaces from <x>
+renaming <x> to <span>
+renaming <source> to <p>
+renaming <trans-unit> to <div>
+processing <trans-unit id="4">
+Replacing @its:locNote of <trans-unit> with its-loc-note
+Replacing @its:locNoteType of <trans-unit> with its-loc-note-type
+setting @title of <trans-unit> to 'trans-unit'
+stripping namespaces from <trans-unit>
+processing <source>
+renaming @xml:lang[en] of <source> to @lang
+setting @title of <source> to 'source'
+stripping namespaces from <source>
+renaming <source> to <p>
+processing <note>
+setting @title of <note> to 'note'
+stripping namespaces from <note>
+renaming <note> to <div>
+renaming <trans-unit> to <div>
+processing <trans-unit id="5">
+match: rule=<its:idValueRule>; idValue=2; selector=<trans-unit>
+setting @title of <trans-unit> to 'trans-unit'
+stripping namespaces from <trans-unit>
+processing <source>
+renaming @xml:lang[en] of <source> to @lang
+setting @title of <source> to 'source'
+stripping namespaces from <source>
+processing <x id="1">
+setting @title of <x> to 'x'
+stripping namespaces from <x>
+renaming <x> to <span>
+renaming <source> to <p>
+renaming <trans-unit> to <div>
+processing <trans-unit id="6">
+match: rule=<its:idValueRule>; idValue=DisableInfo; selector=<trans-unit>
+Replacing @its:locNote of <trans-unit> with its-loc-note
+Replacing @its:locNoteType of <trans-unit> with its-loc-note-type
+setting @title of <trans-unit> to 'trans-unit'
+stripping namespaces from <trans-unit>
+processing <source>
+renaming @xml:lang[en] of <source> to @lang
+setting @title of <source> to 'source'
+stripping namespaces from <source>
+renaming <source> to <p>
+processing <note>
+setting @title of <note> to 'note'
+stripping namespaces from <note>
+renaming <note> to <div>
+renaming <trans-unit> to <div>
+renaming <body> to <div>
+renaming <file> to <div>
+renaming <xliff> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Creating new rule <its:idValueRule> to match [idValue='1'; selector=<div id="ITS_1">]
+Setting id of <div> to ITS_2
+Creating new rule <its:idValueRule> to match [idValue='2'; selector=<div id="ITS_2">]
+Setting id of <div> to ITS_3
+Creating new rule <its:idValueRule> to match [idValue='DisableInfo'; selector=<div id="ITS_3">]
+Creating new rule <its:targetPointerRule> to match convert <source> and <target> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

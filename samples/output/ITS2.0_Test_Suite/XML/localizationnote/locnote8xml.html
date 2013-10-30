@@ -1,0 +1,24 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterType="include" localeFilterList="*" selector="//@*"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule withinText="no" selector="//h:span"/>
+      <its:translateRule translate="no" selector="id('ITS_1')|id('ITS_2')|id('ITS_3')|id('ITS_4')"/>
+      </its:rules>
+</script><div title=Res>
+ <div its-loc-note="The variable {0} is the name of the host." title=body>
+  <div title=msg><span class=_ITS_ATT id=ITS_1 its-within-text=no title=id>HostNotFound</span>
+   <div title=data>Host {0} cannot be found.</div>
+  </div>
+  <div title=msg><span class=_ITS_ATT id=ITS_2 its-within-text=no title=id>HostDisconnected</span>
+   <div title=data>The connection with {0} has been lost.</div>
+  </div>
+  <div title=msg><span class=_ITS_ATT id=ITS_3 its-within-text=no title=id>FileNotFound</span>
+   <div its-loc-note="{0} is a filename" its-loc-note-type=alert title=data>{0} not found.</div>
+  </div>
+  <div title=msg><span class=_ITS_ATT id=ITS_4 its-within-text=no title=id>CannotLog</span>
+   <div its-loc-note-ref="myLocNotes.htm#CannotLog" its-loc-note-type=alert title=data>Cannot log with this username.</div>
+  </div>
+ </div>
+</div>

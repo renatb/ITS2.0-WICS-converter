@@ -1,0 +1,53 @@
+match: rule=<its:idValueRule>; selector=<entry>; idValue=@name[btn.OK]
+converting document elements into HTML
+processing <resource>
+setting @title of <resource> to 'resource'
+removing <its:rules>
+processing <webform id="1">
+setting @title of <webform> to 'webform'
+processing <entry>
+setting @title of <entry> to 'entry'
+processing <text>
+setting @title of <text> to 'text'
+renaming <text> to <div>
+processing <pos>
+setting @title of <pos> to 'pos'
+renaming <pos> to <div>
+processing <trig>
+setting @title of <trig> to 'trig'
+renaming <trig> to <div>
+renaming <entry> to <div>
+renaming <webform> to <div>
+processing <webform id="2">
+setting @title of <webform> to 'webform'
+processing <entry>
+setting @title of <entry> to 'entry'
+processing <text>
+setting @title of <text> to 'text'
+renaming <text> to <div>
+processing <pos>
+setting @title of <pos> to 'pos'
+renaming <pos> to <div>
+processing <trig>
+setting @title of <trig> to 'trig'
+renaming <trig> to <div>
+renaming <entry> to <div>
+renaming <webform> to <div>
+renaming <resource> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (name)
+Creating new <span> element to represent node of type ATT (name)
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Setting id of <span> to ITS_2
+Creating new rule <its:idValueRule> to match [selector=<div id="ITS_1">; idValue=<span id="ITS_2">]
+Setting id of <span> to ITS_3
+Setting id of <span> to ITS_4
+Setting id of <span> to ITS_5
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

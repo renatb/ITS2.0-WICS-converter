@@ -1,0 +1,20 @@
+removed <its:preserveSpaceRule>
+converting document elements into HTML
+processing <book>
+removing @its:version[2.0] from <book>
+setting @title of <book> to 'book'
+stripping namespaces from <book>
+processing <info>
+setting @title of <info> to 'info'
+removing <its:rules>
+renaming <info> to <div>
+processing <verse>
+setting @title of <verse> to 'verse'
+renaming <verse> to <div>
+renaming <book> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

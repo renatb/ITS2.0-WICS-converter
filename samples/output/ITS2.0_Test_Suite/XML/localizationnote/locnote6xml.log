@@ -1,0 +1,56 @@
+match: rule=<its:locNoteRule>; selector=@alt[Hippo in the Chobe River]
+match: rule=<its:locNoteRule>; selector=@alt[Elephants taking a mud bath]
+match: rule=<its:locNoteRule>; selector=@alt[Hippo in the Chobe River]
+match: rule=<its:locNoteRule>; selector=<msg id="DisableInfo">
+converting document elements into HTML
+processing <msgList>
+setting @title of <msgList> to 'msgList'
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <body>
+setting @title of <body> to 'body'
+processing <msg id="1">
+setting @title of <msg> to 'msg'
+processing <img>
+setting @title of <img> to 'img'
+renaming <img> to <span>
+renaming <msg> to <div>
+processing <msg id="2">
+setting @title of <msg> to 'msg'
+processing <img>
+setting @title of <img> to 'img'
+renaming <img> to <span>
+renaming <msg> to <div>
+processing <msg id="DisableInfo">
+setting @title of <msg> to 'msg'
+renaming <msg> to <div>
+renaming <body> to <div>
+renaming <msgList> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (alt)
+Creating new <span> element to represent node of type ATT (alt)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (src)
+Creating new <span> element to represent node of type ATT (src)
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Creating new rule <its:locNoteRule> to match [selector=<span id="ITS_1">]
+Setting id of <span> to ITS_2
+Creating new rule <its:locNoteRule> to match [selector=<span id="ITS_2">]
+Creating new rule <its:locNoteRule> to match [selector=<span id="ITS_1">]
+Setting id of <div> to ITS_3
+Creating new rule <its:locNoteRule> to match [selector=<div id="ITS_3">]
+Setting id of <span> to ITS_4
+Setting id of <span> to ITS_5
+Setting id of <span> to ITS_6
+Setting id of <span> to ITS_7
+Setting id of <span> to ITS_8
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

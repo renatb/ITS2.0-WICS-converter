@@ -1,0 +1,38 @@
+<!DOCTYPE html><head> 
+   <meta charset=utf-8>   
+   <title>EXAMPLE</title> 
+    
+  
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+        <its:param name="spanIdParam">DisableInfo</its:param>
+
+<its:locNoteRule selector="//@alt" locNoteType="description">
+<its:locNote>This text will be displayed over the image.</its:locNote>
+</its:locNoteRule>
+<its:locNoteRule selector="//h:span[@id='1']/h:img/@alt" locNoteType="alert">
+<its:locNote>Do not translate the word "Chobe"</its:locNote>
+</its:locNoteRule>
+<its:locNoteRule locNoteType="alert" selector="//h:span[@id=$spanIdParam]">
+<its:locNote>
+The variable
+{0}
+has three possible values: 'printer', 'stacker' and 'stapler options'.
+</its:locNote>
+</its:locNoteRule>
+</its:rules>
+    </script></head> 
+  <body> 
+   <span id=1> 
+   This is a hippoptamus:
+    <img alt="Hippo in the Chobe River" src=hippo.png> 
+   .
+   </span> 
+   <span id=2> 
+   This is an elephant:
+    <img alt="Elephants taking a mud bath" src=elephants.png> 
+   .
+   </span> 
+   <span id=DisableInfo>The {0} has been disabled.</span> 
+   
+  

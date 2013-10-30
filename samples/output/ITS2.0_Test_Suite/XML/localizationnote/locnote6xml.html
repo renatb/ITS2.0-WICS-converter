@@ -1,0 +1,31 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule selector="//@*" localeFilterType="include" localeFilterList="*"/>
+      <its:dirRule dir="ltr" selector="//@*"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule withinText="no" selector="//h:span"/>
+      <its:translateRule translate="no" selector="id('ITS_1')|id('ITS_2')|id('ITS_4')|id('ITS_5')|id('ITS_6')|id('ITS_7')|id('ITS_8')"/>
+      <its:locNoteRule selector="id('ITS_1')" locNoteType="description">
+    <its:locNote>This text will be displayed over the image.</its:locNote>
+   </its:locNoteRule>
+      <its:locNoteRule selector="id('ITS_2')" locNoteType="description">
+    <its:locNote>This text will be displayed over the image.</its:locNote>
+   </its:locNoteRule>
+      <its:locNoteRule selector="id('ITS_1')" locNoteType="alert">
+    <its:locNote>Do not translate the word "Chobe"</its:locNote>
+   </its:locNoteRule>
+      <its:locNoteRule locNoteType="alert" selector="id('ITS_3')">
+    <its:locNote>The variable {0} has three possible values: 'printer', 
+    'stacker' and 'stapler options'.</its:locNote>
+   </its:locNoteRule>
+    </its:rules>
+</script><div title=msgList>
+ <div title=head>
+  
+ </div>
+ <div title=body>
+  <div title=msg><span class=_ITS_ATT id=ITS_4 its-within-text=no title=id>1</span>This is a hippoptamus: <span title=img><span class=_ITS_ATT id=ITS_5 its-within-text=no title=src>hippo.png</span><span class=_ITS_ATT id=ITS_1 its-within-text=no title=alt>Hippo in the Chobe River</span></span>.</div>
+  <div title=msg><span class=_ITS_ATT id=ITS_6 its-within-text=no title=id>2</span>This is an elephant: <span title=img><span class=_ITS_ATT id=ITS_7 its-within-text=no title=src>elephants.png</span><span class=_ITS_ATT id=ITS_2 its-within-text=no title=alt>Elephants taking a mud bath</span></span>.</div>
+  <div id=ITS_3 title=msg><span class=_ITS_ATT id=ITS_8 its-within-text=no title=id>DisableInfo</span>The {0} has been disabled.</div>
+ </div>
+</div>

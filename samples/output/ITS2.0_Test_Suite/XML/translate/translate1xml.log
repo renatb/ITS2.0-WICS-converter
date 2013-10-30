@@ -1,0 +1,133 @@
+match: rule=<its:translateRule>; selector=@alt[Image description]
+match: rule=<its:translateRule>; selector=@alt[Image description]
+match: rule=<its:translateRule>; selector=@title[Text]
+match: rule=<its:translateRule>; selector=<verbatim>
+match: rule=<its:translateRule>; selector=@src[test.png]
+match: rule=<its:translateRule>; selector=@alt[Image description]
+match: rule=<its:withinTextRule>; selector=<img>
+match: rule=<its:withinTextRule>; selector=<verbatim>
+match: rule=<its:withinTextRule>; selector=<img>
+match: rule=<i:translateRule>; selector=<z:作者>
+match: rule=<i:translateRule>; selector=<z:姓名>
+match: rule=<i:translateRule>; selector=<z:姓名>
+match: rule=<i:withinTextRule>; selector=<z:姓名>
+match: rule=<i:withinTextRule>; selector=<z:姓名>
+converting document elements into HTML
+processing <myMetaDoc>
+setting @title of <myMetaDoc> to 'myMetaDoc'
+stripping namespaces from <myMetaDoc>
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <body>
+setting @title of <body> to 'body'
+processing <par>
+setting @title of <par> to 'par'
+processing <img>
+setting @title of <img> to 'img'
+renaming <img> to <span>
+renaming <par> to <div>
+processing <par id="100">
+setting @title of <par> to 'par'
+processing <verbatim>
+setting @title of <verbatim> to 'verbatim'
+processing <img>
+setting @title of <img> to 'img'
+renaming <img> to <span>
+renaming <verbatim> to <span>
+renaming <par> to <div>
+processing <insert>
+setting @title of <insert> to 'insert'
+stripping namespaces from <insert>
+processing <z:书籍>
+setting @title of <z:书籍> to 'z:书籍'
+stripping namespaces from <z:书籍>
+processing <z:封面>
+setting @title of <z:封面> to 'z:封面'
+stripping namespaces from <z:封面>
+processing <z:汇集>
+setting @title of <z:汇集> to 'z:汇集'
+stripping namespaces from <z:汇集>
+renaming <汇集> to <div>
+processing <z:标题>
+setting @title of <z:标题> to 'z:标题'
+stripping namespaces from <z:标题>
+renaming <标题> to <div>
+processing <z:作者>
+setting @title of <z:作者> to 'z:作者'
+stripping namespaces from <z:作者>
+renaming <作者> to <div>
+renaming <封面> to <div>
+processing <z:章节>
+setting @title of <z:章节> to 'z:章节'
+stripping namespaces from <z:章节>
+processing <z:头注>
+setting @title of <z:头注> to 'z:头注'
+stripping namespaces from <z:头注>
+renaming <头注> to <div>
+processing <z:段落识别 id="A34B">
+setting @title of <z:段落识别> to 'z:段落识别'
+stripping namespaces from <z:段落识别>
+processing <z:姓名>
+setting @title of <z:姓名> to 'z:姓名'
+stripping namespaces from <z:姓名>
+renaming <姓名> to <span>
+processing <z:姓名>
+setting @title of <z:姓名> to 'z:姓名'
+stripping namespaces from <z:姓名>
+renaming <姓名> to <span>
+renaming <段落识别> to <div>
+renaming <章节> to <div>
+processing <z:躯>
+setting @title of <z:躯> to 'z:躯'
+stripping namespaces from <z:躯>
+removing <i:rules>
+renaming <躯> to <div>
+renaming <书籍> to <div>
+renaming <insert> to <div>
+renaming <body> to <div>
+renaming <myMetaDoc> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (alt)
+Creating new <span> element to represent node of type ATT (alt)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (src)
+Creating new <span> element to represent node of type ATT (src)
+Creating new <span> element to represent node of type ATT (title)
+Creating new <span> element to represent node of type ATT (数)
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Creating new rule <its:translateRule> to match [selector=<span id="ITS_1">]
+Setting id of <span> to ITS_2
+Creating new rule <its:translateRule> to match [selector=<span id="ITS_2">]
+Setting id of <span> to ITS_3
+Creating new rule <its:translateRule> to match [selector=<span id="ITS_3">]
+Setting id of <span> to ITS_4
+Creating new rule <its:translateRule> to match [selector=<span id="ITS_4">]
+Setting id of <span> to ITS_5
+Creating new rule <its:translateRule> to match [selector=<span id="ITS_5">]
+Creating new rule <its:translateRule> to match [selector=<span id="ITS_2">]
+Setting id of <span> to ITS_6
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_6">]
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_4">]
+Setting id of <span> to ITS_7
+Creating new rule <its:withinTextRule> to match [selector=<span id="ITS_7">]
+Setting id of <div> to ITS_8
+Creating new rule <i:translateRule> to match [selector=<div id="ITS_8">]
+Setting id of <span> to ITS_9
+Creating new rule <i:translateRule> to match [selector=<span id="ITS_9">]
+Setting id of <span> to ITS_10
+Creating new rule <i:translateRule> to match [selector=<span id="ITS_10">]
+Creating new rule <i:withinTextRule> to match [selector=<span id="ITS_9">]
+Creating new rule <i:withinTextRule> to match [selector=<span id="ITS_10">]
+Setting id of <span> to ITS_11
+Setting id of <span> to ITS_12
+Setting id of <span> to ITS_13
+Setting id of <span> to ITS_14
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

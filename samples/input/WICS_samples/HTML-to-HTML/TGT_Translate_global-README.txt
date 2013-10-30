@@ -1,0 +1,1 @@
+The sample uses ID attribute of SPAN element to refer (via ITS rules) to text metadata embedded in SCRIPT section of the same file

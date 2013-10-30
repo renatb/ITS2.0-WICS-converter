@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<xml>
+  <head>
+    <its:rules version="2.0" xmlns:its="http://www.w3.org/2005/11/its">
+      <its:domainRule selector="//para"
+        domainPointer="processing-instruction()"/>
+      <its:domainRule selector="//para"
+        domainPointer="processing-instruction()"/>
+    </its:rules>
+  </head>
+  <para>Some text<?foo_pi some content?></para>
+  <?bar_pi junk?>
+</xml>

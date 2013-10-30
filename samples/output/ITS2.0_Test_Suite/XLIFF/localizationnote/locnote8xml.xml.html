@@ -1,0 +1,29 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" localeFilterType="include" selector="//@*"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:targetPointerRule targetPointer="../*[@title='target']" selector="//*[@title='source']"/>
+      </its:rules>
+</script><style>body {visibility:hidden} p {visibility: visible}</style><div title=xliff>
+<div title=file>
+<div title=body>
+<div its-loc-note="The variable {0} is the name of the host." its-loc-note-type=alert title=trans-unit>
+<p lang=en title=source>Host {0} cannot be found.</p>
+<div title=note>The variable {0} is the name of the host.</div>
+</div>
+<div its-loc-note="The variable {0} is the name of the host." its-loc-note-type=alert title=trans-unit>
+<p lang=en title=source>The connection with {0} has been lost.</p>
+<div title=note>The variable {0} is the name of the host.</div>
+</div>
+<div its-loc-note="{0} is a filename" its-loc-note-type=alert title=trans-unit>
+<p lang=en title=source>{0} not found.</p>
+<div title=note>{0} is a filename</div>
+</div>
+<div its-loc-note="REF:myLocNotes.htm#CannotLog" its-loc-note-ref="myLocNotes.htm#CannotLog" its-loc-note-type=alert title=trans-unit>
+<p lang=en title=source>Cannot log with this username.</p>
+<div title=note>REF:myLocNotes.htm#CannotLog</div>
+</div>
+</div>
+</div>
+</div>

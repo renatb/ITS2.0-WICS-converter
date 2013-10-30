@@ -1,0 +1,42 @@
+match: rule=<its:textAnalysisRule>; selector=<span id="dublin">; taIdentRefPointer=@identref[http://dbpedia.org/resource/Dublin]; taClassRefPointer=@classref[http://nerd.eurecom.fr/ontology#Location]
+match: rule=<its:textAnalysisRule>; taIdentPointer=@ident[301467919]; selector=<span id="capital">; taSourcePointer=@source[Wordnet3.0]
+converting document elements into HTML
+processing <text>
+setting @title of <text> to 'text'
+removing <its:rules>
+processing <body>
+setting @title of <body> to 'body'
+processing <p>
+setting @title of <p> to 'p'
+processing <span id="dublin">
+setting @title of <span> to 'span'
+renaming <span> to <span>
+processing <span id="capital">
+setting @title of <span> to 'span'
+renaming <span> to <span>
+renaming <p> to <div>
+renaming <body> to <div>
+renaming <text> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (classref)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (ident)
+Creating new <span> element to represent node of type ATT (identref)
+Creating new <span> element to represent node of type ATT (source)
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Setting id of <span> to ITS_2
+Setting id of <span> to ITS_3
+Creating new rule <its:textAnalysisRule> to match [selector=<span id="ITS_1">; taIdentRefPointer=<span id="ITS_2">; taClassRefPointer=<span id="ITS_3">]
+Setting id of <span> to ITS_4
+Setting id of <span> to ITS_5
+Setting id of <span> to ITS_6
+Creating new rule <its:textAnalysisRule> to match [taSourcePointer=<span id="ITS_4">; selector=<span id="ITS_5">; taIdentPointer=<span id="ITS_6">]
+Setting id of <span> to ITS_7
+Setting id of <span> to ITS_8
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

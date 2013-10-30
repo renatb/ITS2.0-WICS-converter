@@ -1,0 +1,40 @@
+match: rule=<its:storageSizeRule>; selector=<field id="123">; storageEncodingPointer=@encoding[ISO-8859-1]; storageSizePointer=@max[25]
+match: rule=<its:storageSizeRule>; selector=<field id="139">; storageSizePointer=@max[25]; storageEncodingPointer=@encoding[ISO-8859-1]
+converting document elements into HTML
+processing <fields>
+setting @title of <fields> to 'fields'
+removing <its:rules>
+processing <field id="123">
+setting @title of <field> to 'field'
+renaming <field> to <div>
+processing <field id="139">
+setting @title of <field> to 'field'
+renaming <field> to <div>
+renaming <fields> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (encoding)
+Creating new <span> element to represent node of type ATT (encoding)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (max)
+Creating new <span> element to represent node of type ATT (max)
+Creating new <span> element to represent node of type ATT (type)
+Creating new <span> element to represent node of type ATT (type)
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Setting id of <span> to ITS_2
+Setting id of <div> to ITS_3
+Creating new rule <its:storageSizeRule> to match [storageSizePointer=<span id="ITS_1">; storageEncodingPointer=<span id="ITS_2">; selector=<div id="ITS_3">]
+Setting id of <div> to ITS_4
+Setting id of <span> to ITS_5
+Setting id of <span> to ITS_6
+Creating new rule <its:storageSizeRule> to match [selector=<div id="ITS_4">; storageSizePointer=<span id="ITS_5">; storageEncodingPointer=<span id="ITS_6">]
+Setting id of <span> to ITS_7
+Setting id of <span> to ITS_8
+Setting id of <span> to ITS_9
+Setting id of <span> to ITS_10
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

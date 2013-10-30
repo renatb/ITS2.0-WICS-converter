@@ -1,0 +1,26 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterType="include" localeFilterList="*" selector="//@*"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:translateRule translate="no" selector="id('ITS_1')|id('ITS_3')|id('ITS_4')|id('ITS_5')"/>
+      <its:idValueRule selector="id('ITS_2')" idValue="id('ITS_1')"/>
+    </its:rules>
+</script><div title=resource>
+ 
+ <div title=webform><span class=_ITS_ATT id=ITS_3 its-within-text=no title=id>1</span>
+ <div id=ITS_2 title=entry><span class=_ITS_ATT id=ITS_1 its-within-text=no title=name>btn.OK</span>
+    <div title=text>OK</div>
+    <div title=pos>1, 1</div>
+    <div title=trig>sendOK</div>
+  </div>
+  </div>
+  <div title=webform><span class=_ITS_ATT id=ITS_4 its-within-text=no title=id>2</span>
+  <div title=entry><span class=_ITS_ATT id=ITS_5 its-within-text=no title=name>btn.CANCEL</span>
+    <div title=text>Cancel</div>
+    <div title=pos>2, 1</div>
+    <div title=trig>cancelAll</div>
+  </div>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+match: rule=<its:termRule>; selector=<term>; termInfoRefPointer=@target[#TDPV]
+converting document elements into HTML
+processing <text>
+setting @title of <text> to 'text'
+removing <its:rules>
+processing <p id="1">
+setting @title of <p> to 'p'
+renaming <p> to <div>
+processing <p id="2">
+setting @title of <p> to 'p'
+processing <term>
+setting @title of <term> to 'term'
+renaming <term> to <div>
+processing <gloss xml:id="TDPV">
+renaming @xml:id[TDPV] of <gloss xml:id="TDPV"> to @id
+setting @title of <gloss id="TDPV"> to 'gloss'
+renaming <gloss id="TDPV"> to <div>
+renaming <p> to <div>
+renaming <text> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (target)
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Setting id of <span> to ITS_2
+Creating new rule <its:termRule> to match [selector=<div id="ITS_1">; termInfoRefPointer=<span id="ITS_2">]
+Setting id of <span> to ITS_3
+Setting id of <span> to ITS_4
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

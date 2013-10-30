@@ -1,0 +1,19 @@
+<!DOCTYPE html><html lang=en><head>
+    <meta charset=utf-8>
+    <title>Example of MT Confidence with annotator references.</title>
+     
+  
+    <script type="application/its+xml">
+      <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+  <its:mtConfidenceRule selector="/h:html/h:body/h:p/h:span[@id='ireland']" mtConfidence="0.8982"/>
+  </its:rules>
+    </script></head>
+  <body its-annotators-ref="mt-confidence|file:///tools.xml#T1">
+    <p its-annotators-ref="text-analysis|file:///tools.xml#T2">
+      <span id=ireland>Dublin is the capital city of Ireland and has the 50th biggest population density in Europe.</span>
+      <span id=spain>Madrid is the capital of Spain.</span>
+      <span id=germany its-annotators-ref="mt-confidence|file:///tools.xml#T3">Berlin is the capital of Germany.</span>
+      <span id=england>London is the capital of England</span>
+    </p>
+
+

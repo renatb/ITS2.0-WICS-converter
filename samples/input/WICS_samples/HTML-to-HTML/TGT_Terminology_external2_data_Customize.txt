@@ -1,0 +1,7 @@
+﻿Source	Target	Usage note	Comment
+Customize	[Translation: variant #1]	[Usage Note #1: - --- ----- -- --- --]	[Comment #1: ---- ---- -- -------------]
+Customize	[Translation: variant #2]	[Usage Note #2: - --- --]	[Comment #2: ---- ---- -- -------------, ----. ---- ------- ----!]
+Customize	[Translation: variant #3]	[Usage Note #3: ------------ --- --; ------------]	[Comment #3: ---- ---- -- -------- ----. ---- ------- ----. -- --- - - --------]
+Customize	[Translation: variant #4]	[Usage Note #4: - --- ----- -- --- --]	[Comment #4: ---- ---- -- -------------]
+Customize	[Translation: variant #5]	[Usage Note #5: - --- --]	[Comment #5: ---- ---- -- -------------, ----. ---- ------- ----!]
+Customize	[Translation: variant #6]	[Usage Note #6: ------------ --- --; ------------]	[Comment #6: ---- ---- -- -------- ----. ---- ------- ----. -- --- - - --------]

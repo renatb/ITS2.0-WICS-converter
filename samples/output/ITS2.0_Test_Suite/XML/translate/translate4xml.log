@@ -1,0 +1,46 @@
+converting document elements into HTML
+processing <book>
+removing @its:version[2.0] from <book>
+setting @title of <book> to 'book'
+stripping namespaces from <book>
+processing <head>
+setting @title of <head> to 'head'
+processing <title>
+setting @title of <title> to 'title'
+renaming <title> to <div>
+renaming <head> to <div>
+processing <body>
+setting @title of <body> to 'body'
+processing <img>
+setting @title of <img> to 'img'
+renaming <img> to <div>
+processing <p>
+setting @title of <p> to 'p'
+processing <fexp>
+renaming @its:translate[no] of <fexp> to @translate
+setting @title of <fexp> to 'fexp'
+stripping namespaces from <fexp>
+renaming <fexp> to <span>
+processing <fexp>
+renaming @its:translate[no] of <fexp> to @translate
+setting @title of <fexp> to 'fexp'
+stripping namespaces from <fexp>
+renaming <fexp> to <span>
+renaming <p> to <div>
+renaming <body> to <div>
+renaming <book> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (alt)
+Creating new <span> element to represent node of type ATT (height)
+Creating new <span> element to represent node of type ATT (src)
+Creating new <span> element to represent node of type ATT (width)
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Setting id of <span> to ITS_2
+Setting id of <span> to ITS_3
+Setting id of <span> to ITS_4
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

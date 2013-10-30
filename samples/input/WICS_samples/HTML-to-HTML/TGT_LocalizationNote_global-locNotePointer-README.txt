@@ -1,0 +1,1 @@
+The sample uses locNotePointer attribute to refer (via ITS rules) to text metadata embedded in content

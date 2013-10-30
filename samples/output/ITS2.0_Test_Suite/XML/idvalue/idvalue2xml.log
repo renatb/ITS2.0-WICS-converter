@@ -1,0 +1,22 @@
+converting document elements into HTML
+processing <file>
+setting @title of <file> to 'file'
+processing <res xml:id="btnAgain">
+renaming @xml:id[btnAgain] of <res xml:id="btnAgain"> to @id
+setting @title of <res id="btnAgain"> to 'res'
+renaming <res id="btnAgain"> to <div>
+processing <res>
+setting @title of <res> to 'res'
+renaming <res> to <div>
+renaming <file> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (name)
+Creating new <span> element to represent node of type ATT (name)
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Setting id of <span> to ITS_2
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

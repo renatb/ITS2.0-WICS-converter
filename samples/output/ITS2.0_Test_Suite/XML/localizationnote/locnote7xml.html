@@ -1,0 +1,29 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterType="include" localeFilterList="*" selector="//@*"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule withinText="no" selector="//h:span"/>
+      <its:translateRule selector="id('ITS_5')|id('ITS_6')" translate="no"/>
+      <its:translateRule selector="id('ITS_1')" translate="no"/>
+      <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:locNoteRule locNoteType="description" selector="id('ITS_3')" locNotePointer="id('ITS_1')"/>
+      <its:locNoteRule locNoteType="description" selector="id('ITS_4')" locNotePointer="id('ITS_2')"/>
+    </its:rules>
+</script><div title=Res>
+<div title=prolog>
+
+</div>
+<div title=body>
+<div title=msg><span class=_ITS_ATT id=ITS_5 its-within-text=no title=id>FileNotFound</span>
+<div id=ITS_1 title=notes>
+Indicates that the resource file {0} could not be loaded.
+</div>
+<div id=ITS_3 title=data>Cannot find the file {0}.</div>
+</div>
+<div title=msg><span class=_ITS_ATT id=ITS_6 its-within-text=no title=id>DivByZero</span>
+<div id=ITS_2 title=notes>A division by 0 was going to be computed.</div>
+<div id=ITS_4 title=data>Invalid parameter.</div>
+</div>
+</div>
+</div>

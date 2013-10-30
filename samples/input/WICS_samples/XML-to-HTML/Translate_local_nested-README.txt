@@ -1,0 +1,1 @@
+The sample uses its:translate attribute to indicate translation status of nested fragments of text

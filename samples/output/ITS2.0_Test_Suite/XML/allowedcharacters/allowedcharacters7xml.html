@@ -1,0 +1,19 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule selector="//@*" localeFilterType="include" localeFilterList="*"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule selector="//@*" translate="no"/>
+      <its:withinTextRule withinText="no" selector="//h:span"/>
+      <its:translateRule selector="id('ITS_2')" translate="no"/>
+      <its:allowedCharactersRule allowedCharacters="[^*+]" selector="id('ITS_1')"/>
+    </its:rules>
+</script><div title=myRes>
+  <div title=head>
+      
+  </div>
+  <div title=body>
+    <div id=ITS_1 title=content><span class=_ITS_ATT id=ITS_2 its-within-text=no title=id>allowedchar</span>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+      nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
+      diam voluptua.</div>
+  </div>
+</div>

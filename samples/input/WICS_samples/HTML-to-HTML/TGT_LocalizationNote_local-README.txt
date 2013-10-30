@@ -1,0 +1,1 @@
+The sample uses locNote attribute to store ITS metadata as inline inserts in the content.

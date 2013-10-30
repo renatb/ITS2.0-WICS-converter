@@ -1,0 +1,45 @@
+match: rule=<its:locQualityIssueRule>; locQualityIssuesRefPointer=@ref[#lq1]; selector=<mrk>
+converting document elements into HTML
+processing <doc>
+removing @its:version[2.0] from <doc>
+setting @title of <doc> to 'doc'
+stripping namespaces from <doc>
+processing <file>
+setting @title of <file> to 'file'
+processing <header>
+setting @title of <header> to 'header'
+removing <its:rules>
+renaming <header> to <div>
+processing <unit id="1">
+setting @title of <unit> to 'unit'
+processing <segment>
+setting @title of <segment> to 'segment'
+processing <source>
+setting @title of <source> to 'source'
+renaming <source> to <div>
+processing <target>
+setting @title of <target> to 'target'
+processing <mrk>
+setting @title of <mrk> to 'mrk'
+renaming <mrk> to <span>
+renaming <target> to <div>
+renaming <segment> to <div>
+placing <its:locQualityIssues xml:id="lq1"> in script element
+renaming <unit> to <div>
+renaming <file> to <div>
+renaming <doc> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (ref)
+Creating new <span> element to represent node of type ATT (type)
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Setting id of <span> to ITS_2
+Creating new rule <its:locQualityIssueRule> to match [selector=<span id="ITS_1">; locQualityIssuesRefPointer=<span id="ITS_2">]
+Setting id of <span> to ITS_3
+Setting id of <span> to ITS_4
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

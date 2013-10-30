@@ -1,0 +1,29 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script id=pr1 type="application/its+xml">
+    <its:provenanceRecords xmlns:its="http://www.w3.org/2005/11/its" xml:id="pr1">
+    <its:provenanceRecord tool="onlinemtex" revPerson="James Joyce" revTool="mycat-v1.0" revOrg="acme-CAT-v2.3" provRef="http://www.examplelsp.com/excontent987/production/prov/e6354"/>
+  </its:provenanceRecords>
+</script><script id=pr2 type="application/its+xml">
+    <its:provenanceRecords xmlns:its="http://www.w3.org/2005/11/its" xml:id="pr2">
+    <its:provenanceRecord person="John Doe" org="legaltrans-ex" revPerson="Tommy Atkins" revOrg="vistatec" provRef="http://www.examplelsp.com/excontent987/legal/prov/e6354 http://www.vistatec.com/job-12-7-15-X31/reviewed/prov/re8573469"/>
+  </its:provenanceRecords>
+</script><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule selector="//@*" localeFilterType="include" localeFilterList="*"/>
+      <its:dirRule selector="//@*" dir="ltr"/>
+      <its:translateRule translate="no" selector="//@*"/>
+      <its:withinTextRule withinText="no" selector="//h:span"/>
+      <its:translateRule selector="id('ITS_2')|id('ITS_3')" translate="no"/>
+      <its:provRule selector="id('ITS_1')" provenanceRecordsRefPointer="id('ITS_2')"/>
+      <its:provRule selector="id('ITS_4')" provenanceRecordsRefPointer="id('ITS_3')"/>
+    </its:rules>
+</script><div title=text>
+  <div title=dc:creator>John Doe</div>
+  
+  
+  
+  <div title=title>Translation Revision Provenance Agent: Global Test in XML</div>
+  <div title=body>
+    <div id=ITS_1 title=par><span class=_ITS_ATT id=ITS_2 its-within-text=no title=ref>#pr1</span> This paragraph was translated from the machine.</div>
+    <div id=ITS_4 title=legalnotice><span class=_ITS_ATT id=ITS_3 its-within-text=no title=ref>#pr2</span>This text was translated directly by a person.</div>
+  </div>
+</div>

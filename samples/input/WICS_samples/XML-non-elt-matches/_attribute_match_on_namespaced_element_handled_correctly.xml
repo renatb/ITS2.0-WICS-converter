@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<xml>
+  <head>
+    <its:rules version="2.0"
+      xmlns:its="http://www.w3.org/2005/11/its"
+      xmlns:foo="foo.com">
+      <its:translateRule selector="//foo:para/@content"
+        translate="yes"/>
+    </its:rules>
+  </head>
+  <foo:para content="foo" xmlns:foo="foo.com">Some text</foo:para>
+</xml>

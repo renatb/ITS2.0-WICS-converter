@@ -1,0 +1,62 @@
+match: rule=<its:mtConfidenceRule>; selector=<span id="ireland">
+match: rule=<its:mtConfidenceRule>; selector=<span id="england">
+match: rule=<its:mtConfidenceRule>; selector=<span id="spain">
+match: rule=<its:mtConfidenceRule>; selector=<span id="germany">
+converting document elements into HTML
+processing <text>
+setting @title of <text> to 'text'
+stripping namespaces from <text>
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <body>
+setting @title of <body> to 'body'
+processing <p>
+setting @title of <p> to 'p'
+processing <span id="ireland">
+Replacing @its:annotatorsRef of <span id="ireland"> with its-annotators-ref
+setting @title of <span> to 'span'
+stripping namespaces from <span>
+renaming <span> to <div>
+processing <span id="spain">
+Replacing @its:annotatorsRef of <span id="spain"> with its-annotators-ref
+setting @title of <span> to 'span'
+stripping namespaces from <span>
+renaming <span> to <div>
+processing <span id="germany">
+Replacing @its:annotatorsRef of <span id="germany"> with its-annotators-ref
+setting @title of <span> to 'span'
+stripping namespaces from <span>
+renaming <span> to <div>
+processing <span id="england">
+Replacing @its:annotatorsRef of <span id="england"> with its-annotators-ref
+setting @title of <span> to 'span'
+stripping namespaces from <span>
+renaming <span> to <div>
+renaming <p> to <div>
+renaming <body> to <div>
+renaming <text> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new <span> element to represent node of type ATT (id)
+Creating new its:rules element to contain all rules
+Setting id of <div> to ITS_1
+Creating new rule <its:mtConfidenceRule> to match [selector=<div id="ITS_1">]
+Setting id of <div> to ITS_2
+Creating new rule <its:mtConfidenceRule> to match [selector=<div id="ITS_2">]
+Setting id of <div> to ITS_3
+Creating new rule <its:mtConfidenceRule> to match [selector=<div id="ITS_3">]
+Setting id of <div> to ITS_4
+Creating new rule <its:mtConfidenceRule> to match [selector=<div id="ITS_4">]
+Setting id of <span> to ITS_5
+Setting id of <span> to ITS_6
+Setting id of <span> to ITS_7
+Setting id of <span> to ITS_8
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

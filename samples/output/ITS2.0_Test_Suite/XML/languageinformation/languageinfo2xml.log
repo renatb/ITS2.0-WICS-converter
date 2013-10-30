@@ -1,0 +1,57 @@
+match: rule=<its:langRule>; langPointer=@language[en]; selector=<text>
+match: rule=<its:langRule>; langPointer=<lang>; selector=<text>
+match: rule=<its:langRule>; selector=<text>; langPointer=<lang>
+converting document elements into HTML
+processing <text>
+setting @title of <text> to 'text'
+processing <head>
+setting @title of <head> to 'head'
+removing <its:rules>
+renaming <head> to <div>
+processing <content>
+setting @title of <content> to 'content'
+processing <item>
+setting @title of <item> to 'item'
+processing <lang>
+setting @title of <lang> to 'lang'
+renaming <lang> to <div>
+processing <text>
+setting @title of <text> to 'text'
+processing <q>
+setting @title of <q> to 'q'
+renaming <q> to <span>
+renaming <text> to <div>
+renaming <item> to <div>
+processing <item>
+setting @title of <item> to 'item'
+processing <lang>
+setting @title of <lang> to 'lang'
+renaming <lang> to <div>
+processing <text>
+setting @title of <text> to 'text'
+processing <q>
+setting @title of <q> to 'q'
+renaming <q> to <span>
+renaming <text> to <div>
+renaming <item> to <div>
+renaming <content> to <div>
+renaming <text> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (language)
+Creating new <span> element to represent node of type ATT (language)
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Setting id of <div> to ITS_2
+Creating new rule <its:langRule> to match [langPointer=<span id="ITS_1">; selector=<div id="ITS_2">]
+Setting id of <div> to ITS_3
+Setting id of <div> to ITS_4
+Creating new rule <its:langRule> to match [langPointer=<div id="ITS_3">; selector=<div id="ITS_4">]
+Setting id of <div> to ITS_5
+Setting id of <div> to ITS_6
+Creating new rule <its:langRule> to match [selector=<div id="ITS_5">; langPointer=<div id="ITS_6">]
+Setting id of <span> to ITS_7
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

@@ -1,0 +1,33 @@
+converting document elements into HTML
+processing <Doc>
+removing @its:version[2.0] from <Doc>
+setting @title of <Doc> to 'Doc'
+stripping namespaces from <Doc>
+processing <body>
+setting @title of <body> to 'body'
+processing <p>
+setting @title of <p> to 'p'
+processing <its:span>
+Replacing @locNote of <its:span> with its-loc-note
+setting @title of <its:span> to 'its:span'
+stripping namespaces from <its:span>
+processing <its:span>
+Replacing @locNoteRef of <its:span> with its-loc-note-ref
+setting @title of <its:span> to 'its:span'
+stripping namespaces from <its:span>
+processing <b>
+setting @title of <b> to 'b'
+renaming <b> to <span>
+processing <its:span>
+Replacing @locNoteRef of <its:span> with its-loc-note-ref
+setting @title of <its:span> to 'its:span'
+stripping namespaces from <its:span>
+renaming <p> to <div>
+renaming <body> to <div>
+renaming <Doc> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

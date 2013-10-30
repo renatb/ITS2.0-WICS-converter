@@ -1,0 +1,40 @@
+converting document elements into HTML
+processing <messages>
+removing @its:version[2.0] from <messages>
+setting @title of <messages> to 'messages'
+stripping namespaces from <messages>
+processing <var>
+Replacing @its:storageSize of <var> with its-storage-size
+Replacing @its:storageEncoding of <var> with its-storage-encoding
+Replacing @its:lineBreakType of <var> with its-line-break-type
+setting @title of <var> to 'var'
+stripping namespaces from <var>
+renaming <var> to <div>
+processing <var>
+Replacing @its:storageSize of <var> with its-storage-size
+Replacing @its:storageEncoding of <var> with its-storage-encoding
+Replacing @its:lineBreakType of <var> with its-line-break-type
+setting @title of <var> to 'var'
+stripping namespaces from <var>
+renaming <var> to <div>
+processing <var>
+Replacing @its:storageSize of <var> with its-storage-size
+Replacing @its:storageEncoding of <var> with its-storage-encoding
+Replacing @its:lineBreakType of <var> with its-line-break-type
+setting @title of <var> to 'var'
+stripping namespaces from <var>
+renaming <var> to <div>
+renaming <messages> to <div>
+wrapping document in HTML structure
+Creating new <span> element to represent node of type ATT (num)
+Creating new <span> element to represent node of type ATT (num)
+Creating new <span> element to represent node of type ATT (num)
+Creating new its:rules element to contain all rules
+Setting id of <span> to ITS_1
+Setting id of <span> to ITS_2
+Setting id of <span> to ITS_3
+Creating new rule <its:translateRule> to prevent false inheritance
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

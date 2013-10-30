@@ -1,0 +1,29 @@
+converting document elements into HTML
+processing <doc>
+removing @its:version[2.0] from <doc>
+setting @title of <doc> to 'doc'
+stripping namespaces from <doc>
+processing <para>
+setting @title of <para> to 'para'
+processing <span>
+Replacing @its:locQualityIssueComment of <span> with its-loc-quality-issue-comment
+Replacing @its:locQualityIssueSeverity of <span> with its-loc-quality-issue-severity
+Replacing @its:locQualityIssueProfileRef of <span> with its-loc-quality-issue-profile-ref
+setting @title of <span> to 'span'
+stripping namespaces from <span>
+renaming <span> to <span>
+processing <span>
+Replacing @its:locQualityIssueComment of <span> with its-loc-quality-issue-comment
+Replacing @its:locQualityIssueSeverity of <span> with its-loc-quality-issue-severity
+Replacing @its:locQualityIssueProfileRef of <span> with its-loc-quality-issue-profile-ref
+setting @title of <span> to 'span'
+stripping namespaces from <span>
+renaming <span> to <span>
+renaming <para> to <div>
+renaming <doc> to <div>
+wrapping document in HTML structure
+Creating new its:rules element to contain all rules
+Creating new rule <its:withinTextRule> to set correct withinText default on <span> elements
+Creating new rule <its:translateRule> to reset its:translateRule on new attributes
+Creating new rule <its:dirRule> to reset its:dirRule on new attributes
+Creating new rule <its:localeFilterRule> to reset its:localeFilterRule on new attributes

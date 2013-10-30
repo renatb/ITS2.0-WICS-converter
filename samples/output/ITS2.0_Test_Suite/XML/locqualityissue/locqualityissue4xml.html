@@ -1,0 +1,24 @@
+<!DOCTYPE html><meta charset=utf-8><title>WICS</title><script id=id1234 type="application/its+xml">
+    <its:locQualityIssues xmlns:its="http://www.w3.org/2005/11/its" xml:id="id1234">
+  <its:locQualityIssue locQualityIssueType="typographical" locQualityIssueSeverity="50" locQualityIssueProfileRef="http://example.org/qaMovel/v1" locQualityIssueEnabled="no"/>
+ </its:locQualityIssues>
+</script><script type="application/its+xml">
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" xmlns:h="http://www.w3.org/1999/xhtml" version="2.0">
+      <its:localeFilterRule localeFilterList="*" localeFilterType="include" selector="//@*"/>
+      <its:dirRule dir="ltr" selector="//@*"/>
+      <its:translateRule translate="no" selector="//@*"/>
+      <its:withinTextRule selector="//h:span" withinText="no"/>
+      <its:translateRule translate="no" selector="id('ITS_2')|id('ITS_4')|id('ITS_5')"/>
+      <its:locQualityIssueRule selector="id('ITS_1')" locQualityIssuesRefPointer="id('ITS_2')"/>
+      <its:locQualityIssueRule selector="id('ITS_3')" locQualityIssueType="misspelling" locQualityIssueSeverity="75" locQualityIssueProfileRef="http://example.org/qaMovel/v1" locQualityIssueEnabled="yes"/>
+    </its:rules>
+</script><div title=doc>
+  <div title=header>
+    
+  </div>
+  <div title=para>
+   <span id=ITS_1 title=span><span class=_ITS_ATT id=ITS_2 its-within-text=no title=issues>#id1234</span><span class=_ITS_ATT id=ITS_4 its-within-text=no title=id>q1</span>transport</span> or transportation is the movement of people, animals and goods from one location to another.
+   Modes of <span id=ITS_3 title=span><span class=_ITS_ATT id=ITS_5 its-within-text=no title=id>q2</span>tranport inc.</span> air, rail, road, water, cable, pipeline, and space.
+ </div>
+ 
+</div>
