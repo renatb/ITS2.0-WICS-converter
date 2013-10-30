@@ -97,5 +97,4 @@ Nathan Glenn <garfieldnate@gmail.com>
 
 This software is copyright (c) 2013 by DFKI.
 
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
+This projected is licensed under the terms of the MIT license.
