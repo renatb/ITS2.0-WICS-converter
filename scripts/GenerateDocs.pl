@@ -9,13 +9,13 @@ use warnings;
 package Wics::Pod;
 use Pod::Weaver;
 use Pod::Elemental;
-use Software::License::Perl_5;
+use Software::License::MIT;
 use PPI;
 use List::MoreUtils qw(any);
 use parent qw(Pod::Simple::HTML);
 
 my $weaver = Pod::Weaver->new_with_default_config;
-my $license = Software::License::Perl_5->new({
+my $license = Software::License::MIT->new({
   holder => 'DFKI',
 });
 
