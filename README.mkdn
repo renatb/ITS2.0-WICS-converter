@@ -1,3 +1,12 @@
+ITS2.0-WICS-converter
+=====================
+
+WICS file format converter
+
+For details, see: 
+
+HTML 5 - ITS 2.0 IMPLEMENTATION PROJECT: WORK IN CONTEXT SYSTEM (WICS).pdf
+
 # NAME
 
 ITS::WICS - Work with ITS-decorated documents
