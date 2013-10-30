@@ -13,7 +13,7 @@ use Exporter::Easy (
 	OK => [qw(xml2html xliff2html reduceHtml xml2xliff)]
 );
 # VERSION
-# ABSTRACT: Work with ITS-decorated documents
+# ABSTRACT: WICS file format converter
 
 =head1 SYNOPSIS
 
@@ -30,6 +30,12 @@ accessible to end-users via extraction and visualization.
 This module provides access to the four WICS conversion tasks
 (see the L</EXPORTS> section). Two standalone applications, a GUI and a CLI,
 are also provided in this distribution (see WICS-GUI.pl and WICS.pl).
+
+See
+"HTML 5 - ITS 2.0 IMPLEMENTATION PROJECT: WORK IN CONTEXT SYSTEM (WICS).pdf"
+in the project
+L<GitHub repository|https://github.com/renatb/ITS2.0-WICS-converter>
+for details.
 
 =head1 EXPORTS
 

@@ -1,19 +1,10 @@
-ITS2.0-WICS-converter
-=====================
-
-WICS file format converter with support of ITS 2.0 metadata
-
-For details, see: 
-
-HTML 5 - ITS 2.0 IMPLEMENTATION PROJECT - WORK IN CONTEXT SYSTEM (WICS).pdf
-
 # NAME
 
-ITS::WICS - Work with ITS-decorated documents
+ITS::WICS - WICS file format converter
 
 # VERSION
 
-version 0.03
+version 0.04
 
 # SYNOPSIS
 
@@ -30,6 +21,12 @@ accessible to end-users via extraction and visualization.
 This module provides access to the four WICS conversion tasks
 (see the ["EXPORTS"](#EXPORTS) section). Two standalone applications, a GUI and a CLI,
 are also provided in this distribution (see WICS-GUI.pl and WICS.pl).
+
+See
+"HTML 5 - ITS 2.0 IMPLEMENTATION PROJECT: WORK IN CONTEXT SYSTEM (WICS).pdf"
+in the project
+[GitHub repository](https://github.com/renatb/ITS2.0-WICS-converter)
+for details.
 
 # EXPORTS
 
@@ -104,6 +101,8 @@ Nathan Glenn <garfieldnate@gmail.com>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by DFKI.
+This software is Copyright (c) 2013 by DFKI.
 
-This project is an open source project licensed under the terms of the MIT license.
+This is free software, licensed under:
+
+    The MIT (X11) License
