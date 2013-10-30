@@ -1,6 +1,8 @@
 Revision history for ITS-WICS
 
 {{$NEXT}}
+
+0.04      2013-10-30 12:48:08 America/Los_Angeles
     Changed license to MIT
     Added pointer to pdf documentation in project repository
 0.03      2013-10-17 13:43:53 America/Los_Angeles
