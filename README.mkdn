@@ -1,7 +1,7 @@
 ITS2.0-WICS-converter
 =====================
 
-WICS file format converter
+WICS file format converter with support of ITS 2.0 metadata
 
 For details, see: 
 
