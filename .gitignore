@@ -4,13 +4,15 @@
 # except these:
 !/bin/
 !/docs/
+!/exe/
 !/lib/
 !/t/
 !/releases/*
+!/samples/
 !/scripts/
 !/dist.ini
 !/Changes
 !/TODO.txt
 !/README.mkdn
-!/!!!.txt
+
 
