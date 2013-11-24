@@ -137,7 +137,7 @@ for my $path (@files){
     try{
         my $html = $processor->( $path );
         my $new_path = _get_new_path($path, $overwrite, $output_ext);
-        my $out_fh = $new_path->filehandle('>:encoding(UTF-8)');
+        my $out_fh = $new_path->openw_utf8;
         print $out_fh ${ $html };
         print "wrote $new_path\n";
     }catch{
