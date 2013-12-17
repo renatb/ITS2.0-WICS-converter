@@ -7,7 +7,6 @@ use Test::HTML::Differences;
 
 filters {
   input => 'htmlize',
-  log => [qw(lines chomp array)],
   output => [qw(normalize_html)]
 };
 
